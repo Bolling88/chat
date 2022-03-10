@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "164406258776",
+    "project_id": "chat-60225",
+    "storage_bucket": "chat-60225.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:164406258776:android:14cc443a70f60bca1c2e2d",
+        "android_client_info": {
+          "package_name": "com.xevenition.chat"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "164406258776-jgo2mem67ofi6lko4qckgm5ub5j76a7r.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.xevenition.chat",
+            "certificate_hash": "fa80ee62f46fc76b875bf709c5e31f934211e703"
+          }
+        },
+        {
+          "client_id": "164406258776-rqr6n103mlu4nhakdji1q9fd75avqidh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDA_Ok3f2_H3bWZhKgiVzrPR6s5nYE4YKY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "164406258776-rqr6n103mlu4nhakdji1q9fd75avqidh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
