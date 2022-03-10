@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>164406258776-lms93gd306frmc92vbds2o21fajlketr.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.164406258776-lms93gd306frmc92vbds2o21fajlketr</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>164406258776-jgo2mem67ofi6lko4qckgm5ub5j76a7r.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyDrYtpHeq3jcb2SSqr4Da9wC-GYfXOd6ko</string>
+	<key>GCM_SENDER_ID</key>
+	<string>164406258776</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.xevenition.chat</string>
+	<key>PROJECT_ID</key>
+	<string>chat-60225</string>
+	<key>STORAGE_BUCKET</key>
+	<string>chat-60225.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:164406258776:ios:9b0bee7c629721891c2e2d</string>
+</dict>
+</plist>
