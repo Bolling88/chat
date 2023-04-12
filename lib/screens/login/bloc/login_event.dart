@@ -10,6 +10,7 @@ class LoginEvent extends Equatable{
 }
 
 class LoginFacebookClickedEvent extends LoginEvent{}
+class LoginGuestClickedEvent extends LoginEvent{}
 class LoginGoogleClickedEvent extends LoginEvent{}
 class LoginAppleClickedEvent extends LoginEvent{}
 

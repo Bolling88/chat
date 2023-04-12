@@ -38,8 +38,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
             final user =
             await FirebaseAuth.instance.signInWithCredential(credential);
 
-            final firaUser = await _firestoreRepository.getUser();
-            if (firaUser == null || firaUser.name.isEmpty) {
+            final chatUser = await _firestoreRepository.getUser();
+            if (chatUser == null || chatUser.name.isEmpty) {
               final searchArray = _getSearchArray(facebookData.name);
               await _firestoreRepository.setInitialUserData(facebookData.name,
                   facebookData.email, user.user!.uid, searchArray);
@@ -50,7 +50,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
                 yield LoginErrorState();
               }
             } else {
-              yield await checkIfOnboardingIsDone(firaUser);
+              yield await checkIfOnboardingIsDone(chatUser);
             }
           } else {
             yield LoginErrorState();
@@ -65,8 +65,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         if (credentials == null) {
           yield LoginErrorState();
         } else {
-          final firaUser = await _firestoreRepository.getUser();
-          if (firaUser == null || firaUser.name.isEmpty) {
+          final chatUser = await _firestoreRepository.getUser();
+          if (chatUser == null || chatUser.name.isEmpty) {
             var fullName = credentials.user?.displayName ?? "";
             if (fullName.contains('@')) {
               fullName = "";
@@ -85,7 +85,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
               yield LoginErrorState();
             }
           } else {
-            yield await checkIfOnboardingIsDone(firaUser);
+            yield await checkIfOnboardingIsDone(chatUser);
           }
         }
       } else if (event is LoginAppleClickedEvent) {
@@ -94,8 +94,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         final appleCredentials = await _loginRepository.getAppleCredentials(nonce);
         final credentials = await _loginRepository.signInWithApple(appleCredentials, nonce);
 
-        final firaUser = await _firestoreRepository.getUser();
-        if (firaUser == null || firaUser.name.isEmpty) {
+        final user = await _firestoreRepository.getUser();
+        if (user == null || user.name.isEmpty) {
           final fullName = '${appleCredentials.givenName} ${appleCredentials.familyName}';
           final searchArray = _getSearchArray(fullName);
           await _firestoreRepository.setInitialUserData(
@@ -111,8 +111,18 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
             yield LoginErrorState();
           }
         } else {
-          yield await checkIfOnboardingIsDone(firaUser);
+          yield await checkIfOnboardingIsDone(user);
         }
+      }else if(event is LoginGuestClickedEvent){
+        UserCredential userCredential = await FirebaseAuth.instance.signInAnonymously();
+        final chatUser = await _firestoreRepository.getUser();
+        if(chatUser != null) {
+          yield await checkIfOnboardingIsDone(chatUser);
+        } else {
+          yield LoginErrorState();
+        }
+      }else{
+        yield LoginErrorState();
       }
     } on Exception catch (exception, stacktrace) {
       Log.e(exception, stackTrace: stacktrace);

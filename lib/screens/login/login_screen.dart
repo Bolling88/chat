@@ -10,6 +10,9 @@ import 'package:flutter_signin_button/button_list.dart';
 import 'package:flutter_signin_button/button_view.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../../onboarding_gender/onboarding_gender_screen.dart';
+import '../../onboarding_name/onboarding_name_screen.dart';
+import '../../onboarding_photo/onboarding_photo_screen.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_widgets.dart';
 import 'bloc/login_bloc.dart';
@@ -19,13 +22,14 @@ import 'bloc/login_state.dart';
 class LoginScreen extends StatelessWidget {
   static const routeName = "/login_screen";
 
-  const LoginScreen({Key? key})
-      : super(key: key);
+  const LoginScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final LoginRepository loginRepository = Provider.of<LoginRepository>(context);
-    final FirestoreRepository firestoreRepository = Provider.of<FirestoreRepository>(context);
+    final LoginRepository loginRepository =
+        Provider.of<LoginRepository>(context);
+    final FirestoreRepository firestoreRepository =
+        Provider.of<FirestoreRepository>(context);
     return BlocProvider(
       create: (BuildContext context) =>
           LoginBloc(loginRepository, firestoreRepository),
@@ -57,26 +61,24 @@ class LoginScreenContent extends StatelessWidget {
           if (state.navigation == OnboardingNavigation.DONE) {
             Navigator.pushReplacementNamed(context, HomeScreen.routeName);
           } else if (state.navigation == OnboardingNavigation.PICTURE) {
-            // Navigator.pushReplacementNamed(
-            //     context, OnboardingPhotoScreen.routeName);
+            Navigator.pushReplacementNamed(
+                context, OnboardingPhotoScreen.routeName);
           } else if (state.navigation == OnboardingNavigation.GENDER) {
-            // Navigator.pushReplacementNamed(
-            //     context, OnboardingGenderScreen.routeName);
+            Navigator.pushReplacementNamed(
+                context, OnboardingGenderScreen.routeName);
           } else if (state.navigation == OnboardingNavigation.NAME) {
-            // Navigator.pushReplacementNamed(
-            //     context, OnboardingNameScreen.routeName);
+            Navigator.pushReplacementNamed(
+                context, OnboardingNameScreen.routeName);
           }
         } else if (state is LoginErrorState) {
-          Scaffold.of(context).showSnackBar(
+          ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              backgroundColor: Colors.red,
               content: Text("Login failed"),
             ),
           );
         } else if (state is LoginAbortedState) {
-          Scaffold.of(context).showSnackBar(
+          ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              backgroundColor: Colors.red,
               content: Text("Login aborted"),
             ),
           );
@@ -104,6 +106,15 @@ class LoginScreenContent extends StatelessWidget {
         children: <Widget>[
           Column(
             children: [
+              SignInButton(
+                Buttons.Email,
+                onPressed: () {
+                  BlocProvider.of<LoginBloc>(context)
+                      .add(LoginGuestClickedEvent());
+                },
+                text: FlutterI18n.translate(context, "continue_guest"),
+              ),
+              const SizedBox(height: 10),
               SignInButton(
                 Buttons.Google,
                 onPressed: () {

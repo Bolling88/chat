@@ -1,6 +1,8 @@
 {
-  "termsandconditions": "by continuing you agree to our",
-  "termsofuse": "terms of use",
-  "privacypolicy": "privacy policy",
-  "and": "and"
+  "terms_intro": "By signing in or creating an\naccount your accept ChatApp's",
+  "terms": "terms of use.",
+  "continue_google": "Continue with Google",
+  "continue_apple": "Continue with Apple",
+  "continue_facebook": "Continue with Facebook",
+  "continue_guest": "Continue as Guest"
 }
