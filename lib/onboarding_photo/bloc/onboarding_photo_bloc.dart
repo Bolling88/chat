@@ -1,14 +1,14 @@
-import 'dart:io';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_map_test/constants.dart';
-import 'package:flutter_map_test/repository/firestore_repository.dart';
-import 'package:flutter_map_test/repository/storage_repository.dart';
-import 'package:flutter_map_test/screens/login/bloc/login_state.dart';
-import 'package:flutter_map_test/screens/onboarding_photo/bloc/onboarding_photo_event.dart';
-import 'package:flutter_map_test/screens/onboarding_photo/bloc/onboarding_photo_state.dart';
-import 'package:flutter_map_test/utils/image_util.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+import '../../repository/firestore_repository.dart';
+import '../../repository/storage_repository.dart';
+import '../../screens/login/bloc/login_state.dart';
+import '../../utils/image_util.dart';
+import 'onboarding_photo_event.dart';
+import 'onboarding_photo_state.dart';
+
+const int photoQuality = 50;
 
 class OnboardingPhotoBloc
     extends Bloc<OnboardingPhotoEvent, OnboardingPhotoState> {
@@ -27,12 +27,12 @@ class OnboardingPhotoBloc
     final currentState = state;
     if (event is OnboardingPhotoInitialEvent) {
       final socializeUser = await _firestoreRepository.getUser();
-      yield OnboardingPhotoBaseState(socializeUser.getFirstName());
+      yield OnboardingPhotoBaseState(socializeUser?.name ?? '');
     } else if (event is OnboardingPhotoCameraClickedEvent) {
       final pickedFile = await picker.pickImage(
-          source: ImageSource.camera, imageQuality: PHOTO_QUALITY);
+          source: ImageSource.camera, imageQuality: photoQuality);
       if (pickedFile != null) {
-        File? croppedFile = await cropImage(pickedFile);
+        CroppedFile? croppedFile = await cropImage(pickedFile);
         if (currentState is OnboardingPhotoBaseState && croppedFile != null) {
           yield OnboardingPhotoDoneState(croppedFile.path);
         } else if (currentState is OnboardingPhotoDoneState &&
@@ -42,9 +42,9 @@ class OnboardingPhotoBloc
       }
     } else if (event is OnboardingPhotoGalleryClickedEvent) {
       final pickedFile = await picker.pickImage(
-          source: ImageSource.gallery, imageQuality: PHOTO_QUALITY);
+          source: ImageSource.gallery, imageQuality: photoQuality);
       if (pickedFile != null) {
-        File? croppedFile = await cropImage(pickedFile);
+        CroppedFile? croppedFile = await cropImage(pickedFile);
         if (currentState is OnboardingPhotoBaseState && croppedFile != null) {
           yield OnboardingPhotoDoneState(croppedFile.path);
         } else if (currentState is OnboardingPhotoDoneState &&
@@ -60,11 +60,11 @@ class OnboardingPhotoBloc
         final finalUrl = await imageUrl?.getDownloadURL() ?? "";
         await _firestoreRepository.updateUserProfileImage(finalUrl);
 
-        final socializeUser = await _firestoreRepository.getUser();
-        if (socializeUser.gender == -1) {
-          yield OnboardingPhotoSuccessState(OnboardingNavigation.GENDER);
+        final chatUser = await _firestoreRepository.getUser();
+        if (chatUser?.gender == -1) {
+          yield const OnboardingPhotoSuccessState(OnboardingNavigation.GENDER);
         } else {
-          yield OnboardingPhotoSuccessState(OnboardingNavigation.DONE);
+          yield const OnboardingPhotoSuccessState(OnboardingNavigation.DONE);
         }
       }
     } else if (event is OnboardingPhotoRedoClickedEvent) {

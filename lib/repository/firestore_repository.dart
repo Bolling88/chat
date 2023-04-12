@@ -61,10 +61,18 @@ class FirestoreRepository {
     return users
         .doc(getUserId())
         .set({
-      'name': fullName,
-      'searchArray': searchArray,
-    }, SetOptions(merge: true))
+          'name': fullName,
+          'searchArray': searchArray,
+        }, SetOptions(merge: true))
         .then((value) => Log.d("User name updated"))
         .catchError((error) => Log.e("Failed to update user name: $error"));
+  }
+
+  Future<void> updateUserProfileImage(String profileImageUrl) async {
+    return users
+        .doc(getUserId())
+        .set({'pictureData': profileImageUrl}, SetOptions(merge: true))
+        .then((value) => Log.d("User profile image updated"))
+        .catchError((error) => Log.e("Failed to update user image: $error"));
   }
 }

@@ -1,21 +1,20 @@
 import 'dart:io';
 
+import 'package:chat/screens/home/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
-import 'package:flutter_map_test/constants.dart';
-import 'package:flutter_map_test/repository/firestore_repository.dart';
-import 'package:flutter_map_test/repository/storage_repository.dart';
-import 'package:flutter_map_test/screens/login/bloc/login_state.dart';
-import 'package:flutter_map_test/screens/onboarding_gender/onboarding_gender_screen.dart';
-import 'package:flutter_map_test/screens/onboarding_photo/bloc/onboarding_photo_bloc.dart';
-import 'package:flutter_map_test/screens/onboarding_photo/bloc/onboarding_photo_event.dart';
-import 'package:flutter_map_test/screens/onboarding_photo/bloc/onboarding_photo_state.dart';
-import 'package:flutter_map_test/screens/tabs/tabs_screen.dart';
-import 'package:flutter_map_test/utils/app_widgets.dart';
 import 'package:flutter_svg/svg.dart';
 
-import '../invited/invited_screen.dart';
+import '../repository/firestore_repository.dart';
+import '../repository/storage_repository.dart';
+import '../screens/login/bloc/login_state.dart';
+import '../screens/onboarding_gender/onboarding_gender_screen.dart';
+import '../utils/app_colors.dart';
+import '../utils/app_widgets.dart';
+import 'bloc/onboarding_photo_bloc.dart';
+import 'bloc/onboarding_photo_event.dart';
+import 'bloc/onboarding_photo_state.dart';
 
 class OnboardingPhotoScreen extends StatelessWidget {
   static const routeName = "/onboarding_photo_screen";
@@ -30,12 +29,14 @@ class OnboardingPhotoScreen extends StatelessWidget {
     return BlocProvider(
       create: (BuildContext context) =>
           OnboardingPhotoBloc(firestoreRepository, _storageRepository),
-      child: OnboardingPhotoScreenContent(),
+      child: const OnboardingPhotoScreenContent(),
     );
   }
 }
 
 class OnboardingPhotoScreenContent extends StatelessWidget {
+  const OnboardingPhotoScreenContent({super.key});
+
   @override
   Widget build(BuildContext appContext) {
     return Scaffold(
@@ -52,7 +53,7 @@ class OnboardingPhotoScreenContent extends StatelessWidget {
             Navigator.pushReplacementNamed(
                 context, OnboardingGenderScreen.routeName);
           } else if (state.navigation == OnboardingNavigation.DONE) {
-            Navigator.pushReplacementNamed(context, TabsScreen.routeName);
+            Navigator.pushReplacementNamed(context, HomeScreen.routeName);
           }
         }
       },
@@ -63,7 +64,7 @@ class OnboardingPhotoScreenContent extends StatelessWidget {
           } else if (state is OnboardingPhotoDoneState) {
             return showPhotoTakenUi(context, state);
           } else {
-            return Center(
+            return const Center(
               child: AppSpinner(),
             );
           }
@@ -96,9 +97,9 @@ class OnboardingPhotoScreenContent extends StatelessWidget {
                 child: Text(
                   '${state.name},',
                   textAlign: TextAlign.center,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 44,
-                    color: AppColors.pink_main,
+                    color: AppColors.main,
                     fontWeight: FontWeight.w800,
                   ),
                 ),
@@ -107,28 +108,28 @@ class OnboardingPhotoScreenContent extends StatelessWidget {
                 child: Text(
                   FlutterI18n.translate(context, "say_cheese"),
                   textAlign: TextAlign.center,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 44,
-                    color: AppColors.grey5,
+                    color: AppColors.grey_1,
                     fontWeight: FontWeight.w800,
                   ),
                 ),
               ),
               Padding(
                 padding:
-                    EdgeInsets.only(left: 70, right: 70, top: 20, bottom: 20),
+                    const EdgeInsets.only(left: 70, right: 70, top: 20, bottom: 20),
                 child: Center(
                   child: Text(FlutterI18n.translate(context, "lets_take_picture"),
                     textAlign: TextAlign.center,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 15,
-                      color: AppColors.grey7,
+                      color: AppColors.grey_1,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
                 ),
               ),
-              SizedBox(height: 30),
+              const SizedBox(height: 30),
               AppButton(
                 onTap: () async {
                   BlocProvider.of<OnboardingPhotoBloc>(context)
@@ -137,7 +138,7 @@ class OnboardingPhotoScreenContent extends StatelessWidget {
                 width: 220,
                 text: FlutterI18n.translate(context, "take_a_picture"),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               AppButton(
                 onTap: () async {
                   BlocProvider.of<OnboardingPhotoBloc>(context)
@@ -173,28 +174,28 @@ class OnboardingPhotoScreenContent extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SizedBox(
+              const SizedBox(
                 height: 20,
               ),
               Center(
                   child: ClipRRect(
                       borderRadius: BorderRadius.circular(70.0),
                       child: (state.filePath.isNotEmpty)
-                          ? Container(
+                          ? SizedBox(
                               width: 140,
                               height: 140,
                               child: CircleAvatar(
                                   backgroundImage:
                                       new FileImage(File(state.filePath))))
-                          : Icon(Icons.camera_alt_outlined))),
-              SizedBox(height: 20),
+                          : const Icon(Icons.camera_alt_outlined))),
+              const SizedBox(height: 20),
               Center(
                 child: Text(
                   FlutterI18n.translate(context, "you_look_good"),
                   textAlign: TextAlign.center,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 44,
-                    color: AppColors.pink_main,
+                    color: AppColors.main,
                     fontWeight: FontWeight.w800,
                   ),
                 ),
@@ -202,28 +203,28 @@ class OnboardingPhotoScreenContent extends StatelessWidget {
               Center(
                 child: Text(FlutterI18n.translate(context, "as_always"),
                   textAlign: TextAlign.center,
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontSize: 44,
-                    color: AppColors.grey5,
+                    color: AppColors.grey_1,
                     fontWeight: FontWeight.w800,
                   ),
                 ),
               ),
               Padding(
                 padding:
-                    EdgeInsets.only(left: 70, right: 70, top: 20, bottom: 20),
+                    const EdgeInsets.only(left: 70, right: 70, top: 20, bottom: 20),
                 child: Center(
                   child: Text(FlutterI18n.translate(context, "continue_if_happy"),
                     textAlign: TextAlign.center,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 15,
-                      color: AppColors.grey7,
+                      color: AppColors.grey_1,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
                 ),
               ),
-              SizedBox(height: 30),
+              const SizedBox(height: 30),
               AppButton(
                 onTap: () async {
                   BlocProvider.of<OnboardingPhotoBloc>(context)
@@ -232,11 +233,11 @@ class OnboardingPhotoScreenContent extends StatelessWidget {
                 width: 220,
                 text: FlutterI18n.translate(context, "continue"),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               TextButton(onPressed: (){
                 BlocProvider.of<OnboardingPhotoBloc>(context)
                     .add(OnboardingPhotoRedoClickedEvent());
-              }, child: Text(FlutterI18n.translate(context, "take_new_picture"), style: TextStyle(fontWeight: FontWeight.w600, color:  AppColors.pink4)),)
+              }, child: Text(FlutterI18n.translate(context, "take_new_picture"), style: const TextStyle(fontWeight: FontWeight.w600, color:  AppColors.main)),)
             ],
           ),
         ),
@@ -249,7 +250,7 @@ class OnboardingPhotoScreenContent extends StatelessWidget {
       useRootNavigator: true,
       isScrollControlled: true,
       context: appContext,
-      shape: RoundedRectangleBorder(
+      shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
             topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0)),
       ),
@@ -257,15 +258,15 @@ class OnboardingPhotoScreenContent extends StatelessWidget {
         return Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            SizedBox(height: 24),
+            const SizedBox(height: 24),
             Text(
               FlutterI18n.translate(context, "add_album"),
-              style: TextStyle(
-                  color: AppColors.grey5,
+              style: const TextStyle(
+                  color: AppColors.grey_1,
                   fontWeight: FontWeight.w600,
                   fontSize: 16),
             ),
-            SizedBox(height: 40),
+            const SizedBox(height: 40),
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
@@ -295,7 +296,7 @@ class OnboardingPhotoScreenContent extends StatelessWidget {
                 }),
               ],
             ),
-            SizedBox(height: 152),
+            const SizedBox(height: 152),
           ],
         );
       },
@@ -303,4 +304,82 @@ class OnboardingPhotoScreenContent extends StatelessWidget {
     BlocProvider.of<OnboardingPhotoBloc>(appContext)
         .add(OnboardingPhotoBottomSheetClosedEvent());
   }
+}
+
+Flexible getOptionWidget(
+    BuildContext context,
+    String title,
+    String message,
+    String iconPath,
+    double paddingLeft,
+    double paddingRight,
+    VoidCallback onPressed) {
+  return Flexible(
+    child: Padding(
+      padding: EdgeInsets.only(left: paddingLeft, right: paddingRight),
+      child: Column(
+        children: [
+          SizedBox(
+            width: 116,
+            height: 116,
+            child: ElevatedButton(
+              style: ButtonStyle(
+                elevation: MaterialStateProperty.all<double>(2.0),
+                backgroundColor:
+                MaterialStateProperty.all<Color>(AppColors.white),
+                overlayColor: MaterialStateProperty.resolveWith(
+                      (states) {
+                    return states.contains(MaterialState.pressed)
+                        ? AppColors.main
+                        : null;
+                  },
+                ),
+                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12.0),
+                  ),
+                ),
+              ),
+              child: Center(
+                child: SvgPicture.asset(
+                  iconPath,
+                  semanticsLabel: iconPath,
+                  width: 45,
+                  height: 45,
+                ),
+              ),
+              onPressed: onPressed,
+            ),
+          ),
+          const SizedBox(height: 10),
+          SizedBox(
+            width: 128,
+            child: Center(
+              child: Text(
+                title,
+                style: TextStyle(
+                    color: AppColors.grey_1,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 11),
+              ),
+            ),
+          ),
+          const SizedBox(height: 10),
+          SizedBox(
+            width: 128,
+            child: Center(
+              child: Text(
+                message,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                    color: AppColors.grey_1,
+                    fontWeight: FontWeight.w400,
+                    fontSize: 11),
+              ),
+            ),
+          )
+        ],
+      ),
+    ),
+  );
 }

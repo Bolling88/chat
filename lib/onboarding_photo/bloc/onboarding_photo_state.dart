@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
-import 'package:flutter_map_test/screens/login/bloc/login_state.dart';
-import 'package:flutter_map_test/screens/onboarding_name/bloc/onboarding_name_state.dart';
+
+import '../../screens/login/bloc/login_state.dart';
 
 abstract class OnboardingPhotoState extends Equatable {
   const OnboardingPhotoState();
