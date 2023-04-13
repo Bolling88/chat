@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../onboarding_name/onboarding_name_screen.dart';
 import '../../onboarding_photo/onboarding_photo_screen.dart';
 import '../../repository/firestore_repository.dart';
+import '../chat/chat_screen.dart';
 import '../error/error_screen.dart';
 import '../home/home_screen.dart';
 import '../loading/loading_screen.dart';
@@ -49,7 +50,7 @@ class SplashScreenBuilder extends StatelessWidget {
           Navigator.pushReplacement(
             context,
             PageRouteBuilder(
-              pageBuilder: (c, a1, a2) => const HomeScreen(),
+              pageBuilder: (c, a1, a2) => const ChatScreen(),
               transitionsBuilder: (c, anim, a2, child) =>
                   FadeTransition(opacity: anim, child: child),
               transitionDuration: const Duration(milliseconds: 2000),

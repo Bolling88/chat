@@ -1,3 +1,4 @@
+import 'package:chat/screens/chat/chat_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
@@ -38,7 +39,7 @@ class OnboardingGenderScreenContent extends StatelessWidget {
       listener: (context, state) {
         if (state is OnboardingGenderSuccessState) {
           if (state.navigation == OnboardingNavigation.DONE) {
-            Navigator.pushReplacementNamed(context, HomeScreen.routeName);
+            Navigator.pushReplacementNamed(context, ChatScreen.routeName);
           }
         }
       },
@@ -56,99 +57,86 @@ class OnboardingGenderScreenContent extends StatelessWidget {
     ));
   }
 
-  Stack showBaseUi(BuildContext context, OnboardingGenderBaseState state) {
-    return Stack(
-      children: [
-        Opacity(
-          opacity: 0.2,
-          child: Align(
-            alignment: Alignment.bottomLeft,
-            child: Container(
-                transform: Matrix4.translationValues(-100.0, 0.0, 0.0),
-                child: SvgPicture.asset("images/gfx_blob-yellow.svg")),
+  Widget showBaseUi(BuildContext context, OnboardingGenderBaseState state) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Center(
+              child: AppUserImage(
+                state.filePath,
+                size: 110,
+              )),
+          const SizedBox(height: 20),
+          Center(
+            child: Text(
+              FlutterI18n.translate(context, "one_more_thing"),
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 44,
+                color: AppColors.main,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
           ),
-        ),
-        Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Center(
-                  child: AppUserImage(
-                    state.filePath,
-                    size: 110,
-                  )),
-              const SizedBox(height: 20),
-              Center(
-                child: Text(
-                  FlutterI18n.translate(context, "one_more_thing"),
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontSize: 44,
-                    color: AppColors.main,
-                    fontWeight: FontWeight.w800,
-                  ),
+          Center(
+            child: Padding(
+              padding: const EdgeInsets.only(left: 20, right: 20),
+              child: Text(
+                FlutterI18n.translate(context, "before_we_are_done"),
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 44,
+                  color: AppColors.grey_1,
+                  fontWeight: FontWeight.w800,
                 ),
               ),
-              Center(
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 20, right: 20),
-                  child: Text(
-                    FlutterI18n.translate(context, "before_we_are_done"),
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontSize: 44,
-                      color: AppColors.grey_1,
-                      fontWeight: FontWeight.w800,
-                    ),
-                  ),
-                ),
-              ),
-              Padding(
-                padding:
-                    const EdgeInsets.only(left: 70, right: 70, top: 20, bottom: 20),
-                child: Center(
-                  child: Text(
-                    FlutterI18n.translate(context, "choose_what_identifies_as"),
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontSize: 15,
-                      color: AppColors.grey_1,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 30),
-              AppButton(
-                onTap: () async {
-                  BlocProvider.of<OnboardingGenderBloc>(context)
-                      .add(OnboardingGenderFemaleClickedEvent());
-                },
-                width: 220,
-                text: FlutterI18n.translate(context, "i_am_woman"),
-              ),
-              const SizedBox(height: 20),
-              AppButton(
-                onTap: () async {
-                  BlocProvider.of<OnboardingGenderBloc>(context)
-                      .add(OnboardingGenderMaleClickedEvent());
-                },
-                width: 220,
-                text: FlutterI18n.translate(context, "i_am_man"),
-              ),
-              const SizedBox(height: 20),
-              AppButton(
-                onTap: () async {
-                  BlocProvider.of<OnboardingGenderBloc>(context)
-                      .add(OnboardingGenderNonBinaryClickedEvent());
-                },
-                width: 220,
-                text: FlutterI18n.translate(context, "i_am_non_binary"),
-              )
-            ],
+            ),
           ),
-        ),
-      ],
+          Padding(
+            padding:
+                const EdgeInsets.only(left: 70, right: 70, top: 20, bottom: 20),
+            child: Center(
+              child: Text(
+                FlutterI18n.translate(context, "choose_what_identifies_as"),
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 15,
+                  color: AppColors.grey_1,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 30),
+          AppButton(
+            onTap: () async {
+              BlocProvider.of<OnboardingGenderBloc>(context)
+                  .add(OnboardingGenderFemaleClickedEvent());
+            },
+            width: 220,
+            text: FlutterI18n.translate(context, "i_am_woman"),
+          ),
+          const SizedBox(height: 20),
+          AppButton(
+            onTap: () async {
+              BlocProvider.of<OnboardingGenderBloc>(context)
+                  .add(OnboardingGenderMaleClickedEvent());
+            },
+            width: 220,
+            text: FlutterI18n.translate(context, "i_am_man"),
+          ),
+          const SizedBox(height: 20),
+          AppButton(
+            onTap: () async {
+              BlocProvider.of<OnboardingGenderBloc>(context)
+                  .add(OnboardingGenderNonBinaryClickedEvent());
+            },
+            width: 220,
+            text: FlutterI18n.translate(context, "i_am_non_binary"),
+          )
+        ],
+      ),
     );
   }
 }

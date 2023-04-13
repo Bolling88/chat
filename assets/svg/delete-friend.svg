@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="18px" height="18px" viewBox="0 0 18 18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Checkbox</title>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="New-chat" transform="translate(-375.000000, -242.000000)" fill="#3F4B5E">
+            <g id="Rectangle" transform="translate(374.000000, 241.000000)">
+                <rect transform="translate(10.250000, 10.000000) rotate(-315.000000) translate(-10.250000, -10.000000) " x="9" y="-1" width="2.5" height="22" rx="1"></rect>
+                <rect transform="translate(10.000000, 10.250000) rotate(-315.000000) translate(-10.000000, -10.250000) " x="-1" y="9" width="22" height="2.5" rx="1"></rect>
+            </g>
+        </g>
+    </g>
+</svg>

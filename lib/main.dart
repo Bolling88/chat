@@ -1,6 +1,7 @@
 import 'package:chat/repository/firestore_repository.dart';
 import 'package:chat/repository/login_repository.dart';
 import 'package:chat/repository/storage_repository.dart';
+import 'package:chat/screens/chat/chat_screen.dart';
 import 'package:chat/screens/onboarding_gender/onboarding_gender_screen.dart';
 import 'package:chat/screens/splash/splash_screen.dart';
 import 'package:flutter/material.dart';
@@ -95,7 +96,7 @@ class Chat extends StatelessWidget {
                 OnboardingGenderScreen.routeName: (context) => const OnboardingGenderScreen(),
                 OnboardingNameScreen.routeName: (context) => const OnboardingNameScreen(),
                 OnboardingPhotoScreen.routeName: (context) => const OnboardingPhotoScreen(),
-                HomeScreen.routeName: (context) => const HomeScreen(),
+                ChatScreen.routeName: (context) => const ChatScreen(),
               },
             ),
           );

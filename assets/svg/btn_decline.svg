@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="35px" height="35px" viewBox="0 0 35 35" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>795E7A4C-7E65-4D1C-81F8-70331B98B0DB</title>
+    <defs>
+        <linearGradient x1="0%" y1="0%" x2="100%" y2="100%" id="linearGradient-1">
+            <stop stop-color="#6F7D83" offset="0%"></stop>
+            <stop stop-color="#7C8485" offset="100%"></stop>
+        </linearGradient>
+        <linearGradient x1="99.9327064%" y1="99.9551309%" x2="0.447484675%" y2="0.447585088%" id="linearGradient-2">
+            <stop stop-color="#E973C4" offset="0%"></stop>
+            <stop stop-color="#BA53E0" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Friend-requests" transform="translate(-304.000000, -193.000000)">
+            <g id="btn---Decline" transform="translate(304.000000, 193.000000)">
+                <rect id="Border" stroke="url(#linearGradient-1)" opacity="0.196212" x="0.5" y="0.5" width="34" height="34" rx="8"></rect>
+                <path d="M22.3971744,10.5 L24.5,12.5893979 L19.594,17.46 L24.5,22.3971744 L22.4106021,24.5 L17.492,19.547 L12.5046739,24.5 L10.5,22.3212043 L15.406,17.446 L10.5,12.5046739 L12.6787957,10.5 L17.506,15.359 L22.3971744,10.5 Z" id="Combined-Shape" fill="url(#linearGradient-2)" fill-rule="nonzero"></path>
+            </g>
+        </g>
+    </g>
+</svg>

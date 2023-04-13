@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="20px" height="21px" viewBox="0 0 20 21" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>btn_change-group-name</title>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Chat-view----Conversation-details---One-user" transform="translate(-374.000000, -392.000000)" stroke="#3F4B5E" stroke-width="2">
+            <g id="Group-2" transform="translate(0.000000, 361.000000)">
+                <g id="a-add" transform="translate(374.000000, 31.000000)">
+                    <g transform="translate(1.000000, 1.000000)">
+                        <path d="M8.1,10.8571429 C5.5584,10.8571429 3.3039,11.434381 1.8225,11.9365238 C0.729,12.308381 0,13.3443333 0,14.5051429 L0,18.0952381 C0,18.0952381 8.9622,18.0952381 9,18.0952381" id="Path"></path>
+                        <path d="M8.1,10.8571429 L8.1,10.8571429 C5.6151,10.8571429 3.6,7.92661905 3.6,5.42857143 L3.6,4.52380952 C3.6,2.0257619 5.6151,0 8.1,0 L8.1,0 C10.5849,0 12.6,2.0257619 12.6,4.52380952 L12.6,5.42857143 C12.6,7.92661905 10.5849,10.8571429 8.1,10.8571429 Z" id="Path" stroke-linecap="square"></path>
+                        <line x1="15.3" y1="12.5714286" x2="15.3" y2="18" id="Path" stroke-linecap="square"></line>
+                        <line x1="12.6" y1="15.2857143" x2="18" y2="15.2857143" id="Path" stroke-linecap="square"></line>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

@@ -7,6 +7,7 @@ import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:flutter_svg/svg.dart';
 import '../repository/firestore_repository.dart';
 import '../repository/storage_repository.dart';
+import '../screens/chat/chat_screen.dart';
 import '../screens/login/bloc/login_state.dart';
 import '../screens/onboarding_gender/onboarding_gender_screen.dart';
 import '../utils/app_colors.dart';
@@ -49,7 +50,7 @@ class OnboardingPhotoScreenContent extends StatelessWidget {
             Navigator.pushReplacementNamed(
                 context, OnboardingGenderScreen.routeName);
           } else if (state.navigation == OnboardingNavigation.DONE) {
-            Navigator.pushReplacementNamed(context, HomeScreen.routeName);
+            Navigator.pushReplacementNamed(context, ChatScreen.routeName);
           }
         }
       },
@@ -69,183 +70,150 @@ class OnboardingPhotoScreenContent extends StatelessWidget {
     ));
   }
 
-  Stack showBaseUi(BuildContext context, OnboardingPhotoBaseState state) {
-    return Stack(
-      children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Opacity(
-              opacity: 0.1,
-              child: Center(
-                child: Container(
-                    transform: Matrix4.translationValues(-100.0, 250.0, 0.0),
-                    child: SvgPicture.asset("images/gfx_blob-blue.svg")),
+  Widget showBaseUi(BuildContext context, OnboardingPhotoBaseState state) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Center(
+            child: Text(
+              '${state.name},',
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 44,
+                color: AppColors.main,
+                fontWeight: FontWeight.w800,
               ),
             ),
-          ],
-        ),
-        Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Center(
-                child: Text(
-                  '${state.name},',
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontSize: 44,
-                    color: AppColors.main,
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
-              ),
-              Center(
-                child: Text(
-                  FlutterI18n.translate(context, "say_cheese"),
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontSize: 44,
-                    color: AppColors.grey_1,
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(
-                    left: 70, right: 70, top: 20, bottom: 20),
-                child: Center(
-                  child: Text(
-                    FlutterI18n.translate(context, "lets_take_picture"),
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontSize: 15,
-                      color: AppColors.grey_1,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 30),
-              AppButton(
-                onTap: () async {
-                  BlocProvider.of<OnboardingPhotoBloc>(context)
-                      .add(OnboardingPhotoCameraClickedEvent());
-                },
-                width: 220,
-                text: FlutterI18n.translate(context, "take_a_picture"),
-              ),
-              const SizedBox(height: 20),
-              AppButton(
-                onTap: () async {
-                  BlocProvider.of<OnboardingPhotoBloc>(context)
-                      .add(OnboardingPhotoGalleryClickedEvent());
-                },
-                width: 220,
-                text: FlutterI18n.translate(context, "select_from_images"),
-              )
-            ],
           ),
-        ),
-      ],
+          Center(
+            child: Text(
+              FlutterI18n.translate(context, "say_cheese"),
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 44,
+                color: AppColors.grey_1,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+          ),
+          Padding(
+            padding:
+                const EdgeInsets.only(left: 70, right: 70, top: 20, bottom: 20),
+            child: Center(
+              child: Text(
+                FlutterI18n.translate(context, "lets_take_picture"),
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 15,
+                  color: AppColors.grey_1,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 30),
+          AppButton(
+            onTap: () async {
+              BlocProvider.of<OnboardingPhotoBloc>(context)
+                  .add(OnboardingPhotoCameraClickedEvent());
+            },
+            width: 220,
+            text: FlutterI18n.translate(context, "take_a_picture"),
+          ),
+          const SizedBox(height: 20),
+          AppButton(
+            onTap: () async {
+              BlocProvider.of<OnboardingPhotoBloc>(context)
+                  .add(OnboardingPhotoGalleryClickedEvent());
+            },
+            width: 220,
+            text: FlutterI18n.translate(context, "select_from_images"),
+          )
+        ],
+      ),
     );
   }
 
-  Stack showPhotoTakenUi(BuildContext context, OnboardingPhotoDoneState state) {
-    return Stack(
-      children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Opacity(
-              opacity: 0.1,
-              child: Center(
-                child: Container(
-                    transform: Matrix4.translationValues(160.0, 350.0, 0.0),
-                    child: SvgPicture.asset("images/gfx_blob-purple.svg")),
+  Widget showPhotoTakenUi(
+      BuildContext context, OnboardingPhotoDoneState state) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const SizedBox(
+            height: 20,
+          ),
+          Center(
+              child: ClipRRect(
+                  borderRadius: BorderRadius.circular(70.0),
+                  child: (state.filePath.isNotEmpty)
+                      ? SizedBox(
+                          width: 140,
+                          height: 140,
+                          child: CircleAvatar(
+                              backgroundImage: FileImage(
+                                  File.fromUri(Uri.parse(state.filePath)))))
+                      : const Icon(Icons.camera_alt_outlined))),
+          const SizedBox(height: 20),
+          Center(
+            child: Text(
+              FlutterI18n.translate(context, "you_look_good"),
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 44,
+                color: AppColors.main,
+                fontWeight: FontWeight.w800,
               ),
             ),
-          ],
-        ),
-        Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const SizedBox(
-                height: 20,
-              ),
-              Center(
-                  child: ClipRRect(
-                      borderRadius: BorderRadius.circular(70.0),
-                      child: (state.filePath.isNotEmpty)
-                          ? SizedBox(
-                              width: 140,
-                              height: 140,
-                              child: CircleAvatar(
-                                  backgroundImage: FileImage(
-                                      File.fromUri(Uri.parse(state.filePath)))))
-                          : const Icon(Icons.camera_alt_outlined))),
-              const SizedBox(height: 20),
-              Center(
-                child: Text(
-                  FlutterI18n.translate(context, "you_look_good"),
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontSize: 44,
-                    color: AppColors.main,
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
-              ),
-              Center(
-                child: Text(
-                  FlutterI18n.translate(context, "as_always"),
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    fontSize: 44,
-                    color: AppColors.grey_1,
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(
-                    left: 70, right: 70, top: 20, bottom: 20),
-                child: Center(
-                  child: Text(
-                    FlutterI18n.translate(context, "continue_if_happy"),
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontSize: 15,
-                      color: AppColors.grey_1,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 30),
-              AppButton(
-                onTap: () async {
-                  BlocProvider.of<OnboardingPhotoBloc>(context)
-                      .add(OnboardingPhotoContinueClickedEvent());
-                },
-                width: 220,
-                text: FlutterI18n.translate(context, "continue"),
-              ),
-              const SizedBox(height: 20),
-              TextButton(
-                onPressed: () {
-                  BlocProvider.of<OnboardingPhotoBloc>(context)
-                      .add(OnboardingPhotoRedoClickedEvent());
-                },
-                child: Text(FlutterI18n.translate(context, "take_new_picture"),
-                    style: const TextStyle(
-                        fontWeight: FontWeight.w600, color: AppColors.main)),
-              )
-            ],
           ),
-        ),
-      ],
+          Center(
+            child: Text(
+              FlutterI18n.translate(context, "as_always"),
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 44,
+                color: AppColors.grey_1,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+          ),
+          Padding(
+            padding:
+                const EdgeInsets.only(left: 70, right: 70, top: 20, bottom: 20),
+            child: Center(
+              child: Text(
+                FlutterI18n.translate(context, "continue_if_happy"),
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 15,
+                  color: AppColors.grey_1,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 30),
+          AppButton(
+            onTap: () async {
+              BlocProvider.of<OnboardingPhotoBloc>(context)
+                  .add(OnboardingPhotoContinueClickedEvent());
+            },
+            width: 220,
+            text: FlutterI18n.translate(context, "continue"),
+          ),
+          const SizedBox(height: 20),
+          TextButton(
+            onPressed: () {
+              BlocProvider.of<OnboardingPhotoBloc>(context)
+                  .add(OnboardingPhotoRedoClickedEvent());
+            },
+            child: Text(FlutterI18n.translate(context, "take_new_picture"),
+                style: const TextStyle(
+                    fontWeight: FontWeight.w600, color: AppColors.main)),
+          )
+        ],
+      ),
     );
   }
 
@@ -361,7 +329,7 @@ Flexible getOptionWidget(
             child: Center(
               child: Text(
                 title,
-                style: TextStyle(
+                style: const TextStyle(
                     color: AppColors.grey_1,
                     fontWeight: FontWeight.w600,
                     fontSize: 11),

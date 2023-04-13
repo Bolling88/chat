@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="26px" height="24px" viewBox="0 0 26 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>qr_icon</title>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Refined-party---Checked-in" transform="translate(-86.000000, -317.000000)" fill-rule="nonzero">
+            <g id="Card" transform="translate(0.000000, 80.000000)">
+                <g id="qr_icon" transform="translate(86.000000, 237.000000)">
+                    <ellipse id="Oval" fill="#B7E3FC" cx="22.75" cy="3" rx="3.25" ry="3"></ellipse>
+                    <ellipse id="Oval" fill="#B7E3FC" cx="13" cy="12" rx="3.25" ry="3"></ellipse>
+                    <ellipse id="Oval" fill="#47B0EA" cx="22.75" cy="12" rx="3.25" ry="3"></ellipse>
+                    <ellipse id="Oval" fill="#B7E3FC" cx="3.25" cy="21" rx="3.25" ry="3"></ellipse>
+                    <ellipse id="Oval" fill="#47B0EA" cx="13" cy="21" rx="3.25" ry="3"></ellipse>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

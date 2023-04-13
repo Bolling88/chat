@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="20px" height="24px" viewBox="0 0 20 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>btn_notifications</title>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Chat-view----Conversation-details" transform="translate(-372.000000, -618.000000)" stroke="#3F4B5E" stroke-width="2">
+            <g id="Path" transform="translate(373.000000, 620.000000)">
+                <path d="M8.336,12 L10.855,18.252 C11.2660836,19.2759264 10.7702913,20.439338 9.747,20.852 L9.747,20.852 C8.7230736,21.2630836 7.55966202,20.7672913 7.147,19.744 L4,12"></path>
+                <path d="M10,4 L4,4 C1.790861,4 0,5.790861 0,8 C0,10.209139 1.790861,12 4,12 L10,12 L18,16 L18,0 L10,4 Z" stroke-linecap="square"></path>
+            </g>
+        </g>
+    </g>
+</svg>

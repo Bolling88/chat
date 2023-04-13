@@ -14,6 +14,7 @@ import '../../onboarding_name/onboarding_name_screen.dart';
 import '../../onboarding_photo/onboarding_photo_screen.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_widgets.dart';
+import '../chat/chat_screen.dart';
 import '../onboarding_gender/onboarding_gender_screen.dart';
 import 'bloc/login_bloc.dart';
 import 'bloc/login_event.dart';
@@ -26,13 +27,9 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final LoginRepository loginRepository =
-        Provider.of<LoginRepository>(context);
-    final FirestoreRepository firestoreRepository =
-        Provider.of<FirestoreRepository>(context);
     return BlocProvider(
-      create: (BuildContext context) =>
-          LoginBloc(loginRepository, firestoreRepository),
+      create: (BuildContext context) => LoginBloc(
+          context.read<LoginRepository>(), context.read<FirestoreRepository>()),
       child: const LoginScreenBuilder(),
     );
   }
@@ -59,7 +56,7 @@ class LoginScreenContent extends StatelessWidget {
       listener: (context, state) {
         if (state is LoginSuccessState) {
           if (state.navigation == OnboardingNavigation.DONE) {
-            Navigator.pushReplacementNamed(context, HomeScreen.routeName);
+            Navigator.pushReplacementNamed(context, ChatScreen.routeName);
           } else if (state.navigation == OnboardingNavigation.PICTURE) {
             Navigator.pushReplacementNamed(
                 context, OnboardingPhotoScreen.routeName);

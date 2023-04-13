@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="17px" height="17px" viewBox="0 0 17 17" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>delete-photo</title>
+    <defs>
+        <linearGradient x1="99.9327064%" y1="99.9551309%" x2="0.447484675%" y2="0.447585088%" id="linearGradient-1">
+            <stop stop-color="#E973C4" offset="0%"></stop>
+            <stop stop-color="#BA53E0" offset="100%"></stop>
+        </linearGradient>
+    </defs>
+    <g id="Symbols" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="delete-photo" transform="translate(-9.000000, -9.000000)" fill="url(#linearGradient-1)">
+            <path d="M18,8 C18.5522847,8 19,8.44771525 19,9 L19,16 L26,16 C26.5522847,16 27,16.4477153 27,17 L27,18 C27,18.5522847 26.5522847,19 26,19 L19,19 L19,26 C19,26.5522847 18.5522847,27 18,27 L17,27 C16.4477153,27 16,26.5522847 16,26 L16,19 L9,19 C8.44771525,19 8,18.5522847 8,18 L8,17 C8,16.4477153 8.44771525,16 9,16 L16,16 L16,9 C16,8.44771525 16.4477153,8 17,8 L18,8 Z" transform="translate(17.500000, 17.500000) rotate(-45.000000) translate(-17.500000, -17.500000) "></path>
+        </g>
+    </g>
+</svg>

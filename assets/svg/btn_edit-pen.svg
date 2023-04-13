@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="20px" height="20px" viewBox="0 0 20 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>btn_edit-pen</title>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="My-profile-settings" transform="translate(-373.000000, -450.000000)" fill="#3F4B5E" fill-rule="nonzero">
+            <g id="Card" transform="translate(0.000000, 264.000000)">
+                <g id="Shape" transform="translate(373.000000, 186.000000)">
+                    <path d="M14.625,0.375 C14.125,-0.125 13.375,-0.125 12.875,0.375 L0.375,12.875 C0.125,13.125 0,13.375 0,13.75 L0,18.75 C0,19.5 0.5,20 1.25,20 L6.25,20 C6.625,20 6.875,19.875 7.125,19.625 L19.625,7.125 C20.125,6.625 20.125,5.875 19.625,5.375 L14.625,0.375 Z M5.75,17.5 L2.5,17.5 L2.5,14.25 L10,6.75 L13.25,10 L5.75,17.5 Z M15,8.25 L11.75,5 L13.75,3 L17,6.25 L15,8.25 Z"></path>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

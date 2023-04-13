@@ -46,13 +46,15 @@ dependencies:
   sign_in_with_apple: ^3.3.0
   flutter_facebook_auth: ^4.1.1
   shared_preferences: ^2.0.12
-  rxdart: ^0.26.0
   crypto: ^3.0.1
   flutter_signin_button: ^2.0.0
   url_launcher: ^6.0.2
   cached_network_image: ^3.2.3
   image_picker: ^0.8.7+2
   image_cropper: ^3.0.2
+
+  giphy_get:
+    path: plugins/giphy_get
 
 dev_dependencies:
   flutter_test:
@@ -80,28 +82,24 @@ flutter:
     - assets/flutter_i18n/
     - assets/svg/
 
-  # An image asset can refer to one or more resolution-specific "variants", see
-  # https://flutter.dev/assets-and-images/#resolution-aware.
-
-  # For details regarding adding assets from package dependencies, see
-  # https://flutter.dev/assets-and-images/#from-packages
-
-  # To add custom fonts to your application, add a fonts section here,
-  # in this "flutter" section. Each entry in this list should have a
-  # "family" key with the font family name, and a "fonts" key with a
-  # list giving the asset and other descriptors for the font. For
-  # example:
-  # fonts:
-  #   - family: Schyler
-  #     fonts:
-  #       - asset: fonts/Schyler-Regular.ttf
-  #       - asset: fonts/Schyler-Italic.ttf
-  #         style: italic
-  #   - family: Trajan Pro
-  #     fonts:
-  #       - asset: fonts/TrajanPro.ttf
-  #       - asset: fonts/TrajanPro_Bold.ttf
-  #         weight: 700
-  #
-  # For details regarding fonts from package dependencies,
-  # see https://flutter.dev/custom-fonts/#from-packages
+  fonts:
+    - family: socialize
+      fonts:
+        - asset: fonts/black.ttf
+          weight: 900
+        - asset: fonts/extra_bold.ttf
+          weight: 800
+        - asset: fonts/bold.ttf
+          weight: 700
+        - asset: fonts/semi_bold.ttf
+          weight: 600
+        - asset: fonts/medium.ttf
+          weight: 500
+        - asset: fonts/regular.ttf
+          weight: 400
+        - asset: fonts/light.ttf
+          weight: 300
+        - asset: fonts/extra_light.ttf
+          weight: 200
+        - asset: fonts/thin.ttf
+          weight: 100

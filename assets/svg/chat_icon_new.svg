@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="26px" height="24px" viewBox="0 0 26 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>chat_icon_new</title>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Refined-party---Checked-in" transform="translate(-303.000000, -317.000000)">
+            <g id="Card" transform="translate(0.000000, 80.000000)">
+                <g id="chat_icon_new" transform="translate(303.000000, 237.000000)">
+                    <path d="M24.8695652,0 L1.13043478,0 C0.506112609,0 0,0.511674286 0,1.14285714 L0,17.1428571 C0,17.77404 0.506112609,18.2857143 1.13043478,18.2857143 L8.20669087,18.2857143 L12.5584239,23.7857143 C12.6660583,23.9213143 12.8283378,24 13,24 C13.1716622,24 13.3339417,23.9213143 13.4415761,23.7857143 L17.7933091,18.2857143 L24.8695652,18.2857143 C25.4938874,18.2857143 26,17.77404 26,17.1428571 L26,1.14285714 C26,0.511674286 25.4938874,0 24.8695652,0 Z" id="Path" fill="#D0A2D8" fill-rule="nonzero"></path>
+                    <rect id="Rectangle" fill="#FFFFFF" x="4" y="5" width="10" height="2" rx="1"></rect>
+                    <rect id="Rectangle" fill="#FFFFFF" x="4" y="10" width="16" height="2" rx="1"></rect>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
