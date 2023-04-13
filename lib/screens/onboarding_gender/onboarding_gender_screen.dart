@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:provider/provider.dart';
 import '../../repository/firestore_repository.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_widgets.dart';
@@ -13,16 +14,15 @@ import 'bloc/onboarding_gender_state.dart';
 
 class OnboardingGenderScreen extends StatelessWidget {
   static const routeName = "/onboarding_gender_screen";
-  final FirestoreRepository firestoreRepository;
 
-  const OnboardingGenderScreen(this.firestoreRepository, {Key? key})
+  const OnboardingGenderScreen({Key? key})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (BuildContext context) =>
-          OnboardingGenderBloc(firestoreRepository),
+          OnboardingGenderBloc(context.read<FirestoreRepository>()),
       child: const OnboardingGenderScreenContent(),
     );
   }

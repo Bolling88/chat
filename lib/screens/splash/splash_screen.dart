@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../onboarding_name/onboarding_name_screen.dart';
+import '../../onboarding_photo/onboarding_photo_screen.dart';
+import '../../repository/firestore_repository.dart';
 import '../error/error_screen.dart';
 import '../home/home_screen.dart';
 import '../loading/loading_screen.dart';
+import '../login/bloc/login_state.dart';
 import '../login/login_screen.dart';
+import '../onboarding_gender/onboarding_gender_screen.dart';
 import 'bloc/splash_bloc.dart';
 import 'bloc/splash_state.dart';
 
@@ -13,7 +18,8 @@ class SplashScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (BuildContext context) => SplashBloc(),
+      create: (BuildContext context) =>
+          SplashBloc(context.read<FirestoreRepository>()),
       child: const SplashScreenBuilder(),
     );
   }
@@ -28,7 +34,28 @@ class SplashScreenBuilder extends StatelessWidget {
       if (state is SplashLoginState) {
         Navigator.pushReplacementNamed(context, LoginScreen.routeName);
       } else if (state is SplashSuccessState) {
-        Navigator.pushReplacementNamed(context, HomeScreen.routeName);
+        if (state.navigation == OnboardingNavigation.NAME) {
+          Navigator.pushReplacementNamed(
+              context, OnboardingNameScreen.routeName);
+        } else if (state.navigation == OnboardingNavigation.PICTURE) {
+          Navigator.pushReplacementNamed(
+            context,
+            OnboardingPhotoScreen.routeName,
+          );
+        } else if (state.navigation == OnboardingNavigation.GENDER) {
+          Navigator.pushReplacementNamed(
+              context, OnboardingGenderScreen.routeName);
+        } else if (state.navigation == OnboardingNavigation.DONE) {
+          Navigator.pushReplacement(
+            context,
+            PageRouteBuilder(
+              pageBuilder: (c, a1, a2) => const HomeScreen(),
+              transitionsBuilder: (c, anim, a2, child) =>
+                  FadeTransition(opacity: anim, child: child),
+              transitionDuration: const Duration(milliseconds: 2000),
+            ),
+          );
+        }
       }
     }, child: BlocBuilder<SplashBloc, SplashState>(builder: (context, state) {
       if (state is SplashErrorState) {

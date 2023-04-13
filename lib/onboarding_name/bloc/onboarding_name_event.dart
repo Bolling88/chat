@@ -9,20 +9,14 @@ class OnboardingNameEvent extends Equatable{
 
 }
 
+class OnboardingNameInitialEvent extends OnboardingNameEvent{}
 class OnboardingNameContinueClickedEvent extends OnboardingNameEvent{}
-class OnboardingLastNameChangedEvent extends OnboardingNameEvent{
-  final String lastName;
 
-  OnboardingLastNameChangedEvent(this.lastName);
-
-  @override
-  List<Object> get props => [lastName];
-}
 class OnboardingNameChangedEvent extends OnboardingNameEvent{
-  final String firstName;
+  final String displayName;
 
-  OnboardingNameChangedEvent(this.firstName);
+  const OnboardingNameChangedEvent(this.displayName);
 
   @override
-  List<Object> get props => [firstName];
+  List<Object> get props => [displayName];
 }

@@ -77,13 +77,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
                 credentials.user?.email ?? "",
                 credentials.user?.uid ?? "",
                 searchArray);
-            Log.d("User logged in!");
-            final chatUser = await _firestoreRepository.getUser();
-            if(chatUser != null) {
-              yield await checkIfOnboardingIsDone(chatUser);
-            } else {
-              yield LoginErrorState();
-            }
+            yield const LoginSuccessState(OnboardingNavigation.NAME);
           } else {
             yield await checkIfOnboardingIsDone(chatUser);
           }
@@ -94,8 +88,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         final appleCredentials = await _loginRepository.getAppleCredentials(nonce);
         final credentials = await _loginRepository.signInWithApple(appleCredentials, nonce);
 
-        final user = await _firestoreRepository.getUser();
-        if (user == null || user.name.isEmpty) {
+        final chatUser = await _firestoreRepository.getUser();
+        if (chatUser == null || chatUser.name.isEmpty) {
           final fullName = '${appleCredentials.givenName} ${appleCredentials.familyName}';
           final searchArray = _getSearchArray(fullName);
           await _firestoreRepository.setInitialUserData(
@@ -104,14 +98,13 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
               credentials.user?.uid ?? "",
               searchArray);
           Log.d("User logged in!");
-          final chatUser = await _firestoreRepository.getUser();
           if(chatUser != null) {
             yield await checkIfOnboardingIsDone(chatUser);
           } else {
             yield LoginErrorState();
           }
         } else {
-          yield await checkIfOnboardingIsDone(user);
+          yield await checkIfOnboardingIsDone(chatUser);
         }
       }else if(event is LoginGuestClickedEvent){
         UserCredential userCredential = await FirebaseAuth.instance.signInAnonymously();
@@ -155,7 +148,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   }
 
   Future<LoginState> checkIfOnboardingIsDone(final ChatUser chatUser) async {
-    if (chatUser.name.isEmpty || chatUser.name.contains('@')) {
+    if (chatUser.displayName.isEmpty) {
       return const LoginSuccessState(OnboardingNavigation.NAME);
     } else if (chatUser.pictureData.isEmpty) {
       return const LoginSuccessState(OnboardingNavigation.PICTURE);

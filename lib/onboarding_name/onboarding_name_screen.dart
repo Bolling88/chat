@@ -15,15 +15,14 @@ import 'bloc/onboarding_name_state.dart';
 
 class OnboardingNameScreen extends StatelessWidget {
   static const routeName = "/onboarding_name_screen";
-  final FirestoreRepository firestoreRepository;
 
-  const OnboardingNameScreen(this.firestoreRepository, {Key? key})
-      : super(key: key);
+  const OnboardingNameScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (BuildContext context) => OnboardingNameBloc(firestoreRepository),
+      create: (BuildContext context) =>
+          OnboardingNameBloc(context.read<FirestoreRepository>()),
       child: const OnboardingNameScreenContent(),
     );
   }
@@ -33,7 +32,7 @@ class OnboardingNameScreenContent extends StatelessWidget {
   const OnboardingNameScreenContent({super.key});
 
   @override
-  Widget build(BuildContext appContext) {
+  Widget build(BuildContext context) {
     return Scaffold(
         body: BlocListener<OnboardingNameBloc, OnboardingNameState>(
       listener: (context, state) {
@@ -109,8 +108,8 @@ class OnboardingNameScreenContent extends StatelessWidget {
                 ),
               ),
               Padding(
-                padding:
-                    const EdgeInsets.only(left: 70, right: 70, top: 20, bottom: 20),
+                padding: const EdgeInsets.only(
+                    left: 70, right: 70, top: 20, bottom: 20),
                 child: Center(
                   child: Text(
                     FlutterI18n.translate(context, "nice_see_you_here_info"),
@@ -126,17 +125,18 @@ class OnboardingNameScreenContent extends StatelessWidget {
               const SizedBox(height: 30),
               Padding(
                 padding: const EdgeInsets.only(left: 20, right: 20),
-                child: Container(
+                child: SizedBox(
                   width: 220,
                   height: 60,
                   child: TextFormField(
-                      initialValue: state.firstName,
+                      initialValue: state.displayName,
                       keyboardType: TextInputType.name,
                       maxLines: 1,
                       maxLength: 30,
                       autofocus: false,
                       autocorrect: false,
-                      style: const TextStyle(color: AppColors.grey_1, fontSize: 15),
+                      style: const TextStyle(
+                          color: AppColors.grey_1, fontSize: 15),
                       textCapitalization: TextCapitalization.sentences,
                       cursorColor: AppColors.main,
                       onChanged: (text) {
@@ -152,54 +152,17 @@ class OnboardingNameScreenContent extends StatelessWidget {
                                 style: BorderStyle.none,
                               )),
                           fillColor: AppColors.grey_1,
-                          hintStyle:
-                              const TextStyle(color: AppColors.grey_1),
-                          contentPadding: const EdgeInsets.only(left: 15, right: 15),
+                          hintStyle: const TextStyle(color: AppColors.grey_1),
+                          contentPadding:
+                              const EdgeInsets.only(left: 15, right: 15),
                           hintText: FlutterI18n.translate(
                               context, "write_firstname"))),
                 ),
               ),
               const SizedBox(height: 10),
-              Padding(
-                padding: const EdgeInsets.only(left: 20, right: 20),
-                child: Container(
-                  width: 220,
-                  height: 60,
-                  child: TextFormField(
-                      initialValue: state.lastName,
-                      keyboardType: TextInputType.name,
-                      maxLines: 1,
-                      maxLength: 30,
-                      autofocus: false,
-                      autocorrect: false,
-                      style: TextStyle(color: AppColors.grey_1, fontSize: 15),
-                      textCapitalization: TextCapitalization.sentences,
-                      cursorColor: AppColors.main,
-                      onChanged: (text) {
-                        BlocProvider.of<OnboardingNameBloc>(context)
-                            .add(OnboardingLastNameChangedEvent(text));
-                      },
-                      decoration: InputDecoration(
-                          filled: true,
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(5.0),
-                              borderSide: const BorderSide(
-                                width: 0,
-                                style: BorderStyle.none,
-                              )),
-                          fillColor: AppColors.grey_1,
-                          hintStyle:
-                              TextStyle(color: AppColors.grey_1),
-                          contentPadding: const EdgeInsets.only(left: 15, right: 15),
-                          hintText: FlutterI18n.translate(
-                              context, "write_lastname"))),
-                ),
-              ),
-              const SizedBox(height: 10),
-              (state.lastName.isNotEmpty &&
-                      state.firstName.isNotEmpty &&
-                      !state.lastName.contains("@") &&
-                      !state.firstName.contains("@"))
+              (state.displayName.isNotEmpty &&
+                      !state.displayName.contains("@") &&
+                      !state.displayName.contains("@"))
                   ? AppButton(
                       onTap: () async {
                         BlocProvider.of<OnboardingNameBloc>(context)

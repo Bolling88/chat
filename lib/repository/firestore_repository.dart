@@ -57,15 +57,15 @@ class FirestoreRepository {
         .catchError((error) => Log.e("Failed to update user gender: $error"));
   }
 
-  Future<void> updateUserName(String fullName, List<String> searchArray) async {
+  Future<void> updateUserDisplayName(String fullName, List<String> searchArray) async {
     return users
         .doc(getUserId())
         .set({
-          'name': fullName,
+          'displayName': fullName,
           'searchArray': searchArray,
         }, SetOptions(merge: true))
-        .then((value) => Log.d("User name updated"))
-        .catchError((error) => Log.e("Failed to update user name: $error"));
+        .then((value) => Log.d("User displayName updated"))
+        .catchError((error) => Log.e("Failed to update user displayName: $error"));
   }
 
   Future<void> updateUserProfileImage(String profileImageUrl) async {

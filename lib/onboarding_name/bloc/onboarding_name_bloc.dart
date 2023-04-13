@@ -12,17 +12,25 @@ class OnboardingNameBloc
   final picker = ImagePicker();
 
   OnboardingNameBloc(this._firestoreRepository)
-      : super(const OnboardingNameBaseState("", ""));
+      : super(const OnboardingNameBaseState('')) {
+    add(OnboardingNameInitialEvent());
+  }
 
   @override
   Stream<OnboardingNameState> mapEventToState(
       OnboardingNameEvent event) async* {
     final currentState = state;
-    if (event is OnboardingNameContinueClickedEvent) {
+    if (event is OnboardingNameInitialEvent) {
+      _firestoreRepository.getUser().then((value) {
+        if (value != null) {
+          add(OnboardingNameChangedEvent(value.name));
+        }
+      });
+    } else if (event is OnboardingNameContinueClickedEvent) {
       if (currentState is OnboardingNameBaseState) {
-        final fullName = "${currentState.firstName} ${currentState.lastName}";
+        final fullName = currentState.displayName;
         final searchArray = _getSearchArray(fullName);
-        await _firestoreRepository.updateUserName(fullName, searchArray);
+        await _firestoreRepository.updateUserDisplayName(fullName, searchArray);
         final chatUser = await _firestoreRepository.getUser();
         if (chatUser?.pictureData.isEmpty == true) {
           yield const OnboardingNameSuccessState(OnboardingNavigation.PICTURE);
@@ -34,13 +42,8 @@ class OnboardingNameBloc
       }
     } else if (event is OnboardingNameChangedEvent) {
       if (currentState is OnboardingNameBaseState) {
-        Log.d(event.firstName);
-        yield currentState.copyWith(firstName: event.firstName);
-      }
-    } else if (event is OnboardingLastNameChangedEvent) {
-      if (currentState is OnboardingNameBaseState) {
-        Log.d(event.lastName);
-        yield currentState.copyWith(lastName: event.lastName);
+        Log.d(event.displayName);
+        yield currentState.copyWith(displayName: event.displayName);
       }
     }
   }

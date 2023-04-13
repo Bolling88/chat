@@ -26,8 +26,8 @@ class OnboardingPhotoBloc
       OnboardingPhotoEvent event) async* {
     final currentState = state;
     if (event is OnboardingPhotoInitialEvent) {
-      final socializeUser = await _firestoreRepository.getUser();
-      yield OnboardingPhotoBaseState(socializeUser?.name ?? '');
+      final chatUser = await _firestoreRepository.getUser();
+      yield OnboardingPhotoBaseState(chatUser?.displayName ?? '');
     } else if (event is OnboardingPhotoCameraClickedEvent) {
       final pickedFile = await picker.pickImage(
           source: ImageSource.camera, imageQuality: photoQuality);

@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:flutter_svg/svg.dart';
-
 import '../repository/firestore_repository.dart';
 import '../repository/storage_repository.dart';
 import '../screens/login/bloc/login_state.dart';
@@ -18,17 +17,15 @@ import 'bloc/onboarding_photo_state.dart';
 
 class OnboardingPhotoScreen extends StatelessWidget {
   static const routeName = "/onboarding_photo_screen";
-  final FirestoreRepository firestoreRepository;
-  final StorageRepository _storageRepository;
 
-  const OnboardingPhotoScreen(this.firestoreRepository, this._storageRepository, {Key? key})
-      : super(key: key);
+  const OnboardingPhotoScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (BuildContext context) =>
-          OnboardingPhotoBloc(firestoreRepository, _storageRepository),
+      create: (BuildContext context) => OnboardingPhotoBloc(
+          context.read<FirestoreRepository>(),
+          context.read<StorageRepository>()),
       child: const OnboardingPhotoScreenContent(),
     );
   }
@@ -42,10 +39,9 @@ class OnboardingPhotoScreenContent extends StatelessWidget {
     return Scaffold(
         body: BlocListener<OnboardingPhotoBloc, OnboardingPhotoState>(
       listener: (context, state) {
-        if(state is OnboardingPhotoRedoState){
+        if (state is OnboardingPhotoRedoState) {
           _showBottomSheet(appContext);
-        }
-        else if (state is OnboardingPhotoSuccessState) {
+        } else if (state is OnboardingPhotoSuccessState) {
           if (state.navigation == OnboardingNavigation.PICTURE) {
             Navigator.pushReplacementNamed(
                 context, OnboardingPhotoScreen.routeName);
@@ -116,10 +112,11 @@ class OnboardingPhotoScreenContent extends StatelessWidget {
                 ),
               ),
               Padding(
-                padding:
-                    const EdgeInsets.only(left: 70, right: 70, top: 20, bottom: 20),
+                padding: const EdgeInsets.only(
+                    left: 70, right: 70, top: 20, bottom: 20),
                 child: Center(
-                  child: Text(FlutterI18n.translate(context, "lets_take_picture"),
+                  child: Text(
+                    FlutterI18n.translate(context, "lets_take_picture"),
                     textAlign: TextAlign.center,
                     style: const TextStyle(
                       fontSize: 15,
@@ -185,8 +182,8 @@ class OnboardingPhotoScreenContent extends StatelessWidget {
                               width: 140,
                               height: 140,
                               child: CircleAvatar(
-                                  backgroundImage:
-                                      new FileImage(File(state.filePath))))
+                                  backgroundImage: FileImage(
+                                      File.fromUri(Uri.parse(state.filePath)))))
                           : const Icon(Icons.camera_alt_outlined))),
               const SizedBox(height: 20),
               Center(
@@ -201,7 +198,8 @@ class OnboardingPhotoScreenContent extends StatelessWidget {
                 ),
               ),
               Center(
-                child: Text(FlutterI18n.translate(context, "as_always"),
+                child: Text(
+                  FlutterI18n.translate(context, "as_always"),
                   textAlign: TextAlign.center,
                   style: const TextStyle(
                     fontSize: 44,
@@ -211,10 +209,11 @@ class OnboardingPhotoScreenContent extends StatelessWidget {
                 ),
               ),
               Padding(
-                padding:
-                    const EdgeInsets.only(left: 70, right: 70, top: 20, bottom: 20),
+                padding: const EdgeInsets.only(
+                    left: 70, right: 70, top: 20, bottom: 20),
                 child: Center(
-                  child: Text(FlutterI18n.translate(context, "continue_if_happy"),
+                  child: Text(
+                    FlutterI18n.translate(context, "continue_if_happy"),
                     textAlign: TextAlign.center,
                     style: const TextStyle(
                       fontSize: 15,
@@ -234,10 +233,15 @@ class OnboardingPhotoScreenContent extends StatelessWidget {
                 text: FlutterI18n.translate(context, "continue"),
               ),
               const SizedBox(height: 20),
-              TextButton(onPressed: (){
-                BlocProvider.of<OnboardingPhotoBloc>(context)
-                    .add(OnboardingPhotoRedoClickedEvent());
-              }, child: Text(FlutterI18n.translate(context, "take_new_picture"), style: const TextStyle(fontWeight: FontWeight.w600, color:  AppColors.main)),)
+              TextButton(
+                onPressed: () {
+                  BlocProvider.of<OnboardingPhotoBloc>(context)
+                      .add(OnboardingPhotoRedoClickedEvent());
+                },
+                child: Text(FlutterI18n.translate(context, "take_new_picture"),
+                    style: const TextStyle(
+                        fontWeight: FontWeight.w600, color: AppColors.main)),
+              )
             ],
           ),
         ),
@@ -326,9 +330,9 @@ Flexible getOptionWidget(
               style: ButtonStyle(
                 elevation: MaterialStateProperty.all<double>(2.0),
                 backgroundColor:
-                MaterialStateProperty.all<Color>(AppColors.white),
+                    MaterialStateProperty.all<Color>(AppColors.white),
                 overlayColor: MaterialStateProperty.resolveWith(
-                      (states) {
+                  (states) {
                     return states.contains(MaterialState.pressed)
                         ? AppColors.main
                         : null;

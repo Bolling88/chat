@@ -10,18 +10,17 @@ abstract class OnboardingNameState extends Equatable {
 }
 
 class OnboardingNameBaseState extends OnboardingNameState {
-  final String firstName;
-  final String lastName;
+  final String displayName;
 
-  const OnboardingNameBaseState(this.firstName, this.lastName);
+  const OnboardingNameBaseState(this.displayName);
 
-  OnboardingNameBaseState copyWith({String? firstName, String? lastName}) {
+  OnboardingNameBaseState copyWith({String? displayName}) {
     return OnboardingNameBaseState(
-        firstName ?? this.firstName, lastName ?? this.lastName);
+        displayName ?? this.displayName);
   }
 
   @override
-  List<Object> get props => [firstName, lastName];
+  List<Object> get props => [displayName];
 }
 
 class OnboardingNameSuccessState extends OnboardingNameState {
