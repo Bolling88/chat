@@ -1,8 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
-import '../../repository/firestore_repository.dart';
-import '../../screens/login/bloc/login_state.dart';
-import '../../utils/log.dart';
+import '../../../repository/firestore_repository.dart';
+import '../../../utils/log.dart';
+import '../../login/bloc/login_state.dart';
 import 'onboarding_name_event.dart';
 import 'onboarding_name_state.dart';
 

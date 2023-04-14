@@ -1,6 +1,5 @@
+import 'package:chat/screens/login/bloc/login_state.dart';
 import 'package:equatable/equatable.dart';
-
-import '../../screens/login/bloc/login_state.dart';
 
 abstract class OnboardingPhotoState extends Equatable {
   const OnboardingPhotoState();
@@ -12,7 +11,7 @@ abstract class OnboardingPhotoState extends Equatable {
 class OnboardingPhotoBaseState extends OnboardingPhotoState {
   final String name;
 
-  OnboardingPhotoBaseState(this.name);
+  const OnboardingPhotoBaseState(this.name);
 
   @override
   List<Object> get props => [name];
@@ -21,7 +20,7 @@ class OnboardingPhotoBaseState extends OnboardingPhotoState {
 class OnboardingPhotoDoneState extends OnboardingPhotoState {
   final String filePath;
 
-  OnboardingPhotoDoneState(this.filePath);
+  const OnboardingPhotoDoneState(this.filePath);
 
   OnboardingPhotoDoneState copyWith({String? filePath}) {
     return OnboardingPhotoDoneState(filePath ?? this.filePath);
@@ -32,9 +31,10 @@ class OnboardingPhotoDoneState extends OnboardingPhotoState {
 }
 
 class OnboardingPhotoLoadingState extends OnboardingPhotoState {}
+class OnboardingPhotoErrorState extends OnboardingPhotoState {}
 
 class OnboardingPhotoRedoState extends OnboardingPhotoDoneState {
-  OnboardingPhotoRedoState(String filePath) : super(filePath);
+  const OnboardingPhotoRedoState(String filePath) : super(filePath);
 }
 
 class OnboardingPhotoSuccessState extends OnboardingPhotoState {

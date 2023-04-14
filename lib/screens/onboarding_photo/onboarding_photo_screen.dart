@@ -1,17 +1,16 @@
 import 'dart:io';
 
-import 'package:chat/screens/home/home_screen.dart';
+import 'package:chat/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:flutter_svg/svg.dart';
-import '../repository/firestore_repository.dart';
-import '../repository/storage_repository.dart';
-import '../screens/chat/chat_screen.dart';
-import '../screens/login/bloc/login_state.dart';
-import '../screens/onboarding_gender/onboarding_gender_screen.dart';
-import '../utils/app_colors.dart';
-import '../utils/app_widgets.dart';
+import '../../repository/firestore_repository.dart';
+import '../../repository/storage_repository.dart';
+import '../../utils/app_widgets.dart';
+import '../chat/chat_screen.dart';
+import '../login/bloc/login_state.dart';
+import '../onboarding_gender/onboarding_gender_screen.dart';
 import 'bloc/onboarding_photo_bloc.dart';
 import 'bloc/onboarding_photo_event.dart';
 import 'bloc/onboarding_photo_state.dart';
@@ -129,6 +128,17 @@ class OnboardingPhotoScreenContent extends StatelessWidget {
             },
             width: 220,
             text: FlutterI18n.translate(context, "select_from_images"),
+          ),
+          const SizedBox(height: 20),
+          Text(FlutterI18n.translate(context, 'or')),
+          const SizedBox(height: 20),
+          AppButton(
+            onTap: () async {
+              BlocProvider.of<OnboardingPhotoBloc>(context)
+                  .add(OnboardingPhotoSkipEvent());
+            },
+            width: 220,
+            text: FlutterI18n.translate(context, "skip_this_step"),
           )
         ],
       ),
@@ -248,7 +258,7 @@ class OnboardingPhotoScreenContent extends StatelessWidget {
                     appContext,
                     FlutterI18n.translate(context, "camera"),
                     '',
-                    'images/upload_camera.svg',
+                    'assets/svg/upload_camera.svg',
                     20,
                     8, () async {
                   Navigator.of(appContext).pop();
@@ -259,7 +269,7 @@ class OnboardingPhotoScreenContent extends StatelessWidget {
                     appContext,
                     FlutterI18n.translate(context, "images"),
                     '',
-                    'images/upload_images.svg',
+                    'assets/svg/upload_images.svg',
                     8,
                     20, () {
                   Navigator.of(appContext).pop();

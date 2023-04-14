@@ -16,10 +16,10 @@ enum Gender {
   final num value;
 }
 
+getUserId() => FirebaseAuth.instance.currentUser!.uid;
+
 class FirestoreRepository {
   FirestoreRepository();
-
-  String getUserId() => FirebaseAuth.instance.currentUser!.uid;
 
   final CollectionReference users =
       FirebaseFirestore.instance.collection('users');
@@ -41,14 +41,13 @@ class FirestoreRepository {
     });
   }
 
-  Future<void> setInitialUserData(String name, String email, String userId,
-      List<String> searchArray) async {
+  Future<void> setInitialUserData(
+      String name, String email, String userId) async {
     return users
         .doc(userId)
         .set({
           'name': name,
           'email': email,
-          'searchArray': searchArray,
           'created': FieldValue.serverTimestamp(),
         }, SetOptions(merge: true))
         .then((value) => Log.d("User updated"))
@@ -112,7 +111,8 @@ class FirestoreRepository {
       'text': message,
       'isGiphy': isGiphy,
       'isInfoMessage': isInfoMessage,
-      'createdBy': getUserId(),
+      'createdById': getUserId(),
+      'createdByName': user.displayName,
       'createdByImageUrl': user.pictureData,
       'created': FieldValue.serverTimestamp()
     });
@@ -187,8 +187,7 @@ class FirestoreRepository {
   }
 
   Stream<QuerySnapshot> streamChats() {
-    String userId = getUserId();
-    return chats.where("users", arrayContains: userId).snapshots();
+    return chats.snapshots();
   }
 
   Future<Chat?> createChat({required String chatName}) async {

@@ -24,4 +24,5 @@ class CreateChatSuccessState extends CreateChatBaseState {
   const CreateChatSuccessState({required super.name});
 }
 
+class CreateChatLoadingState extends CreateChatState {}
 class CreateChatErrorState extends CreateChatState {}

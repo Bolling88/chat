@@ -22,6 +22,12 @@ class CreateChatBloc extends Bloc<CreateChatEvent, CreateChatState> {
           Log.d(event.name);
           yield currentState.copyWith(name: event.name);
         }
+      } else if (event is CreateChatContinueClickedEvent) {
+        if (currentState is CreateChatBaseState) {
+          yield CreateChatLoadingState();
+          await _firestoreRepository.createChat(chatName: currentState.name);
+          yield CreateChatSuccessState(name: currentState.name);
+        }
       } else {
         Log.e('CreateChatBloc: Not implemented');
         throw UnimplementedError();

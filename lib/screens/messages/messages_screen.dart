@@ -16,8 +16,7 @@ class MessagesScreen extends StatelessWidget {
   final String chatId;
   final List<String>? userIds;
 
-  const MessagesScreen(this.chatId, {this.userIds, Key? key})
-      : super(key: key);
+  const MessagesScreen(this.chatId, {this.userIds, Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -102,19 +101,23 @@ class ChatsScreenContentState extends State<ChatsScreenContent> {
                                         fontWeight: FontWeight.normal,
                                         color: AppColors.grey_1),
                                   )));
-                        } else if (state.messages[index].message!.createdBy ==
+                        } else if (state.messages[index].message!.createdById ==
                             state.userId) {
                           return AppMyMessageWidget(
-                              state.messages[index].message!,
-                              state.users[
-                                  state.messages[index].message!.createdBy]!);
+                            state.messages[index].message!,
+                            pictureData: state
+                                .messages[index].message!.createdByImageUrl,
+                          );
                         } else {
                           return AppOtherMessageWidget(
-                              context.read<FirestoreRepository>(),
-                              context.read<DataRepository>(),
-                              state.messages[index].message!,
-                              state.users[
-                                  state.messages[index].message!.createdBy]!);
+                              message: state.messages[index].message!,
+                              pictureData: state.messages[index].message
+                                      ?.createdByImageUrl ??
+                                  '',
+                              userId:
+                                  state.messages[index].message!.createdById,
+                              displayName:
+                                  state.messages[index].message!.createdByName);
                         }
                       },
                     ),

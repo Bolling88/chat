@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../onboarding_name/onboarding_name_screen.dart';
-import '../../onboarding_photo/onboarding_photo_screen.dart';
 import '../../repository/firestore_repository.dart';
 import '../chat/chat_screen.dart';
 import '../error/error_screen.dart';
-import '../home/home_screen.dart';
 import '../loading/loading_screen.dart';
 import '../login/bloc/login_state.dart';
 import '../login/login_screen.dart';
 import '../onboarding_gender/onboarding_gender_screen.dart';
+import '../onboarding_name/onboarding_name_screen.dart';
+import '../onboarding_photo/onboarding_photo_screen.dart';
 import 'bloc/splash_bloc.dart';
 import 'bloc/splash_state.dart';
 

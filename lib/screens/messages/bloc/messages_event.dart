@@ -15,15 +15,6 @@ class MessagesSendEvent extends MessagesEvent {}
 class MessagesFetchMoreEvent extends MessagesEvent {}
 class MessagesFetchedEvent extends MessagesEvent {}
 
-class MessageChatUpdatedEvent extends MessagesEvent {
-  final Chat chat;
-
-  MessageChatUpdatedEvent(this.chat);
-
-  @override
-  List<Object> get props => [chat];
-}
-
 class MessagesUpdatedEvent extends MessagesEvent {
   final List<Message> messages;
 

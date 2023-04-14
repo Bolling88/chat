@@ -2,7 +2,10 @@ import 'package:chat/repository/firestore_repository.dart';
 import 'package:chat/repository/login_repository.dart';
 import 'package:chat/repository/storage_repository.dart';
 import 'package:chat/screens/chat/chat_screen.dart';
+import 'package:chat/screens/message_holder/message_holder_screen.dart';
 import 'package:chat/screens/onboarding_gender/onboarding_gender_screen.dart';
+import 'package:chat/screens/onboarding_name/onboarding_name_screen.dart';
+import 'package:chat/screens/onboarding_photo/onboarding_photo_screen.dart';
 import 'package:chat/screens/splash/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -12,14 +15,8 @@ import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import 'onboarding_name/onboarding_name_screen.dart';
-import 'onboarding_photo/onboarding_photo_screen.dart';
-import 'utils/app_colors.dart';
-import 'utils/app_widgets.dart';
 import 'utils/save_file.dart';
 import 'utils/simple_bloc_observer.dart';
-import 'screens/home/home_screen.dart';
 import 'screens/loading/loading_screen.dart';
 import 'screens/login/login_screen.dart';
 
@@ -97,6 +94,7 @@ class Chat extends StatelessWidget {
                 OnboardingNameScreen.routeName: (context) => const OnboardingNameScreen(),
                 OnboardingPhotoScreen.routeName: (context) => const OnboardingPhotoScreen(),
                 ChatScreen.routeName: (context) => const ChatScreen(),
+                MessageHolderScreen.routeName: (context) => const MessageHolderScreen(),
               },
             ),
           );

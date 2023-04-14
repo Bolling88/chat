@@ -248,5 +248,8 @@
   "form_message": "but could we please have your attention for just two minutes to give some feedback on this app?",
   "party_mode": "Party mode",
   "admin_mode": "Admin mode",
-  "chat_name": "Enter chat name..."
+  "chat_name": "Enter chat name...",
+  "create_chat": "Create chat",
+  "skip_this_step": "Skip this step",
+  "or": "or"
 }

@@ -1,18 +1,18 @@
 import 'package:equatable/equatable.dart';
 import '../../../model/chat.dart';
 
-abstract class PartyMessagesState extends Equatable {
+abstract class MessageHolderState extends Equatable {
   @override
   List<Object> get props => [];
 }
 
-class PartyMessageLoadingState extends PartyMessagesState {}
+class PartyMessageLoadingState extends MessageHolderState {}
 
-class PartyMessagesBaseState extends PartyMessagesState {
+class MessageHolderBaseState extends MessageHolderState {
   final String chatId;
   final Chat chat;
 
-  PartyMessagesBaseState(this.chat, this.chatId);
+  MessageHolderBaseState(this.chat, this.chatId);
 
   @override
   List<Object> get props => [chat, chatId];

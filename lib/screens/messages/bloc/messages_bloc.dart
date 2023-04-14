@@ -17,13 +17,11 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
   final String chatId;
   final bool isPartyChat;
   DocumentSnapshot? _lastMessageSnapshot;
-  Map<String, ChatUser> contributorMap = {};
-  List<ChatUser> contributors = [];
   final FirestoreRepository _firestoreRepository;
   final secondsInFiveMins = 300;
+  late final ChatUser _chatUser;
 
   StreamSubscription<QuerySnapshot>? messagesStream;
-  StreamSubscription<QuerySnapshot>? chatsStream;
 
   MessagesBloc(this.chatId, this._firestoreRepository,
       {this.isPartyChat = false})
@@ -34,7 +32,6 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
   @override
   Future<void> close() {
     messagesStream?.cancel();
-    chatsStream?.cancel();
     return super.close();
   }
 
@@ -44,50 +41,38 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
     final currentState = state;
     if (event is MessagesInitialEvent) {
       final chat = await _firestoreRepository.getChat(chatId);
-      if(chat != null) {
-        Log.d("Fetching users in this chat: ${chat.users}");
-        await updateUsers(chat);
+      _chatUser = (await _firestoreRepository.getUser())!;
+      if (chat != null) {
         final data = await _firestoreRepository.getMessages(chatId);
         if (data.docs.isNotEmpty) {
           Log.d("New documents: ${data.docs.length}");
           _lastMessageSnapshot = data.docs.last;
-          final initialMessages =
-          data.docs.map((e) => Message.fromJson(e.id, e.data() as Map<String, dynamic>)).toList();
+          final initialMessages = data.docs
+              .map((e) =>
+                  Message.fromJson(e.id, e.data() as Map<String, dynamic>))
+              .toList();
 
           yield MessagesBaseState(getMessagesWithDates(initialMessages),
-              contributorMap, FirebaseAuth.instance.currentUser!.uid, "");
+              FirebaseAuth.instance.currentUser!.uid, "");
         } else {
           yield MessagesBaseState(
-              [], contributorMap, FirebaseAuth.instance.currentUser!.uid, "");
+              const [], getUserId(), "");
         }
         setUpMessagesListener(chatId);
-        setUpChatsListener(chatId);
-      }else{
+      } else {
         yield MessagesErrorState();
       }
     } else if (event is MessagesSendEvent) {
       if (currentState is MessagesBaseState) {
         if (currentState.currentMessage.isNotEmpty) {
           await _firestoreRepository.postMessage(
-              chatId,
-              contributorMap[FirebaseAuth.instance.currentUser!.uid]!,
-              currentState.currentMessage);
+              chatId, _chatUser, currentState.currentMessage);
           yield currentState.copyWith(currentMessage: "");
         }
       }
     } else if (event is MessagesChangedEvent) {
       if (currentState is MessagesBaseState) {
         yield currentState.copyWith(currentMessage: event.message);
-      }
-    } else if (event is MessageChatUpdatedEvent) {
-      if (currentState is MessagesBaseState) {
-        if (event.chat.users.length > contributors.length) {
-          //A new user have joined or left the chat, re-fetch users
-          await updateUsers(event.chat);
-          yield currentState.copyWith(users: contributorMap);
-        } else {
-          //Nothing of interest have changed
-        }
       }
     } else if (event is MessagesUpdatedEvent) {
       Log.d("Got more messages event");
@@ -97,7 +82,8 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
                   currentState.messages.first.message!.id)) {
         Log.d("New message id: ${event.messages.last.id}");
         final List<MessageItem> updatedList = [...currentState.messages];
-        updatedList.insertAll(0, getMessagesWithDates(event.messages as List<Message>));
+        updatedList.insertAll(
+            0, getMessagesWithDates(event.messages));
         Log.d("Total messages: ${updatedList.length}");
         yield currentState.copyWith(messages: updatedList);
       }
@@ -106,7 +92,7 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
       if (currentState is MessagesBaseState) {
         final String giphyUrl = event.gif.images?.downsized?.url ?? "";
         await _firestoreRepository.postMessage(chatId,
-            contributorMap[FirebaseAuth.instance.currentUser!.uid]!, giphyUrl,
+            _chatUser, giphyUrl,
             isGiphy: true);
         yield currentState.copyWith(currentMessage: "");
       }
@@ -118,8 +104,10 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
         if (data.docs.isNotEmpty) {
           Log.d("New documents: ${data.docs.length}");
           _lastMessageSnapshot = data.docs.last;
-          final messages =
-              data.docs.map((e) => Message.fromJson(e.id, e.data() as Map<String, dynamic>)).toList();
+          final messages = data.docs
+              .map((e) =>
+                  Message.fromJson(e.id, e.data() as Map<String, dynamic>))
+              .toList();
           final List<MessageItem> updatedList = [...currentState.messages];
           updatedList.addAll(getMessagesWithDates(messages));
           Log.d("Total messages: ${updatedList.length}");
@@ -135,27 +123,6 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
     } else {
       yield MessagesErrorState();
       Log.e("Error in messages");
-    }
-  }
-
-  Future updateUsers(Chat chat) async {
-    if (chat.contributors.isEmpty) {
-      contributorMap = <String, ChatUser>{};
-      return;
-    }
-    contributors = await _firestoreRepository.getUsers(chat.contributors);
-    Log.d("Got users: ${contributors.toString()}");
-    contributorMap = <String, ChatUser>{};
-
-    for (var user in contributors) {
-      contributorMap[user.id] = user;
-    }
-
-    //Add deleted users, if any
-    for(var userId in chat.contributors){
-      if(!contributorMap.containsKey(userId)){
-        contributorMap[userId] = ChatUser.asUnknown(userId);
-      }
     }
   }
 
@@ -177,21 +144,9 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
     });
   }
 
-  void setUpChatsListener(String chatId) async {
-    Log.d('Setting up chat stream');
-    chatsStream = _firestoreRepository.streamChat(chatId).listen((data) {
-      Log.d("Got updated chat");
-      if (data.docs.isNotEmpty) {
-        final json = data.docs.first;
-        final newChat = Chat.fromJson(chatId, json.data() as Map<String, dynamic>);
-        add(MessageChatUpdatedEvent(newChat));
-      }
-    });
-  }
-
   List<MessageItem> getMessagesWithDates(List<Message> messages) {
     final List<MessageItem> datedList = [];
-    if(messages.length == 1){
+    if (messages.length == 1) {
       //If this is a new message after entering the chat, don't bother with dates
       datedList.add(MessageItem(messages.last, null));
       return datedList;

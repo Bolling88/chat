@@ -5,44 +5,44 @@ import '../../model/chat.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_widgets.dart';
 import '../messages/messages_screen.dart';
-import 'bloc/party_messages_bloc.dart';
-import 'bloc/party_messages_state.dart';
+import 'bloc/message_holder_bloc.dart';
+import 'bloc/message_holder_state.dart';
 
-class PartyMessageScreenArguments {
+class MessageHolderScreenArguments {
   final Chat? chat;
   final String? chatId;
 
-  const PartyMessageScreenArguments({this.chat, this.chatId});
+  const MessageHolderScreenArguments({this.chat, this.chatId});
 }
 
-class PartyMessagesScreen extends StatelessWidget {
-  static const routeName = "/party_messages_screen";
+class MessageHolderScreen extends StatelessWidget {
+  static const routeName = "/message_holder_screen";
 
-  const PartyMessagesScreen({Key? key}) : super(key: key);
+  const MessageHolderScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final PartyMessageScreenArguments args = ModalRoute.of(context)
+    final MessageHolderScreenArguments args = ModalRoute.of(context)
         ?.settings
-        .arguments as PartyMessageScreenArguments;
+        .arguments as MessageHolderScreenArguments;
     return BlocProvider(
-      create: (BuildContext context) => PartyMessagesBloc(
+      create: (BuildContext context) => MessageHolderBloc(
           context.read<FirestoreRepository>(), args.chat, args.chatId),
-      child: const PartyScreenContent(),
+      child: const MessageHolderScreenContent(),
     );
   }
 }
 
-class PartyScreenContent extends StatelessWidget {
-  const PartyScreenContent({Key? key}) : super(key: key);
+class MessageHolderScreenContent extends StatelessWidget {
+  const MessageHolderScreenContent({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<PartyMessagesBloc, PartyMessagesState>(
+    return BlocListener<MessageHolderBloc, MessageHolderState>(
         listener: (context, state) {},
-        child: BlocBuilder<PartyMessagesBloc, PartyMessagesState>(
+        child: BlocBuilder<MessageHolderBloc, MessageHolderState>(
           builder: (context, state) {
-            if (state is PartyMessagesBaseState) {
+            if (state is MessageHolderBaseState) {
               return Scaffold(
                   backgroundColor: AppColors.white,
                   appBar: getAppBar(context, state),
@@ -50,7 +50,7 @@ class PartyScreenContent extends StatelessWidget {
                       padding: const EdgeInsets.only(bottom: 20),
                       child: MessagesScreen(state.chatId)));
             } else {
-              return Scaffold(
+              return const Scaffold(
                   backgroundColor: AppColors.white,
                   body: Center(child: AppSpinner()));
             }
@@ -58,7 +58,7 @@ class PartyScreenContent extends StatelessWidget {
         ));
   }
 
-  AppBar getAppBar(BuildContext context, PartyMessagesBaseState state) {
+  AppBar getAppBar(BuildContext context, MessageHolderBaseState state) {
     return AppBar(
       elevation: 0,
       iconTheme: const IconThemeData(
@@ -67,7 +67,7 @@ class PartyScreenContent extends StatelessWidget {
       backgroundColor: AppColors.white,
       title: Text(
         state.chat.getPartyChatName(context),
-        style: TextStyle(
+        style: const TextStyle(
             color: AppColors.grey_1, fontSize: 15, fontWeight: FontWeight.w600),
       ),
     );

@@ -6,21 +6,31 @@ class Message extends Equatable implements Comparable<Message> {
   final String text;
   final bool isGiphy;
   final bool isInfoMessage;
-  final String createdBy;
+  final String createdById;
+  final String createdByName;
   final String createdByImageUrl;
   final Timestamp created;
 
   Message.fromJson(this.id, Map<String, dynamic> json)
       : created = json['created'] ?? Timestamp.now(),
-        createdBy = json['createdBy'] ?? "",
+        createdById = json['createdById'] ?? "",
+        createdByName = json['createdByName'] ?? "",
         isGiphy = json['isGiphy'] ?? false,
         isInfoMessage = json['isInfoMessage'] ?? false,
         createdByImageUrl = json['createdByImageUrl'] ?? "",
         text = json['text'] ?? "";
 
   @override
-  List<Object> get props =>
-      [id, text, isGiphy, isInfoMessage, createdBy, createdByImageUrl, created];
+  List<Object> get props => [
+        id,
+        text,
+        isGiphy,
+        isInfoMessage,
+        createdById,
+        createdByName,
+        createdByImageUrl,
+        created
+      ];
 
   @override
   int compareTo(Message other) {

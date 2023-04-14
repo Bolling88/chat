@@ -125,8 +125,7 @@ class DetailScreen extends StatelessWidget {
   }
 }
 
-Future showVisitScreen(BuildContext context, FirestoreRepository repository,
-    DataRepository dataRepository, String userId) async {
+Future showVisitScreen(BuildContext context, String userId) async {
   await showModalBottomSheet(
     useRootNavigator: true,
     context: context,

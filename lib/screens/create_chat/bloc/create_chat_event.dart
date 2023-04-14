@@ -8,6 +8,7 @@ abstract class CreateChatEvent extends Equatable {
 }
 
 class CreateChatInitialEvent extends CreateChatEvent {}
+class CreateChatContinueClickedEvent extends CreateChatEvent {}
 
 class CreateChatNameChangedEvent extends CreateChatEvent {
   final String name;

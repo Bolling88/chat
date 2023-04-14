@@ -15,3 +15,4 @@ class OnboardingPhotoGalleryClickedEvent extends OnboardingPhotoEvent{}
 class OnboardingPhotoContinueClickedEvent extends OnboardingPhotoEvent{}
 class OnboardingPhotoRedoClickedEvent extends OnboardingPhotoEvent{}
 class OnboardingPhotoBottomSheetClosedEvent extends OnboardingPhotoEvent{}
+class OnboardingPhotoSkipEvent extends OnboardingPhotoEvent{}

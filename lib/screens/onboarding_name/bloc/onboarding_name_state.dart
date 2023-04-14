@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 
-import '../../screens/login/bloc/login_state.dart';
+import '../../login/bloc/login_state.dart';
 
 abstract class OnboardingNameState extends Equatable {
   const OnboardingNameState();

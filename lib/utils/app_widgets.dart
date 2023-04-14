@@ -214,7 +214,7 @@ class AppMessageEditTextWidget extends StatelessWidget {
                         ? TextEditingController(text: currentMessage)
                         : null,
                     style:
-                        const TextStyle(color: AppColors.grey_1, fontSize: 15),
+                        const TextStyle(color: AppColors.main, fontSize: 15),
                     textCapitalization: TextCapitalization.sentences,
                     cursorColor: AppColors.main,
                     onChanged: onTextChanged,
@@ -223,7 +223,7 @@ class AppMessageEditTextWidget extends StatelessWidget {
                         counterText: "",
                         suffixIcon: IconButton(
                           onPressed: onSendPressed,
-                          icon: SvgPicture.asset("images/send_message.svg",
+                          icon: SvgPicture.asset("assets/svg/send_message.svg",
                               semanticsLabel: "Send message"),
                         ),
                         border: OutlineInputBorder(
@@ -232,7 +232,7 @@ class AppMessageEditTextWidget extends StatelessWidget {
                               width: 0,
                               style: BorderStyle.none,
                             )),
-                        fillColor: AppColors.grey_1,
+                        fillColor: AppColors.white,
                         hintStyle: const TextStyle(color: AppColors.grey_1),
                         contentPadding:
                             const EdgeInsets.only(left: 15, right: 15),
@@ -274,17 +274,17 @@ class AppMessageEditTextWidget extends StatelessWidget {
 
 class AppOtherMessageWidget extends StatelessWidget {
   final Message message;
-  final ChatUser createdByUser;
-  final FirestoreRepository firestoreRepository;
-  final DataRepository dataRepository;
+  final String pictureData;
+  final String displayName;
+  final String userId;
 
-  const AppOtherMessageWidget(
-      this.firestoreRepository,
-      this.dataRepository,
-      this.message,
-      this.createdByUser, {
-        Key? key,
-      }) : super(key: key);
+  const AppOtherMessageWidget({
+    Key? key,
+    required this.message,
+    required this.pictureData,
+    required this.userId,
+    required this.displayName,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -295,70 +295,67 @@ class AppOtherMessageWidget extends StatelessWidget {
         children: [
           GestureDetector(
             onTap: () {
-              showVisitScreen(context, firestoreRepository, dataRepository,
-                  message.createdBy);
+              showVisitScreen(
+                  context, userId);
             },
             child: Padding(
               padding: const EdgeInsets.only(left: 0, right: 20),
-              child: AppUserImage(createdByUser.pictureData),
+              child: AppUserImage(pictureData),
             ),
           ),
           Flexible(
             child: (message.isGiphy)
                 ? ClipRRect(
-              borderRadius: BorderRadius.circular(20.0),
-              child: CachedNetworkImage(
-                imageUrl: message.text,
-                placeholder: (context, url) =>
-                    const Center(child: AppSpinner()),
-                errorWidget: (context, url, error) => const Icon(Icons.error),
-              ),
-            )
-                : Stack(
-              children: [
-                DecoratedBox(
-                  decoration: const BoxDecoration(
-                      borderRadius: BorderRadius.only(
-                        bottomLeft: Radius.circular(10.0),
-                        bottomRight: Radius.circular(10.0),
-                        topRight: Radius.circular(10.0),
-                      ),
-                      gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [AppColors.grey_1, AppColors.grey_2])),
-                  child: Padding(
-                    padding: const EdgeInsets.all(15),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                            (createdByUser.displayName.isNotEmpty)
-                                ? createdByUser.displayName
-                                : FlutterI18n.translate(
-                                context, "unknown_user"),
-                            textAlign: TextAlign.left,
-                            style: const TextStyle(
-                                color: AppColors.grey_1,
-                                fontSize: 13,
-                                fontWeight: FontWeight.bold)),
-                        const SizedBox(
-                          height: 5,
-                        ),
-                        Text(
-                          message.text,
-                          textAlign: TextAlign.left,
-                          style: const TextStyle(
-                              color: AppColors.grey_1,
-                              fontSize: 15,
-                              fontWeight: FontWeight.w500),
-                        ),
-                      ],
+                    borderRadius: BorderRadius.circular(20.0),
+                    child: CachedNetworkImage(
+                      imageUrl: message.text,
+                      placeholder: (context, url) =>
+                          const Center(child: AppSpinner()),
+                      errorWidget: (context, url, error) =>
+                          const Icon(Icons.error),
                     ),
+                  )
+                : Stack(
+                    children: [
+                      DecoratedBox(
+                        decoration: const BoxDecoration(
+                            borderRadius: BorderRadius.only(
+                              bottomLeft: Radius.circular(10.0),
+                              bottomRight: Radius.circular(10.0),
+                              topRight: Radius.circular(10.0),
+                            ),
+                            gradient: LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [AppColors.grey_1, AppColors.grey_2])),
+                        child: Padding(
+                          padding: const EdgeInsets.all(15),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(displayName,
+                                  textAlign: TextAlign.left,
+                                  style: const TextStyle(
+                                      color: AppColors.grey_1,
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.bold)),
+                              const SizedBox(
+                                height: 5,
+                              ),
+                              Text(
+                                message.text,
+                                textAlign: TextAlign.left,
+                                style: const TextStyle(
+                                    color: AppColors.grey_1,
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w500),
+                              ),
+                            ],
+                          ),
+                        ),
+                      )
+                    ],
                   ),
-                )
-              ],
-            ),
           ),
         ],
       ),
@@ -368,18 +365,19 @@ class AppOtherMessageWidget extends StatelessWidget {
 
 class AppMyMessageWidget extends StatelessWidget {
   final Message message;
-  final ChatUser createdByUser;
+  final String pictureData;
 
   const AppMyMessageWidget(
-      this.message,
-      this.createdByUser, {
-        Key? key,
-      }) : super(key: key);
+    this.message, {
+    Key? key,
+    required this.pictureData,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-        padding: const EdgeInsets.only(left: 40, bottom: 10, top: 10, right: 20),
+        padding:
+            const EdgeInsets.only(left: 40, bottom: 10, top: 10, right: 20),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.end,
@@ -387,54 +385,55 @@ class AppMyMessageWidget extends StatelessWidget {
           children: [
             (message.isGiphy)
                 ? Flexible(
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(20.0),
-                child: CachedNetworkImage(
-                  imageUrl: message.text,
-                  placeholder: (context, url) =>
-                      const Center(child: AppSpinner()),
-                  errorWidget: (context, url, error) => const Icon(Icons.error),
-                ),
-              ),
-            )
-                : Flexible(
-              child: Align(
-                alignment: Alignment.bottomRight,
-                child: Stack(
-                  children: [
-                    DecoratedBox(
-                      decoration: const BoxDecoration(
-                          borderRadius: BorderRadius.only(
-                            bottomLeft: Radius.circular(10.0),
-                            bottomRight: Radius.circular(10.0),
-                            topLeft: Radius.circular(10.0),
-                          ),
-                          gradient: LinearGradient(
-                              begin: Alignment.topCenter,
-                              end: Alignment.bottomCenter,
-                              colors: [
-                                AppColors.main,
-                                AppColors.main_2
-                              ])),
-                      child: Padding(
-                        padding: const EdgeInsets.all(15),
-                        child: Text(
-                          message.text,
-                          textAlign: TextAlign.left,
-                          style: const TextStyle(
-                              color: AppColors.grey_1,
-                              fontSize: 15,
-                              fontWeight: FontWeight.w500),
-                        ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(20.0),
+                      child: CachedNetworkImage(
+                        imageUrl: message.text,
+                        placeholder: (context, url) =>
+                            const Center(child: AppSpinner()),
+                        errorWidget: (context, url, error) =>
+                            const Icon(Icons.error),
                       ),
-                    )
-                  ],
-                ),
-              ),
-            ),
+                    ),
+                  )
+                : Flexible(
+                    child: Align(
+                      alignment: Alignment.bottomRight,
+                      child: Stack(
+                        children: [
+                          DecoratedBox(
+                            decoration: const BoxDecoration(
+                                borderRadius: BorderRadius.only(
+                                  bottomLeft: Radius.circular(10.0),
+                                  bottomRight: Radius.circular(10.0),
+                                  topLeft: Radius.circular(10.0),
+                                ),
+                                gradient: LinearGradient(
+                                    begin: Alignment.topCenter,
+                                    end: Alignment.bottomCenter,
+                                    colors: [
+                                      AppColors.main,
+                                      AppColors.main_2
+                                    ])),
+                            child: Padding(
+                              padding: const EdgeInsets.all(15),
+                              child: Text(
+                                message.text,
+                                textAlign: TextAlign.left,
+                                style: const TextStyle(
+                                    color: AppColors.grey_1,
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w500),
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
             Padding(
               padding: const EdgeInsets.only(left: 20),
-              child: AppUserImage(createdByUser.pictureData),
+              child: AppUserImage(pictureData),
             )
           ],
         ));

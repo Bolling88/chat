@@ -1,4 +1,4 @@
-import 'package:chat/screens/party_messages/party_messages_screen.dart';
+import 'package:chat/screens/create_chat/create_chat_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -9,6 +9,7 @@ import '../../model/chat_user.dart';
 import '../../repository/firestore_repository.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_widgets.dart';
+import '../message_holder/message_holder_screen.dart';
 import 'bloc/chat_bloc.dart';
 import 'bloc/chat_state.dart';
 
@@ -35,7 +36,7 @@ class ChatsScreenContent extends StatelessWidget {
     return Scaffold(
         backgroundColor: AppColors.white,
         appBar: AppBar(
-          backgroundColor: AppColors.white,
+          backgroundColor: AppColors.main,
           elevation: 0,
           title: Text(
             FlutterI18n.translate(context, "chat"),
@@ -48,7 +49,7 @@ class ChatsScreenContent extends StatelessWidget {
             IconButton(
               icon: const Icon(Icons.add),
               onPressed: () {
-                Navigator.pushNamed(context, '');
+                showCreateChatScreen(context);
               },
             )
           ],
@@ -148,9 +149,9 @@ class ChatsScreenContent extends StatelessWidget {
                   ),
             onTap: () {
               Navigator.of(context, rootNavigator: true).pushNamed(
-                  PartyMessagesScreen.routeName,
+                  MessageHolderScreen.routeName,
                   arguments:
-                      PartyMessageScreenArguments(chat: state.chats[index]));
+                      MessageHolderScreenArguments(chat: state.chats[index]));
             },
           ),
         );
@@ -207,7 +208,7 @@ class ChatsScreenContent extends StatelessWidget {
           color: AppColors.main,
           child: Padding(
               padding: const EdgeInsets.all(6),
-              child: SvgPicture.asset("images/party-icon.svg",
+              child: SvgPicture.asset("assets/svg/party-icon.svg",
                   semanticsLabel: "", color: AppColors.main))),
     );
   }
