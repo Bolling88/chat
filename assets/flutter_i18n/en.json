@@ -251,5 +251,6 @@
   "chat_name": "Enter chat name...",
   "create_chat": "Create chat",
   "skip_this_step": "Skip this step",
-  "or": "or"
+  "or": "or",
+  "private_chat": "Private chat"
 }

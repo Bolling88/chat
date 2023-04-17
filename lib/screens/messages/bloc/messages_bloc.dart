@@ -15,16 +15,16 @@ import 'messages_state.dart';
 
 class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
   final String chatId;
-  final bool isPartyChat;
+  final bool isPrivateChat;
   DocumentSnapshot? _lastMessageSnapshot;
   final FirestoreRepository _firestoreRepository;
-  final secondsInFiveMins = 300;
+  final secondsInFiveMinutes = 300;
   late final ChatUser _chatUser;
 
   StreamSubscription<QuerySnapshot>? messagesStream;
 
   MessagesBloc(this.chatId, this._firestoreRepository,
-      {this.isPartyChat = false})
+      {required this.isPrivateChat})
       : super(MessagesLoadingState()) {
     add(MessagesInitialEvent());
   }
@@ -40,7 +40,9 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
     Log.d(event.toString());
     final currentState = state;
     if (event is MessagesInitialEvent) {
-      final chat = await _firestoreRepository.getChat(chatId);
+      final chat = isPrivateChat
+          ? await _firestoreRepository.getPrivateChat(chatId)
+          : await _firestoreRepository.getChat(chatId);
       _chatUser = (await _firestoreRepository.getUser())!;
       if (chat != null) {
         final data = await _firestoreRepository.getMessages(chatId);
@@ -55,8 +57,7 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
           yield MessagesBaseState(getMessagesWithDates(initialMessages),
               FirebaseAuth.instance.currentUser!.uid, "");
         } else {
-          yield MessagesBaseState(
-              const [], getUserId(), "");
+          yield MessagesBaseState(const [], getUserId(), "");
         }
         setUpMessagesListener(chatId);
       } else {
@@ -82,8 +83,7 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
                   currentState.messages.first.message!.id)) {
         Log.d("New message id: ${event.messages.last.id}");
         final List<MessageItem> updatedList = [...currentState.messages];
-        updatedList.insertAll(
-            0, getMessagesWithDates(event.messages));
+        updatedList.insertAll(0, getMessagesWithDates(event.messages));
         Log.d("Total messages: ${updatedList.length}");
         yield currentState.copyWith(messages: updatedList);
       }
@@ -91,8 +91,7 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
       Log.d("Got giphy event");
       if (currentState is MessagesBaseState) {
         final String giphyUrl = event.gif.images?.downsized?.url ?? "";
-        await _firestoreRepository.postMessage(chatId,
-            _chatUser, giphyUrl,
+        await _firestoreRepository.postMessage(chatId, _chatUser, giphyUrl,
             isGiphy: true);
         yield currentState.copyWith(currentMessage: "");
       }
@@ -158,7 +157,7 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
         if (i < messages.length - 1) {
           final next = messages[i + 1];
           if (current.created.seconds - next.created.seconds >=
-              secondsInFiveMins) {
+              secondsInFiveMinutes) {
             datedList.add(MessageItem(current, null));
             datedList.add(MessageItem(null, getMessageDate(current.created)));
           } else {

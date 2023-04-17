@@ -16,13 +16,15 @@ class MessagesScreen extends StatelessWidget {
   final String chatId;
   final List<String>? userIds;
 
-  const MessagesScreen(this.chatId, {this.userIds, Key? key}) : super(key: key);
+  final bool isPrivateChat;
+
+  const MessagesScreen(this.chatId, this.isPrivateChat, {this.userIds, Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (BuildContext context) =>
-          MessagesBloc(chatId, context.read<FirestoreRepository>()),
+          MessagesBloc(chatId, context.read<FirestoreRepository>(), isPrivateChat: isPrivateChat),
       child: const ChatsScreenContent(),
     );
   }

@@ -23,6 +23,8 @@ class FirestoreRepository {
       FirebaseFirestore.instance.collection('users');
   final CollectionReference chats =
       FirebaseFirestore.instance.collection('chats');
+  final CollectionReference privateChats =
+      FirebaseFirestore.instance.collection('privateChats');
   final CollectionReference messages =
       FirebaseFirestore.instance.collection('messages');
 
@@ -83,6 +85,19 @@ class FirestoreRepository {
 
   Future<Chat?> getChat(String chatId) async {
     return chats
+        .doc(chatId)
+        .get()
+        .then((value) => value.exists
+            ? Chat.fromJson(value.id, value.data() as Map<String, dynamic>)
+            : null)
+        .catchError((error) {
+      Log.e("Failed to get chat: $error");
+      return null;
+    });
+  }
+
+  Future<Chat?> getPrivateChat(String chatId) async {
+    return privateChats
         .doc(chatId)
         .get()
         .then((value) => value.exists
@@ -188,13 +203,37 @@ class FirestoreRepository {
     return chats.snapshots();
   }
 
+  Stream<QuerySnapshot> streamPrivateChats() {
+    return privateChats.where('users', arrayContains: getUserId()).snapshots();
+  }
+
   Future<Chat?> createChat({required String chatName}) async {
     try {
       final reference = await chats.add({
         'created': FieldValue.serverTimestamp(),
         'lastMessageReadBy': [getUserId()],
-        'users': [FirebaseAuth.instance.currentUser!.uid],
+        'users': [getUserId()],
         'chatName': chatName,
+      });
+      final querySnapshot = await chats.doc(reference.id).get()
+        ..data();
+      final data = querySnapshot.data();
+      if (data != null) {
+        return Chat.fromJson(querySnapshot.id, data as Map<String, dynamic>);
+      }
+    } catch (e) {
+      Log.e(e);
+    }
+    return null;
+  }
+
+  Future<Chat?> createPrivateChat(ChatUser user) async {
+    try {
+      final reference = await privateChats.add({
+        'created': FieldValue.serverTimestamp(),
+        'lastMessageReadBy': [getUserId()],
+        'users': [getUserId(), user.id],
+        'chatName': user.displayName,
       });
       final querySnapshot = await chats.doc(reference.id).get()
         ..data();

@@ -6,6 +6,7 @@ import '../../utils/app_colors.dart';
 import '../../utils/app_widgets.dart';
 import '../messages/messages_screen.dart';
 import 'bloc/message_holder_bloc.dart';
+import 'bloc/message_holder_event.dart';
 import 'bloc/message_holder_state.dart';
 
 class MessageHolderScreenArguments {
@@ -46,9 +47,17 @@ class MessageHolderScreenContent extends StatelessWidget {
               return Scaffold(
                   backgroundColor: AppColors.white,
                   appBar: getAppBar(context, state),
-                  body: Padding(
-                      padding: const EdgeInsets.only(bottom: 20),
-                      child: MessagesScreen(state.chatId)));
+                  body: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        state.privateChats.isNotEmpty
+                            ? getSideMenu(state)
+                            : const SizedBox.shrink(),
+                        Expanded(
+                            child: IndexedStack(
+                                index: state.selectedChatIndex,
+                                children: getChatViews(state))),
+                      ]));
             } else {
               return const Scaffold(
                   backgroundColor: AppColors.white,
@@ -56,6 +65,74 @@ class MessageHolderScreenContent extends StatelessWidget {
             }
           },
         ));
+  }
+
+  Widget getSideMenu(MessageHolderBaseState state) {
+    return SizedBox(
+      width: 60,
+      child: ListView.builder(
+          itemCount: state.privateChats.length + 1,
+          itemBuilder: (context, index) {
+            return GestureDetector(
+              onTap: () {
+                BlocProvider.of<MessageHolderBloc>(context)
+                    .add(MessageHolderChatClickedEvent(index));
+              },
+              child: Padding(
+                padding: const EdgeInsets.all(4.0),
+                child: Container(
+                    height: 50,
+                    width: 50,
+                    decoration: const BoxDecoration(
+                      color: AppColors.main,
+                      shape: BoxShape.rectangle,
+                      borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                    ),
+                    child: Stack(
+                      children: [
+                        (index == 0)
+                            ? (state.chat.lastMessageReadBy
+                                    .contains(getUserId()))
+                                ? const SizedBox()
+                                : Container(
+                                    color: AppColors.main,
+                                    width: 10,
+                                    height: 10,
+                                  )
+                            : (state.privateChats[index - 1].lastMessageReadBy
+                                    .contains(getUserId()))
+                                ? const SizedBox()
+                                : Container(
+                                    color: AppColors.main,
+                                    width: 10,
+                                    height: 10,
+                                  ),
+                        (index == 0)
+                            ? Text(state.chat.chatName)
+                            : Text(state.privateChats[index - 1].chatName)
+                      ],
+                    )),
+              ),
+            );
+          }),
+    );
+  }
+
+  List<Widget> getChatViews(MessageHolderBaseState state) {
+    return {
+          MessagesScreen(
+            state.chat.id,
+            false,
+            key: Key(state.chat.id),
+          )
+        }.toList() +
+        Iterable.generate(state.privateChats.length)
+            .map((e) => MessagesScreen(
+                  state.privateChats[e].id,
+                  true,
+                  key: Key(state.privateChats[e].id),
+                ))
+            .toList();
   }
 
   AppBar getAppBar(BuildContext context, MessageHolderBaseState state) {
