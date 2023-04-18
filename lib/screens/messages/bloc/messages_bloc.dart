@@ -4,7 +4,6 @@ import 'package:chat/model/chat_user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../model/chat.dart';
 import '../../../model/message.dart';
 import '../../../model/message_item.dart';
 import '../../../repository/firestore_repository.dart';
@@ -67,7 +66,7 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
       if (currentState is MessagesBaseState) {
         if (currentState.currentMessage.isNotEmpty) {
           await _firestoreRepository.postMessage(
-              chatId, _chatUser, currentState.currentMessage);
+              chatId, _chatUser, currentState.currentMessage, isPrivateChat);
           yield currentState.copyWith(currentMessage: "");
         }
       }
@@ -91,7 +90,7 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
       Log.d("Got giphy event");
       if (currentState is MessagesBaseState) {
         final String giphyUrl = event.gif.images?.downsized?.url ?? "";
-        await _firestoreRepository.postMessage(chatId, _chatUser, giphyUrl,
+        await _firestoreRepository.postMessage(chatId, _chatUser, giphyUrl, isPrivateChat,
             isGiphy: true);
         yield currentState.copyWith(currentMessage: "");
       }

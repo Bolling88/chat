@@ -116,7 +116,7 @@ class OnboardingNameScreenContent extends StatelessWidget {
                   initialValue: state.displayName,
                   keyboardType: TextInputType.name,
                   maxLines: 1,
-                  maxLength: 30,
+                  maxLength: 15,
                   autofocus: false,
                   autocorrect: false,
                   style: const TextStyle(

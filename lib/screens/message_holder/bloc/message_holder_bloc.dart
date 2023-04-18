@@ -31,7 +31,8 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
     final currentState = state;
     if (event is MessageHolderInitialEvent) {
       chat ??= await _firestoreRepository.getChat(chatId!);
-      _firestoreRepository.setLastMessageRead(chat?.id ?? '');
+      _firestoreRepository.setLastMessageRead(
+          chatId: chat?.id ?? '', isPrivateChat: false);
       yield MessageHolderBaseState(
           chat: chat!,
           chatId: chat?.id ?? '',
@@ -46,8 +47,16 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
       if (currentState is MessageHolderBaseState) {
         yield currentState.copyWith(privateChats: event.chats);
       }
-    }else if(event is MessageHolderChatClickedEvent){
+    } else if (event is MessageHolderChatClickedEvent) {
       if (currentState is MessageHolderBaseState) {
+        if (event.index == 0) {
+          _firestoreRepository.setLastMessageRead(
+              chatId: currentState.chatId, isPrivateChat: false);
+        } else {
+          _firestoreRepository.setLastMessageRead(
+              chatId: currentState.privateChats[event.index - 1].id,
+              isPrivateChat: true);
+        }
         yield currentState.copyWith(selectedChatIndex: event.index);
       }
     } else {

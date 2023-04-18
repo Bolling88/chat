@@ -421,7 +421,7 @@ class AppMyMessageWidget extends StatelessWidget {
                                 message.text,
                                 textAlign: TextAlign.left,
                                 style: const TextStyle(
-                                    color: AppColors.grey_1,
+                                    color: AppColors.white,
                                     fontSize: 15,
                                     fontWeight: FontWeight.w500),
                               ),

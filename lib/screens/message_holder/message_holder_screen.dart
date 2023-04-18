@@ -68,7 +68,8 @@ class MessageHolderScreenContent extends StatelessWidget {
   }
 
   Widget getSideMenu(MessageHolderBaseState state) {
-    return SizedBox(
+    return Container(
+      color: AppColors.grey_3,
       width: 60,
       child: ListView.builder(
           itemCount: state.privateChats.length + 1,
@@ -80,38 +81,38 @@ class MessageHolderScreenContent extends StatelessWidget {
               },
               child: Padding(
                 padding: const EdgeInsets.all(4.0),
-                child: Container(
-                    height: 50,
-                    width: 50,
-                    decoration: const BoxDecoration(
-                      color: AppColors.main,
-                      shape: BoxShape.rectangle,
-                      borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                    ),
-                    child: Stack(
-                      children: [
-                        (index == 0)
-                            ? (state.chat.lastMessageReadBy
-                                    .contains(getUserId()))
-                                ? const SizedBox()
-                                : Container(
-                                    color: AppColors.main,
-                                    width: 10,
-                                    height: 10,
-                                  )
-                            : (state.privateChats[index - 1].lastMessageReadBy
-                                    .contains(getUserId()))
-                                ? const SizedBox()
-                                : Container(
-                                    color: AppColors.main,
-                                    width: 10,
-                                    height: 10,
-                                  ),
-                        (index == 0)
-                            ? Text(state.chat.chatName)
-                            : Text(state.privateChats[index - 1].chatName)
-                      ],
-                    )),
+                child: Material(
+                  type: MaterialType.card,
+                  elevation: (state.selectedChatIndex == index) ? 0 : 4,
+                  color: (state.selectedChatIndex == index)
+                      ? AppColors.main_2
+                      : (index == 0)
+                          ? (state.chat.lastMessageReadBy.contains(getUserId()))
+                              ? AppColors.grey_2
+                              : AppColors.main
+                          : (state.privateChats[index - 1].lastMessageReadBy
+                                  .contains(getUserId()))
+                              ? AppColors.grey_2
+                              : AppColors.main,
+                  shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(5.0))),
+                  child: Container(
+                      height: 50,
+                      width: 50,
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.rectangle,
+                        borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                      ),
+                      child: (index == 0)
+                          ? Text(
+                              state.chat.chatName,
+                              style: const TextStyle(color: AppColors.white),
+                            )
+                          : Text(
+                              state.privateChats[index - 1].chatName,
+                              style: const TextStyle(color: AppColors.white),
+                            )),
+                ),
               ),
             );
           }),
@@ -137,15 +138,14 @@ class MessageHolderScreenContent extends StatelessWidget {
 
   AppBar getAppBar(BuildContext context, MessageHolderBaseState state) {
     return AppBar(
-      elevation: 0,
       iconTheme: const IconThemeData(
-        color: AppColors.black, //change your color here
+        color: AppColors.white, //change your color here
       ),
-      backgroundColor: AppColors.white,
+      backgroundColor: AppColors.main,
       title: Text(
         state.chat.getPartyChatName(context),
         style: const TextStyle(
-            color: AppColors.grey_1, fontSize: 15, fontWeight: FontWeight.w600),
+            color: AppColors.white, fontSize: 15, fontWeight: FontWeight.w600),
       ),
     );
   }

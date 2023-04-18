@@ -118,7 +118,8 @@ class FirestoreRepository {
         .get();
   }
 
-  Future<void> postMessage(String documentId, ChatUser user, String message,
+  Future<void> postMessage(
+      String documentId, ChatUser user, String message, bool isPrivateChat,
       {isGiphy = false, isInfoMessage = false}) async {
     await chats.doc(documentId).collection('messages').add({
       'text': message,
@@ -129,14 +130,25 @@ class FirestoreRepository {
       'createdByImageUrl': user.pictureData,
       'created': FieldValue.serverTimestamp()
     });
-    await chats.doc(documentId).set({
-      'lastMessage': message,
-      'lastMessageIsGiphy': isGiphy,
-      'lastMessageIsInfo': isInfoMessage,
-      'lastMessageReadBy': [getUserId()],
-      'lastMessageTimestamp': FieldValue.serverTimestamp(),
-      'lastMessageUserId': getUserId()
-    }, SetOptions(merge: true));
+    if (isPrivateChat) {
+      await privateChats.doc(documentId).set({
+        'lastMessage': message,
+        'lastMessageIsGiphy': isGiphy,
+        'lastMessageIsInfo': isInfoMessage,
+        'lastMessageReadBy': [getUserId()],
+        'lastMessageTimestamp': FieldValue.serverTimestamp(),
+        'lastMessageUserId': getUserId()
+      }, SetOptions(merge: true));
+    } else {
+      await chats.doc(documentId).set({
+        'lastMessage': message,
+        'lastMessageIsGiphy': isGiphy,
+        'lastMessageIsInfo': isInfoMessage,
+        'lastMessageReadBy': [getUserId()],
+        'lastMessageTimestamp': FieldValue.serverTimestamp(),
+        'lastMessageUserId': getUserId()
+      }, SetOptions(merge: true));
+    }
   }
 
   Future<QuerySnapshot> getMoreMessages(
@@ -185,17 +197,20 @@ class FirestoreRepository {
     return chats.where(FieldPath.documentId, isEqualTo: chatId).snapshots();
   }
 
-  Future<void> setLastMessageRead(String chatId) async {
-    if (chatId.isNotEmpty) {
-      try {
+  Future<void> setLastMessageRead(
+      {required String chatId, required bool isPrivateChat}) async {
+    try {
+      if (isPrivateChat) {
+        await privateChats.doc(chatId).set({
+          'lastMessageReadBy': FieldValue.arrayUnion([getUserId()]),
+        }, SetOptions(merge: true));
+      } else {
         await chats.doc(chatId).set({
           'lastMessageReadBy': FieldValue.arrayUnion([getUserId()]),
         }, SetOptions(merge: true));
-      } catch (e) {
-        Log.e(e);
       }
-    } else {
-      Log.e("setLastMessageRead: Chat is was empty");
+    } catch (e) {
+      Log.e(e);
     }
   }
 
