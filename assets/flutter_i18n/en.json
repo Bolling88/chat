@@ -252,5 +252,6 @@
   "create_chat": "Create chat",
   "skip_this_step": "Skip this step",
   "or": "or",
-  "private_chat": "Private chat"
+  "private_chat": "Private chat",
+  "joined_chat": "joined the chat"
 }

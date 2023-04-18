@@ -18,13 +18,16 @@ class MessagesScreen extends StatelessWidget {
 
   final bool isPrivateChat;
 
-  const MessagesScreen(this.chatId, this.isPrivateChat, {this.userIds, Key? key}) : super(key: key);
+  const MessagesScreen(this.chatId, this.isPrivateChat,
+      {this.userIds, Key? key})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (BuildContext context) =>
-          MessagesBloc(chatId, context.read<FirestoreRepository>(), isPrivateChat: isPrivateChat),
+      create: (BuildContext context) => MessagesBloc(
+          chatId, context.read<FirestoreRepository>(),
+          isPrivateChat: isPrivateChat),
       child: const ChatsScreenContent(),
     );
   }
@@ -97,7 +100,10 @@ class ChatsScreenContentState extends State<ChatsScreenContent> {
                                   padding: const EdgeInsets.only(
                                       top: 40, bottom: 20),
                                   child: Text(
-                                    state.messages[index].message!.text,
+                                    state.messages[index].message!.text +
+                                        ' ' +
+                                        FlutterI18n.translate(
+                                            context, 'joined_chat'),
                                     style: const TextStyle(
                                         fontSize: 13,
                                         fontWeight: FontWeight.normal,

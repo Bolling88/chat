@@ -10,10 +10,9 @@ import 'bloc/message_holder_event.dart';
 import 'bloc/message_holder_state.dart';
 
 class MessageHolderScreenArguments {
-  final Chat? chat;
-  final String? chatId;
+  final Chat chat;
 
-  const MessageHolderScreenArguments({this.chat, this.chatId});
+  const MessageHolderScreenArguments({required this.chat});
 }
 
 class MessageHolderScreen extends StatelessWidget {
@@ -28,7 +27,7 @@ class MessageHolderScreen extends StatelessWidget {
         .arguments as MessageHolderScreenArguments;
     return BlocProvider(
       create: (BuildContext context) => MessageHolderBloc(
-          context.read<FirestoreRepository>(), args.chat, args.chatId),
+          context.read<FirestoreRepository>(), args.chat),
       child: const MessageHolderScreenContent(),
     );
   }

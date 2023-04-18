@@ -119,9 +119,13 @@ class FirestoreRepository {
   }
 
   Future<void> postMessage(
-      String documentId, ChatUser user, String message, bool isPrivateChat,
-      {isGiphy = false, isInfoMessage = false}) async {
-    await chats.doc(documentId).collection('messages').add({
+      {required String chatId,
+      required ChatUser user,
+      required String message,
+      required bool isPrivateChat,
+      bool isGiphy = false,
+      bool isInfoMessage = false}) async {
+    await chats.doc(chatId).collection('messages').add({
       'text': message,
       'isGiphy': isGiphy,
       'isInfoMessage': isInfoMessage,
@@ -131,7 +135,7 @@ class FirestoreRepository {
       'created': FieldValue.serverTimestamp()
     });
     if (isPrivateChat) {
-      await privateChats.doc(documentId).set({
+      await privateChats.doc(chatId).set({
         'lastMessage': message,
         'lastMessageIsGiphy': isGiphy,
         'lastMessageIsInfo': isInfoMessage,
@@ -140,7 +144,7 @@ class FirestoreRepository {
         'lastMessageUserId': getUserId()
       }, SetOptions(merge: true));
     } else {
-      await chats.doc(documentId).set({
+      await chats.doc(chatId).set({
         'lastMessage': message,
         'lastMessageIsGiphy': isGiphy,
         'lastMessageIsInfo': isInfoMessage,

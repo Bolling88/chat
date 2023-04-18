@@ -10,12 +10,11 @@ import 'message_holder_state.dart';
 
 class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
   final FirestoreRepository _firestoreRepository;
-  Chat? chat;
-  final String? chatId;
+  final Chat chat;
 
   StreamSubscription<QuerySnapshot>? chatsStream;
 
-  MessageHolderBloc(this._firestoreRepository, this.chat, this.chatId)
+  MessageHolderBloc(this._firestoreRepository, this.chat)
       : super(MessageHolderLoadingState()) {
     add(MessageHolderInitialEvent());
   }
@@ -30,12 +29,11 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
   Stream<MessageHolderState> mapEventToState(MessageHolderEvent event) async* {
     final currentState = state;
     if (event is MessageHolderInitialEvent) {
-      chat ??= await _firestoreRepository.getChat(chatId!);
       _firestoreRepository.setLastMessageRead(
-          chatId: chat?.id ?? '', isPrivateChat: false);
+          chatId: chat.id ?? '', isPrivateChat: false);
       yield MessageHolderBaseState(
-          chat: chat!,
-          chatId: chat?.id ?? '',
+          chat: chat,
+          chatId: chat.id ?? '',
           privateChats: const [],
           selectedChatIndex: 0);
       setUpChatsListener();

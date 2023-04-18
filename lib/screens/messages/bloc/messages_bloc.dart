@@ -43,6 +43,7 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
           ? await _firestoreRepository.getPrivateChat(chatId)
           : await _firestoreRepository.getChat(chatId);
       _chatUser = (await _firestoreRepository.getUser())!;
+      postJoinedMessage();
       if (chat != null) {
         final data = await _firestoreRepository.getMessages(chatId);
         if (data.docs.isNotEmpty) {
@@ -66,7 +67,10 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
       if (currentState is MessagesBaseState) {
         if (currentState.currentMessage.isNotEmpty) {
           await _firestoreRepository.postMessage(
-              chatId, _chatUser, currentState.currentMessage, isPrivateChat);
+              chatId: chatId,
+              user: _chatUser,
+              message: currentState.currentMessage,
+              isPrivateChat: isPrivateChat);
           yield currentState.copyWith(currentMessage: "");
         }
       }
@@ -90,7 +94,11 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
       Log.d("Got giphy event");
       if (currentState is MessagesBaseState) {
         final String giphyUrl = event.gif.images?.downsized?.url ?? "";
-        await _firestoreRepository.postMessage(chatId, _chatUser, giphyUrl, isPrivateChat,
+        await _firestoreRepository.postMessage(
+            chatId: chatId,
+            user: _chatUser,
+            message: giphyUrl,
+            isPrivateChat: isPrivateChat,
             isGiphy: true);
         yield currentState.copyWith(currentMessage: "");
       }
@@ -122,6 +130,15 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
       yield MessagesErrorState();
       Log.e("Error in messages");
     }
+  }
+
+  void postJoinedMessage() {
+    _firestoreRepository.postMessage(
+        chatId: chatId,
+        user: _chatUser,
+        message: _chatUser.name,
+        isPrivateChat: isPrivateChat,
+        isInfoMessage: true);
   }
 
   void setUpMessagesListener(String chatId) async {
