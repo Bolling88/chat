@@ -12,11 +12,11 @@ import 'bloc/visit_bloc.dart';
 import 'bloc/visit_state.dart';
 
 class VisitScreen extends StatelessWidget {
-  static const routeName = "/visit_screen";
   final String _userId;
   final BuildContext parentContext;
 
-  const VisitScreen(this._userId, {required this.parentContext, Key? key}) : super(key: key);
+  const VisitScreen(this._userId, {required this.parentContext, Key? key})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {

@@ -13,10 +13,9 @@ class ChatEmptyState extends ChatState {}
 
 class ChatBaseState extends ChatState {
   final List<Chat> chats;
-  final Map<String, ChatUser> users;
 
-  ChatBaseState(this.chats, this.users);
+  ChatBaseState(this.chats);
 
   @override
-  List<Object?> get props => [chats, users];
+  List<Object?> get props => [chats];
 }

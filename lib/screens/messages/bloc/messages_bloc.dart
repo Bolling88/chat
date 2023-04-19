@@ -30,6 +30,7 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
 
   @override
   Future<void> close() {
+    postLeftMessage();
     messagesStream?.cancel();
     return super.close();
   }
@@ -39,36 +40,31 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
     Log.d(event.toString());
     final currentState = state;
     if (event is MessagesInitialEvent) {
-      final chat = isPrivateChat
-          ? await _firestoreRepository.getPrivateChat(chatId)
-          : await _firestoreRepository.getChat(chatId);
       _chatUser = (await _firestoreRepository.getUser())!;
       postJoinedMessage();
-      if (chat != null) {
-        final data = await _firestoreRepository.getMessages(chatId);
-        if (data.docs.isNotEmpty) {
-          Log.d("New documents: ${data.docs.length}");
-          _lastMessageSnapshot = data.docs.last;
-          final initialMessages = data.docs
-              .map((e) =>
-                  Message.fromJson(e.id, e.data() as Map<String, dynamic>))
-              .toList();
+      final data =
+          await _firestoreRepository.getMessages(chatId, isPrivateChat);
+      if (data.docs.isNotEmpty) {
+        Log.d("New documents: ${data.docs.length}");
+        _lastMessageSnapshot = data.docs.last;
+        final initialMessages = data.docs
+            .map(
+                (e) => Message.fromJson(e.id, e.data() as Map<String, dynamic>))
+            .toList();
 
-          yield MessagesBaseState(getMessagesWithDates(initialMessages),
-              FirebaseAuth.instance.currentUser!.uid, "");
-        } else {
-          yield MessagesBaseState(const [], getUserId(), "");
-        }
-        setUpMessagesListener(chatId);
+        yield MessagesBaseState(getMessagesWithDates(initialMessages),
+            FirebaseAuth.instance.currentUser!.uid, "");
       } else {
-        yield MessagesErrorState();
+        yield MessagesBaseState(const [], getUserId(), "");
       }
+      setUpMessagesListener(chatId);
     } else if (event is MessagesSendEvent) {
       if (currentState is MessagesBaseState) {
         if (currentState.currentMessage.isNotEmpty) {
           await _firestoreRepository.postMessage(
               chatId: chatId,
               user: _chatUser,
+              chatType: ChatType.message,
               message: currentState.currentMessage,
               isPrivateChat: isPrivateChat);
           yield currentState.copyWith(currentMessage: "");
@@ -97,6 +93,7 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
         await _firestoreRepository.postMessage(
             chatId: chatId,
             user: _chatUser,
+            chatType: ChatType.giphy,
             message: giphyUrl,
             isPrivateChat: isPrivateChat,
             isGiphy: true);
@@ -105,8 +102,8 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
     } else if (event is MessagesFetchMoreEvent) {
       final lastMessage = _lastMessageSnapshot;
       if (currentState is MessagesBaseState && lastMessage != null) {
-        final data =
-            await _firestoreRepository.getMoreMessages(chatId, lastMessage);
+        final data = await _firestoreRepository.getMoreMessages(
+            chatId, isPrivateChat, lastMessage);
         if (data.docs.isNotEmpty) {
           Log.d("New documents: ${data.docs.length}");
           _lastMessageSnapshot = data.docs.last;
@@ -136,6 +133,17 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
     _firestoreRepository.postMessage(
         chatId: chatId,
         user: _chatUser,
+        chatType: ChatType.joined,
+        message: _chatUser.name,
+        isPrivateChat: isPrivateChat,
+        isInfoMessage: true);
+  }
+
+  void postLeftMessage() {
+    _firestoreRepository.postMessage(
+        chatId: chatId,
+        user: _chatUser,
+        chatType: ChatType.left,
         message: _chatUser.name,
         isPrivateChat: isPrivateChat,
         isInfoMessage: true);
@@ -143,8 +151,9 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
 
   void setUpMessagesListener(String chatId) async {
     Log.d('Setting up message stream');
-    messagesStream =
-        _firestoreRepository.streamMessages(chatId, 1).listen((data) {
+    messagesStream = _firestoreRepository
+        .streamMessages(chatId, isPrivateChat, 1)
+        .listen((data) {
       Log.d("Got messages");
       //Only add last document as snapshot if this is initial fetch.
       if (_lastMessageSnapshot == null && data.docs.isNotEmpty) {

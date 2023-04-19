@@ -1,10 +1,12 @@
 import 'package:chat/repository/firestore_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_i18n/flutter_i18n.dart';
 import '../../model/chat.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_widgets.dart';
 import '../messages/messages_screen.dart';
+import '../people/people_screen.dart';
 import 'bloc/message_holder_bloc.dart';
 import 'bloc/message_holder_event.dart';
 import 'bloc/message_holder_state.dart';
@@ -26,8 +28,8 @@ class MessageHolderScreen extends StatelessWidget {
         ?.settings
         .arguments as MessageHolderScreenArguments;
     return BlocProvider(
-      create: (BuildContext context) => MessageHolderBloc(
-          context.read<FirestoreRepository>(), args.chat),
+      create: (BuildContext context) =>
+          MessageHolderBloc(context.read<FirestoreRepository>(), args.chat),
       child: const MessageHolderScreenContent(),
     );
   }
@@ -36,6 +38,30 @@ class MessageHolderScreen extends StatelessWidget {
 class MessageHolderScreenContent extends StatelessWidget {
   const MessageHolderScreenContent({Key? key}) : super(key: key);
 
+  Future<bool> _onWillPop(blocContext) async {
+    return await showDialog(
+      context: blocContext,
+      builder: (context) => AlertDialog(
+        title: Text(FlutterI18n.translate(context, 'exit_chat_title')),
+        content: Text(FlutterI18n.translate(context, 'exit_chat_message')),
+        actions: <Widget>[
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text(FlutterI18n.translate(context, 'no')),
+          ),
+          TextButton(
+            onPressed: () {
+              BlocProvider.of<MessageHolderBloc>(blocContext)
+                  .add(MessageHolderExitChatEvent());
+              return Navigator.of(context).pop(true);
+            },
+            child: Text(FlutterI18n.translate(context, 'yes')),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocListener<MessageHolderBloc, MessageHolderState>(
@@ -43,20 +69,23 @@ class MessageHolderScreenContent extends StatelessWidget {
         child: BlocBuilder<MessageHolderBloc, MessageHolderState>(
           builder: (context, state) {
             if (state is MessageHolderBaseState) {
-              return Scaffold(
-                  backgroundColor: AppColors.white,
-                  appBar: getAppBar(context, state),
-                  body: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        state.privateChats.isNotEmpty
-                            ? getSideMenu(state)
-                            : const SizedBox.shrink(),
-                        Expanded(
-                            child: IndexedStack(
-                                index: state.selectedChatIndex,
-                                children: getChatViews(state))),
-                      ]));
+              return WillPopScope(
+                onWillPop: () => _onWillPop(context),
+                child: Scaffold(
+                    backgroundColor: AppColors.white,
+                    appBar: getAppBar(context, state),
+                    body: Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          state.privateChats.isNotEmpty
+                              ? getSideMenu(state)
+                              : const SizedBox.shrink(),
+                          Expanded(
+                              child: IndexedStack(
+                                  index: state.selectedChatIndex,
+                                  children: getChatViews(state))),
+                        ])),
+              );
             } else {
               return const Scaffold(
                   backgroundColor: AppColors.white,
@@ -142,10 +171,20 @@ class MessageHolderScreenContent extends StatelessWidget {
       ),
       backgroundColor: AppColors.main,
       title: Text(
-        state.chat.getPartyChatName(context),
-        style: const TextStyle(
-            color: AppColors.white, fontSize: 15, fontWeight: FontWeight.w600),
+        state.chat.chatName,
+        style: const TextStyle(color: AppColors.white),
       ),
+      actions: [
+        IconButton(
+          icon: const Icon(
+            Icons.people,
+            color: AppColors.white,
+          ),
+          onPressed: () {
+            showPeopleScreen(context, state.chat);
+          },
+        )
+      ],
     );
   }
 }

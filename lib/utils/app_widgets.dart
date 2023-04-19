@@ -304,7 +304,7 @@ class AppOtherMessageWidget extends StatelessWidget {
             ),
           ),
           Flexible(
-            child: (message.isGiphy)
+            child: (message.chatType == ChatType.giphy)
                 ? ClipRRect(
                     borderRadius: BorderRadius.circular(20.0),
                     child: CachedNetworkImage(
@@ -383,7 +383,7 @@ class AppMyMessageWidget extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.end,
           mainAxisSize: MainAxisSize.min,
           children: [
-            (message.isGiphy)
+            (message.chatType == ChatType.giphy)
                 ? Flexible(
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(20.0),

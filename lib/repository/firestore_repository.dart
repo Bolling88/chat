@@ -14,6 +14,18 @@ enum Gender {
   final num value;
 }
 
+enum ChatType {
+  message(0),
+  joined(1),
+  left(2),
+  giphy(3),
+  date(4);
+
+  const ChatType(this.value);
+
+  final num value;
+}
+
 getUserId() => FirebaseAuth.instance.currentUser!.uid;
 
 class FirestoreRepository {
@@ -83,8 +95,8 @@ class FirestoreRepository {
         .catchError((error) => Log.e("Failed to update user image: $error"));
   }
 
-  Future<Chat?> getChat(String chatId) async {
-    return chats
+  Future<Chat?> getChat(String chatId, bool isPrivateChat) async {
+    return getChatType(isPrivateChat: isPrivateChat)
         .doc(chatId)
         .get()
         .then((value) => value.exists
@@ -96,21 +108,8 @@ class FirestoreRepository {
     });
   }
 
-  Future<Chat?> getPrivateChat(String chatId) async {
-    return privateChats
-        .doc(chatId)
-        .get()
-        .then((value) => value.exists
-            ? Chat.fromJson(value.id, value.data() as Map<String, dynamic>)
-            : null)
-        .catchError((error) {
-      Log.e("Failed to get chat: $error");
-      return null;
-    });
-  }
-
-  Future<QuerySnapshot> getMessages(String chatId) async {
-    return await chats
+  Future<QuerySnapshot> getMessages(String chatId, bool isPrivateChat) async {
+    return await getChatType(isPrivateChat: isPrivateChat)
         .doc(chatId)
         .collection("messages")
         .orderBy("created", descending: true)
@@ -123,41 +122,72 @@ class FirestoreRepository {
       required ChatUser user,
       required String message,
       required bool isPrivateChat,
+      required ChatType chatType,
       bool isGiphy = false,
       bool isInfoMessage = false}) async {
-    await chats.doc(chatId).collection('messages').add({
-      'text': message,
-      'isGiphy': isGiphy,
-      'isInfoMessage': isInfoMessage,
-      'createdById': getUserId(),
-      'createdByName': user.displayName,
-      'createdByImageUrl': user.pictureData,
-      'created': FieldValue.serverTimestamp()
-    });
     if (isPrivateChat) {
-      await privateChats.doc(chatId).set({
-        'lastMessage': message,
-        'lastMessageIsGiphy': isGiphy,
-        'lastMessageIsInfo': isInfoMessage,
-        'lastMessageReadBy': [getUserId()],
-        'lastMessageTimestamp': FieldValue.serverTimestamp(),
-        'lastMessageUserId': getUserId()
-      }, SetOptions(merge: true));
+      //Do not post joined and left messages in private chats
+      if (chatType == ChatType.message || chatType == ChatType.giphy) {
+        await privateChats.doc(chatId).collection('messages').add({
+          'text': message,
+          'chatType': chatType.value,
+          'isInfoMessage': isInfoMessage,
+          'createdById': getUserId(),
+          'createdByName': user.displayName,
+          'createdByImageUrl': user.pictureData,
+          'created': FieldValue.serverTimestamp()
+        });
+      }
     } else {
+      //Post message in regular chat
+      await chats.doc(chatId).collection('messages').add({
+        'text': message,
+        'chatType': chatType.value,
+        'isInfoMessage': isInfoMessage,
+        'createdById': getUserId(),
+        'createdByName': user.displayName,
+        'createdByImageUrl': user.pictureData,
+        'created': FieldValue.serverTimestamp()
+      });
+    }
+
+    //Update the chat object
+    if (chatType == ChatType.message || chatType == ChatType.giphy) {
+      if (isPrivateChat) {
+        await privateChats.doc(chatId).set({
+          'lastMessage': message,
+          'chatType': chatType.value,
+          'lastMessageReadBy': FieldValue.arrayUnion([getUserId()]),
+          'lastMessageTimestamp': FieldValue.serverTimestamp(),
+          'lastMessageUserId': getUserId()
+        }, SetOptions(merge: true));
+      } else {
+        await chats.doc(chatId).set({
+          'lastMessage': message,
+          'chatType': chatType.value,
+          'lastMessageReadBy': FieldValue.arrayUnion([getUserId()]),
+          'lastMessageTimestamp': FieldValue.serverTimestamp(),
+          'lastMessageUserId': getUserId()
+        }, SetOptions(merge: true));
+      }
+    } else if (chatType == ChatType.joined) {
       await chats.doc(chatId).set({
-        'lastMessage': message,
-        'lastMessageIsGiphy': isGiphy,
-        'lastMessageIsInfo': isInfoMessage,
-        'lastMessageReadBy': [getUserId()],
-        'lastMessageTimestamp': FieldValue.serverTimestamp(),
-        'lastMessageUserId': getUserId()
+        'users': FieldValue.arrayUnion([getUserId()]),
+      }, SetOptions(merge: true));
+    } else if (chatType == ChatType.left) {
+      await chats.doc(chatId).set({
+        'users': FieldValue.arrayRemove([getUserId()]),
       }, SetOptions(merge: true));
     }
   }
 
+  CollectionReference getChatType({required bool isPrivateChat}) {
+    return isPrivateChat ? privateChats : chats;
+  }
+
   Future<QuerySnapshot> getMoreMessages(
-      String chatId, DocumentSnapshot snapshot) async {
-    return chats
+      String chatId, bool isPrivateChat, DocumentSnapshot snapshot) async {
+    return getChatType(isPrivateChat: isPrivateChat)
         .doc(chatId)
         .collection("messages")
         .orderBy("created", descending: true)
@@ -166,30 +196,9 @@ class FirestoreRepository {
         .get();
   }
 
-  Future<List<ChatUser>> getUsers(List<String> userIds) async {
-    final fetchedUsers = <ChatUser>[];
-    for (var i = 0; i < userIds.length; i++) {
-      final startValue = i * 10;
-      final endValue = i * 10 + 10;
-      if (startValue >= userIds.length) break;
-      final List<String> userSection = userIds
-          .getRange(startValue,
-              (endValue >= userIds.length) ? userIds.length : endValue)
-          .toList();
-      final querySnapshot =
-          await users.where(FieldPath.documentId, whereIn: userSection).get();
-      final userList = querySnapshot.docs
-          .where((it) => it.exists)
-          .map((it) =>
-              ChatUser.fromJson(it.id, it.data() as Map<String, dynamic>))
-          .toList();
-      fetchedUsers.addAll(userList);
-    }
-    return fetchedUsers;
-  }
-
-  Stream<QuerySnapshot> streamMessages(String chatId, int limit) {
-    return chats
+  Stream<QuerySnapshot> streamMessages(
+      String chatId, bool isPrivateChat, int limit) {
+    return getChatType(isPrivateChat: isPrivateChat)
         .doc(chatId)
         .collection("messages")
         .orderBy("created", descending: true)
@@ -197,36 +206,28 @@ class FirestoreRepository {
         .snapshots(includeMetadataChanges: true);
   }
 
-  Stream<QuerySnapshot> streamChat(String chatId) {
-    return chats.where(FieldPath.documentId, isEqualTo: chatId).snapshots();
+  Stream<QuerySnapshot> streamChat(String chatId, bool isPrivateChat) {
+    return getChatType(isPrivateChat: isPrivateChat)
+        .where(FieldPath.documentId, isEqualTo: chatId)
+        .snapshots();
   }
 
   Future<void> setLastMessageRead(
       {required String chatId, required bool isPrivateChat}) async {
     try {
-      if (isPrivateChat) {
-        await privateChats.doc(chatId).set({
-          'lastMessageReadBy': FieldValue.arrayUnion([getUserId()]),
-        }, SetOptions(merge: true));
-      } else {
-        await chats.doc(chatId).set({
-          'lastMessageReadBy': FieldValue.arrayUnion([getUserId()]),
-        }, SetOptions(merge: true));
-      }
+      await getChatType(isPrivateChat: isPrivateChat).doc(chatId).set({
+        'lastMessageReadBy': FieldValue.arrayUnion([getUserId()]),
+      }, SetOptions(merge: true));
     } catch (e) {
       Log.e(e);
     }
   }
 
-  Stream<QuerySnapshot> streamChats() {
-    return chats.snapshots();
+  Stream<QuerySnapshot> streamChats({required bool isPrivateChat}) {
+    return getChatType(isPrivateChat: isPrivateChat).snapshots();
   }
 
-  Stream<QuerySnapshot> streamPrivateChats() {
-    return privateChats.where('users', arrayContains: getUserId()).snapshots();
-  }
-
-  Future<Chat?> createChat({required String chatName}) async {
+  Future<Chat?> createOpenChat({required String chatName}) async {
     try {
       final reference = await chats.add({
         'created': FieldValue.serverTimestamp(),
@@ -244,6 +245,29 @@ class FirestoreRepository {
       Log.e(e);
     }
     return null;
+  }
+
+  void exitAllChats({required String chatId}) async {
+    leaveChat(chatId);
+    final chats =
+        await privateChats.where('users', arrayContains: getUserId()).get();
+    for (var element in chats.docs) {
+      element.reference.delete();
+    }
+  }
+
+  Future<void> leaveChat(String chatId) async {
+    if (chatId.isNotEmpty) {
+      try {
+        await chats.doc(chatId).set({
+          'users': FieldValue.arrayRemove([getUserId()]),
+        }, SetOptions(merge: true));
+      } catch (e) {
+        Log.e(e);
+      }
+    } else {
+      Log.e("leaveChat: Chat is was empty");
+    }
   }
 
   Future<Chat?> createPrivateChat(ChatUser user) async {
@@ -264,5 +288,19 @@ class FirestoreRepository {
       Log.e(e);
     }
     return null;
+  }
+
+  Future<List<ChatUser>?> getUsersInChat(Chat chat) {
+    return users
+        .where(FieldPath.documentId, whereIn: chat.users)
+        .get()
+        .then((value) => value.docs
+            .map((e) =>
+                ChatUser.fromJson(e.id, e.data() as Map<String, dynamic>))
+            .toList())
+        .catchError((error) {
+      Log.e("Failed to get chat: $error");
+      return null;
+    });
   }
 }

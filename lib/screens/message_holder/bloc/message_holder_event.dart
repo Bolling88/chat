@@ -9,6 +9,7 @@ class MessageHolderEvent extends Equatable {
 }
 
 class MessageHolderInitialEvent extends MessageHolderEvent {}
+class MessageHolderExitChatEvent extends MessageHolderEvent {}
 
 class MessageHolderChatsUpdatedEvent extends MessageHolderEvent {
   final List<Chat> chats;

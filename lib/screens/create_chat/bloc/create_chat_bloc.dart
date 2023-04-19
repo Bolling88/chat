@@ -25,7 +25,7 @@ class CreateChatBloc extends Bloc<CreateChatEvent, CreateChatState> {
       } else if (event is CreateChatContinueClickedEvent) {
         if (currentState is CreateChatBaseState) {
           yield CreateChatLoadingState();
-          await _firestoreRepository.createChat(chatName: currentState.name);
+          await _firestoreRepository.createOpenChat(chatName: currentState.name);
           yield CreateChatSuccessState(name: currentState.name);
         }
       } else {

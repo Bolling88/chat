@@ -253,5 +253,10 @@
   "skip_this_step": "Skip this step",
   "or": "or",
   "private_chat": "Private chat",
-  "joined_chat": "joined the chat"
+  "joined_chat": "joined the chat",
+  "left_chat": "left the chat",
+  "yes": "yes",
+  "no": "no",
+  "exit_chat_title": "Leave all chats?",
+  "exit_chat_message": "Are you sure you want to leave the group chat and all the private chats?"
 }

@@ -94,7 +94,7 @@ class ChatsScreenContentState extends State<ChatsScreenContent> {
                                         color: AppColors.grey_1),
                                   )));
                         } else if (state
-                            .messages[index].message!.isInfoMessage) {
+                            .messages[index].message?.chatType == ChatType.joined) {
                           return Center(
                               child: Padding(
                                   padding: const EdgeInsets.only(
@@ -104,6 +104,22 @@ class ChatsScreenContentState extends State<ChatsScreenContent> {
                                         ' ' +
                                         FlutterI18n.translate(
                                             context, 'joined_chat'),
+                                    style: const TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.normal,
+                                        color: AppColors.grey_1),
+                                  )));
+                        }else if (state
+                            .messages[index].message?.chatType == ChatType.left) {
+                          return Center(
+                              child: Padding(
+                                  padding: const EdgeInsets.only(
+                                      top: 40, bottom: 20),
+                                  child: Text(
+                                    state.messages[index].message!.text +
+                                        ' ' +
+                                        FlutterI18n.translate(
+                                            context, 'left_chat'),
                                     style: const TextStyle(
                                         fontSize: 13,
                                         fontWeight: FontWeight.normal,

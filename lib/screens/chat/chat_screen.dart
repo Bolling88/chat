@@ -5,7 +5,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:flutter_svg/svg.dart';
 import '../../model/chat.dart';
-import '../../model/chat_user.dart';
 import '../../repository/firestore_repository.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_widgets.dart';
@@ -37,13 +36,9 @@ class ChatsScreenContent extends StatelessWidget {
         backgroundColor: AppColors.white,
         appBar: AppBar(
           backgroundColor: AppColors.main,
-          elevation: 0,
           title: Text(
             FlutterI18n.translate(context, "chat"),
-            style: const TextStyle(
-                color: AppColors.grey_1,
-                fontSize: 15,
-                fontWeight: FontWeight.w600),
+            style: const TextStyle(color: AppColors.white),
           ),
           actions: [
             IconButton(
@@ -113,10 +108,7 @@ class ChatsScreenContent extends StatelessWidget {
             subtitle: (state.chats[index].lastMessageReadBy
                     .contains(FirebaseAuth.instance.currentUser!.uid))
                 ? Text(
-                    _getLastMessage(
-                        state.chats[index],
-                        state.users[state.chats[index].lastMessageUserId],
-                        context),
+                    state.chats[index].lastMessage,
                     maxLines: 2,
                     style: const TextStyle(
                         color: AppColors.grey_1,
@@ -134,10 +126,7 @@ class ChatsScreenContent extends StatelessWidget {
                       ),
                       Expanded(
                         child: Text(
-                          _getLastMessage(
-                              state.chats[index],
-                              state.users[state.chats[index].lastMessageUserId],
-                              context),
+                          state.chats[index].lastMessage,
                           maxLines: 2,
                           style: const TextStyle(
                               color: AppColors.grey_1,
@@ -211,24 +200,5 @@ class ChatsScreenContent extends StatelessWidget {
               child: SvgPicture.asset("assets/svg/party-icon.svg",
                   semanticsLabel: "", color: AppColors.main))),
     );
-  }
-
-  String _getLastMessage(Chat chat, ChatUser? user, BuildContext context) {
-    if (chat.lastMessageUserId.isEmpty || user == null) {
-      return chat.lastMessage;
-    } else if (chat.lastMessageUserId ==
-        FirebaseAuth.instance.currentUser!.uid) {
-      if (chat.lastMessageIsGiphy) {
-        return FlutterI18n.translate(context, "giphy_sent");
-      } else {
-        return "${FlutterI18n.translate(context, "you")}: ${chat.lastMessage}";
-      }
-    } else {
-      if (chat.lastMessageIsGiphy) {
-        return "$user ${FlutterI18n.translate(context, "giphy_info")}";
-      } else {
-        return "$user: ${chat.lastMessage}";
-      }
-    }
   }
 }

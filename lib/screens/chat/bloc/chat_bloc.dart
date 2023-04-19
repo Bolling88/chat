@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:collection/collection.dart';
 import '../../../model/chat.dart';
@@ -14,8 +13,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   final FirestoreRepository _firestoreRepository;
   late ChatUser user;
 
-  ChatBloc(this._firestoreRepository)
-      : super(ChatLoadingState()) {
+  ChatBloc(this._firestoreRepository) : super(ChatLoadingState()) {
     add(ChatInitialEvent());
   }
 
@@ -32,16 +30,8 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
         for (var chat in chats) {
           userIds.addAll(chat.users);
         }
-        final List<ChatUser> users =
-            await _firestoreRepository.getUsers(userIds.toList());
-        Log.d("Got users: ${users.toString()}");
-        final userMap = <String, ChatUser>{};
-        for (var user in users) {
-          if (user.id != FirebaseAuth.instance.currentUser!.uid) {
-            userMap[user.id] = user;
-          }
-        }
-        yield ChatBaseState(chats, userMap);
+
+        yield ChatBaseState(chats);
       }
     } else {
       throw UnimplementedError();
@@ -50,7 +40,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
 
   void setUpDataListener() {
     Log.d("Setting up data listener");
-    _firestoreRepository.streamChats().listen((event) {
+    _firestoreRepository.streamChats(isPrivateChat: false).listen((event) {
       final List<Chat> chats = event.docs
           .map((e) => Chat.fromJson(e.id, e.data() as Map<String, dynamic>))
           .toList()
