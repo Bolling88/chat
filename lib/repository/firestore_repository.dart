@@ -123,15 +123,13 @@ class FirestoreRepository {
       required String message,
       required bool isPrivateChat,
       required ChatType chatType,
-      bool isGiphy = false,
-      bool isInfoMessage = false}) async {
+      bool isGiphy = false}) async {
     if (isPrivateChat) {
       //Do not post joined and left messages in private chats
       if (chatType == ChatType.message || chatType == ChatType.giphy) {
         await privateChats.doc(chatId).collection('messages').add({
           'text': message,
           'chatType': chatType.value,
-          'isInfoMessage': isInfoMessage,
           'createdById': getUserId(),
           'createdByName': user.displayName,
           'createdByImageUrl': user.pictureData,
@@ -143,7 +141,6 @@ class FirestoreRepository {
       await chats.doc(chatId).collection('messages').add({
         'text': message,
         'chatType': chatType.value,
-        'isInfoMessage': isInfoMessage,
         'createdById': getUserId(),
         'createdByName': user.displayName,
         'createdByImageUrl': user.pictureData,
@@ -170,11 +167,11 @@ class FirestoreRepository {
           'lastMessageUserId': getUserId()
         }, SetOptions(merge: true));
       }
-    } else if (chatType == ChatType.joined) {
+    } else if (chatType == ChatType.joined && !isPrivateChat) {
       await chats.doc(chatId).set({
         'users': FieldValue.arrayUnion([getUserId()]),
       }, SetOptions(merge: true));
-    } else if (chatType == ChatType.left) {
+    } else if (chatType == ChatType.left && !isPrivateChat) {
       await chats.doc(chatId).set({
         'users': FieldValue.arrayRemove([getUserId()]),
       }, SetOptions(merge: true));
@@ -278,7 +275,7 @@ class FirestoreRepository {
         'users': [getUserId(), user.id],
         'chatName': user.displayName,
       });
-      final querySnapshot = await chats.doc(reference.id).get()
+      final querySnapshot = await privateChats.doc(reference.id).get()
         ..data();
       final data = querySnapshot.data();
       if (data != null) {

@@ -135,8 +135,7 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
         user: _chatUser,
         chatType: ChatType.joined,
         message: _chatUser.name,
-        isPrivateChat: isPrivateChat,
-        isInfoMessage: true);
+        isPrivateChat: isPrivateChat);
   }
 
   void postLeftMessage() {
@@ -145,8 +144,7 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
         user: _chatUser,
         chatType: ChatType.left,
         message: _chatUser.name,
-        isPrivateChat: isPrivateChat,
-        isInfoMessage: true);
+        isPrivateChat: isPrivateChat);
   }
 
   void setUpMessagesListener(String chatId) async {

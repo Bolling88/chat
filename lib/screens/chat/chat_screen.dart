@@ -104,7 +104,7 @@ class ChatsScreenContent extends StatelessWidget {
               state.chats[index].getLastMessageReadableDate(),
               style: const TextStyle(fontSize: 13, color: AppColors.grey_1),
             ),
-            leading: getLeadingIcon(state.chats[index]),
+            leading: const Icon(Icons.chat),
             subtitle: (state.chats[index].lastMessageReadBy
                     .contains(FirebaseAuth.instance.currentUser!.uid))
                 ? Text(
@@ -146,47 +146,6 @@ class ChatsScreenContent extends StatelessWidget {
         );
       },
     );
-  }
-
-  Widget getLeadingIcon(Chat chat) {
-    if (chat.users.length > 2) {
-      return SizedBox(
-        width: 50,
-        child: Stack(
-          children: [
-            Align(
-              alignment: Alignment.topLeft,
-              child: AppUserImage(chat.userInfos[0].pictureData, size: 36),
-            ),
-            Align(
-              alignment: Alignment.bottomRight,
-              child: Container(
-                width: 38,
-                height: 38,
-                decoration: const BoxDecoration(
-                  color: AppColors.white,
-                  shape: BoxShape.circle,
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(2),
-                  child: AppUserImage(
-                    chat.userInfos[1].pictureData,
-                    size: 36,
-                  ),
-                ),
-              ),
-            )
-          ],
-        ),
-      );
-    } else if (chat.userInfos.isNotEmpty) {
-      return AppUserImage(chat.userInfos[0].pictureData);
-    } else {
-      return const SizedBox(
-        width: 10,
-        height: 10,
-      );
-    }
   }
 
   Widget getLeadingPartyIcon(Chat chat) {
