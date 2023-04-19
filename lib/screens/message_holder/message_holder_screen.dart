@@ -104,8 +104,12 @@ class MessageHolderScreenContent extends StatelessWidget {
           itemBuilder: (context, index) {
             return GestureDetector(
               onTap: () {
-                BlocProvider.of<MessageHolderBloc>(context)
-                    .add(MessageHolderChatClickedEvent(index));
+                BlocProvider.of<MessageHolderBloc>(context).add(
+                    MessageHolderChatClickedEvent(
+                        index,
+                        (index == 0)
+                            ? state.chat
+                            : state.privateChats[index - 1]));
               },
               child: Padding(
                 padding: const EdgeInsets.all(4.0),

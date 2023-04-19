@@ -11,13 +11,13 @@ class MessageHolderEvent extends Equatable {
 class MessageHolderInitialEvent extends MessageHolderEvent {}
 class MessageHolderExitChatEvent extends MessageHolderEvent {}
 
-class MessageHolderChatsUpdatedEvent extends MessageHolderEvent {
-  final List<Chat> chats;
+class MessageHolderPrivateChatsUpdatedEvent extends MessageHolderEvent {
+  final List<Chat> privateChats;
 
-  MessageHolderChatsUpdatedEvent(this.chats);
+  MessageHolderPrivateChatsUpdatedEvent(this.privateChats);
 
   @override
-  List<Object> get props => [chats];
+  List<Object> get props => [privateChats];
 }
 
 class MessageHolderPrivateChatEvent extends MessageHolderEvent {
@@ -31,9 +31,10 @@ class MessageHolderPrivateChatEvent extends MessageHolderEvent {
 
 class MessageHolderChatClickedEvent extends MessageHolderEvent {
   final int index;
+  final Chat chat;
 
-  MessageHolderChatClickedEvent(this.index);
+  MessageHolderChatClickedEvent(this.index, this.chat);
 
   @override
-  List<Object> get props => [index];
+  List<Object> get props => [index, chat];
 }

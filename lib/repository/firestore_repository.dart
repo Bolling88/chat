@@ -154,7 +154,7 @@ class FirestoreRepository {
         await privateChats.doc(chatId).set({
           'lastMessage': message,
           'chatType': chatType.value,
-          'lastMessageReadBy': FieldValue.arrayUnion([getUserId()]),
+          'lastMessageReadBy': [getUserId()],
           'lastMessageTimestamp': FieldValue.serverTimestamp(),
           'lastMessageUserId': getUserId()
         }, SetOptions(merge: true));
@@ -162,7 +162,7 @@ class FirestoreRepository {
         await chats.doc(chatId).set({
           'lastMessage': message,
           'chatType': chatType.value,
-          'lastMessageReadBy': FieldValue.arrayUnion([getUserId()]),
+          'lastMessageReadBy': [getUserId()],
           'lastMessageTimestamp': FieldValue.serverTimestamp(),
           'lastMessageUserId': getUserId()
         }, SetOptions(merge: true));
@@ -220,8 +220,12 @@ class FirestoreRepository {
     }
   }
 
-  Stream<QuerySnapshot> streamChats({required bool isPrivateChat}) {
-    return getChatType(isPrivateChat: isPrivateChat).snapshots();
+  Stream<QuerySnapshot> streamChats() {
+    return chats.snapshots();
+  }
+
+  Stream<QuerySnapshot> streamPrivateChats() {
+    return privateChats.where('users', arrayContains: getUserId()).snapshots();
   }
 
   Future<Chat?> createOpenChat({required String chatName}) async {

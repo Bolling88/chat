@@ -12,26 +12,30 @@ class MessageHolderBaseState extends MessageHolderState {
   final String chatId;
   final Chat chat;
   final List<Chat> privateChats;
+  final Chat selectedChat;
   final int selectedChatIndex;
 
   MessageHolderBaseState(
       {required this.chat,
       required this.privateChats,
       required this.chatId,
+      required this.selectedChat,
       required this.selectedChatIndex});
 
   MessageHolderBaseState copyWith(
       {Chat? chat,
       List<Chat>? privateChats,
       String? chatId,
+      Chat? selectedChat,
       int? selectedChatIndex}) {
     return MessageHolderBaseState(
         chat: chat ?? this.chat,
         privateChats: privateChats ?? this.privateChats,
         chatId: chatId ?? this.chatId,
+        selectedChat: selectedChat ?? this.selectedChat,
         selectedChatIndex: selectedChatIndex ?? this.selectedChatIndex);
   }
 
   @override
-  List<Object> get props => [chat, chatId, privateChats, selectedChatIndex];
+  List<Object> get props => [chat, chatId, privateChats, selectedChat, selectedChatIndex];
 }

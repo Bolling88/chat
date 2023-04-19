@@ -40,7 +40,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
 
   void setUpDataListener() {
     Log.d("Setting up data listener");
-    _firestoreRepository.streamChats(isPrivateChat: false).listen((event) {
+    _firestoreRepository.streamChats().listen((event) {
       final List<Chat> chats = event.docs
           .map((e) => Chat.fromJson(e.id, e.data() as Map<String, dynamic>))
           .toList()
