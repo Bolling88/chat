@@ -38,6 +38,7 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
           selectedChat: chat,
           selectedChatIndex: 0);
       setUpPrivateChatsListener();
+      setUpChatsListener();
     } else if (event is MessageHolderPrivateChatEvent) {
       if (currentState is MessageHolderBaseState) {
         await _firestoreRepository.createPrivateChat(event.user);
@@ -64,6 +65,10 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
         } else {
           yield currentState.copyWith(privateChats: event.privateChats);
         }
+      }
+    }else if(event is MessageHolderChatUpdatedEvent){
+      if (currentState is MessageHolderBaseState) {
+        yield currentState.copyWith(chat: event.chat);
       }
     } else if (event is MessageHolderChatClickedEvent) {
       if (currentState is MessageHolderBaseState) {
@@ -99,6 +104,15 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
           .toList();
       Log.d("Chats: ${chats.length}");
       add(MessageHolderPrivateChatsUpdatedEvent(chats));
+    });
+  }
+
+  void setUpChatsListener() async {
+    Log.d('Setting up private chats stream');
+    _firestoreRepository.streamChat(chat.id, false).listen((event) async {
+      final chat = Chat.fromJson(
+          event.docs.first.id, event.docs.first.data() as Map<String, dynamic>);
+      add(MessageHolderChatUpdatedEvent(chat));
     });
   }
 }

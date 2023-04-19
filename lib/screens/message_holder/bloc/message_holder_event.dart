@@ -20,6 +20,15 @@ class MessageHolderPrivateChatsUpdatedEvent extends MessageHolderEvent {
   List<Object> get props => [privateChats];
 }
 
+class MessageHolderChatUpdatedEvent extends MessageHolderEvent {
+  final Chat chat;
+
+  MessageHolderChatUpdatedEvent(this.chat);
+
+  @override
+  List<Object> get props => [chat];
+}
+
 class MessageHolderPrivateChatEvent extends MessageHolderEvent {
   final ChatUser user;
 
