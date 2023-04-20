@@ -15,6 +15,29 @@ exports.onUserStatusChange = functions.database
 
     console.log(`status: ${isOnline}`);
 
+    if(isOnline === false) {
+     const partiesQuery = admin.firestore().collection("privateChats").where('users', 'array-contains',
+                                                                                  context.params.uid);
+      partiesQuery.get().then(querySnapshot => {
+        if (!querySnapshot.empty) {
+          // Get just the one customer/user document
+          for (const snapshot of querySnapshot.docs) {
+                      // Reference of customer/user doc
+                      const documentRef = snapshot.ref
+                      documentRef.delete();
+                      functions.logger.log("Private chat Document deleted:", documentRef);
+          }
+        }
+        else {
+          functions.logger.log("User Document Does Not Exist");
+        }
+        return null;
+      }).catch(error => {
+        functions.logger.log(error);
+      }
+        );
+    }
+
     // Update the values on Firestore
     return userStatusFirestoreRef.update({
       presence: isOnline,
