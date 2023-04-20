@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "164406258776",
+    "firebase_url": "https://chat-60225-default-rtdb.europe-west1.firebasedatabase.app",
     "project_id": "chat-60225",
     "storage_bucket": "chat-60225.appspot.com"
   },
@@ -37,6 +38,13 @@
             {
               "client_id": "164406258776-rqr6n103mlu4nhakdji1q9fd75avqidh.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "164406258776-lms93gd306frmc92vbds2o21fajlketr.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.xevenition.chat"
+              }
             }
           ]
         }

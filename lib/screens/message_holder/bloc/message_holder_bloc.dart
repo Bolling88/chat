@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:chat/repository/presence_database.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../model/chat.dart';
@@ -39,7 +40,9 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
           selectedChatIndex: 0);
       setUpPrivateChatsListener();
       setUpChatsListener();
-    } else if (event is MessageHolderPrivateChatEvent) {
+
+      PresenceDatabase().updateUserPresence();
+  } else if (event is MessageHolderPrivateChatEvent) {
       if (currentState is MessageHolderBaseState) {
         await _firestoreRepository.createPrivateChat(event.user);
       }
