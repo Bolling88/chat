@@ -294,6 +294,7 @@ class FirestoreRepository {
   Future<List<ChatUser>?> getUsersInChat(Chat chat) {
     return users
         .where(FieldPath.documentId, whereIn: chat.users)
+        .where('presence', isEqualTo: true)
         .get()
         .then((value) => value.docs
             .map((e) =>
