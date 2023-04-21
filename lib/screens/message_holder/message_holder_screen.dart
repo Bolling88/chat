@@ -175,10 +175,11 @@ class MessageHolderScreenContent extends StatelessWidget {
       ),
       backgroundColor: AppColors.main,
       title: Text(
-        state.chat.chatName,
+        state.selectedChat.chatName,
         style: const TextStyle(color: AppColors.white),
       ),
       actions: [
+        (state.selectedChatIndex == 0)?
         IconButton(
           icon: const Icon(
             Icons.people,
@@ -187,7 +188,16 @@ class MessageHolderScreenContent extends StatelessWidget {
           onPressed: () {
             showPeopleScreen(context, state.chat);
           },
-        )
+        ): IconButton(
+          icon: const Icon(
+            Icons.close,
+            color: AppColors.white,
+          ),
+          onPressed: () {
+            BlocProvider.of<MessageHolderBloc>(context).add(
+                MessageHolderClosePrivateChatEvent());
+          },
+        ),
       ],
     );
   }

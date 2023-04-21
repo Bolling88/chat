@@ -305,4 +305,12 @@ class FirestoreRepository {
       return null;
     });
   }
+
+  void leavePrivateChat(Chat selectedChat) {
+    privateChats.doc(selectedChat.id).set({
+      'users': FieldValue.arrayRemove([getUserId()]),
+    }).catchError((error) {
+      Log.e("Failed to leave private chat: $error");
+    });
+  }
 }

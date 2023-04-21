@@ -90,6 +90,10 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
       if (currentState is MessageHolderBaseState) {
         _firestoreRepository.exitAllChats(chatId: chat.id);
       }
+    }else if(event is MessageHolderClosePrivateChatEvent){
+      if (currentState is MessageHolderBaseState) {
+        _firestoreRepository.leavePrivateChat(currentState.selectedChat);
+      }
     } else {
       throw UnimplementedError();
     }

@@ -44,3 +44,24 @@ exports.onUserStatusChange = functions.database
       last_seen: Date.now(),
     });
   });
+
+exports.deletePrivateChatOnLastLeft = functions.firestore.document('/privateChats/{documentId}')
+  .onUpdate((change, context) => {
+    // Get an object representing the document
+    const newValue = change.after.data();
+    // ...or the previous value before this update
+    const previousValue = change.before.data();
+
+    // access a particular field as you would any JS property
+    const users = newValue.users;
+    console.log("Array size: " + users.length);
+    //If no person, delete document
+    if (users.length === 1) {
+      console.log("Last person left private chat, deleting");
+      return change.after.ref.delete()
+    }
+    else {
+      console.log("People are still chatting");
+      return null;
+    }
+  });
