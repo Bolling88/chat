@@ -2,6 +2,7 @@ import 'package:chat/repository/firestore_repository.dart';
 import 'package:chat/repository/login_repository.dart';
 import 'package:chat/repository/storage_repository.dart';
 import 'package:chat/screens/chat/chat_screen.dart';
+import 'package:chat/screens/hero/hero_screen.dart';
 import 'package:chat/screens/message_holder/message_holder_screen.dart';
 import 'package:chat/screens/onboarding_gender/onboarding_gender_screen.dart';
 import 'package:chat/screens/onboarding_name/onboarding_name_screen.dart';
@@ -95,6 +96,7 @@ class Chat extends StatelessWidget {
                 OnboardingPhotoScreen.routeName: (context) => const OnboardingPhotoScreen(),
                 ChatScreen.routeName: (context) => const ChatScreen(),
                 MessageHolderScreen.routeName: (context) => const MessageHolderScreen(),
+                HeroScreen.routeName: (context) => const HeroScreen(),
               },
             ),
           );

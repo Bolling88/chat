@@ -1,3 +1,4 @@
+import 'package:chat/screens/visit/visit_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -55,6 +56,7 @@ class PeopleScreenBuilder extends StatelessWidget {
               ),
               child: ListView.builder(
                 itemCount: state.chatUsers.length,
+                shrinkWrap: true,
                 itemBuilder: (BuildContext context, int index) {
                   return ListTile(
                     title: Text(state.chatUsers[index].displayName),
@@ -69,9 +71,7 @@ class PeopleScreenBuilder extends StatelessWidget {
                             AppUserImage(state.chatUsers[index].pictureData)),
                     onTap: () {
                       Navigator.pop(context);
-                      BlocProvider.of<MessageHolderBloc>(parentContext).add(
-                          MessageHolderPrivateChatEvent(
-                              state.chatUsers[index]));
+                      showVisitScreen(parentContext, state.chatUsers[index].id);
                     },
                   );
                 },

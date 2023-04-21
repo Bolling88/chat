@@ -37,7 +37,8 @@ class PeopleBloc extends Bloc<PeopleEvent, PeopleState> {
       final chat = Chat.fromJson(
           event.docs.first.id, event.docs.first.data() as Map<String, dynamic>);
       final users = await _firestoreRepository.getUsersInChat(chat) ?? [];
-      add(PeopleLoadedEvent(users));
+      final filteredUsers = users.where((element) => element.id != getUserId()).toList();
+      add(PeopleLoadedEvent(filteredUsers));
     });
   }
 }
