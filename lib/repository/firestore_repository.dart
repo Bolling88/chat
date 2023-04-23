@@ -302,7 +302,6 @@ class FirestoreRepository {
             .toList())
         .catchError((error) {
       Log.e("Failed to get chat: $error");
-      return null;
     });
   }
 

@@ -1,6 +1,7 @@
 import 'package:chat/screens/visit/visit_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_i18n/flutter_i18n.dart';
 
 import '../../model/chat.dart';
 import '../../repository/firestore_repository.dart';
@@ -54,28 +55,33 @@ class PeopleScreenBuilder extends StatelessWidget {
                   topRight: Radius.circular(20),
                 ),
               ),
-              child: ListView.builder(
-                itemCount: state.chatUsers.length,
-                shrinkWrap: true,
-                itemBuilder: (BuildContext context, int index) {
-                  return ListTile(
-                    title: Text(state.chatUsers[index].displayName),
-                    subtitle: Text(state.chatUsers[index].gender.toString()),
-                    leading: GestureDetector(
-                        onTap: () {
-                          Navigator.pushNamed(context, HeroScreen.routeName,
-                              arguments: HeroScreenArguments(
-                                  state.chatUsers[index].pictureData));
-                        },
-                        child:
-                            AppUserImage(state.chatUsers[index].pictureData)),
-                    onTap: () {
-                      Navigator.pop(context);
-                      showVisitScreen(parentContext, state.chatUsers[index].id);
-                    },
-                  );
-                },
-              ),
+              child: (state.chatUsers.isEmpty)
+                  ? Center(child: Text(FlutterI18n.translate(context,'no_users')))
+                  : ListView.builder(
+                      itemCount: state.chatUsers.length,
+                      shrinkWrap: true,
+                      itemBuilder: (BuildContext context, int index) {
+                        return ListTile(
+                          title: Text(state.chatUsers[index].displayName),
+                          subtitle:
+                              Text(state.chatUsers[index].gender.toString()),
+                          leading: GestureDetector(
+                              onTap: () {
+                                Navigator.pushNamed(
+                                    context, HeroScreen.routeName,
+                                    arguments: HeroScreenArguments(
+                                        state.chatUsers[index].pictureData));
+                              },
+                              child: AppUserImage(
+                                  state.chatUsers[index].pictureData)),
+                          onTap: () {
+                            Navigator.pop(context);
+                            showVisitScreen(
+                                parentContext, state.chatUsers[index].id);
+                          },
+                        );
+                      },
+                    ),
             );
           } else {
             return const LoadingScreen();
