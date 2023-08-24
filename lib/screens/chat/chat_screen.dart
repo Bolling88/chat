@@ -9,6 +9,7 @@ import '../../repository/firestore_repository.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_widgets.dart';
 import '../message_holder/message_holder_screen.dart';
+import '../profile/profile_screen.dart';
 import 'bloc/chat_bloc.dart';
 import 'bloc/chat_state.dart';
 
@@ -42,9 +43,9 @@ class ChatsScreenContent extends StatelessWidget {
           ),
           actions: [
             IconButton(
-              icon: const Icon(Icons.add),
+              icon: const Icon(Icons.person),
               onPressed: () {
-                showCreateChatScreen(context);
+                Navigator.pushNamed(context, ProfileScreen.routeName);
               },
             )
           ],

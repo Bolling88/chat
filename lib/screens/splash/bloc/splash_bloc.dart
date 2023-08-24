@@ -2,10 +2,7 @@ import 'package:chat/repository/firestore_repository.dart';
 import 'package:chat/screens/splash/bloc/splash_state.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
-import '../../../repository/data_repository.dart';
 import '../../../utils/log.dart';
-import '../../../utils/save_file.dart';
 import '../../login/bloc/login_state.dart';
 import 'splash_event.dart';
 

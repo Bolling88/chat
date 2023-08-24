@@ -149,10 +149,6 @@ class ChatsScreenContentState extends State<ChatsScreenContent> {
                   const Divider(),
                   AppMessageEditTextWidget(
                       currentMessage: state.currentMessage,
-                      onSendPressed: () {
-                        BlocProvider.of<MessagesBloc>(context)
-                            .add(MessagesSendEvent());
-                      },
                       onTextChanged: (text) {
                         BlocProvider.of<MessagesBloc>(context)
                             .add(MessagesChangedEvent(text));

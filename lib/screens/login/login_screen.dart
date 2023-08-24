@@ -2,13 +2,11 @@ import 'dart:io';
 
 import 'package:chat/repository/firestore_repository.dart';
 import 'package:chat/repository/login_repository.dart';
-import 'package:chat/screens/home/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:flutter_signin_button/button_list.dart';
 import 'package:flutter_signin_button/button_view.dart';
-import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_widgets.dart';

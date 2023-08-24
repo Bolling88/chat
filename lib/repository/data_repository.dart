@@ -10,4 +10,6 @@ class DataRepository {
   final SaveFile _saveFile;
 
   DataRepository(this._saveFile);
+
+  deleteGambitUser() {}
 }

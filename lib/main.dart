@@ -7,6 +7,7 @@ import 'package:chat/screens/message_holder/message_holder_screen.dart';
 import 'package:chat/screens/onboarding_gender/onboarding_gender_screen.dart';
 import 'package:chat/screens/onboarding_name/onboarding_name_screen.dart';
 import 'package:chat/screens/onboarding_photo/onboarding_photo_screen.dart';
+import 'package:chat/screens/profile/profile_screen.dart';
 import 'package:chat/screens/splash/splash_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -87,16 +88,21 @@ class Chat extends StatelessWidget {
               ],
               supportedLocales: const [Locale('en', 'EN')],
               builder: FlutterI18n.rootAppBuilder(),
-              theme: ThemeData(),
+              theme: ThemeData(fontFamily: 'chat'),
               home: const SplashScreen(),
               routes: {
                 LoginScreen.routeName: (context) => const LoginScreen(),
-                OnboardingGenderScreen.routeName: (context) => const OnboardingGenderScreen(),
-                OnboardingNameScreen.routeName: (context) => const OnboardingNameScreen(),
-                OnboardingPhotoScreen.routeName: (context) => const OnboardingPhotoScreen(),
+                OnboardingGenderScreen.routeName: (context) =>
+                    const OnboardingGenderScreen(),
+                OnboardingNameScreen.routeName: (context) =>
+                    const OnboardingNameScreen(),
+                OnboardingPhotoScreen.routeName: (context) =>
+                    const OnboardingPhotoScreen(),
                 ChatScreen.routeName: (context) => const ChatScreen(),
-                MessageHolderScreen.routeName: (context) => const MessageHolderScreen(),
+                MessageHolderScreen.routeName: (context) =>
+                    const MessageHolderScreen(),
                 HeroScreen.routeName: (context) => const HeroScreen(),
+                ProfileScreen.routeName: (context) => const ProfileScreen(),
               },
             ),
           );

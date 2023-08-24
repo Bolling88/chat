@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import '../model/chat.dart';
 import '../model/chat_user.dart';
 import '../utils/log.dart';
@@ -234,6 +235,7 @@ class FirestoreRepository {
         'created': FieldValue.serverTimestamp(),
         'lastMessageReadBy': [getUserId()],
         'users': [getUserId()],
+        'initiatedBy': getUserId(),
         'chatName': chatName,
       });
       final querySnapshot = await chats.doc(reference.id).get()
@@ -277,6 +279,7 @@ class FirestoreRepository {
         'created': FieldValue.serverTimestamp(),
         'lastMessageReadBy': [getUserId()],
         'users': [getUserId(), user.id],
+        'initiatedBy': getUserId(),
         'chatName': user.displayName,
       });
       final querySnapshot = await privateChats.doc(reference.id).get()
@@ -311,5 +314,41 @@ class FirestoreRepository {
     }).catchError((error) {
       Log.e("Failed to leave private chat: $error");
     });
+  }
+
+  Future<void> _deleteAllUserFiles(String userId) async {
+    FirebaseStorage storage = FirebaseStorage.instance;
+    Reference userFolderRef = storage.ref().child('images/$userId');
+
+    try {
+      // List all items (files and sub-folders) in the user's folder
+      ListResult result = await userFolderRef.listAll();
+
+      // Delete each file in the folder
+      for (Reference ref in result.items) {
+        await ref.delete();
+        Log.d("File deleted: ${ref.fullPath}");
+      }
+
+      Log.d("All user files deleted successfully");
+    } catch (e) {
+      Log.d("Error deleting user files: $e");
+    }
+  }
+
+  Future<void> deleteUserAndFiles() async {
+    User? user = FirebaseAuth.instance.currentUser;
+
+    if (user != null) {
+      try {
+        await _deleteAllUserFiles(user.uid);
+        await user.delete();
+        Log.d("User account and files deleted successfully");
+      } catch (e) {
+        Log.d("Error deleting user account and files: $e");
+      }
+    } else {
+      Log.d("No user is currently signed in.");
+    }
   }
 }

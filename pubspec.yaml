@@ -32,7 +32,7 @@ dependencies:
 
   flutter_bloc: ^7.1.0
   equatable: ^2.0.3
-  firebase_core: ^2.10.0
+  firebase_core: ^2.15.1
   firebase_analytics:
   cloud_firestore:
   firebase_auth:
@@ -40,8 +40,8 @@ dependencies:
   firebase_messaging:
   firebase_storage:
   firebase_database:
-  flutter_svg: ^0.23.0
-  flutter_i18n: ^0.31.0
+  flutter_svg: any
+  flutter_i18n: any
   provider: ^6.0.0
   google_sign_in: ^5.2.2
   sign_in_with_apple: ^3.3.0
@@ -52,10 +52,8 @@ dependencies:
   url_launcher: ^6.0.2
   cached_network_image: ^3.2.3
   image_picker: ^0.8.7+2
-  image_cropper: ^3.0.2
-
-  giphy_get:
-    path: plugins/giphy_get
+  image_cropper: any
+  giphy_get: any
   cloud_functions: ^4.1.1
 
 dev_dependencies:
@@ -85,7 +83,7 @@ flutter:
     - assets/svg/
 
   fonts:
-    - family: socialize
+    - family: chat
       fonts:
         - asset: fonts/black.ttf
           weight: 900

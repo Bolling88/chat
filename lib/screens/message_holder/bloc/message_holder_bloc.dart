@@ -42,7 +42,7 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
       setUpChatsListener();
 
       PresenceDatabase().updateUserPresence();
-  } else if (event is MessageHolderPrivateChatEvent) {
+    } else if (event is MessageHolderPrivateChatEvent) {
       if (currentState is MessageHolderBaseState) {
         await _firestoreRepository.createPrivateChat(event.user);
       }
@@ -51,14 +51,29 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
         //If the number of chats have changed...
         if (currentState.privateChats.length != event.privateChats.length) {
           if (currentState.selectedChatIndex == 0) {
-            //If we are in the group chat, just update the list
-            yield currentState.copyWith(privateChats: event.privateChats);
+            //If we are in the group chat
+            if (event.privateChats.length > currentState.privateChats.length) {
+              //And private chats have increased
+              if(event.privateChats.last.initiatedBy == getUserId()){
+                //And it was by you, move to that chat
+                yield currentState.copyWith(
+                    privateChats: event.privateChats,
+                    selectedChat: event.privateChats.last,
+                    selectedChatIndex: event.privateChats.length);
+              }else {
+                yield currentState.copyWith(privateChats: event.privateChats);
+              }
+            } else {
+              yield currentState.copyWith(privateChats: event.privateChats);
+            }
           } else {
-            if (event.privateChats
-                .contains(currentState.selectedChat)) {
+            if (event.privateChats.contains(currentState.selectedChat)) {
               //If the private chat we are on still exists
               yield currentState.copyWith(
-                  privateChats: event.privateChats, selectedChatIndex: event.privateChats.indexOf(currentState.selectedChat)+1);
+                  privateChats: event.privateChats,
+                  selectedChatIndex:
+                      event.privateChats.indexOf(currentState.selectedChat) +
+                          1);
             } else {
               //The private chat has been removed, move the user to the group chat
               yield currentState.copyWith(
@@ -69,7 +84,7 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
           yield currentState.copyWith(privateChats: event.privateChats);
         }
       }
-    }else if(event is MessageHolderChatUpdatedEvent){
+    } else if (event is MessageHolderChatUpdatedEvent) {
       if (currentState is MessageHolderBaseState) {
         yield currentState.copyWith(chat: event.chat);
       }
@@ -90,7 +105,7 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
       if (currentState is MessageHolderBaseState) {
         _firestoreRepository.exitAllChats(chatId: chat.id);
       }
-    }else if(event is MessageHolderClosePrivateChatEvent){
+    } else if (event is MessageHolderClosePrivateChatEvent) {
       if (currentState is MessageHolderBaseState) {
         _firestoreRepository.leavePrivateChat(currentState.selectedChat);
       }
@@ -101,8 +116,7 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
 
   void setUpPrivateChatsListener() async {
     Log.d('Setting up private chats stream');
-    chatsStream =
-        _firestoreRepository.streamPrivateChats().listen((data) {
+    chatsStream = _firestoreRepository.streamPrivateChats().listen((data) {
       Log.d("Got private chats");
       final chats = data.docs
           .map((e) => Chat.fromJson(e.id, e.data() as Map<String, dynamic>))
