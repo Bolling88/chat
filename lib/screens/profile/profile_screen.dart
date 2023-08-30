@@ -62,16 +62,8 @@ class ProfileScreenBuilder extends StatelessWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Padding(
-                          padding: const EdgeInsets.only(top: 20, left: 20, right: 20),
-                          child: ElevatedButton.icon(
-                            icon: const Icon(Icons.settings),
-                            onPressed: () {},
-                            label: Text(translate(context, 'settings')),
-                          ),
-                        ),
-                        Padding(
-                          padding:
-                              const EdgeInsets.only(top: 5, bottom: 5, left: 20, right: 20),
+                          padding: const EdgeInsets.only(
+                              top: 5, bottom: 5, left: 20, right: 20),
                           child: ElevatedButton.icon(
                             icon: const Icon(Icons.exit_to_app),
                             onPressed: () {
@@ -85,8 +77,8 @@ class ProfileScreenBuilder extends StatelessWidget {
                           ),
                         ),
                         Padding(
-                          padding:
-                              const EdgeInsets.only(top: 5, bottom: 5, left: 20, right: 20),
+                          padding: const EdgeInsets.only(
+                              top: 5, bottom: 5, left: 20, right: 20),
                           child: ElevatedButton.icon(
                             icon: const Icon(Icons.delete_outline),
                             onPressed: () {
@@ -114,37 +106,51 @@ class ProfileScreenBuilder extends StatelessWidget {
     );
   }
 
-  AppDialog getSignOutDialog(BuildContext context) {
-    return AppDialog(
-      title: translate(context, 'sign_out'),
-      message: translate(context, 'sign_out_info'),
-      button1Text: translate(context, 'yes'),
-      button1Pressed: () {
-        Navigator.of(context).pop();
-        FirebaseAuth.instance.signOut().then((value) => {exitToLogin(context)});
-      },
-      button2Text: translate(context, 'no'),
-      button2Pressed: () {
-        Navigator.of(context).pop();
-      },
+  AlertDialog getSignOutDialog(BuildContext context) {
+    return AlertDialog(
+      title: Text(translate(context, 'sign_out')),
+      content: Text(translate(context, 'sign_out_info')),
+      actions: [
+        TextButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+            FirebaseAuth.instance
+                .signOut()
+                .then((value) => {exitToLogin(context)});
+          },
+          child: Text(translate(context, 'yes')),
+        ),
+        TextButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          child: Text(translate(context, 'no')),
+        ),
+      ],
     );
   }
 
-  AppDialog getDeleteAccountDialog(
-      BuildContext blocContext, BuildContext dialogContext) {
-    return AppDialog(
-      title: translate(dialogContext, 'delete_account'),
-      message: translate(dialogContext, 'delete_account_info'),
-      button1Text: translate(dialogContext, 'yes'),
-      button1Pressed: () {
-        Navigator.of(dialogContext).pop();
-        BlocProvider.of<ProfileBloc>(blocContext)
-            .add(ProfileDeleteAccountEvent());
-      },
-      button2Text: translate(dialogContext, 'no'),
-      button2Pressed: () {
-        Navigator.of(dialogContext).pop();
-      },
+  AlertDialog getDeleteAccountDialog(
+      BuildContext blocContext, BuildContext context) {
+    return AlertDialog(
+      title: Text(translate(context, 'delete_account')),
+      content: Text(translate(context, 'delete_account_info')),
+      actions: [
+        TextButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+            BlocProvider.of<ProfileBloc>(blocContext)
+                .add(ProfileDeleteAccountEvent());
+          },
+          child: Text(translate(context, 'yes')),
+        ),
+        TextButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          child: Text(translate(context, 'no')),
+        ),
+      ],
     );
   }
 

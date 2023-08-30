@@ -70,7 +70,9 @@ class MessageHolderScreenContent extends StatelessWidget {
           builder: (context, state) {
             if (state is MessageHolderBaseState) {
               return WillPopScope(
-                onWillPop: () => _onWillPop(context),
+                onWillPop: () => state.privateChats.isNotEmpty
+                    ? _onWillPop(context)
+                    : Future.value(true),
                 child: Scaffold(
                     backgroundColor: AppColors.white,
                     appBar: getAppBar(context, state),
@@ -179,25 +181,26 @@ class MessageHolderScreenContent extends StatelessWidget {
         style: const TextStyle(color: AppColors.white),
       ),
       actions: [
-        (state.selectedChatIndex == 0)?
-        IconButton(
-          icon: const Icon(
-            Icons.people,
-            color: AppColors.white,
-          ),
-          onPressed: () {
-            showPeopleScreen(context, state.chat);
-          },
-        ): IconButton(
-          icon: const Icon(
-            Icons.close,
-            color: AppColors.white,
-          ),
-          onPressed: () {
-            BlocProvider.of<MessageHolderBloc>(context).add(
-                MessageHolderClosePrivateChatEvent());
-          },
-        ),
+        (state.selectedChatIndex == 0)
+            ? IconButton(
+                icon: const Icon(
+                  Icons.people,
+                  color: AppColors.white,
+                ),
+                onPressed: () {
+                  showPeopleScreen(context, state.chat);
+                },
+              )
+            : IconButton(
+                icon: const Icon(
+                  Icons.close,
+                  color: AppColors.white,
+                ),
+                onPressed: () {
+                  BlocProvider.of<MessageHolderBloc>(context)
+                      .add(MessageHolderClosePrivateChatEvent());
+                },
+              ),
       ],
     );
   }
