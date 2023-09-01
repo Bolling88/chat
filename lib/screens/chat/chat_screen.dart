@@ -1,4 +1,4 @@
-import 'package:chat/screens/create_chat/create_chat_screen.dart';
+import 'package:chat/utils/translate.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -73,88 +73,92 @@ class ChatsScreenContent extends StatelessWidget {
   }
 
   ListView getRegularChats(ChatBaseState state) {
-    return ListView.builder(
+    return ListView.separated(
       shrinkWrap: true,
       itemCount: state.chats.length,
       physics: const NeverScrollableScrollPhysics(),
       itemBuilder: (BuildContext context, int index) {
-        return Padding(
-          padding: const EdgeInsets.only(top: 5, bottom: 5),
-          child: ListTile(
-            title: (state.chats[index].lastMessageReadBy
-                    .contains(FirebaseAuth.instance.currentUser!.uid))
-                ? Text(
-                    (state.chats[index].chatName.isNotEmpty)
-                        ? state.chats[index].chatName
-                        : state.chats[index].usersText,
-                    style: const TextStyle(
-                        fontSize: 15,
-                        color: AppColors.grey_1,
-                        fontWeight: FontWeight.bold),
-                  )
-                : Text(
-                    (state.chats[index].chatName.isNotEmpty)
-                        ? state.chats[index].chatName
-                        : state.chats[index].usersText,
-                    style: const TextStyle(
-                        fontSize: 15,
-                        color: AppColors.grey_1,
-                        fontWeight: FontWeight.bold),
-                  ),
-            trailing: Row(
-              mainAxisSize: MainAxisSize.min,
+        return getListTile(state, index, context);
+      },
+      separatorBuilder: (BuildContext context, int index) {
+        return const Divider();
+      },
+    );
+  }
+
+  ListTile getListTile(ChatBaseState state, int index, BuildContext context) {
+    return ListTile(
+      title: (state.chats[index].lastMessageReadBy
+              .contains(FirebaseAuth.instance.currentUser!.uid))
+          ? Text(
+              (state.chats[index].chatName.isNotEmpty)
+                  ? state.chats[index].chatName
+                  : state.chats[index].usersText,
+              style: const TextStyle(
+                  fontSize: 15,
+                  color: AppColors.grey_1,
+                  fontWeight: FontWeight.bold),
+            )
+          : Text(
+              (state.chats[index].chatName.isNotEmpty)
+                  ? state.chats[index].chatName
+                  : state.chats[index].usersText,
+              style: const TextStyle(
+                  fontSize: 15,
+                  color: AppColors.grey_1,
+                  fontWeight: FontWeight.bold),
+            ),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            state.chats[index].users.length.toString(),
+            style: const TextStyle(fontSize: 13, color: AppColors.grey_1),
+          ),
+          const Icon(Icons.person)
+        ],
+      ),
+      leading: Image.asset(
+        "assets/png/${state.chats[index].languageCode}.png",
+        width: 48,
+        height: 48,
+      ),
+      subtitle: (state.chats[index].lastMessageReadBy
+              .contains(FirebaseAuth.instance.currentUser!.uid))
+          ? Text(
+              '${translate(context, 'last_message')} ${state.chats[index].lastMessage}',
+              maxLines: 2,
+              style: const TextStyle(
+                  color: AppColors.grey_1,
+                  fontSize: 13,
+                  overflow: TextOverflow.ellipsis,
+                  fontWeight: FontWeight.w500),
+            )
+          : Row(
               children: [
-                Text(
-                  state.chats[index].users.length.toString(),
-                  style: const TextStyle(fontSize: 13, color: AppColors.grey_1),
+                Container(
+                  width: 10,
+                  height: 10,
+                  margin: const EdgeInsets.only(right: 5),
+                  decoration: const BoxDecoration(
+                      color: AppColors.main, shape: BoxShape.circle),
                 ),
-                const Icon(Icons.person)
-              ],
-            ),
-            leading: Image.asset(
-              "assets/png/${state.chats[index].languageCode}.png",
-              width: 48,
-              height: 48,
-            ),
-            subtitle: (state.chats[index].lastMessageReadBy
-                    .contains(FirebaseAuth.instance.currentUser!.uid))
-                ? Text(
+                Expanded(
+                  child: Text(
                     state.chats[index].lastMessage,
                     maxLines: 2,
                     style: const TextStyle(
                         color: AppColors.grey_1,
                         fontSize: 13,
-                        fontWeight: FontWeight.w500),
-                  )
-                : Row(
-                    children: [
-                      Container(
-                        width: 10,
-                        height: 10,
-                        margin: const EdgeInsets.only(right: 5),
-                        decoration: const BoxDecoration(
-                            color: AppColors.main, shape: BoxShape.circle),
-                      ),
-                      Expanded(
-                        child: Text(
-                          state.chats[index].lastMessage,
-                          maxLines: 2,
-                          style: const TextStyle(
-                              color: AppColors.grey_1,
-                              fontSize: 13,
-                              fontWeight: FontWeight.bold),
-                        ),
-                      )
-                    ],
+                        fontWeight: FontWeight.bold),
                   ),
-            onTap: () {
-              Navigator.of(context, rootNavigator: true).pushNamed(
-                  MessageHolderScreen.routeName,
-                  arguments:
-                      MessageHolderScreenArguments(chat: state.chats[index]));
-            },
-          ),
-        );
+                )
+              ],
+            ),
+      onTap: () {
+        Navigator.of(context, rootNavigator: true).pushNamed(
+            MessageHolderScreen.routeName,
+            arguments: MessageHolderScreenArguments(chat: state.chats[index]));
       },
     );
   }

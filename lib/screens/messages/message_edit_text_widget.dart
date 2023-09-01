@@ -50,7 +50,7 @@ class _MessageEditTextWidgetState extends State<MessageEditTextWidget> {
                     style: const TextStyle(
                         color: AppColors.main,
                         fontSize: 15,
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w500,
                         fontFamily: 'socialize'),
                     textCapitalization: TextCapitalization.sentences,
                     cursorColor: AppColors.main,
@@ -93,7 +93,7 @@ class _MessageEditTextWidgetState extends State<MessageEditTextWidget> {
                               color: AppColors.main,
                               style: BorderStyle.solid,
                             )),
-                        fillColor: AppColors.white,
+                        fillColor: AppColors.grey_4,
                         hintStyle: const TextStyle(
                             color: AppColors.grey_1,
                             fontWeight: FontWeight.w600,

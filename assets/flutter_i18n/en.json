@@ -263,5 +263,6 @@
   "profile": "Profile",
   "sign_out": "Sign out",
   "sign_out_info": "Are you sure you wish to sign out?",
-  "delete_account_info": "Are you sure you wish to delete your account?"
+  "delete_account_info": "Are you sure you wish to delete your account?",
+  "last_message": "Last message:"
 }

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:giphy_get/giphy_get.dart';
-import '../../repository/data_repository.dart';
 import '../../repository/firestore_repository.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_widgets.dart';
@@ -11,6 +10,8 @@ import 'bloc/messages_bloc.dart';
 import 'bloc/messages_event.dart';
 import 'bloc/messages_state.dart';
 import 'message_edit_text_widget.dart';
+import 'my_message_widget.dart';
+import 'other_message_widget.dart';
 
 class MessagesScreen extends StatelessWidget {
   static const routeName = "/messages_screen";
@@ -85,14 +86,14 @@ class ChatsScreenContentState extends State<ChatsScreenContent> {
                         if (state.messages[index].messageDate != null &&
                             state.messages[index].messageDate?.isNotEmpty ==
                                 true) {
-                          return getChatMessage(
+                          return getChatInfoMessage(
                               text: state.messages[index].messageDate ?? '',
                               state: state,
                               index: index,
                               context: context);
                         } else if (state.messages[index].message?.chatType ==
                             ChatType.joined) {
-                          return getChatMessage(
+                          return getChatInfoMessage(
                               text: state.messages[index].message!.text +
                                   ' ' +
                                   FlutterI18n.translate(context, 'joined_chat'),
@@ -101,7 +102,7 @@ class ChatsScreenContentState extends State<ChatsScreenContent> {
                               context: context);
                         } else if (state.messages[index].message?.chatType ==
                             ChatType.left) {
-                          return getChatMessage(
+                          return getChatInfoMessage(
                               text: state.messages[index].message!.text +
                                   ' ' +
                                   FlutterI18n.translate(context, 'left_chat'),
@@ -167,14 +168,14 @@ class ChatsScreenContentState extends State<ChatsScreenContent> {
         ));
   }
 
-  Center getChatMessage(
+  Center getChatInfoMessage(
       {required String text,
       required MessagesBaseState state,
       required int index,
       required BuildContext context}) {
     return Center(
         child: Padding(
-            padding: const EdgeInsets.only(top: 40, bottom: 20),
+            padding: const EdgeInsets.only(top: 5, bottom: 5),
             child: Text(
               text,
               style: const TextStyle(
