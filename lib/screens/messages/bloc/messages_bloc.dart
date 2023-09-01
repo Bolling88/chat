@@ -100,27 +100,29 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
         yield currentState.copyWith(currentMessage: "");
       }
     } else if (event is MessagesFetchMoreEvent) {
-      final lastMessage = _lastMessageSnapshot;
-      if (currentState is MessagesBaseState && lastMessage != null) {
-        final data = await _firestoreRepository.getMoreMessages(
-            chatId, isPrivateChat, lastMessage);
-        if (data.docs.isNotEmpty) {
-          Log.d("New documents: ${data.docs.length}");
-          _lastMessageSnapshot = data.docs.last;
-          final messages = data.docs
-              .map((e) =>
-                  Message.fromJson(e.id, e.data() as Map<String, dynamic>))
-              .toList();
-          final List<MessageItem> updatedList = [...currentState.messages];
-          updatedList.addAll(getMessagesWithDates(messages));
-          Log.d("Total messages: ${updatedList.length}");
-          yield currentState.copyWith(messages: updatedList);
-          //Adding this so that we can load more, since we are filtering away duplicates in transform
-          add(MessagesFetchedEvent());
-        } else {
-          Log.d("Got all the documents");
-        }
-      }
+      //Limit this for now to save costs
+
+      // final lastMessage = _lastMessageSnapshot;
+      // if (currentState is MessagesBaseState && lastMessage != null) {
+      //   final data = await _firestoreRepository.getMoreMessages(
+      //       chatId, isPrivateChat, lastMessage);
+      //   if (data.docs.isNotEmpty) {
+      //     Log.d("New documents: ${data.docs.length}");
+      //     _lastMessageSnapshot = data.docs.last;
+      //     final messages = data.docs
+      //         .map((e) =>
+      //             Message.fromJson(e.id, e.data() as Map<String, dynamic>))
+      //         .toList();
+      //     final List<MessageItem> updatedList = [...currentState.messages];
+      //     updatedList.addAll(getMessagesWithDates(messages));
+      //     Log.d("Total messages: ${updatedList.length}");
+      //     yield currentState.copyWith(messages: updatedList);
+      //     //Adding this so that we can load more, since we are filtering away duplicates in transform
+      //     add(MessagesFetchedEvent());
+      //   } else {
+      //     Log.d("Got all the documents");
+      //   }
+      // }
     } else if (event is MessagesFetchedEvent) {
       //Do nothing
     } else {

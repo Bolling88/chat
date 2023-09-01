@@ -15,8 +15,8 @@ class PresenceDatabase {
     await databaseReference
         .child(getUserId())
         .update(presenceStatusTrue)
-        .whenComplete(() => Log.d('Updated your presence.'))
-        .catchError((e) => Log.e(e));
+        .whenComplete(_logSuccess)
+        .catchError(_logError);
 
     Map<String, dynamic> presenceStatusFalse = {
       'presence': false,
@@ -24,5 +24,13 @@ class PresenceDatabase {
     };
 
     databaseReference.child(getUserId()).onDisconnect().update(presenceStatusFalse);
+  }
+
+  void _logSuccess(){
+    Log.d('Updated your presence.');
+  }
+
+  void _logError(Error error){
+    Log.e('$error Updated your presence.');
   }
 }
