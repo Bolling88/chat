@@ -79,7 +79,7 @@ class ChatsScreenContent extends StatelessWidget {
       physics: const NeverScrollableScrollPhysics(),
       itemBuilder: (BuildContext context, int index) {
         return Padding(
-          padding: const EdgeInsets.only(top: 10, bottom: 10),
+          padding: const EdgeInsets.only(top: 5, bottom: 5),
           child: ListTile(
             title: (state.chats[index].lastMessageReadBy
                     .contains(FirebaseAuth.instance.currentUser!.uid))
@@ -101,11 +101,21 @@ class ChatsScreenContent extends StatelessWidget {
                         color: AppColors.grey_1,
                         fontWeight: FontWeight.bold),
                   ),
-            trailing: Text(
-              state.chats[index].getLastMessageReadableDate(),
-              style: const TextStyle(fontSize: 13, color: AppColors.grey_1),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  state.chats[index].users.length.toString(),
+                  style: const TextStyle(fontSize: 13, color: AppColors.grey_1),
+                ),
+                const Icon(Icons.person)
+              ],
             ),
-            leading: const Icon(Icons.chat),
+            leading: Image.asset(
+              "assets/png/${state.chats[index].languageCode}.png",
+              width: 48,
+              height: 48,
+            ),
             subtitle: (state.chats[index].lastMessageReadBy
                     .contains(FirebaseAuth.instance.currentUser!.uid))
                 ? Text(

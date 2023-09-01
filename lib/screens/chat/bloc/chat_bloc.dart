@@ -51,19 +51,27 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
           .reversed
           .toList();
       Chat? sameLanguageChat;
+      Chat? enLanguageChat;
 
       for (final chat in chats) {
         if (chat.languageCode == deviceLanguage) {
           sameLanguageChat = chat;
           break; // Found a chat with the same language code, no need to continue
         }
+        if (chat.languageCode == 'en') {
+          enLanguageChat = chat;
+        }
       }
 
-      chats.removeWhere((chat) => chat.languageCode == deviceLanguage); // Remove the chat with the same language code from the list
+      chats.removeWhere((chat) => chat.languageCode == deviceLanguage);
+      chats.removeWhere((chat) => chat.languageCode == 'en');
 
       // If a chat with the same language code was found, add it to the beginning
       if (sameLanguageChat != null) {
         chats.insert(0, sameLanguageChat);
+      }
+      if (enLanguageChat != null) {
+        chats.insert(0, enLanguageChat);
       }
 
       add(ChatUpdatedEvent(chats));
