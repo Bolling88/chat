@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:collection/collection.dart';
@@ -40,13 +41,31 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
 
   void setUpDataListener() {
     Log.d("Setting up data listener");
+    String deviceLanguage= Platform.localeName.substring(0,2);
+    Log.d('Current Language Code: $deviceLanguage');
     _firestoreRepository.streamChats().listen((event) {
       final List<Chat> chats = event.docs
           .map((e) => Chat.fromJson(e.id, e.data() as Map<String, dynamic>))
           .toList()
-          .sorted((a, b) => b.created.compareTo(a.created))
+          .sorted((a, b) => b.chatName.compareTo(a.chatName))
           .reversed
           .toList();
+      Chat? sameLanguageChat;
+
+      for (final chat in chats) {
+        if (chat.languageCode == deviceLanguage) {
+          sameLanguageChat = chat;
+          break; // Found a chat with the same language code, no need to continue
+        }
+      }
+
+      chats.removeWhere((chat) => chat.languageCode == deviceLanguage); // Remove the chat with the same language code from the list
+
+      // If a chat with the same language code was found, add it to the beginning
+      if (sameLanguageChat != null) {
+        chats.insert(0, sameLanguageChat);
+      }
+
       add(ChatUpdatedEvent(chats));
     });
   }

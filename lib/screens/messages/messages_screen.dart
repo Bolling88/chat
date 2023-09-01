@@ -10,6 +10,7 @@ import '../../utils/constants.dart';
 import 'bloc/messages_bloc.dart';
 import 'bloc/messages_event.dart';
 import 'bloc/messages_state.dart';
+import 'message_edit_text_widget.dart';
 
 class MessagesScreen extends StatelessWidget {
   static const routeName = "/messages_screen";
@@ -81,50 +82,32 @@ class ChatsScreenContentState extends State<ChatsScreenContent> {
                       controller: _scrollController,
                       itemCount: state.messages.length,
                       itemBuilder: (BuildContext context, int index) {
-                        if (state.messages[index].messageDate != null) {
-                          return Center(
-                              child: Padding(
-                                  padding: const EdgeInsets.only(
-                                      top: 40, bottom: 10),
-                                  child: Text(
-                                    state.messages[index].messageDate!,
-                                    style: const TextStyle(
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.normal,
-                                        color: AppColors.grey_1),
-                                  )));
-                        } else if (state
-                            .messages[index].message?.chatType == ChatType.joined) {
-                          return Center(
-                              child: Padding(
-                                  padding: const EdgeInsets.only(
-                                      top: 40, bottom: 20),
-                                  child: Text(
-                                    state.messages[index].message!.text +
-                                        ' ' +
-                                        FlutterI18n.translate(
-                                            context, 'joined_chat'),
-                                    style: const TextStyle(
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.normal,
-                                        color: AppColors.grey_1),
-                                  )));
-                        }else if (state
-                            .messages[index].message?.chatType == ChatType.left) {
-                          return Center(
-                              child: Padding(
-                                  padding: const EdgeInsets.only(
-                                      top: 40, bottom: 20),
-                                  child: Text(
-                                    state.messages[index].message!.text +
-                                        ' ' +
-                                        FlutterI18n.translate(
-                                            context, 'left_chat'),
-                                    style: const TextStyle(
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.normal,
-                                        color: AppColors.grey_1),
-                                  )));
+                        if (state.messages[index].messageDate != null &&
+                            state.messages[index].messageDate?.isNotEmpty ==
+                                true) {
+                          return getChatMessage(
+                              text: state.messages[index].messageDate ?? '',
+                              state: state,
+                              index: index,
+                              context: context);
+                        } else if (state.messages[index].message?.chatType ==
+                            ChatType.joined) {
+                          return getChatMessage(
+                              text: state.messages[index].message!.text +
+                                  ' ' +
+                                  FlutterI18n.translate(context, 'joined_chat'),
+                              state: state,
+                              index: index,
+                              context: context);
+                        } else if (state.messages[index].message?.chatType ==
+                            ChatType.left) {
+                          return getChatMessage(
+                              text: state.messages[index].message!.text +
+                                  ' ' +
+                                  FlutterI18n.translate(context, 'left_chat'),
+                              state: state,
+                              index: index,
+                              context: context);
                         } else if (state.messages[index].message!.createdById ==
                             state.userId) {
                           return AppMyMessageWidget(
@@ -147,7 +130,7 @@ class ChatsScreenContentState extends State<ChatsScreenContent> {
                     ),
                   )),
                   const Divider(),
-                  AppMessageEditTextWidget(
+                  MessageEditTextWidget(
                       currentMessage: state.currentMessage,
                       onTextChanged: (text) {
                         BlocProvider.of<MessagesBloc>(context)
@@ -182,5 +165,22 @@ class ChatsScreenContentState extends State<ChatsScreenContent> {
             }
           },
         ));
+  }
+
+  Center getChatMessage(
+      {required String text,
+      required MessagesBaseState state,
+      required int index,
+      required BuildContext context}) {
+    return Center(
+        child: Padding(
+            padding: const EdgeInsets.only(top: 40, bottom: 20),
+            child: Text(
+              text,
+              style: const TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.normal,
+                  color: AppColors.grey_1),
+            )));
   }
 }

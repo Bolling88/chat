@@ -54,12 +54,10 @@ class FirestoreRepository {
     });
   }
 
-  Future<void> setInitialUserData(
-      String name, String email, String userId) async {
+  Future<void> setInitialUserData(String email, String userId) async {
     return users
         .doc(userId)
         .set({
-          'name': name,
           'email': email,
           'created': FieldValue.serverTimestamp(),
         }, SetOptions(merge: true))

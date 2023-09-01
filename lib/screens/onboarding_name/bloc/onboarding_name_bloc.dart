@@ -23,7 +23,7 @@ class OnboardingNameBloc
     if (event is OnboardingNameInitialEvent) {
       _firestoreRepository.getUser().then((value) {
         if (value != null) {
-          add(OnboardingNameChangedEvent(value.name));
+          add(OnboardingNameChangedEvent(value.displayName));
         }
       });
     } else if (event is OnboardingNameContinueClickedEvent) {

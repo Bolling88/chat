@@ -4,19 +4,17 @@ import 'dart:core';
 
 class ChatUser extends Equatable {
   final String id;
-  final String name;
   final String displayName;
   final int gender;
   final String pictureData;
   final bool onboardingCompleted;
   final Timestamp created;
 
-  const ChatUser(this.id, this.name, this.displayName, this.gender,
+  const ChatUser(this.id, this.displayName, this.gender,
       this.pictureData, this.onboardingCompleted, this.created);
 
   ChatUser.fromJson(this.id, Map<String, dynamic> json)
       : created = json['created'] ?? Timestamp.now(),
-        name = json['name'] ?? "",
         displayName = json['displayName'] ?? "",
         onboardingCompleted = json['onboardingCompleted'] ?? false,
         gender = json['gender'] ?? -1,
@@ -24,7 +22,6 @@ class ChatUser extends Equatable {
 
   ChatUser.asUnknown(this.id)
       : created = Timestamp.now(),
-        name = "",
         displayName = "",
         onboardingCompleted = false,
         gender = -1,
@@ -39,7 +36,6 @@ class ChatUser extends Equatable {
       Timestamp? created}) {
     return ChatUser(
         id,
-        name ?? this.name,
         displayName ?? this.displayName,
         gender ?? this.gender,
         pictureData ?? this.pictureData,
@@ -50,7 +46,6 @@ class ChatUser extends Equatable {
   @override
   List<Object?> get props => [
         id,
-        name,
         displayName,
         gender,
         pictureData,

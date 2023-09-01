@@ -12,7 +12,7 @@ abstract class OnboardingGenderState extends Equatable {
 class OnboardingGenderBaseState extends OnboardingGenderState {
   final String filePath;
 
-  OnboardingGenderBaseState(this.filePath);
+  const OnboardingGenderBaseState(this.filePath);
 
   OnboardingGenderBaseState copyWith({String? filePath}) {
     return OnboardingGenderBaseState(filePath ?? this.filePath);

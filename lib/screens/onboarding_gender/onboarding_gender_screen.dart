@@ -13,8 +13,7 @@ import 'bloc/onboarding_gender_state.dart';
 class OnboardingGenderScreen extends StatelessWidget {
   static const routeName = "/onboarding_gender_screen";
 
-  const OnboardingGenderScreen({Key? key})
-      : super(key: key);
+  const OnboardingGenderScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -59,11 +58,12 @@ class OnboardingGenderScreenContent extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Center(
-              child: AppUserImage(
-                state.filePath,
-                size: 110,
-              )),
+          if (state.filePath.isNotEmpty && state.filePath != "nan")
+            Center(
+                child: AppUserImage(
+              state.filePath,
+              size: 110,
+            )),
           const SizedBox(height: 20),
           Center(
             child: Text(

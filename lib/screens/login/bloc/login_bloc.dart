@@ -39,9 +39,9 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
                 await FirebaseAuth.instance.signInWithCredential(credential);
 
             final chatUser = await _firestoreRepository.getUser();
-            if (chatUser == null || chatUser.name.isEmpty) {
+            if (chatUser == null || chatUser.displayName.isEmpty) {
               await _firestoreRepository.setInitialUserData(
-                  facebookData.name, facebookData.email, user.user!.uid);
+                  facebookData.email, user.user!.uid);
               final chatUser = await _firestoreRepository.getUser();
               if (chatUser != null) {
                 yield await checkIfOnboardingIsDone(chatUser);
@@ -65,12 +65,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
           yield LoginErrorState();
         } else {
           final chatUser = await _firestoreRepository.getUser();
-          if (chatUser == null || chatUser.name.isEmpty) {
-            var fullName = credentials.user?.displayName ?? "";
-            if (fullName.contains('@')) {
-              fullName = "";
-            }
-            await _firestoreRepository.setInitialUserData(fullName,
+          if (chatUser == null || chatUser.displayName.isEmpty) {
+            await _firestoreRepository.setInitialUserData(
                 credentials.user?.email ?? "", credentials.user?.uid ?? "");
             yield const LoginSuccessState(OnboardingNavigation.NAME);
           } else {
@@ -86,10 +82,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
             await _loginRepository.signInWithApple(appleCredentials, nonce);
 
         final chatUser = await _firestoreRepository.getUser();
-        if (chatUser == null || chatUser.name.isEmpty) {
-          final fullName =
-              '${appleCredentials.givenName} ${appleCredentials.familyName}';
-          await _firestoreRepository.setInitialUserData(fullName,
+        if (chatUser == null || chatUser.displayName.isEmpty) {
+          await _firestoreRepository.setInitialUserData(
               credentials.user?.email ?? "", credentials.user?.uid ?? "");
           Log.d("User logged in!");
           if (chatUser != null) {
@@ -102,7 +96,8 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         }
       } else if (event is LoginGuestClickedEvent) {
         final credentials = await FirebaseAuth.instance.signInAnonymously();
-        await _firestoreRepository.setInitialUserData('Guest', "", credentials.user?.uid ?? "");
+        await _firestoreRepository.setInitialUserData(
+            "", credentials.user?.uid ?? "");
         yield await checkIfOnboardingIsDone(null);
       } else {
         yield LoginErrorState();

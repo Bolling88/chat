@@ -1,18 +1,14 @@
 import 'package:chat/model/chat_user.dart';
-import 'package:chat/repository/firestore_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter/widgets.dart';
-import 'package:flutter_i18n/flutter_i18n.dart';
 
 import '../utils/time_util.dart';
 
 class Chat extends Equatable implements Comparable<Chat> {
   final String id;
-  final Timestamp created;
   final List<String> users;
   final String lastMessage;
-  final ChatType chatType;
+  final String languageCode;
   final Timestamp lastMessageTimestamp;
   final String lastMessageUserId;
   final List<String> lastMessageReadBy;
@@ -23,10 +19,9 @@ class Chat extends Equatable implements Comparable<Chat> {
   final String usersText = "";
 
   Chat.fromJson(this.id, Map<String, dynamic> json)
-      : created = json['created'] ?? Timestamp.now(),
+      : languageCode = json['languageCode'] ?? 'en',
         users = json['users']?.cast<String>() ?? [],
         lastMessage = json['lastMessage'] ?? "",
-        chatType = ChatType.values[json['chatType'] ?? 0],
         lastMessageTimestamp = json['lastMessageTimestamp'] ?? Timestamp.now(),
         lastMessageUserId = json['lastMessageUserId'] ?? "",
         lastMessageReadBy = json['lastMessageReadBy']?.cast<String>() ?? [],
@@ -45,13 +40,12 @@ class Chat extends Equatable implements Comparable<Chat> {
   @override
   List<Object> get props => [
         id,
-        created,
+        languageCode,
         lastMessage,
         lastMessageTimestamp,
         lastMessageUserId,
         users,
         userInfos,
-        chatType,
         lastMessageReadBy,
         chatName,
         initiatedBy,

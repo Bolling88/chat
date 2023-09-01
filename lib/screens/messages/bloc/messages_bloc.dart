@@ -134,7 +134,7 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
         chatId: chatId,
         user: _chatUser,
         chatType: ChatType.joined,
-        message: _chatUser.name,
+        message: _chatUser.displayName,
         isPrivateChat: isPrivateChat);
   }
 
@@ -143,7 +143,7 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
         chatId: chatId,
         user: _chatUser,
         chatType: ChatType.left,
-        message: _chatUser.name,
+        message: _chatUser.displayName,
         isPrivateChat: isPrivateChat);
   }
 
