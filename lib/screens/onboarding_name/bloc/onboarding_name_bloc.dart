@@ -12,7 +12,7 @@ class OnboardingNameBloc
   final picker = ImagePicker();
 
   OnboardingNameBloc(this._firestoreRepository)
-      : super(const OnboardingNameBaseState('')) {
+      : super(const OnboardingNameBaseState('', false, false)) {
     add(OnboardingNameInitialEvent());
   }
 
@@ -28,22 +28,33 @@ class OnboardingNameBloc
       });
     } else if (event is OnboardingNameContinueClickedEvent) {
       if (currentState is OnboardingNameBaseState) {
-        final fullName = currentState.displayName;
-        final searchArray = _getSearchArray(fullName);
-        await _firestoreRepository.updateUserDisplayName(fullName, searchArray);
-        final chatUser = await _firestoreRepository.getUser();
-        if (chatUser?.pictureData.isEmpty == true) {
-          yield const OnboardingNameSuccessState(OnboardingNavigation.PICTURE);
-        } else if (chatUser?.gender == -1) {
-          yield const OnboardingNameSuccessState(OnboardingNavigation.GENDER);
+        yield currentState.copyWith(isValidatingName: true);
+        final nameAvailable = await _firestoreRepository
+            .getIsNameAvailable(currentState.displayName);
+        if (!nameAvailable) {
+          yield currentState.copyWith(
+              isValidatingName: false, isNameTaken: true);
         } else {
-          yield const OnboardingNameSuccessState(OnboardingNavigation.DONE);
+          final fullName = currentState.displayName;
+          final searchArray = _getSearchArray(fullName);
+          await _firestoreRepository.updateUserDisplayName(
+              fullName, searchArray);
+          final chatUser = await _firestoreRepository.getUser();
+          if (chatUser?.pictureData.isEmpty == true) {
+            yield const OnboardingNameSuccessState(
+                OnboardingNavigation.PICTURE);
+          } else if (chatUser?.gender == -1) {
+            yield const OnboardingNameSuccessState(OnboardingNavigation.GENDER);
+          } else {
+            yield const OnboardingNameSuccessState(OnboardingNavigation.DONE);
+          }
         }
       }
     } else if (event is OnboardingNameChangedEvent) {
       if (currentState is OnboardingNameBaseState) {
         Log.d(event.displayName);
-        yield currentState.copyWith(displayName: event.displayName);
+        yield currentState.copyWith(
+            displayName: event.displayName, isNameTaken: false);
       }
     }
   }

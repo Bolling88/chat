@@ -40,7 +40,7 @@ class AppUserImage extends StatelessWidget {
         fit: BoxFit.cover,
         // placeholder: (context, url) => AppSpinner(),
         errorWidget: (context, url, error) =>
-            const Icon(Icons.account_circle_rounded),
+        const Icon(Icons.account_circle_rounded),
       ),
     );
   }
@@ -53,13 +53,12 @@ class AppButton extends StatelessWidget {
   final double? height;
   final GestureTapCallback onTap;
 
-  const AppButton(
-      {Key? key,
-      required this.text,
-      required this.onTap,
-      this.width,
-      this.wrapText,
-      this.height})
+  const AppButton({Key? key,
+    required this.text,
+    required this.onTap,
+    this.width,
+    this.wrapText,
+    this.height})
       : super(key: key);
 
   @override
@@ -89,7 +88,7 @@ class AppButton extends StatelessWidget {
               child: Center(
                 child: Padding(
                   padding:
-                      const EdgeInsets.only(bottom: 4, left: 20, right: 20),
+                  const EdgeInsets.only(bottom: 4, left: 20, right: 20),
                   child: Text(
                     text,
                     textAlign: TextAlign.center,
@@ -115,13 +114,12 @@ class AppButtonDisabled extends StatelessWidget {
   final bool? wrapText;
   final double? height;
 
-  const AppButtonDisabled(
-      {Key? key,
-      required this.text,
-      this.width,
-      this.onTap,
-      this.wrapText,
-      this.height})
+  const AppButtonDisabled({Key? key,
+    required this.text,
+    this.width,
+    this.onTap,
+    this.wrapText,
+    this.height})
       : super(key: key);
 
   @override
@@ -140,21 +138,50 @@ class AppButtonDisabled extends StatelessWidget {
           ],
         ),
       ),
-      child: Material(
-        color: Colors.white.withOpacity(0.0),
-        child: InkWell(
-          onTap: onTap,
-          splashColor: AppColors.white,
-          child: Center(
-            child: Text(
-              text,
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                  fontSize: 15.0,
-                  fontWeight: FontWeight.w400,
-                  color: AppColors.white),
-            ),
-          ),
+      child: Center(
+        child: Text(
+          text,
+          textAlign: TextAlign.center,
+          style: const TextStyle(
+              fontSize: 15.0,
+              fontWeight: FontWeight.w400,
+              color: AppColors.white),
+        ),
+      ),
+    );
+  }
+}
+
+class AppButtonLoading extends StatelessWidget {
+  final double? width;
+  final GestureTapCallback? onTap;
+  final double? height;
+
+  const AppButtonLoading({Key? key,
+    this.width,
+    this.onTap,
+    this.height})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: width ?? double.infinity,
+      height: height ?? 40,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(5.0),
+        gradient: const LinearGradient(
+          colors: [
+            AppColors.grey_1,
+            AppColors.grey_2,
+          ],
+        ),
+      ),
+      child: const Center(
+        child: Padding(
+          padding: EdgeInsets.only(bottom: 4, top: 4, left: 20, right: 20),
+          child: CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(AppColors.main)),
         ),
       ),
     );
@@ -175,7 +202,7 @@ class AppVectorImageButton extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child:
-          SvgPicture.asset(assetName, semanticsLabel: assetName, color: tint),
+      SvgPicture.asset(assetName, semanticsLabel: assetName, color: tint),
     );
   }
 }

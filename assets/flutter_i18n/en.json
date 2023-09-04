@@ -131,8 +131,8 @@
   "i_am_non_binary": "I'm non-binary",
   "hey_you": "Hello you,",
   "nice_see_you_here": "thrilled to see you here!",
-  "nice_see_you_here_info": "Now we know you're a real person, but do you have a name as well?",
-  "write_firstname": "Type your name",
+  "nice_see_you_here_info": "Please select you chat name!",
+  "write_firstname": "Type your chat name",
   "continue": "Continue",
   "continue_if_happy": "Continue if you're happy with the result, or try another image",
   "as_always": "as always. You agree?",
@@ -264,5 +264,6 @@
   "sign_out": "Sign out",
   "sign_out_info": "Are you sure you wish to sign out?",
   "delete_account_info": "Are you sure you wish to delete your account?",
-  "last_message": "Last message:"
+  "last_message": "Last message:",
+  "name_taken": "User name is taken :("
 }

@@ -92,8 +92,8 @@ class OnboardingNameScreenContent extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.only(
-                left: 70, right: 70, top: 20, bottom: 20),
+            padding:
+                const EdgeInsets.only(left: 70, right: 70, top: 20, bottom: 20),
             child: Center(
               child: Text(
                 FlutterI18n.translate(context, "nice_see_you_here_info"),
@@ -119,8 +119,7 @@ class OnboardingNameScreenContent extends StatelessWidget {
                   maxLength: 15,
                   autofocus: false,
                   autocorrect: false,
-                  style: const TextStyle(
-                      color: AppColors.main, fontSize: 15),
+                  style: const TextStyle(color: AppColors.main, fontSize: 15),
                   textCapitalization: TextCapitalization.sentences,
                   cursorColor: AppColors.main,
                   onChanged: (text) {
@@ -129,6 +128,9 @@ class OnboardingNameScreenContent extends StatelessWidget {
                   },
                   decoration: InputDecoration(
                       filled: true,
+                      errorText: state.isNameTaken
+                          ? FlutterI18n.translate(context, "name_taken")
+                          : null,
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(4.0),
                           borderSide: const BorderSide(
@@ -139,12 +141,14 @@ class OnboardingNameScreenContent extends StatelessWidget {
                       hintStyle: const TextStyle(color: AppColors.grey_1),
                       contentPadding:
                           const EdgeInsets.only(left: 15, right: 15),
-                      hintText: FlutterI18n.translate(
-                          context, "write_firstname"))),
+                      hintText:
+                          FlutterI18n.translate(context, "write_firstname"))),
             ),
           ),
           const SizedBox(height: 10),
-          (state.displayName.isNotEmpty)
+          (state.displayName.isNotEmpty &&
+                  !state.isNameTaken &&
+                  !state.isValidatingName)
               ? AppButton(
                   onTap: () async {
                     BlocProvider.of<OnboardingNameBloc>(context)
@@ -153,10 +157,12 @@ class OnboardingNameScreenContent extends StatelessWidget {
                   width: 220,
                   text: FlutterI18n.translate(context, "continue"),
                 )
-              : AppButtonDisabled(
-                  text: FlutterI18n.translate(context, "continue"),
-                  width: 220,
-                )
+              : (state.isValidatingName)
+                  ? const AppButtonLoading(width: 220)
+                  : AppButtonDisabled(
+                      text: FlutterI18n.translate(context, "continue"),
+                      width: 220,
+                    )
         ],
       ),
     );

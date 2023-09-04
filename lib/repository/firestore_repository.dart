@@ -349,4 +349,15 @@ class FirestoreRepository {
       Log.d("No user is currently signed in.");
     }
   }
+
+  getIsNameAvailable(String displayName) {
+    return users
+        .where('displayName', isEqualTo: displayName)
+        .get()
+        .then((value) => value.docs.isEmpty)
+        .catchError((error) {
+      Log.e("Failed to get chat: $error");
+      return false;
+    });
+  }
 }
