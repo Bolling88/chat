@@ -12,6 +12,7 @@ class AppOtherMessageWidget extends StatelessWidget {
   final String pictureData;
   final String displayName;
   final String userId;
+  final String chatId;
 
   const AppOtherMessageWidget({
     Key? key,
@@ -19,13 +20,14 @@ class AppOtherMessageWidget extends StatelessWidget {
     required this.pictureData,
     required this.userId,
     required this.displayName,
+    required this.chatId,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        showVisitScreen(context, userId);
+        showVisitScreen(context, userId, chatId);
       },
       child: Padding(
         padding: const EdgeInsets.only(left: 20, bottom: 10, top: 10, right: 40),

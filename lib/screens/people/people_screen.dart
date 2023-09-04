@@ -10,8 +10,6 @@ import '../../utils/app_widgets.dart';
 import '../error/error_screen.dart';
 import '../hero/hero_screen.dart';
 import '../loading/loading_screen.dart';
-import '../message_holder/bloc/message_holder_bloc.dart';
-import '../message_holder/bloc/message_holder_event.dart';
 import 'bloc/people_bloc.dart';
 import 'bloc/people_state.dart';
 
@@ -28,15 +26,17 @@ class PeopleScreen extends StatelessWidget {
     return BlocProvider(
       create: (BuildContext context) =>
           PeopleBloc(context.read<FirestoreRepository>(), chat),
-      child: PeopleScreenBuilder(parentContext: parentContext),
+      child: PeopleScreenBuilder(chat: chat, parentContext: parentContext),
     );
   }
 }
 
 class PeopleScreenBuilder extends StatelessWidget {
   final BuildContext parentContext;
+  final Chat chat;
 
-  const PeopleScreenBuilder({required this.parentContext, Key? key})
+  const PeopleScreenBuilder(
+      {required this.chat, required this.parentContext, Key? key})
       : super(key: key);
 
   @override
@@ -56,7 +56,8 @@ class PeopleScreenBuilder extends StatelessWidget {
                 ),
               ),
               child: (state.chatUsers.isEmpty)
-                  ? Center(child: Text(FlutterI18n.translate(context,'no_users')))
+                  ? Center(
+                      child: Text(FlutterI18n.translate(context, 'no_users')))
                   : ListView.builder(
                       itemCount: state.chatUsers.length,
                       shrinkWrap: true,
@@ -76,8 +77,8 @@ class PeopleScreenBuilder extends StatelessWidget {
                                   state.chatUsers[index].pictureData)),
                           onTap: () {
                             Navigator.pop(context);
-                            showVisitScreen(
-                                parentContext, state.chatUsers[index].id);
+                            showVisitScreen(parentContext,
+                                state.chatUsers[index].id, chat.id);
                           },
                         );
                       },

@@ -15,6 +15,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'utils/save_file.dart';
@@ -78,7 +79,7 @@ class Chat extends StatelessWidget {
               Provider<StorageRepository>.value(value: storageRepository),
             ],
             child: MaterialApp(
-              title: 'gambit.ai',
+              title: 'Chatta',
               debugShowCheckedModeBanner: false,
               localizationsDelegates: [
                 flutterI18nDelegate,
@@ -88,7 +89,31 @@ class Chat extends StatelessWidget {
               ],
               supportedLocales: const [Locale('en', 'EN')],
               builder: FlutterI18n.rootAppBuilder(),
-              theme: ThemeData(fontFamily: 'chat'),
+              theme: ThemeData(
+                useMaterial3: true,
+                // Define the default brightness and colors.
+                colorScheme: ColorScheme.fromSeed(
+                  seedColor: Colors.purple,
+                  // ···
+                  brightness: Brightness.dark,
+                ),
+
+                // Define the default `TextTheme`. Use this to specify the default
+                // text styling for headlines, titles, bodies of text, and more.
+                textTheme: TextTheme(
+                  displayLarge: const TextStyle(
+                    fontSize: 72,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  // ···
+                  titleLarge: GoogleFonts.oswald(
+                    fontSize: 30,
+                    fontStyle: FontStyle.italic,
+                  ),
+                  bodyMedium: GoogleFonts.merriweather(),
+                  displaySmall: GoogleFonts.pacifico(),
+                ),
+              ),
               home: const SplashScreen(),
               routes: {
                 LoginScreen.routeName: (context) => const LoginScreen(),

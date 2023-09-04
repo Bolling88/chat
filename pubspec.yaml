@@ -54,6 +54,8 @@ dependencies:
   image_cropper: any
   giphy_get: any
   cloud_functions: ^4.1.1
+  lottie: ^2.6.0
+  google_fonts: ^5.1.0
 
 dev_dependencies:
   flutter_test:
@@ -79,25 +81,3 @@ flutter:
 
   assets:
     - assets/flutter_i18n/
-
-  fonts:
-    - family: chat
-      fonts:
-        - asset: fonts/black.ttf
-          weight: 900
-        - asset: fonts/extra_bold.ttf
-          weight: 800
-        - asset: fonts/bold.ttf
-          weight: 700
-        - asset: fonts/semi_bold.ttf
-          weight: 600
-        - asset: fonts/medium.ttf
-          weight: 500
-        - asset: fonts/regular.ttf
-          weight: 400
-        - asset: fonts/light.ttf
-          weight: 300
-        - asset: fonts/extra_light.ttf
-          weight: 200
-        - asset: fonts/thin.ttf
-          weight: 100

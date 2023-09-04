@@ -30,13 +30,17 @@ class MessagesScreen extends StatelessWidget {
       create: (BuildContext context) => MessagesBloc(
           chatId, context.read<FirestoreRepository>(),
           isPrivateChat: isPrivateChat),
-      child: const ChatsScreenContent(),
+      child: ChatsScreenContent(
+        chatId: chatId,
+      ),
     );
   }
 }
 
 class ChatsScreenContent extends StatefulWidget {
-  const ChatsScreenContent({Key? key}) : super(key: key);
+  final String chatId;
+
+  const ChatsScreenContent({required this.chatId, Key? key}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
@@ -118,14 +122,15 @@ class ChatsScreenContentState extends State<ChatsScreenContent> {
                           );
                         } else {
                           return AppOtherMessageWidget(
-                              message: state.messages[index].message!,
-                              pictureData: state.messages[index].message
-                                      ?.createdByImageUrl ??
-                                  '',
-                              userId:
-                                  state.messages[index].message!.createdById,
-                              displayName:
-                                  state.messages[index].message!.createdByName);
+                            message: state.messages[index].message!,
+                            pictureData: state.messages[index].message
+                                    ?.createdByImageUrl ??
+                                '',
+                            userId: state.messages[index].message!.createdById,
+                            displayName:
+                                state.messages[index].message!.createdByName,
+                            chatId: widget.chatId,
+                          );
                         }
                       },
                     ),

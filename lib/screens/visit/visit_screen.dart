@@ -3,8 +3,10 @@ import 'package:chat/repository/firestore_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
+import 'package:lottie/lottie.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_widgets.dart';
+import '../../utils/lottie.dart';
 import '../hero/hero_screen.dart';
 import '../message_holder/bloc/message_holder_bloc.dart';
 import '../message_holder/bloc/message_holder_event.dart';
@@ -12,17 +14,22 @@ import 'bloc/visit_bloc.dart';
 import 'bloc/visit_state.dart';
 
 class VisitScreen extends StatelessWidget {
-  final String _userId;
+  final String userId;
+  final String chatId;
   final BuildContext parentContext;
 
-  const VisitScreen(this._userId, {required this.parentContext, Key? key})
-      : super(key: key);
+  const VisitScreen({
+    required this.userId,
+    required this.chatId,
+    required this.parentContext,
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (BuildContext context) =>
-          VisitBloc(context.read<FirestoreRepository>(), _userId),
+          VisitBloc(context.read<FirestoreRepository>(), userId, chatId),
       child: VisitScreenContent(parentContext),
     );
   }
@@ -40,7 +47,8 @@ class VisitScreenContent extends StatelessWidget {
     return BlocListener<VisitBloc, VisitState>(
       listener: (context, state) {},
       child: BlocBuilder<VisitBloc, VisitState>(builder: (context, state) {
-        if (state is VisitBaseState) {
+        if (state is VisitBaseState && state.user != null) {
+          final user = state.user!;
           return Container(
             height: viewHeight,
             width: double.infinity,
@@ -58,12 +66,12 @@ class VisitScreenContent extends StatelessWidget {
                     child: GestureDetector(
                   onTap: () {
                     Navigator.pushNamed(context, HeroScreen.routeName,
-                        arguments: HeroScreenArguments(state.user.pictureData));
+                        arguments: HeroScreenArguments(user.pictureData));
                   },
                   child: Hero(
                     tag: "imageHero",
                     child: AppUserImage(
-                      state.user.pictureData,
+                      user.pictureData,
                       size: 110,
                     ),
                   ),
@@ -71,7 +79,7 @@ class VisitScreenContent extends StatelessWidget {
                 const SizedBox(height: 20),
                 Center(
                     child: Text(
-                  state.user.displayName,
+                  user.displayName,
                   style: const TextStyle(
                       fontSize: 28,
                       fontWeight: FontWeight.bold,
@@ -85,8 +93,35 @@ class VisitScreenContent extends StatelessWidget {
                     onTap: () {
                       Navigator.pop(context);
                       BlocProvider.of<MessageHolderBloc>(parentContext)
-                          .add(MessageHolderPrivateChatEvent(state.user));
+                          .add(MessageHolderPrivateChatEvent(user));
                     })
+              ],
+            ),
+          );
+        } else if (state is VisitBaseState && state.user == null) {
+          return Container(
+            width: double.infinity,
+            height: viewHeight,
+            decoration: const BoxDecoration(
+                color: AppColors.white,
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20))),
+            child: Column(
+              children: [
+                const Center(
+                    child: SizedBox(
+                        height: 200,
+                        child: AppLottie(
+                            url:
+                                'https://firebasestorage.googleapis.com/v0/b/chat-60225.appspot.com/o/lottie%2Fshrug.json?alt=media&token=73407d43-f0b5-4762-9042-12f07b3646e5'))),
+                Text(
+                  FlutterI18n.translate(context, 'user_offline'),
+                  style: const TextStyle(
+                      color: AppColors.main,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w500),
+                ),
               ],
             ),
           );
@@ -132,13 +167,18 @@ class DetailScreen extends StatelessWidget {
   }
 }
 
-Future showVisitScreen(BuildContext parentContext, String userId) async {
+Future showVisitScreen(
+    BuildContext parentContext, String userId, String chatId) async {
   await showModalBottomSheet(
     useRootNavigator: true,
     context: parentContext,
     backgroundColor: AppColors.transparent,
     builder: (BuildContext context) {
-      return VisitScreen(userId, parentContext: parentContext);
+      return VisitScreen(
+        userId: userId,
+        parentContext: parentContext,
+        chatId: chatId,
+      );
     },
   );
 }

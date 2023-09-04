@@ -3,11 +3,11 @@ import '../../../model/chat_user.dart';
 
 abstract class VisitState extends Equatable {
   @override
-  List<Object> get props => [];
+  List<Object?> get props => [];
 }
 
 class VisitBaseState extends VisitState {
-  final ChatUser user;
+  final ChatUser? user;
 
   VisitBaseState(this.user);
 
@@ -16,9 +16,7 @@ class VisitBaseState extends VisitState {
   }
 
   @override
-  List<Object> get props => [
-        user,
-      ];
+  List<Object?> get props => [user];
 }
 
 class VisitLoadingState extends VisitState {}

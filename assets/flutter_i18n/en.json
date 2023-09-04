@@ -266,5 +266,6 @@
   "last_message": "Last message:",
   "name_taken": "User name is taken :(",
   "continue_guest": "Continue as guest",
-  "select_source": "Select source"
+  "select_source": "Select source",
+  "user_offline": "User is offline currently :("
 }
