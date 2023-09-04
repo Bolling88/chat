@@ -152,7 +152,6 @@ class FirestoreRepository {
       if (isPrivateChat) {
         await privateChats.doc(chatId).set({
           'lastMessage': message,
-          'chatType': chatType.value,
           'lastMessageReadBy': [getUserId()],
           'lastMessageTimestamp': FieldValue.serverTimestamp(),
           'lastMessageUserId': getUserId()
@@ -160,7 +159,6 @@ class FirestoreRepository {
       } else {
         await chats.doc(chatId).set({
           'lastMessage': message,
-          'chatType': chatType.value,
           'lastMessageReadBy': [getUserId()],
           'lastMessageTimestamp': FieldValue.serverTimestamp(),
           'lastMessageUserId': getUserId()
@@ -219,8 +217,10 @@ class FirestoreRepository {
     }
   }
 
-  Stream<QuerySnapshot> streamChats() {
-    return chats.snapshots();
+  Stream<QuerySnapshot> streamChats(String countryCode) {
+    return chats
+        .where('countryCode', whereIn: [countryCode, ''])
+        .snapshots();
   }
 
   Stream<QuerySnapshot> streamPrivateChats() {

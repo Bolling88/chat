@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:collection/collection.dart';
 import '../../../model/chat.dart';
@@ -41,38 +42,15 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
 
   void setUpDataListener() {
     Log.d("Setting up data listener");
-    String deviceLanguage= Platform.localeName.substring(0,2);
-    Log.d('Current Language Code: $deviceLanguage');
-    _firestoreRepository.streamChats().listen((event) {
+    String countryCode= WidgetsBinding.instance.platformDispatcher.locale.countryCode ?? 'en';
+    Log.d('Current country Code: $countryCode');
+    _firestoreRepository.streamChats(countryCode).listen((event) {
       final List<Chat> chats = event.docs
           .map((e) => Chat.fromJson(e.id, e.data() as Map<String, dynamic>))
           .toList()
           .sorted((a, b) => b.chatName.compareTo(a.chatName))
           .reversed
           .toList();
-      Chat? sameLanguageChat;
-      Chat? enLanguageChat;
-
-      for (final chat in chats) {
-        if (chat.languageCode == deviceLanguage) {
-          sameLanguageChat = chat;
-          break; // Found a chat with the same language code, no need to continue
-        }
-        if (chat.languageCode == 'en') {
-          enLanguageChat = chat;
-        }
-      }
-
-      chats.removeWhere((chat) => chat.languageCode == deviceLanguage);
-      chats.removeWhere((chat) => chat.languageCode == 'en');
-
-      // If a chat with the same language code was found, add it to the beginning
-      if (sameLanguageChat != null) {
-        chats.insert(0, sameLanguageChat);
-      }
-      if (enLanguageChat != null) {
-        chats.insert(0, enLanguageChat);
-      }
 
       add(ChatUpdatedEvent(chats));
     });

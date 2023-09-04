@@ -14,6 +14,7 @@ class Chat extends Equatable implements Comparable<Chat> {
   final List<String> lastMessageReadBy;
   final String initiatedBy;
   final String chatName;
+  final String imageUrl;
 
   final List<ChatUser> userInfos = [];
   final String usersText = "";
@@ -26,7 +27,8 @@ class Chat extends Equatable implements Comparable<Chat> {
         lastMessageUserId = json['lastMessageUserId'] ?? "",
         lastMessageReadBy = json['lastMessageReadBy']?.cast<String>() ?? [],
         initiatedBy = json['initiatedBy'] ?? "",
-        chatName = json['chatName'] ?? "";
+        chatName = json['chatName'] ?? "",
+        imageUrl = json['imageUrl'] ?? "";
 
   String getLastMessageReadableDate() {
     return getLastMessageTimeFromTimeStamp(lastMessageTimestamp);
@@ -50,5 +52,6 @@ class Chat extends Equatable implements Comparable<Chat> {
         chatName,
         initiatedBy,
         usersText,
+        imageUrl,
       ];
 }

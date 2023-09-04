@@ -81,7 +81,6 @@ flutter:
   assets:
     - assets/flutter_i18n/
     - assets/svg/
-    - assets/png/
 
   fonts:
     - family: chat

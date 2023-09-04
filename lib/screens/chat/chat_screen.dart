@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chat/utils/translate.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -118,10 +119,18 @@ class ChatsScreenContent extends StatelessWidget {
           const Icon(Icons.person)
         ],
       ),
-      leading: Image.asset(
-        "assets/png/${state.chats[index].languageCode}.png",
-        width: 48,
-        height: 48,
+      leading: CachedNetworkImage(
+        imageUrl: state.chats[index].imageUrl,
+        imageBuilder: (context, imageProvider) => Container(
+          width: 48,
+          height: 48,
+          decoration: BoxDecoration(
+            shape: BoxShape.rectangle,
+            image: DecorationImage(image: imageProvider, fit: BoxFit.contain),
+          ),
+        ),
+        placeholder: (context, url) => getLeadingPartyIcon(state.chats[index]),
+        errorWidget: (context, url, error) => getLeadingPartyIcon(state.chats[index]),
       ),
       subtitle: (state.chats[index].lastMessageReadBy
               .contains(FirebaseAuth.instance.currentUser!.uid))
