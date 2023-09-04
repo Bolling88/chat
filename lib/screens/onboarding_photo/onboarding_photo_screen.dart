@@ -4,7 +4,6 @@ import 'package:chat/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
-import 'package:flutter_svg/svg.dart';
 import '../../repository/firestore_repository.dart';
 import '../../repository/storage_repository.dart';
 import '../../utils/app_widgets.dart';
@@ -242,7 +241,7 @@ class OnboardingPhotoScreenContent extends StatelessWidget {
           children: [
             const SizedBox(height: 24),
             Text(
-              FlutterI18n.translate(context, "add_album"),
+              FlutterI18n.translate(context, "select_source"),
               style: const TextStyle(
                   color: AppColors.grey_1,
                   fontWeight: FontWeight.w600,
@@ -258,7 +257,7 @@ class OnboardingPhotoScreenContent extends StatelessWidget {
                     appContext,
                     FlutterI18n.translate(context, "camera"),
                     '',
-                    'assets/svg/upload_camera.svg',
+                    const Icon(Icons.camera_alt, size: 30, color: Colors.black),
                     20,
                     8, () async {
                   Navigator.of(appContext).pop();
@@ -269,7 +268,7 @@ class OnboardingPhotoScreenContent extends StatelessWidget {
                     appContext,
                     FlutterI18n.translate(context, "images"),
                     '',
-                    'assets/svg/upload_images.svg',
+                    const Icon(Icons.image, size: 30, color: Colors.black),
                     8,
                     20, () {
                   Navigator.of(appContext).pop();
@@ -292,7 +291,7 @@ Flexible getOptionWidget(
     BuildContext context,
     String title,
     String message,
-    String iconPath,
+    Icon icon,
     double paddingLeft,
     double paddingRight,
     VoidCallback onPressed) {
@@ -323,12 +322,7 @@ Flexible getOptionWidget(
                 ),
               ),
               child: Center(
-                child: SvgPicture.asset(
-                  iconPath,
-                  semanticsLabel: iconPath,
-                  width: 45,
-                  height: 45,
-                ),
+                child: icon,
               ),
               onPressed: onPressed,
             ),

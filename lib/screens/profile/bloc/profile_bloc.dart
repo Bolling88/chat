@@ -28,6 +28,17 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
           await _firestoreRepository.deleteUserAndFiles();
           yield ProfileLogoutState();
         }
+      } else if (event is ProfileLogoutEvent) {
+        yield ProfileLoadingState();
+        //Check if user is anonymous
+        if (FirebaseAuth.instance.currentUser?.isAnonymous == true) {
+          //Delete user
+          await _firestoreRepository.deleteUserAndFiles();
+        } else {
+          //else just sign out the user
+          await FirebaseAuth.instance.signOut();
+        }
+        yield ProfileLogoutState();
       } else {
         Log.e('ProfileBloc: Not implemented');
         throw UnimplementedError();

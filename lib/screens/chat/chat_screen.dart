@@ -4,8 +4,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
-import 'package:flutter_svg/svg.dart';
-import '../../model/chat.dart';
 import '../../repository/firestore_repository.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_widgets.dart';
@@ -129,59 +127,29 @@ class ChatsScreenContent extends StatelessWidget {
             image: DecorationImage(image: imageProvider, fit: BoxFit.contain),
           ),
         ),
-        placeholder: (context, url) => getLeadingPartyIcon(state.chats[index]),
-        errorWidget: (context, url, error) => getLeadingPartyIcon(state.chats[index]),
+        placeholder: (context, url) => const SizedBox(
+          width: 48,
+          height: 48,
+          child: Center(
+            child: AppSpinner(),
+          ),
+        ),
+        errorWidget: (context, url, error) => const Icon(Icons.error),
       ),
-      subtitle: (state.chats[index].lastMessageReadBy
-              .contains(FirebaseAuth.instance.currentUser!.uid))
-          ? Text(
-              '${translate(context, 'last_message')} ${state.chats[index].lastMessage}',
-              maxLines: 2,
-              style: const TextStyle(
-                  color: AppColors.grey_1,
-                  fontSize: 13,
-                  overflow: TextOverflow.ellipsis,
-                  fontWeight: FontWeight.w500),
-            )
-          : Row(
-              children: [
-                Container(
-                  width: 10,
-                  height: 10,
-                  margin: const EdgeInsets.only(right: 5),
-                  decoration: const BoxDecoration(
-                      color: AppColors.main, shape: BoxShape.circle),
-                ),
-                Expanded(
-                  child: Text(
-                    state.chats[index].lastMessage,
-                    maxLines: 2,
-                    style: const TextStyle(
-                        color: AppColors.grey_1,
-                        fontSize: 13,
-                        fontWeight: FontWeight.bold),
-                  ),
-                )
-              ],
-            ),
+      subtitle: Text(
+        '${state.chats[index].lastMessageByName}: ${state.chats[index].lastMessage}',
+        maxLines: 2,
+        style: const TextStyle(
+            color: AppColors.grey_1,
+            fontSize: 13,
+            overflow: TextOverflow.ellipsis,
+            fontWeight: FontWeight.w500),
+      ),
       onTap: () {
         Navigator.of(context, rootNavigator: true).pushNamed(
             MessageHolderScreen.routeName,
             arguments: MessageHolderScreenArguments(chat: state.chats[index]));
       },
-    );
-  }
-
-  Widget getLeadingPartyIcon(Chat chat) {
-    return ClipOval(
-      child: Container(
-          width: 48,
-          height: 48,
-          color: AppColors.main,
-          child: Padding(
-              padding: const EdgeInsets.all(6),
-              child: SvgPicture.asset("assets/svg/party-icon.svg",
-                  semanticsLabel: "", color: AppColors.main))),
     );
   }
 }

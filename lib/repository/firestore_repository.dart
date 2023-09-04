@@ -152,6 +152,7 @@ class FirestoreRepository {
       if (isPrivateChat) {
         await privateChats.doc(chatId).set({
           'lastMessage': message,
+          'lastMessageByName': user.displayName,
           'lastMessageReadBy': [getUserId()],
           'lastMessageTimestamp': FieldValue.serverTimestamp(),
           'lastMessageUserId': getUserId()
@@ -159,6 +160,7 @@ class FirestoreRepository {
       } else {
         await chats.doc(chatId).set({
           'lastMessage': message,
+          'lastMessageByName': user.displayName,
           'lastMessageReadBy': [getUserId()],
           'lastMessageTimestamp': FieldValue.serverTimestamp(),
           'lastMessageUserId': getUserId()
@@ -340,10 +342,23 @@ class FirestoreRepository {
     if (user != null) {
       try {
         await _deleteAllUserFiles(user.uid);
-        await user.delete();
-        Log.d("User account and files deleted successfully");
+        Log.d("Files deleted successfully");
       } catch (e) {
-        Log.d("Error deleting user account and files: $e");
+        Log.d("Error deleting files: $e");
+      }
+
+      try{
+        await users.doc(user.uid).delete();
+        Log.d("User deleted in Firestore successfully");
+      } catch (e) {
+        Log.d("Error deleting user: $e");
+      }
+
+      try{
+        await user.delete();
+        Log.d("User account deleted successfully");
+      } catch (e) {
+        Log.d("Error deleting user account: $e");
       }
     } else {
       Log.d("No user is currently signed in.");

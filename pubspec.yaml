@@ -40,7 +40,6 @@ dependencies:
   firebase_messaging:
   firebase_storage:
   firebase_database:
-  flutter_svg: any
   flutter_i18n: any
   provider: ^6.0.0
   google_sign_in: ^5.2.2
@@ -80,7 +79,6 @@ flutter:
 
   assets:
     - assets/flutter_i18n/
-    - assets/svg/
 
   fonts:
     - family: chat

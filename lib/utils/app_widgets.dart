@@ -1,17 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chat/utils/translate.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_i18n/flutter_i18n.dart';
-import 'package:flutter_svg/svg.dart';
-
-import '../model/chat_user.dart';
-import '../model/message.dart';
-import '../repository/data_repository.dart';
-import '../repository/firestore_repository.dart';
-import '../screens/messages/bloc/messages_bloc.dart';
-import '../screens/messages/bloc/messages_event.dart';
-import '../screens/visit/visit_screen.dart';
 import 'app_colors.dart';
 
 class AppSpinner extends StatelessWidget {
@@ -184,25 +173,6 @@ class AppButtonLoading extends StatelessWidget {
               valueColor: AlwaysStoppedAnimation<Color>(AppColors.main)),
         ),
       ),
-    );
-  }
-}
-
-class AppVectorImageButton extends StatelessWidget {
-  final String assetName;
-  final GestureTapCallback onTap;
-  final Color? tint;
-
-  const AppVectorImageButton(
-      {Key? key, required this.assetName, required this.onTap, this.tint})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child:
-      SvgPicture.asset(assetName, semanticsLabel: assetName, color: tint),
     );
   }
 }

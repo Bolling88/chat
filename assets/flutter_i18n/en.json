@@ -209,7 +209,6 @@
   "show_participants": "Show participants",
   "chat_members": "Chat members",
   "party_ending": "s party",
-  "add_album": "Add to album",
   "no_location_title": "No location",
   "no_location_title_message": "To be able to create a party, we need to know where you are. Please give the app permission to access your location",
   "ok": "ok",
@@ -265,5 +264,7 @@
   "sign_out_info": "Are you sure you wish to sign out?",
   "delete_account_info": "Are you sure you wish to delete your account?",
   "last_message": "Last message:",
-  "name_taken": "User name is taken :("
+  "name_taken": "User name is taken :(",
+  "continue_guest": "Continue as guest",
+  "select_source": "Select source"
 }

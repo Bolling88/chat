@@ -70,7 +70,7 @@ class ProfileScreenBuilder extends StatelessWidget {
                               showDialog(
                                   context: context,
                                   builder: (BuildContext context) {
-                                    return getSignOutDialog(context);
+                                    return getSignOutDialog(blocContext);
                                   });
                             },
                             label: Text(translate(context, 'sign_out')),
@@ -114,9 +114,8 @@ class ProfileScreenBuilder extends StatelessWidget {
         TextButton(
           onPressed: () {
             Navigator.of(context).pop();
-            FirebaseAuth.instance
-                .signOut()
-                .then((value) => {exitToLogin(context)});
+            BlocProvider.of<ProfileBloc>(context)
+                .add(ProfileLogoutEvent());
           },
           child: Text(translate(context, 'yes')),
         ),

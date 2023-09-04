@@ -8,6 +8,7 @@ class Chat extends Equatable implements Comparable<Chat> {
   final String id;
   final List<String> users;
   final String lastMessage;
+  final String lastMessageByName;
   final String languageCode;
   final Timestamp lastMessageTimestamp;
   final String lastMessageUserId;
@@ -23,6 +24,7 @@ class Chat extends Equatable implements Comparable<Chat> {
       : languageCode = json['languageCode'] ?? 'en',
         users = json['users']?.cast<String>() ?? [],
         lastMessage = json['lastMessage'] ?? "",
+        lastMessageByName = json['lastMessageByName'] ?? "",
         lastMessageTimestamp = json['lastMessageTimestamp'] ?? Timestamp.now(),
         lastMessageUserId = json['lastMessageUserId'] ?? "",
         lastMessageReadBy = json['lastMessageReadBy']?.cast<String>() ?? [],
@@ -44,6 +46,7 @@ class Chat extends Equatable implements Comparable<Chat> {
         id,
         languageCode,
         lastMessage,
+        lastMessageByName,
         lastMessageTimestamp,
         lastMessageUserId,
         users,
