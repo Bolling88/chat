@@ -74,7 +74,6 @@ class MessageHolderScreenContent extends StatelessWidget {
                     ? _onWillPop(context)
                     : Future.value(true),
                 child: Scaffold(
-                    backgroundColor: AppColors.white,
                     appBar: getAppBar(context, state),
                     body: Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
@@ -156,14 +155,14 @@ class MessageHolderScreenContent extends StatelessWidget {
   List<Widget> getChatViews(MessageHolderBaseState state) {
     return {
           MessagesScreen(
-            state.chat.id,
+            state.chat,
             false,
             key: Key(state.chat.id),
           )
         }.toList() +
         Iterable.generate(state.privateChats.length)
             .map((e) => MessagesScreen(
-                  state.privateChats[e].id,
+                  state.privateChats[e],
                   true,
                   key: Key(state.privateChats[e].id),
                 ))
@@ -172,10 +171,6 @@ class MessageHolderScreenContent extends StatelessWidget {
 
   AppBar getAppBar(BuildContext context, MessageHolderBaseState state) {
     return AppBar(
-      iconTheme: const IconThemeData(
-        color: AppColors.white, //change your color here
-      ),
-      backgroundColor: AppColors.main,
       title: Text(
         state.selectedChat.chatName,
         style: const TextStyle(color: AppColors.white),

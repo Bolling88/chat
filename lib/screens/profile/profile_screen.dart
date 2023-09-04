@@ -63,7 +63,7 @@ class ProfileScreenBuilder extends StatelessWidget {
                       children: [
                         Padding(
                           padding: const EdgeInsets.only(
-                              top: 5, bottom: 5, left: 20, right: 20),
+                              top: 20, bottom: 5, left: 20, right: 20),
                           child: ElevatedButton.icon(
                             icon: const Icon(Icons.exit_to_app),
                             onPressed: () {

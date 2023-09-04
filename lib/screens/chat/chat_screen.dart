@@ -33,16 +33,16 @@ class ChatsScreenContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: AppColors.white,
         appBar: AppBar(
-          backgroundColor: AppColors.main,
           title: Text(
             FlutterI18n.translate(context, "chat"),
             style: const TextStyle(color: AppColors.white),
           ),
           actions: [
             IconButton(
-              icon: const Icon(Icons.person),
+              icon: const Icon(
+                Icons.settings,
+              ),
               onPressed: () {
                 Navigator.pushNamed(context, ProfileScreen.routeName);
               },
@@ -112,9 +112,14 @@ class ChatsScreenContent extends StatelessWidget {
         children: [
           Text(
             state.chats[index].users.length.toString(),
-            style: const TextStyle(fontSize: 13, color: AppColors.grey_1),
+            style: const TextStyle(fontSize: 14, color: AppColors.grey_1),
           ),
-          const Icon(Icons.person)
+          Icon(
+            Icons.person,
+            color: state.chats[index].users.isNotEmpty
+                ? AppColors.main
+                : AppColors.grey_1,
+          )
         ],
       ),
       leading: CachedNetworkImage(
@@ -141,9 +146,8 @@ class ChatsScreenContent extends StatelessWidget {
         maxLines: 2,
         style: const TextStyle(
             color: AppColors.grey_1,
-            fontSize: 13,
-            overflow: TextOverflow.ellipsis,
-            fontWeight: FontWeight.w500),
+            fontSize: 12,
+            overflow: TextOverflow.ellipsis),
       ),
       onTap: () {
         Navigator.of(context, rootNavigator: true).pushNamed(

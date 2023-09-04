@@ -9,6 +9,7 @@ import 'package:chat/screens/onboarding_name/onboarding_name_screen.dart';
 import 'package:chat/screens/onboarding_photo/onboarding_photo_screen.dart';
 import 'package:chat/screens/profile/profile_screen.dart';
 import 'package:chat/screens/splash/splash_screen.dart';
+import 'package:chat/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
@@ -91,27 +92,28 @@ class Chat extends StatelessWidget {
               builder: FlutterI18n.rootAppBuilder(),
               theme: ThemeData(
                 useMaterial3: true,
-                // Define the default brightness and colors.
                 colorScheme: ColorScheme.fromSeed(
-                  seedColor: Colors.purple,
-                  // ···
-                  brightness: Brightness.dark,
+                  brightness: Brightness.light,
+                  seedColor: AppColors.main,
                 ),
-
-                // Define the default `TextTheme`. Use this to specify the default
-                // text styling for headlines, titles, bodies of text, and more.
+                iconTheme: const IconThemeData(
+                  color: Colors.white, // <= You can change your color here.
+                ),
+                appBarTheme: AppBarTheme(
+                  backgroundColor: AppColors.main,
+                  elevation: 4,
+                  titleTextStyle: GoogleFonts.lobster(fontSize: 30),
+                  shadowColor: Colors.black,
+                  iconTheme: const IconThemeData(color: Colors.white),
+                ),
                 textTheme: TextTheme(
-                  displayLarge: const TextStyle(
-                    fontSize: 72,
-                    fontWeight: FontWeight.bold,
-                  ),
-                  // ···
-                  titleLarge: GoogleFonts.oswald(
-                    fontSize: 30,
-                    fontStyle: FontStyle.italic,
-                  ),
-                  bodyMedium: GoogleFonts.merriweather(),
-                  displaySmall: GoogleFonts.pacifico(),
+                  displayLarge: GoogleFonts.lobster(),
+                  displayMedium: GoogleFonts.lobster(),
+                  displaySmall: GoogleFonts.lobster(),
+                  titleLarge: GoogleFonts.lobster(),
+                  bodyLarge: GoogleFonts.notoSans(),
+                  bodyMedium: GoogleFonts.notoSans(fontWeight: FontWeight.w700),
+                  bodySmall: GoogleFonts.notoSans(fontWeight: FontWeight.w500),
                 ),
               ),
               home: const SplashScreen(),

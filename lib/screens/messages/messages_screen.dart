@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:giphy_get/giphy_get.dart';
+import '../../model/chat.dart';
 import '../../repository/firestore_repository.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_widgets.dart';
@@ -15,12 +16,12 @@ import 'other_message_widget.dart';
 
 class MessagesScreen extends StatelessWidget {
   static const routeName = "/messages_screen";
-  final String chatId;
+  final Chat chat;
   final List<String>? userIds;
 
   final bool isPrivateChat;
 
-  const MessagesScreen(this.chatId, this.isPrivateChat,
+  const MessagesScreen(this.chat, this.isPrivateChat,
       {this.userIds, Key? key})
       : super(key: key);
 
@@ -28,19 +29,19 @@ class MessagesScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (BuildContext context) => MessagesBloc(
-          chatId, context.read<FirestoreRepository>(),
+          chat.id, context.read<FirestoreRepository>(),
           isPrivateChat: isPrivateChat),
       child: ChatsScreenContent(
-        chatId: chatId,
+        chat: chat,
       ),
     );
   }
 }
 
 class ChatsScreenContent extends StatefulWidget {
-  final String chatId;
+  final Chat chat;
 
-  const ChatsScreenContent({required this.chatId, Key? key}) : super(key: key);
+  const ChatsScreenContent({required this.chat, Key? key}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
@@ -129,7 +130,7 @@ class ChatsScreenContentState extends State<ChatsScreenContent> {
                             userId: state.messages[index].message!.createdById,
                             displayName:
                                 state.messages[index].message!.createdByName,
-                            chatId: widget.chatId,
+                            chat: widget.chat,
                           );
                         }
                       },

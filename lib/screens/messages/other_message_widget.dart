@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
+import '../../model/chat.dart';
 import '../../model/message.dart';
 import '../../repository/firestore_repository.dart';
 import '../../utils/app_colors.dart';
@@ -12,7 +13,7 @@ class AppOtherMessageWidget extends StatelessWidget {
   final String pictureData;
   final String displayName;
   final String userId;
-  final String chatId;
+  final Chat chat;
 
   const AppOtherMessageWidget({
     Key? key,
@@ -20,17 +21,18 @@ class AppOtherMessageWidget extends StatelessWidget {
     required this.pictureData,
     required this.userId,
     required this.displayName,
-    required this.chatId,
+    required this.chat,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        showVisitScreen(context, userId, chatId);
+        showVisitScreen(context, userId, chat, false);
       },
       child: Padding(
-        padding: const EdgeInsets.only(left: 20, bottom: 10, top: 10, right: 40),
+        padding:
+            const EdgeInsets.only(left: 20, bottom: 10, top: 10, right: 40),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -63,7 +65,10 @@ class AppOtherMessageWidget extends StatelessWidget {
                               gradient: LinearGradient(
                                   begin: Alignment.topCenter,
                                   end: Alignment.bottomCenter,
-                                  colors: [AppColors.grey_4, AppColors.grey_4])),
+                                  colors: [
+                                    AppColors.grey_4,
+                                    AppColors.grey_4
+                                  ])),
                           child: Padding(
                             padding: const EdgeInsets.all(15),
                             child: Column(

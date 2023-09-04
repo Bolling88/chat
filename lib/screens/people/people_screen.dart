@@ -48,6 +48,7 @@ class PeopleScreenBuilder extends StatelessWidget {
             return const ErrorScreen();
           } else if (state is PeopleBaseState) {
             return Container(
+              height: 400,
               decoration: const BoxDecoration(
                 color: AppColors.white,
                 borderRadius: BorderRadius.only(
@@ -58,30 +59,78 @@ class PeopleScreenBuilder extends StatelessWidget {
               child: (state.chatUsers.isEmpty)
                   ? Center(
                       child: Text(FlutterI18n.translate(context, 'no_users')))
-                  : ListView.builder(
-                      itemCount: state.chatUsers.length,
-                      shrinkWrap: true,
-                      itemBuilder: (BuildContext context, int index) {
-                        return ListTile(
-                          title: Text(state.chatUsers[index].displayName),
-                          subtitle:
-                              Text(state.chatUsers[index].gender.toString()),
-                          leading: GestureDetector(
-                              onTap: () {
-                                Navigator.pushNamed(
-                                    context, HeroScreen.routeName,
-                                    arguments: HeroScreenArguments(
-                                        state.chatUsers[index].pictureData));
-                              },
-                              child: AppUserImage(
-                                  state.chatUsers[index].pictureData)),
-                          onTap: () {
-                            Navigator.pop(context);
-                            showVisitScreen(parentContext,
-                                state.chatUsers[index].id, chat.id);
-                          },
-                        );
-                      },
+                  : Column(
+                      children: [
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        Row(
+                          children: [
+                            Visibility(
+                              visible: false,
+                              maintainSize: true,
+                              maintainState: true,
+                              maintainAnimation: true,
+                              child: ElevatedButton(
+                                  onPressed: () {},
+                                  style: ElevatedButton.styleFrom(
+                                    shape: const CircleBorder(),
+                                    padding: const EdgeInsets.all(10),
+                                  ),
+                                  child: const Icon(Icons.arrow_back)),
+                            ),
+                            Expanded(
+                                child: Center(
+                                    child: Text(
+                              FlutterI18n.translate(
+                                context,
+                                'people',
+                              ),
+                              style: Theme.of(context).textTheme.displaySmall,
+                            ))),
+                            ElevatedButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  shape: const CircleBorder(),
+                                  padding: const EdgeInsets.all(10),
+                                ),
+                                child: const Icon(Icons.close))
+                          ],
+                        ),
+                        Expanded(
+                          child: ListView.builder(
+                            itemCount: state.chatUsers.length,
+                            shrinkWrap: true,
+                            itemBuilder: (BuildContext context, int index) {
+                              return ListTile(
+                                title: Text(state.chatUsers[index].displayName),
+                                subtitle: Text(
+                                    state.chatUsers[index].gender.toString()),
+                                leading: (state.chatUsers[index].pictureData !=
+                                        'nan')
+                                    ? GestureDetector(
+                                        onTap: () {
+                                          Navigator.pushNamed(
+                                              context, HeroScreen.routeName,
+                                              arguments: HeroScreenArguments(
+                                                  state.chatUsers[index]
+                                                      .pictureData));
+                                        },
+                                        child: AppUserImage(
+                                            state.chatUsers[index].pictureData))
+                                    : const SizedBox.shrink(),
+                                onTap: () {
+                                  Navigator.pop(context);
+                                  showVisitScreen(context,
+                                      state.chatUsers[index].id, chat, true);
+                                },
+                              );
+                            },
+                          ),
+                        )
+                      ],
                     ),
             );
           } else {
