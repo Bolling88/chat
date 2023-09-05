@@ -26,7 +26,6 @@ class VisitBloc extends Bloc<VisitEvent, VisitState> {
   Stream<VisitState> mapEventToState(VisitEvent event) async* {
     if (event is VisitInitialEvent) {
       setUpPeopleListener();
-      yield VisitBaseState(null);
     }else if(event is VisitUserLoadedState){
       yield VisitBaseState(event.user);
     } else {

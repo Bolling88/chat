@@ -267,5 +267,7 @@
   "name_taken": "User name is taken :(",
   "continue_guest": "Continue as guest",
   "select_source": "Select source",
-  "user_offline": "User is offline currently :("
+  "user_offline": "User is offline currently :(",
+  "user_online": "Online",
+  "chat_rooms": "Chat rooms"
 }

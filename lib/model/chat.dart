@@ -9,7 +9,7 @@ class Chat extends Equatable implements Comparable<Chat> {
   final List<String> users;
   final String lastMessage;
   final String lastMessageByName;
-  final String languageCode;
+  final String countryCode;
   final Timestamp lastMessageTimestamp;
   final String lastMessageUserId;
   final List<String> lastMessageReadBy;
@@ -21,7 +21,7 @@ class Chat extends Equatable implements Comparable<Chat> {
   final String usersText = "";
 
   Chat.fromJson(this.id, Map<String, dynamic> json)
-      : languageCode = json['languageCode'] ?? 'en',
+      : countryCode = json['countryCode'] ?? 'en',
         users = json['users']?.cast<String>() ?? [],
         lastMessage = json['lastMessage'] ?? "",
         lastMessageByName = json['lastMessageByName'] ?? "",
@@ -44,7 +44,7 @@ class Chat extends Equatable implements Comparable<Chat> {
   @override
   List<Object> get props => [
         id,
-        languageCode,
+    countryCode,
         lastMessage,
         lastMessageByName,
         lastMessageTimestamp,

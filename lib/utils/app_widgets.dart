@@ -8,8 +8,7 @@ class AppSpinner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const CircularProgressIndicator(
-        valueColor: AlwaysStoppedAnimation<Color>(AppColors.main));
+    return const CircularProgressIndicator();
   }
 }
 
@@ -29,149 +28,7 @@ class AppUserImage extends StatelessWidget {
         fit: BoxFit.cover,
         // placeholder: (context, url) => AppSpinner(),
         errorWidget: (context, url, error) =>
-        const Icon(Icons.account_circle_rounded),
-      ),
-    );
-  }
-}
-
-class AppButton extends StatelessWidget {
-  final String text;
-  final double? width;
-  final bool? wrapText;
-  final double? height;
-  final GestureTapCallback onTap;
-
-  const AppButton({Key? key,
-    required this.text,
-    required this.onTap,
-    this.width,
-    this.wrapText,
-    this.height})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Container(
-          height: height ?? 40,
-          width: (wrapText != null && wrapText == true)
-              ? null
-              : width ?? double.infinity,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(5.0),
-            gradient: const LinearGradient(
-              colors: [
-                AppColors.main,
-                AppColors.main_2,
-              ],
-            ),
-          ),
-          child: Material(
-            color: Colors.white.withOpacity(0.0),
-            child: InkWell(
-              splashColor: AppColors.white.withOpacity(0.2),
-              onTap: onTap,
-              child: Center(
-                child: Padding(
-                  padding:
-                  const EdgeInsets.only(bottom: 4, left: 20, right: 20),
-                  child: Text(
-                    text,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                        fontSize: 15.0,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.white),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        )
-      ],
-    );
-  }
-}
-
-class AppButtonDisabled extends StatelessWidget {
-  final String text;
-  final double? width;
-  final GestureTapCallback? onTap;
-  final bool? wrapText;
-  final double? height;
-
-  const AppButtonDisabled({Key? key,
-    required this.text,
-    this.width,
-    this.onTap,
-    this.wrapText,
-    this.height})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: (wrapText != null && wrapText == true)
-          ? null
-          : width ?? double.infinity,
-      height: height ?? 40,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(5.0),
-        gradient: const LinearGradient(
-          colors: [
-            AppColors.grey_1,
-            AppColors.grey_2,
-          ],
-        ),
-      ),
-      child: Center(
-        child: Text(
-          text,
-          textAlign: TextAlign.center,
-          style: const TextStyle(
-              fontSize: 15.0,
-              fontWeight: FontWeight.w400,
-              color: AppColors.white),
-        ),
-      ),
-    );
-  }
-}
-
-class AppButtonLoading extends StatelessWidget {
-  final double? width;
-  final GestureTapCallback? onTap;
-  final double? height;
-
-  const AppButtonLoading({Key? key,
-    this.width,
-    this.onTap,
-    this.height})
-      : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: width ?? double.infinity,
-      height: height ?? 40,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(5.0),
-        gradient: const LinearGradient(
-          colors: [
-            AppColors.grey_1,
-            AppColors.grey_2,
-          ],
-        ),
-      ),
-      child: const Center(
-        child: Padding(
-          padding: EdgeInsets.only(bottom: 4, top: 4, left: 20, right: 20),
-          child: CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation<Color>(AppColors.main)),
-        ),
+            const Icon(Icons.account_circle_rounded),
       ),
     );
   }
@@ -188,9 +45,9 @@ class AppErrorScreen extends StatelessWidget {
       color: AppColors.white,
       child: Center(
           child: Text(
-            translate(context, 'unknown_error'),
-            style: const TextStyle(color: AppColors.white),
-          )),
+        translate(context, 'unknown_error'),
+        style: Theme.of(context).textTheme.displayMedium,
+      )),
     );
   }
 }
@@ -202,11 +59,8 @@ class AppLoadingScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: AppColors.white,
-      child: const Center(
-        child: AppSpinner(),
-      ),
+    return const Center(
+      child: AppSpinner(),
     );
   }
 }

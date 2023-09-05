@@ -84,7 +84,7 @@ class PeopleScreenBuilder extends StatelessWidget {
                                     child: Text(
                               FlutterI18n.translate(
                                 context,
-                                'people',
+                                'user_online',
                               ),
                               style: Theme.of(context).textTheme.displaySmall,
                             ))),

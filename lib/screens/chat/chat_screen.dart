@@ -35,8 +35,7 @@ class ChatsScreenContent extends StatelessWidget {
     return Scaffold(
         appBar: AppBar(
           title: Text(
-            FlutterI18n.translate(context, "chat"),
-            style: const TextStyle(color: AppColors.white),
+            FlutterI18n.translate(context, "chat_rooms"),
           ),
           actions: [
             IconButton(
@@ -128,8 +127,8 @@ class ChatsScreenContent extends StatelessWidget {
           width: 48,
           height: 48,
           decoration: BoxDecoration(
-            shape: BoxShape.rectangle,
-            image: DecorationImage(image: imageProvider, fit: BoxFit.contain),
+            shape: state.chats[index].countryCode.isNotEmpty ? BoxShape.circle: BoxShape.rectangle,
+            image: DecorationImage(image: imageProvider, fit: state.chats[index].countryCode.isNotEmpty ? BoxFit.cover: BoxFit.contain),
           ),
         ),
         placeholder: (context, url) => const SizedBox(

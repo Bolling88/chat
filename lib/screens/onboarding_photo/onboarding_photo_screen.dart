@@ -111,33 +111,30 @@ class OnboardingPhotoScreenContent extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 30),
-          AppButton(
-            onTap: () async {
+          ElevatedButton(
+            onPressed: () {
               BlocProvider.of<OnboardingPhotoBloc>(context)
                   .add(OnboardingPhotoCameraClickedEvent());
             },
-            width: 220,
-            text: FlutterI18n.translate(context, "take_a_picture"),
+            child: Text(FlutterI18n.translate(context, "take_a_picture")),
           ),
           const SizedBox(height: 20),
-          AppButton(
-            onTap: () async {
+          ElevatedButton(
+            onPressed: () {
               BlocProvider.of<OnboardingPhotoBloc>(context)
                   .add(OnboardingPhotoGalleryClickedEvent());
             },
-            width: 220,
-            text: FlutterI18n.translate(context, "select_from_images"),
+            child: Text(FlutterI18n.translate(context, "select_from_images")),
           ),
           const SizedBox(height: 20),
           Text(FlutterI18n.translate(context, 'or')),
           const SizedBox(height: 20),
-          AppButton(
-            onTap: () async {
+          ElevatedButton(
+            onPressed: () {
               BlocProvider.of<OnboardingPhotoBloc>(context)
                   .add(OnboardingPhotoSkipEvent());
             },
-            width: 220,
-            text: FlutterI18n.translate(context, "skip_this_step"),
+            child: Text(FlutterI18n.translate(context, "skip_this_step")),
           )
         ],
       ),
@@ -203,13 +200,12 @@ class OnboardingPhotoScreenContent extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 30),
-          AppButton(
-            onTap: () async {
+          ElevatedButton(
+            onPressed: () {
               BlocProvider.of<OnboardingPhotoBloc>(context)
                   .add(OnboardingPhotoContinueClickedEvent());
             },
-            width: 220,
-            text: FlutterI18n.translate(context, "continue"),
+            child: Text(FlutterI18n.translate(context, "continue")),
           ),
           const SizedBox(height: 20),
           TextButton(

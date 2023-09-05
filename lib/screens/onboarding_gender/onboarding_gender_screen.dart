@@ -106,31 +106,28 @@ class OnboardingGenderScreenContent extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 30),
-          AppButton(
-            onTap: () async {
+          ElevatedButton(
+            onPressed: () {
               BlocProvider.of<OnboardingGenderBloc>(context)
                   .add(OnboardingGenderFemaleClickedEvent());
             },
-            width: 220,
-            text: FlutterI18n.translate(context, "i_am_woman"),
+            child: Text(FlutterI18n.translate(context, "i_am_woman")),
           ),
           const SizedBox(height: 20),
-          AppButton(
-            onTap: () async {
+          ElevatedButton(
+            onPressed: () {
               BlocProvider.of<OnboardingGenderBloc>(context)
                   .add(OnboardingGenderMaleClickedEvent());
             },
-            width: 220,
-            text: FlutterI18n.translate(context, "i_am_man"),
+            child: Text(FlutterI18n.translate(context, "i_am_man")),
           ),
           const SizedBox(height: 20),
-          AppButton(
-            onTap: () async {
+          ElevatedButton(
+            onPressed: () {
               BlocProvider.of<OnboardingGenderBloc>(context)
                   .add(OnboardingGenderNonBinaryClickedEvent());
             },
-            width: 220,
-            text: FlutterI18n.translate(context, "i_am_non_binary"),
+            child: Text(FlutterI18n.translate(context, "i_am_non_binary")),
           )
         ],
       ),

@@ -149,19 +149,21 @@ class OnboardingNameScreenContent extends StatelessWidget {
           (state.displayName.isNotEmpty &&
                   !state.isNameTaken &&
                   !state.isValidatingName)
-              ? AppButton(
-                  onTap: () async {
+              ? ElevatedButton(
+                  onPressed: () {
                     BlocProvider.of<OnboardingNameBloc>(context)
                         .add(OnboardingNameContinueClickedEvent());
                   },
-                  width: 220,
-                  text: FlutterI18n.translate(context, "continue"),
+                  child: Text(FlutterI18n.translate(context, "continue")),
                 )
               : (state.isValidatingName)
-                  ? const AppButtonLoading(width: 220)
-                  : AppButtonDisabled(
-                      text: FlutterI18n.translate(context, "continue"),
-                      width: 220,
+                  ? const ElevatedButton(
+                      onPressed: null,
+                      child: CircularProgressIndicator(),
+                    )
+                  : ElevatedButton(
+                      onPressed: null,
+                      child: Text(FlutterI18n.translate(context, "continue")),
                     )
         ],
       ),
