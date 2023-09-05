@@ -10,6 +10,7 @@ import 'package:chat/screens/onboarding_photo/onboarding_photo_screen.dart';
 import 'package:chat/screens/profile/profile_screen.dart';
 import 'package:chat/screens/splash/splash_screen.dart';
 import 'package:chat/utils/app_colors.dart';
+import 'package:chat/utils/log.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
@@ -23,6 +24,7 @@ import 'utils/save_file.dart';
 import 'utils/simple_bloc_observer.dart';
 import 'screens/loading/loading_screen.dart';
 import 'screens/login/login_screen.dart';
+import 'firebase_options.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -30,7 +32,7 @@ Future<void> main() async {
     translationLoader: FileTranslationLoader(
         fallbackFile: 'en', basePath: 'assets/flutter_i18n'),
     missingTranslationHandler: (key, locale) {
-      print(
+      Log.d(
           "--- Missing Key: $key, languageCode: ${locale?.languageCode ?? ""}");
     },
   );
@@ -43,7 +45,9 @@ Future<void> main() async {
 }
 
 class Chat extends StatelessWidget {
-  final Future<FirebaseApp> _initialization = Firebase.initializeApp();
+  final Future<FirebaseApp> _initialization = Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
 
   final FlutterI18nDelegate flutterI18nDelegate;
 

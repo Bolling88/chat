@@ -127,9 +127,9 @@ class VisitScreenContent extends StatelessWidget {
                 const SizedBox(height: 40),
                 ElevatedButton(
                   onPressed: () {
-                    Navigator.pop(context);
                     BlocProvider.of<MessageHolderBloc>(parentContext)
                         .add(MessageHolderPrivateChatEvent(user));
+                    Navigator.pop(context);
                   },
                   child: Text(FlutterI18n.translate(context, 'private_chat')),
                 )

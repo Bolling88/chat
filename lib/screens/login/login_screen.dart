@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:chat/repository/firestore_repository.dart';
 import 'package:chat/repository/login_repository.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
@@ -26,8 +27,10 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (BuildContext context) => LoginBloc(
-          context.read<LoginRepository>(), context.read<FirestoreRepository>()),
+      create: (BuildContext context) =>
+          LoginBloc(
+              context.read<LoginRepository>(),
+              context.read<FirestoreRepository>()),
       child: const LoginScreenBuilder(),
     );
   }
@@ -51,48 +54,48 @@ class LoginScreenContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         body: BlocListener<LoginBloc, LoginState>(
-      listener: (context, state) {
-        if (state is LoginSuccessState) {
-          if (state.navigation == OnboardingNavigation.DONE) {
-            Navigator.pushReplacementNamed(context, ChatScreen.routeName);
-          } else if (state.navigation == OnboardingNavigation.PICTURE) {
-            Navigator.pushReplacementNamed(
-                context, OnboardingPhotoScreen.routeName);
-          } else if (state.navigation == OnboardingNavigation.GENDER) {
-            Navigator.pushReplacementNamed(
-                context, OnboardingGenderScreen.routeName);
-          } else if (state.navigation == OnboardingNavigation.NAME) {
-            Navigator.pushReplacementNamed(
-                context, OnboardingNameScreen.routeName);
-          }
-        } else if (state is LoginErrorState) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text("Login failed"),
-            ),
-          );
-        } else if (state is LoginAbortedState) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text("Login aborted"),
-            ),
-          );
-        }
-      },
-      child: BlocBuilder<LoginBloc, LoginState>(
-        builder: (context, state) {
-          if (state is LoginBaseState ||
-              state is LoginErrorState ||
-              state is LoginAbortedState) {
-            return showBaseUi(context);
-          } else {
-            return const Center(
-              child: AppSpinner(),
-            );
-          }
-        },
-      ),
-    ));
+          listener: (context, state) {
+            if (state is LoginSuccessState) {
+              if (state.navigation == OnboardingNavigation.DONE) {
+                Navigator.pushReplacementNamed(context, ChatScreen.routeName);
+              } else if (state.navigation == OnboardingNavigation.PICTURE) {
+                Navigator.pushReplacementNamed(
+                    context, OnboardingPhotoScreen.routeName);
+              } else if (state.navigation == OnboardingNavigation.GENDER) {
+                Navigator.pushReplacementNamed(
+                    context, OnboardingGenderScreen.routeName);
+              } else if (state.navigation == OnboardingNavigation.NAME) {
+                Navigator.pushReplacementNamed(
+                    context, OnboardingNameScreen.routeName);
+              }
+            } else if (state is LoginErrorState) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text("Login failed"),
+                ),
+              );
+            } else if (state is LoginAbortedState) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text("Login aborted"),
+                ),
+              );
+            }
+          },
+          child: BlocBuilder<LoginBloc, LoginState>(
+            builder: (context, state) {
+              if (state is LoginBaseState ||
+                  state is LoginErrorState ||
+                  state is LoginAbortedState) {
+                return showBaseUi(context);
+              } else {
+                return const Center(
+                  child: AppSpinner(),
+                );
+              }
+            },
+          ),
+        ));
   }
 
   ListView showBaseUi(BuildContext context) {
@@ -119,26 +122,16 @@ class LoginScreenContent extends StatelessWidget {
                 text: FlutterI18n.translate(context, "continue_google"),
               ),
               const SizedBox(height: 10),
-              (Platform.isIOS)
-                  ? SignInButton(
-                      Buttons.Apple,
-                      onPressed: () {
-                        BlocProvider.of<LoginBloc>(context)
-                            .add(LoginAppleClickedEvent());
-                      },
-                      text: FlutterI18n.translate(context, "continue_apple"),
-                    )
-                  : const SizedBox.shrink(),
-              const SizedBox(height: 10),
-              SignInButton(
-                Buttons.Facebook,
-                onPressed: () {
-                  BlocProvider.of<LoginBloc>(context)
-                      .add(LoginFacebookClickedEvent());
-                  //loginWithFacebook(context);
-                },
-                text: FlutterI18n.translate(context, "continue_facebook"),
-              ),
+              if(!kIsWeb)
+                if(Platform.isIOS)
+                  SignInButton(
+                    Buttons.Apple,
+                    onPressed: () {
+                      BlocProvider.of<LoginBloc>(context)
+                          .add(LoginAppleClickedEvent());
+                    },
+                    text: FlutterI18n.translate(context, "continue_apple"),
+                  ),
               const SizedBox(height: 20),
               Padding(
                 padding: const EdgeInsets.only(left: 20, right: 20),

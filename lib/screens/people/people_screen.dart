@@ -64,41 +64,7 @@ class PeopleScreenBuilder extends StatelessWidget {
                         const SizedBox(
                           height: 10,
                         ),
-                        Row(
-                          children: [
-                            Visibility(
-                              visible: false,
-                              maintainSize: true,
-                              maintainState: true,
-                              maintainAnimation: true,
-                              child: ElevatedButton(
-                                  onPressed: () {},
-                                  style: ElevatedButton.styleFrom(
-                                    shape: const CircleBorder(),
-                                    padding: const EdgeInsets.all(10),
-                                  ),
-                                  child: const Icon(Icons.arrow_back)),
-                            ),
-                            Expanded(
-                                child: Center(
-                                    child: Text(
-                              FlutterI18n.translate(
-                                context,
-                                'user_online',
-                              ),
-                              style: Theme.of(context).textTheme.displaySmall,
-                            ))),
-                            ElevatedButton(
-                                onPressed: () {
-                                  Navigator.pop(context);
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  shape: const CircleBorder(),
-                                  padding: const EdgeInsets.all(10),
-                                ),
-                                child: const Icon(Icons.close))
-                          ],
-                        ),
+                        getTopBar(context),
                         Expanded(
                           child: ListView.builder(
                             itemCount: state.chatUsers.length,
@@ -123,7 +89,7 @@ class PeopleScreenBuilder extends StatelessWidget {
                                     : const SizedBox.shrink(),
                                 onTap: () {
                                   Navigator.pop(context);
-                                  showVisitScreen(context,
+                                  showVisitScreen(parentContext,
                                       state.chatUsers[index].id, chat, true);
                                 },
                               );
@@ -134,9 +100,52 @@ class PeopleScreenBuilder extends StatelessWidget {
                     ),
             );
           } else {
-            return const LoadingScreen();
+            return Column(
+              children: [
+                getTopBar(context),
+                const LoadingScreen(),
+              ],
+            );
           }
         }));
+  }
+
+  Row getTopBar(BuildContext context) {
+    return Row(
+      children: [
+        Visibility(
+          visible: false,
+          maintainSize: true,
+          maintainState: true,
+          maintainAnimation: true,
+          child: ElevatedButton(
+              onPressed: () {},
+              style: ElevatedButton.styleFrom(
+                shape: const CircleBorder(),
+                padding: const EdgeInsets.all(10),
+              ),
+              child: const Icon(Icons.arrow_back)),
+        ),
+        Expanded(
+            child: Center(
+                child: Text(
+          FlutterI18n.translate(
+            context,
+            'user_online',
+          ),
+          style: Theme.of(context).textTheme.displaySmall,
+        ))),
+        ElevatedButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            style: ElevatedButton.styleFrom(
+              shape: const CircleBorder(),
+              padding: const EdgeInsets.all(10),
+            ),
+            child: const Icon(Icons.close))
+      ],
+    );
   }
 }
 

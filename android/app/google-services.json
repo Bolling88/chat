@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "164406258776-7q0513htl5ova5h4sg4e9jnq2uqugfin.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.xevenition.chat",
+            "certificate_hash": "909beb91c08daec02363fbfa6890a17966c9cfeb"
+          }
+        },
+        {
           "client_id": "164406258776-jgo2mem67ofi6lko4qckgm5ub5j76a7r.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {

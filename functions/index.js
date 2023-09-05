@@ -4,46 +4,47 @@ admin.initializeApp();
 
 const firestore = admin.firestore();
 
-exports.onUserStatusChange = functions.database
-  .ref("/{uid}/presence")
-  .onUpdate(async (change, context) => {
-    // Get the data written to Realtime Database
+exports.onUserStatusChange = functions.database.ref("/{uid}/presence").onUpdate(async (change, context) => {
+  try {
     const isOnline = change.after.val();
 
-    // Get a reference to the Firestore document
     const userStatusFirestoreRef = firestore.doc(`users/${context.params.uid}`);
 
     console.log(`status: ${isOnline}`);
 
-    if(isOnline === false) {
-     const partiesQuery = admin.firestore().collection("privateChats").where('users', 'array-contains',
-                                                                                  context.params.uid);
-      partiesQuery.get().then(querySnapshot => {
-        if (!querySnapshot.empty) {
-          // Get just the one customer/user document
-          for (const snapshot of querySnapshot.docs) {
-                      // Reference of customer/user doc
-                      const documentRef = snapshot.ref
-                      documentRef.delete();
-                      functions.logger.log("Private chat Document deleted:", documentRef);
-          }
-        }
-        else {
-          functions.logger.log("User Document Does Not Exist");
-        }
-        return null;
-      }).catch(error => {
-        functions.logger.log(error);
-      }
-        );
-    }
-
-    // Update the values on Firestore
-    return userStatusFirestoreRef.update({
+    // Update Firestore document
+    await userStatusFirestoreRef.update({
       presence: isOnline,
       last_seen: Date.now(),
     });
-  });
+
+    if (!isOnline) {
+      // Delete private chat documents
+      const partiesQuery = admin.firestore().collection("privateChats").where('users', 'array-contains', context.params.uid);
+      const partiesSnapshot = await partiesQuery.get();
+
+      for (const partyDoc of partiesSnapshot.docs) {
+        await partyDoc.ref.delete();
+        functions.logger.log("Private chat Document deleted:", partyDoc.id);
+      }
+
+      // Remove the user from chat documents
+      const chatQuery = admin.firestore().collection("chats").where('users', 'array-contains', context.params.uid);
+      const chatSnapshot = await chatQuery.get();
+
+      for (const chatDoc of chatSnapshot.docs) {
+        const chatData = chatDoc.data();
+        const updatedUsers = chatData.users.filter(uid => uid !== context.params.uid);
+        await chatDoc.ref.update({ users: updatedUsers });
+        functions.logger.log(`User ${context.params.uid} removed from chat ${chatDoc.id}`);
+      }
+    }
+  } catch (error) {
+    functions.logger.error("Error in onUserStatusChange:", error);
+  }
+
+  return null;
+});
 
 exports.deletePrivateChatOnLastLeft = functions.firestore.document('/privateChats/{documentId}')
   .onUpdate((change, context) => {
