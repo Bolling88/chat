@@ -297,7 +297,7 @@ class FirestoreRepository {
   Future<List<ChatUser>?> getUsersInChat(Chat chat) {
     return users
         .where(FieldPath.documentId, whereIn: chat.users)
-        .where('presence', isEqualTo: true)
+        // .where('presence', isEqualTo: true)
         .get()
         .then((value) => value.docs
             .map((e) =>
@@ -374,5 +374,12 @@ class FirestoreRepository {
       Log.e("Failed to get chat: $error");
       return false;
     });
+  }
+
+  void updateUserPresence(int lastSeen, bool presence) {
+    users.doc(getUserId()).set({
+      'presence': presence,
+      'last_seen': lastSeen,
+    }, SetOptions(merge: true));
   }
 }

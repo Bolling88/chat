@@ -30,6 +30,9 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
   Stream<MessageHolderState> mapEventToState(MessageHolderEvent event) async* {
     final currentState = state;
     if (event is MessageHolderInitialEvent) {
+
+      //_firestoreRepository.updateUserPresence(DateTime.now().millisecondsSinceEpoch, true);
+
       _firestoreRepository.setLastMessageRead(
           chatId: chat.id ?? '', isPrivateChat: false);
       yield MessageHolderBaseState(
@@ -40,8 +43,6 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
           selectedChatIndex: 0);
       setUpPrivateChatsListener();
       setUpChatsListener();
-
-      PresenceDatabase().updateUserPresence();
     } else if (event is MessageHolderPrivateChatEvent) {
       if (currentState is MessageHolderBaseState) {
         await _firestoreRepository.createPrivateChat(event.user);

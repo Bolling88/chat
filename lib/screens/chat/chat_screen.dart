@@ -1,10 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:chat/utils/translate.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import '../../repository/firestore_repository.dart';
+import '../../repository/presence_database.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_widgets.dart';
 import '../message_holder/message_holder_screen.dart';
@@ -19,6 +19,7 @@ class ChatScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    context.read<PresenceDatabase>().updateUserPresence();
     return BlocProvider(
       create: (BuildContext context) =>
           ChatBloc(context.read<FirestoreRepository>()),

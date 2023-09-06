@@ -1,5 +1,6 @@
 import 'package:chat/repository/firestore_repository.dart';
 import 'package:chat/repository/login_repository.dart';
+import 'package:chat/repository/presence_database.dart';
 import 'package:chat/repository/storage_repository.dart';
 import 'package:chat/screens/chat/chat_screen.dart';
 import 'package:chat/screens/hero/hero_screen.dart';
@@ -75,6 +76,7 @@ class Chat extends StatelessWidget {
           final FirestoreRepository firestoreRepository = FirestoreRepository();
           final LoginRepository loginRepository = LoginRepository();
           final StorageRepository storageRepository = StorageRepository();
+          final PresenceDatabase presenceDatabase = PresenceDatabase(firestoreRepository);
 
           return MultiProvider(
             providers: [
@@ -82,6 +84,7 @@ class Chat extends StatelessWidget {
               Provider<FirestoreRepository>.value(value: firestoreRepository),
               Provider<LoginRepository>.value(value: loginRepository),
               Provider<StorageRepository>.value(value: storageRepository),
+              Provider<PresenceDatabase>.value(value: presenceDatabase),
             ],
             child: MaterialApp(
               title: 'Chatta',
