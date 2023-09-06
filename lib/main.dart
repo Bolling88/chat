@@ -102,6 +102,7 @@ class Chat extends StatelessWidget {
               builder: FlutterI18n.rootAppBuilder(),
               theme: ThemeData(
                 useMaterial3: true,
+                primaryColor: AppColors.main,
                 colorScheme: ColorScheme.fromSeed(
                   brightness: Brightness.light,
                   seedColor: AppColors.main,
@@ -113,8 +114,11 @@ class Chat extends StatelessWidget {
                 appBarTheme: AppBarTheme(
                   backgroundColor: AppColors.main,
                   elevation: 4,
-                  titleTextStyle: GoogleFonts.lobster(fontSize: 30),
+                  surfaceTintColor: AppColors.main,
+                  titleTextStyle: GoogleFonts.lobster(fontSize: 30, color: AppColors.white),
                   shadowColor: Colors.black,
+                  toolbarTextStyle:
+                      GoogleFonts.lobster(fontSize: 30, color: AppColors.white),
                   iconTheme: const IconThemeData(color: Colors.white),
                 ),
                 textTheme: TextTheme(

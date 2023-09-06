@@ -42,12 +42,15 @@ class OnboardingPhotoScreenContent extends StatelessWidget {
           _showBottomSheet(appContext);
         } else if (state is OnboardingPhotoSuccessState) {
           if (state.navigation == OnboardingNavigation.PICTURE) {
+            Navigator.of(context).popUntil((route) => route.isFirst);
             Navigator.pushReplacementNamed(
                 context, OnboardingPhotoScreen.routeName);
           } else if (state.navigation == OnboardingNavigation.GENDER) {
+            Navigator.of(context).popUntil((route) => route.isFirst);
             Navigator.pushReplacementNamed(
                 context, OnboardingGenderScreen.routeName);
           } else if (state.navigation == OnboardingNavigation.DONE) {
+            Navigator.of(context).popUntil((route) => route.isFirst);
             Navigator.pushReplacementNamed(context, ChatScreen.routeName);
           }
         }

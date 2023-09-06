@@ -32,20 +32,25 @@ class SplashScreenBuilder extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocListener<SplashBloc, SplashState>(listener: (context, state) {
       if (state is SplashLoginState) {
+        Navigator.of(context).popUntil((route) => route.isFirst);
         Navigator.pushReplacementNamed(context, LoginScreen.routeName);
       } else if (state is SplashSuccessState) {
         if (state.navigation == OnboardingNavigation.NAME) {
+          Navigator.of(context).popUntil((route) => route.isFirst);
           Navigator.pushReplacementNamed(
               context, OnboardingNameScreen.routeName);
         } else if (state.navigation == OnboardingNavigation.PICTURE) {
+          Navigator.of(context).popUntil((route) => route.isFirst);
           Navigator.pushReplacementNamed(
             context,
             OnboardingPhotoScreen.routeName,
           );
         } else if (state.navigation == OnboardingNavigation.GENDER) {
+          Navigator.of(context).popUntil((route) => route.isFirst);
           Navigator.pushReplacementNamed(
               context, OnboardingGenderScreen.routeName);
         } else if (state.navigation == OnboardingNavigation.DONE) {
+          Navigator.of(context).popUntil((route) => route.isFirst);
           Navigator.pushReplacement(
             context,
             PageRouteBuilder(

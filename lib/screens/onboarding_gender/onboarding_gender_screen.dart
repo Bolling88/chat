@@ -35,6 +35,7 @@ class OnboardingGenderScreenContent extends StatelessWidget {
       listener: (context, state) {
         if (state is OnboardingGenderSuccessState) {
           if (state.navigation == OnboardingNavigation.DONE) {
+            Navigator.of(context).popUntil((route) => route.isFirst);
             Navigator.pushReplacementNamed(context, ChatScreen.routeName);
           }
         }

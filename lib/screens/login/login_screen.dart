@@ -6,10 +6,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
+import 'package:lottie/lottie.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_widgets.dart';
-import '../../utils/lottie.dart';
 import '../chat/chat_screen.dart';
 import '../onboarding_gender/onboarding_gender_screen.dart';
 import '../onboarding_name/onboarding_name_screen.dart';
@@ -54,14 +54,18 @@ class LoginScreenContent extends StatelessWidget {
       listener: (context, state) {
         if (state is LoginSuccessState) {
           if (state.navigation == OnboardingNavigation.DONE) {
+            Navigator.of(context).popUntil((route) => route.isFirst);
             Navigator.pushReplacementNamed(context, ChatScreen.routeName);
           } else if (state.navigation == OnboardingNavigation.PICTURE) {
+            Navigator.of(context).popUntil((route) => route.isFirst);
             Navigator.pushReplacementNamed(
                 context, OnboardingPhotoScreen.routeName);
           } else if (state.navigation == OnboardingNavigation.GENDER) {
+            Navigator.of(context).popUntil((route) => route.isFirst);
             Navigator.pushReplacementNamed(
                 context, OnboardingGenderScreen.routeName);
           } else if (state.navigation == OnboardingNavigation.NAME) {
+            Navigator.of(context).popUntil((route) => route.isFirst);
             Navigator.pushReplacementNamed(
                 context, OnboardingNameScreen.routeName);
           }
@@ -103,15 +107,20 @@ class LoginScreenContent extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Expanded(
-              child: AppLottie(
-                url:
-                    'https://firebasestorage.googleapis.com/v0/b/chat-60225.appspot.com/o/lottie%2Fwelcome.json?alt=media&token=8c63f728-d463-4af0-b3cc-41066bea4600',
+            Expanded(
+              child: Lottie.asset(
+                "assets/lottie/welcome.json",
               ),
+              // child: Lottie.network(
+              //   "https://firebasestorage.googleapis.com/v0/b/chat-60225.appspot.com/o/lottie%2Fwelcome.json?alt=media&token=8c63f728-d463-4af0-b3cc-41066bea4600",
+              // ),
             ),
             Text(
               FlutterI18n.translate(context, "app_name"),
-              style: Theme.of(context).textTheme.displayLarge?.merge(const TextStyle(color: AppColors.main)),
+              style: Theme.of(context)
+                  .textTheme
+                  .displayLarge
+                  ?.merge(const TextStyle(color: AppColors.main)),
             ),
             Text(
               FlutterI18n.translate(context, "chat_rooms_intro"),
@@ -128,7 +137,7 @@ class LoginScreenContent extends StatelessWidget {
                   FlutterI18n.translate(context, 'continue_guest'),
                   style: Theme.of(context).textTheme.bodyMedium,
                 )),
-            const SizedBox(height: 10),
+            const SizedBox(height: 20),
             ElevatedButton.icon(
                 onPressed: () {
                   BlocProvider.of<LoginBloc>(context)
@@ -143,7 +152,7 @@ class LoginScreenContent extends StatelessWidget {
                   style: Theme.of(context).textTheme.bodyMedium,
                 )),
             if (!kIsWeb)
-              if (Platform.isIOS) const SizedBox(height: 10),
+              if (Platform.isIOS) const SizedBox(height: 20),
             if (!kIsWeb)
               if (Platform.isIOS)
                 ElevatedButton.icon(
@@ -172,13 +181,11 @@ class LoginScreenContent extends StatelessWidget {
               onTap: () {
                 Navigator.pushNamed(context, "/terms_screen");
               },
-              child: Text(
-                FlutterI18n.translate(context, "terms"),
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.bodySmall?.merge(
-                      const TextStyle(color: AppColors.main),
-                    )
-              ),
+              child: Text(FlutterI18n.translate(context, "terms"),
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.bodySmall?.merge(
+                        const TextStyle(color: AppColors.main),
+                      )),
             ),
             Text(
               FlutterI18n.translate(context, "and"),
@@ -189,14 +196,13 @@ class LoginScreenContent extends StatelessWidget {
               onTap: () {
                 Navigator.pushNamed(context, "/privacy_screen");
               },
-              child: Text(
-                FlutterI18n.translate(context, "privacy"),
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.bodySmall?.merge(
-                      const TextStyle(color: AppColors.main),
-                    )
-              ),
+              child: Text(FlutterI18n.translate(context, "privacy"),
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.bodySmall?.merge(
+                        const TextStyle(color: AppColors.main),
+                      )),
             ),
+            const SizedBox(height: 40),
           ],
         ),
       ),

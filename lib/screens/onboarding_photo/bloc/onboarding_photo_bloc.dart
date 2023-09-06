@@ -46,8 +46,13 @@ class OnboardingPhotoBloc
           }
         }
       } else if (event is OnboardingPhotoGalleryClickedEvent) {
-        final pickedFile = await picker.pickImage(
-            source: ImageSource.gallery, imageQuality: photoQuality);
+        XFile? pickedFile;
+        try {
+           pickedFile = await picker.pickImage(
+              source: ImageSource.gallery, imageQuality: photoQuality);
+        }catch(e){
+          Log.e(e);
+        }
         if (pickedFile != null) {
           CroppedFile? croppedFile = await cropImage(pickedFile);
           if (currentState is OnboardingPhotoBaseState && croppedFile != null) {

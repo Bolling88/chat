@@ -8,6 +8,7 @@ import '../../utils/app_colors.dart';
 import '../../utils/app_widgets.dart';
 import '../../utils/dialogs.dart';
 import '../../utils/translate.dart';
+import '../onboarding_photo/onboarding_photo_screen.dart';
 import 'bloc/profile_bloc.dart';
 import 'bloc/profile_event.dart';
 import 'bloc/profile_state.dart';
@@ -34,10 +35,8 @@ class ProfileScreenBuilder extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: AppColors.main,
         title: Text(
           translate(context, 'profile'),
-          style: const TextStyle(color: AppColors.white),
         ),
       ),
       body: BlocListener<ProfileBloc, ProfileState>(listener: (context, state) {
@@ -58,36 +57,39 @@ class ProfileScreenBuilder extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.only(
-                          top: 20, bottom: 5, left: 20, right: 20),
-                      child: ElevatedButton.icon(
-                        icon: const Icon(Icons.exit_to_app),
-                        onPressed: () {
-                          showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return getSignOutDialog(blocContext);
-                              });
-                        },
-                        label: Text(translate(context, 'sign_out')),
-                      ),
+                    const SizedBox(height: 20),
+                    ElevatedButton.icon(
+                      icon: const Icon(Icons.camera_alt),
+                      onPressed: () {
+                        Navigator.pushNamed(
+                            blocContext, OnboardingPhotoScreen.routeName);
+                      },
+                      label: Text(translate(context, 'change_image')),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.only(
-                          top: 5, bottom: 5, left: 20, right: 20),
-                      child: ElevatedButton.icon(
-                        icon: const Icon(Icons.delete_outline),
-                        onPressed: () {
-                          showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return getDeleteAccountDialog(
-                                    blocContext, context);
-                              });
-                        },
-                        label: Text(translate(context, 'delete_account')),
-                      ),
+                    const SizedBox(height: 20),
+                    ElevatedButton.icon(
+                      icon: const Icon(Icons.exit_to_app),
+                      onPressed: () {
+                        showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return getSignOutDialog(blocContext);
+                            });
+                      },
+                      label: Text(translate(context, 'sign_out')),
+                    ),
+                    const SizedBox(height: 20),
+                    ElevatedButton.icon(
+                      icon: const Icon(Icons.delete_outline),
+                      onPressed: () {
+                        showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return getDeleteAccountDialog(
+                                  blocContext, context);
+                            });
+                      },
+                      label: Text(translate(context, 'delete_account')),
                     ),
                   ],
                 ),
@@ -109,8 +111,7 @@ class ProfileScreenBuilder extends StatelessWidget {
         TextButton(
           onPressed: () {
             Navigator.of(context).pop();
-            BlocProvider.of<ProfileBloc>(context)
-                .add(ProfileLogoutEvent());
+            BlocProvider.of<ProfileBloc>(context).add(ProfileLogoutEvent());
           },
           child: Text(translate(context, 'yes')),
         ),
@@ -149,6 +150,7 @@ class ProfileScreenBuilder extends StatelessWidget {
   }
 
   void exitToLogin(BuildContext context) {
+    Navigator.of(context).popUntil((route) => route.isFirst);
     Navigator.of(context, rootNavigator: true)
         .pushReplacementNamed(LoginScreen.routeName);
   }

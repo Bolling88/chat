@@ -88,9 +88,7 @@ class MessageHolderScreenContent extends StatelessWidget {
                         ])),
               );
             } else {
-              return const Scaffold(
-                  backgroundColor: AppColors.white,
-                  body: Center(child: AppSpinner()));
+              return const Scaffold(body: Center(child: AppSpinner()));
             }
           },
         ));
@@ -173,7 +171,6 @@ class MessageHolderScreenContent extends StatelessWidget {
     return AppBar(
       title: Text(
         state.selectedChat.chatName,
-        style: const TextStyle(color: AppColors.white),
       ),
       actions: [
         (state.selectedChatIndex == 0)

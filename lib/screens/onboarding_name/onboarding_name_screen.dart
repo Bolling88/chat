@@ -37,12 +37,15 @@ class OnboardingNameScreenContent extends StatelessWidget {
       listener: (context, state) {
         if (state is OnboardingNameSuccessState) {
           if (state.navigation == OnboardingNavigation.PICTURE) {
+            Navigator.of(context).popUntil((route) => route.isFirst);
             Navigator.pushReplacementNamed(
                 context, OnboardingPhotoScreen.routeName);
           } else if (state.navigation == OnboardingNavigation.GENDER) {
+            Navigator.of(context).popUntil((route) => route.isFirst);
             Navigator.pushReplacementNamed(
                 context, OnboardingGenderScreen.routeName);
           } else if (state.navigation == OnboardingNavigation.DONE) {
+            Navigator.of(context).popUntil((route) => route.isFirst);
             Navigator.pushReplacementNamed(context, ChatScreen.routeName);
           }
         }
