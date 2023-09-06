@@ -6,12 +6,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
-import 'package:flutter_signin_button/button_list.dart';
-import 'package:flutter_signin_button/button_view.dart';
-import 'package:lottie/lottie.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_widgets.dart';
+import '../../utils/lottie.dart';
 import '../chat/chat_screen.dart';
 import '../onboarding_gender/onboarding_gender_screen.dart';
 import '../onboarding_name/onboarding_name_screen.dart';
@@ -99,62 +97,108 @@ class LoginScreenContent extends StatelessWidget {
 
   Widget showBaseUi(BuildContext context) {
     return SafeArea(
-      child: Column(
-        mainAxisSize: MainAxisSize.max,
-        children: [
-          Expanded(
-            child: Lottie.network(
-              'https://firebasestorage.googleapis.com/v0/b/chat-60225.appspot.com/o/lottie%2Fwelcome.json?alt=media&token=8c63f728-d463-4af0-b3cc-41066bea4600',
+      child: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.max,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Expanded(
+              child: AppLottie(
+                url:
+                    'https://firebasestorage.googleapis.com/v0/b/chat-60225.appspot.com/o/lottie%2Fwelcome.json?alt=media&token=8c63f728-d463-4af0-b3cc-41066bea4600',
+              ),
             ),
-          ),
-          SignInButton(
-            Buttons.Email,
-            onPressed: () {
-              BlocProvider.of<LoginBloc>(context)
-                  .add(LoginGuestClickedEvent());
-            },
-            text: FlutterI18n.translate(context, "continue_guest"),
-          ),
-          const SizedBox(height: 10),
-          SignInButton(
-            Buttons.Google,
-            onPressed: () {
-              BlocProvider.of<LoginBloc>(context)
-                  .add(LoginGoogleClickedEvent());
-            },
-            text: FlutterI18n.translate(context, "continue_google"),
-          ),
-          const SizedBox(height: 10),
-          if (!kIsWeb)
-            if (Platform.isIOS)
-              SignInButton(
-                Buttons.Apple,
+            Text(
+              FlutterI18n.translate(context, "app_name"),
+              style: Theme.of(context).textTheme.displayLarge?.merge(const TextStyle(color: AppColors.main)),
+            ),
+            Text(
+              FlutterI18n.translate(context, "chat_rooms_intro"),
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+            const SizedBox(height: 40),
+            ElevatedButton.icon(
                 onPressed: () {
                   BlocProvider.of<LoginBloc>(context)
-                      .add(LoginAppleClickedEvent());
+                      .add(LoginGuestClickedEvent());
                 },
-                text: FlutterI18n.translate(context, "continue_apple"),
+                icon: const Icon(Icons.person),
+                label: Text(
+                  FlutterI18n.translate(context, 'continue_guest'),
+                  style: Theme.of(context).textTheme.bodyMedium,
+                )),
+            const SizedBox(height: 10),
+            ElevatedButton.icon(
+                onPressed: () {
+                  BlocProvider.of<LoginBloc>(context)
+                      .add(LoginGoogleClickedEvent());
+                },
+                icon: Image.asset(
+                  "assets/img/google.png",
+                  height: 24,
+                ),
+                label: Text(
+                  FlutterI18n.translate(context, 'continue_google'),
+                  style: Theme.of(context).textTheme.bodyMedium,
+                )),
+            if (!kIsWeb)
+              if (Platform.isIOS) const SizedBox(height: 10),
+            if (!kIsWeb)
+              if (Platform.isIOS)
+                ElevatedButton.icon(
+                    onPressed: () {
+                      BlocProvider.of<LoginBloc>(context)
+                          .add(LoginAppleClickedEvent());
+                    },
+                    icon: Image.asset(
+                      "assets/img/apple.png",
+                      height: 24,
+                    ),
+                    label: Text(
+                      FlutterI18n.translate(context, 'continue_apple'),
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    )),
+            const SizedBox(height: 20),
+            Padding(
+              padding: const EdgeInsets.only(left: 20, right: 20),
+              child: Text(
+                FlutterI18n.translate(context, "terms_intro"),
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodySmall,
               ),
-          const SizedBox(height: 20),
-          Padding(
-            padding: const EdgeInsets.only(left: 20, right: 20),
-            child: Text(
-              FlutterI18n.translate(context, "terms_intro"),
-              textAlign: TextAlign.center,
-              style: const TextStyle(color: AppColors.black),
             ),
-          ),
-          GestureDetector(
-            onTap: () {
-              _launchURL('https://github.com/Bolling88/chat/blob/main/terms.md');
-            },
-            child: Text(
-              FlutterI18n.translate(context, "terms"),
-              textAlign: TextAlign.center,
-              style: const TextStyle(color: AppColors.black),
+            GestureDetector(
+              onTap: () {
+                Navigator.pushNamed(context, "/terms_screen");
+              },
+              child: Text(
+                FlutterI18n.translate(context, "terms"),
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodySmall?.merge(
+                      const TextStyle(color: AppColors.main),
+                    )
+              ),
             ),
-          ),
-        ],
+            Text(
+              FlutterI18n.translate(context, "and"),
+              textAlign: TextAlign.center,
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+            GestureDetector(
+              onTap: () {
+                Navigator.pushNamed(context, "/privacy_screen");
+              },
+              child: Text(
+                FlutterI18n.translate(context, "privacy"),
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodySmall?.merge(
+                      const TextStyle(color: AppColors.main),
+                    )
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

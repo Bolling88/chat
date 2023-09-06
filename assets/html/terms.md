@@ -6,7 +6,7 @@ These terms of service ("Terms") apply to your access and use of Kvitter (the "S
 
 ## Accepting these Terms
 
-If you access or use the Service, it means you agree to be bound by all of the terms below. So, before you use the Service, please read all of the terms. If you don't agree to all of the terms below, please do not use the Service. Also, if a term does not make sense to you, please let us know by e-mailing bolling.ludwig@gmail.com.
+If you access or use the Service, it means you agree to be bound by all of the terms below. So, before you use the Service, please read all of the terms. If you don't agree to all of the terms below, please do not use the Service. Also, if a term does not make sense to you, please let us know by e-mailing xevenition@gmail.com.
 
 ## Changes to these Terms
 
@@ -99,5 +99,5 @@ Please let us know what you think of the Service, these Terms and, in general, K
 
 ## Questions & Contact Information
 
-Questions or comments about the Service may be directed to us at the email address bolling.ludwig@gmail.com.
+Questions or comments about the Service may be directed to us at the email address xevenition@gmail.com.
 

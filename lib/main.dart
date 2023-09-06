@@ -10,6 +10,8 @@ import 'package:chat/screens/onboarding_name/onboarding_name_screen.dart';
 import 'package:chat/screens/onboarding_photo/onboarding_photo_screen.dart';
 import 'package:chat/screens/profile/profile_screen.dart';
 import 'package:chat/screens/splash/splash_screen.dart';
+import 'package:chat/screens/terms/privacy.dart';
+import 'package:chat/screens/terms/terms.dart';
 import 'package:chat/utils/app_colors.dart';
 import 'package:chat/utils/log.dart';
 import 'package:flutter/material.dart';
@@ -76,7 +78,8 @@ class Chat extends StatelessWidget {
           final FirestoreRepository firestoreRepository = FirestoreRepository();
           final LoginRepository loginRepository = LoginRepository();
           final StorageRepository storageRepository = StorageRepository();
-          final PresenceDatabase presenceDatabase = PresenceDatabase(firestoreRepository);
+          final PresenceDatabase presenceDatabase =
+              PresenceDatabase(firestoreRepository);
 
           return MultiProvider(
             providers: [
@@ -102,6 +105,7 @@ class Chat extends StatelessWidget {
                 colorScheme: ColorScheme.fromSeed(
                   brightness: Brightness.light,
                   seedColor: AppColors.main,
+                  background: AppColors.background,
                 ),
                 iconTheme: const IconThemeData(
                   color: Colors.white, // <= You can change your color here.
@@ -117,7 +121,6 @@ class Chat extends StatelessWidget {
                   displayLarge: GoogleFonts.lobster(),
                   displayMedium: GoogleFonts.lobster(),
                   displaySmall: GoogleFonts.lobster(),
-                  titleLarge: GoogleFonts.lobster(),
                   bodyLarge: GoogleFonts.notoSans(),
                   bodyMedium: GoogleFonts.notoSans(fontWeight: FontWeight.w700),
                   bodySmall: GoogleFonts.notoSans(fontWeight: FontWeight.w500),
@@ -137,6 +140,8 @@ class Chat extends StatelessWidget {
                     const MessageHolderScreen(),
                 HeroScreen.routeName: (context) => const HeroScreen(),
                 ProfileScreen.routeName: (context) => const ProfileScreen(),
+                TermsScreen.routeName: (context) => const TermsScreen(),
+                PrivacyScreen.routeName: (context) => const PrivacyScreen(),
               },
             ),
           );

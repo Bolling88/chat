@@ -73,4 +73,4 @@ You may opt out of receiving any promotional emails from us by following the ins
 
 ## Contact Us
 
-If you have any questions about this privacy policy, please contact us at:  bolling.ludwig@gmail.com.
+If you have any questions about this privacy policy, please contact us at: xevenition@gmail.com.

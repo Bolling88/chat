@@ -11,6 +11,7 @@ class AppColors {
   static const Color highlight = Color(0xFFFF6600);
   static const Color black = Color(0xFF000000);
   static const Color transparent = Color(0x00000000);
+  static const Color background = Color(0xFFf2ffff);
 
   const AppColors();
 }

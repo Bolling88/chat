@@ -51,52 +51,47 @@ class ProfileScreenBuilder extends StatelessWidget {
         } else if (state is ProfileBaseState) {
           return Scaffold(
             backgroundColor: AppColors.white,
-            body: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: SingleChildScrollView(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.only(
-                              top: 20, bottom: 5, left: 20, right: 20),
-                          child: ElevatedButton.icon(
-                            icon: const Icon(Icons.exit_to_app),
-                            onPressed: () {
-                              showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return getSignOutDialog(blocContext);
-                                  });
-                            },
-                            label: Text(translate(context, 'sign_out')),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(
-                              top: 5, bottom: 5, left: 20, right: 20),
-                          child: ElevatedButton.icon(
-                            icon: const Icon(Icons.delete_outline),
-                            onPressed: () {
-                              showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return getDeleteAccountDialog(
-                                        blocContext, context);
-                                  });
-                            },
-                            label: Text(translate(context, 'delete_account')),
-                          ),
-                        ),
-                      ],
+            body: SingleChildScrollView(
+              child: Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(
+                          top: 20, bottom: 5, left: 20, right: 20),
+                      child: ElevatedButton.icon(
+                        icon: const Icon(Icons.exit_to_app),
+                        onPressed: () {
+                          showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return getSignOutDialog(blocContext);
+                              });
+                        },
+                        label: Text(translate(context, 'sign_out')),
+                      ),
                     ),
-                  ),
-                )
-              ],
+                    Padding(
+                      padding: const EdgeInsets.only(
+                          top: 5, bottom: 5, left: 20, right: 20),
+                      child: ElevatedButton.icon(
+                        icon: const Icon(Icons.delete_outline),
+                        onPressed: () {
+                          showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return getDeleteAccountDialog(
+                                    blocContext, context);
+                              });
+                        },
+                        label: Text(translate(context, 'delete_account')),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
           );
         } else {
