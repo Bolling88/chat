@@ -146,7 +146,7 @@ class LoginScreenContent extends StatelessWidget {
           ),
           GestureDetector(
             onTap: () {
-              _launchURL('https://fira-app.com/int-policy');
+              _launchURL('https://github.com/Bolling88/chat/blob/main/terms.md');
             },
             child: Text(
               FlutterI18n.translate(context, "terms"),
