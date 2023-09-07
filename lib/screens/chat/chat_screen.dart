@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
@@ -139,7 +140,7 @@ class ChatsScreenContent extends StatelessWidget {
             child: AppSpinner(),
           ),
         ),
-        errorWidget: (context, url, error) => const Icon(Icons.error),
+        errorWidget: (context, url, error) => const Icon(Icons.error_outline),
       ),
       subtitle: Text(
         '${state.chats[index].lastMessageByName}: ${state.chats[index].lastMessage}',

@@ -48,51 +48,48 @@ class ProfileScreenBuilder extends StatelessWidget {
         if (state is ProfileErrorState) {
           return const AppErrorScreen();
         } else if (state is ProfileBaseState) {
-          return Scaffold(
-            backgroundColor: AppColors.white,
-            body: SingleChildScrollView(
-              child: Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.max,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const SizedBox(height: 20),
-                    ElevatedButton.icon(
-                      icon: const Icon(Icons.camera_alt),
-                      onPressed: () {
-                        Navigator.pushNamed(
-                            blocContext, OnboardingPhotoScreen.routeName);
-                      },
-                      label: Text(translate(context, 'change_image')),
-                    ),
-                    const SizedBox(height: 20),
-                    ElevatedButton.icon(
-                      icon: const Icon(Icons.exit_to_app),
-                      onPressed: () {
-                        showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return getSignOutDialog(blocContext);
-                            });
-                      },
-                      label: Text(translate(context, 'sign_out')),
-                    ),
-                    const SizedBox(height: 20),
-                    ElevatedButton.icon(
-                      icon: const Icon(Icons.delete_outline),
-                      onPressed: () {
-                        showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return getDeleteAccountDialog(
-                                  blocContext, context);
-                            });
-                      },
-                      label: Text(translate(context, 'delete_account')),
-                    ),
-                  ],
-                ),
+          return SingleChildScrollView(
+            child: Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const SizedBox(height: 20),
+                  ElevatedButton.icon(
+                    icon: const Icon(Icons.camera_alt),
+                    onPressed: () {
+                      Navigator.pushNamed(
+                          blocContext, OnboardingPhotoScreen.routeName);
+                    },
+                    label: Text(translate(context, 'change_image')),
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton.icon(
+                    icon: const Icon(Icons.exit_to_app),
+                    onPressed: () {
+                      showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return getSignOutDialog(blocContext);
+                          });
+                    },
+                    label: Text(translate(context, 'sign_out')),
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton.icon(
+                    icon: const Icon(Icons.delete_outline),
+                    onPressed: () {
+                      showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return getDeleteAccountDialog(
+                                blocContext, context);
+                          });
+                    },
+                    label: Text(translate(context, 'delete_account')),
+                  ),
+                ],
               ),
             ),
           );

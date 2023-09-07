@@ -108,12 +108,9 @@ class LoginScreenContent extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Expanded(
-              child: Lottie.asset(
-                "assets/lottie/welcome.json",
+              child: Lottie.network(
+                "https://firebasestorage.googleapis.com/v0/b/chat-60225.appspot.com/o/lottie%2Fwelcome.json?alt=media&token=8c63f728-d463-4af0-b3cc-41066bea4600",
               ),
-              // child: Lottie.network(
-              //   "https://firebasestorage.googleapis.com/v0/b/chat-60225.appspot.com/o/lottie%2Fwelcome.json?alt=media&token=8c63f728-d463-4af0-b3cc-41066bea4600",
-              // ),
             ),
             Text(
               FlutterI18n.translate(context, "app_name"),

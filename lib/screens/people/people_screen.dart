@@ -1,7 +1,9 @@
 import 'package:chat/screens/visit/visit_screen.dart';
+import 'package:chat/utils/lottie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
+import 'package:lottie/lottie.dart';
 
 import '../../model/chat.dart';
 import '../../repository/firestore_repository.dart';
@@ -57,8 +59,18 @@ class PeopleScreenBuilder extends StatelessWidget {
                 ),
               ),
               child: (state.chatUsers.isEmpty)
-                  ? Center(
-                      child: Text(FlutterI18n.translate(context, 'no_users')))
+                  ? Column(
+                      children: [
+                        const Center(
+                            child: SizedBox(
+                                height: 200,
+                                child: AppLottie(
+                                    url: 'https://firebasestorage.googleapis.com/v0/b/chat-60225.appspot.com/o/lottie%2Fshrug.json?alt=media&token=73407d43-f0b5-4762-9042-12f07b3646e5'))),
+                        Center(
+                            child: Text(
+                                FlutterI18n.translate(context, 'no_users')))
+                      ],
+                    )
                   : Column(
                       children: [
                         const SizedBox(

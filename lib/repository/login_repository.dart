@@ -1,5 +1,6 @@
 import 'package:crypto/crypto.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:http/http.dart' as http;
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
@@ -17,18 +18,34 @@ class LoginRepository {
   }
 
   Future<UserCredential?> signInWithGoogle() async {
-    // Trigger the authentication flow
-    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+    if(kIsWeb){
+      return await _signInWithGoogleWeb();
+    }else {
+      // Trigger the authentication flow
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
 
-    if(googleUser == null) {
-      return null;
+      if (googleUser == null) {
+        return null;
+      }
+
+      // Obtain the auth details from the request
+      OAuthCredential credential = await getGoogleCredentials(googleUser);
+
+      return await FirebaseAuth.instance.signInWithCredential(credential);
+      // Once signed in, return the UserCredential
     }
+  }
 
-    // Obtain the auth details from the request
-    OAuthCredential credential = await getGoogleCredentials(googleUser);
+  Future<UserCredential> _signInWithGoogleWeb() async{
+    GoogleAuthProvider googleProvider = GoogleAuthProvider();
 
-    return await FirebaseAuth.instance.signInWithCredential(credential);
+    googleProvider.addScope('https://www.googleapis.com/auth/');
+    googleProvider.setCustomParameters({
+      'login_hint': 'user@example.com'
+    });
+
     // Once signed in, return the UserCredential
+    return await FirebaseAuth.instance.signInWithPopup(googleProvider);
   }
 
   String createNonce(int length) {

@@ -162,7 +162,9 @@ class OnboardingNameScreenContent extends StatelessWidget {
               : (state.isValidatingName)
                   ? const ElevatedButton(
                       onPressed: null,
-                      child: CircularProgressIndicator(),
+                      child: Padding(
+                          padding: EdgeInsets.all(10),
+                          child: CircularProgressIndicator()),
                     )
                   : ElevatedButton(
                       onPressed: null,
