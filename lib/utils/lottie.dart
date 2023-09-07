@@ -27,7 +27,7 @@ class _AppLottieState extends State<AppLottie> {
       builder: (context, snapshot) {
         var composition = snapshot.data;
         if (composition != null) {
-          return Lottie(composition: composition);
+          return Lottie(composition: composition, fit: BoxFit.fitHeight,);
         } else {
           return const Center(child: CircularProgressIndicator());
         }

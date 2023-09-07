@@ -1,5 +1,6 @@
 //a bloc builder widget class for creating a chat
 import 'package:chat/screens/login/login_screen.dart';
+import 'package:chat/utils/lottie.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -55,6 +56,21 @@ class ProfileScreenBuilder extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
+                  if (state.user.pictureData != null &&
+                      state.user.pictureData != 'nan')
+                    const SizedBox(height: 20),
+                  if (state.user.pictureData != null &&
+                      state.user.pictureData != 'nan')
+                    GestureDetector(
+                      child: AppUserImage(
+                        state.user.pictureData,
+                        size: 120,
+                      ),
+                      onTap: () {
+                        Navigator.pushNamed(
+                            blocContext, OnboardingPhotoScreen.routeName);
+                      },
+                    ),
                   const SizedBox(height: 20),
                   ElevatedButton.icon(
                     icon: const Icon(Icons.camera_alt),
@@ -83,8 +99,7 @@ class ProfileScreenBuilder extends StatelessWidget {
                       showDialog(
                           context: context,
                           builder: (BuildContext context) {
-                            return getDeleteAccountDialog(
-                                blocContext, context);
+                            return getDeleteAccountDialog(blocContext, context);
                           });
                     },
                     label: Text(translate(context, 'delete_account')),

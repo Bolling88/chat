@@ -114,7 +114,7 @@ class MessageHolderScreenContent extends StatelessWidget {
                 padding: const EdgeInsets.all(4.0),
                 child: Material(
                   type: MaterialType.card,
-                  elevation: (state.selectedChatIndex == index) ? 0 : 4,
+                  elevation: (state.selectedChatIndex == index) ? 0 : 2,
                   color: (state.selectedChatIndex == index)
                       ? AppColors.main_2
                       : (index == 0)
@@ -135,13 +135,31 @@ class MessageHolderScreenContent extends StatelessWidget {
                         borderRadius: BorderRadius.all(Radius.circular(5.0)),
                       ),
                       child: (index == 0)
-                          ? Text(
-                              state.chat.chatName,
-                              style: const TextStyle(color: AppColors.white),
+                          ? Center(
+                              child: Text(state.chat.chatName,
+                                  textAlign: TextAlign.center,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodySmall
+                                      ?.merge(
+                                        const TextStyle(
+                                            color: AppColors.white,
+                                            fontWeight: FontWeight.bold),
+                                      )),
                             )
-                          : Text(
-                              state.privateChats[index - 1].chatName,
-                              style: const TextStyle(color: AppColors.white),
+                          : Center(
+                              child: Text(
+                                state.privateChats[index - 1].chatName,
+                                textAlign: TextAlign.center,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall
+                                    ?.merge(
+                                      const TextStyle(
+                                          color: AppColors.white,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                              ),
                             )),
                 ),
               ),

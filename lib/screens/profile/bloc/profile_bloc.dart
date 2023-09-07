@@ -1,18 +1,17 @@
-import 'package:chat/repository/data_repository.dart';
 import 'package:chat/repository/firestore_repository.dart';
 import 'package:chat/screens/profile/bloc/profile_event.dart';
 import 'package:chat/screens/profile/bloc/profile_state.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../model/chat_user.dart';
 import '../../../utils/log.dart';
 
 class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   final FirestoreRepository _firestoreRepository;
+  late final ChatUser _chatUser;
 
   ProfileBloc(this._firestoreRepository)
-      : super(const ProfileBaseState(name: '')) {
+      : super(ProfileLoadingState()) {
     add(ProfileInitialEvent());
   }
 
@@ -21,6 +20,8 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     final currentState = state;
     try {
       if (event is ProfileInitialEvent) {
+        _chatUser = (await _firestoreRepository.getUser())!;
+        yield ProfileBaseState(user: _chatUser);
       } else if (event is ProfileDeleteAccountEvent) {
         if (currentState is ProfileBaseState) {
           yield ProfileLoadingState();

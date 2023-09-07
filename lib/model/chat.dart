@@ -16,6 +16,8 @@ class Chat extends Equatable implements Comparable<Chat> {
   final String initiatedBy;
   final String chatName;
   final String imageUrl;
+  final int imageOverflow;
+  final int imageTranslationX;
 
   final List<ChatUser> userInfos = [];
   final String usersText = "";
@@ -30,7 +32,9 @@ class Chat extends Equatable implements Comparable<Chat> {
         lastMessageReadBy = json['lastMessageReadBy']?.cast<String>() ?? [],
         initiatedBy = json['initiatedBy'] ?? "",
         chatName = json['chatName'] ?? "",
-        imageUrl = json['imageUrl'] ?? "";
+        imageUrl = json['imageUrl'] ?? "",
+        imageOverflow = json['imageOverflow'] ?? 80,
+        imageTranslationX = json['imageTranslationX'] ?? 0;
 
   String getLastMessageReadableDate() {
     return getLastMessageTimeFromTimeStamp(lastMessageTimestamp);
@@ -44,7 +48,7 @@ class Chat extends Equatable implements Comparable<Chat> {
   @override
   List<Object> get props => [
         id,
-    countryCode,
+        countryCode,
         lastMessage,
         lastMessageByName,
         lastMessageTimestamp,
@@ -56,5 +60,7 @@ class Chat extends Equatable implements Comparable<Chat> {
         initiatedBy,
         usersText,
         imageUrl,
+    imageOverflow,
+    imageTranslationX
       ];
 }

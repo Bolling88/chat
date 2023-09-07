@@ -1,11 +1,9 @@
 import 'dart:async';
 
 import 'package:chat/screens/visit/bloc/visit_state.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../model/chat.dart';
 import '../../../model/chat_user.dart';
-import '../../../repository/data_repository.dart';
 import '../../../repository/firestore_repository.dart';
 import 'visit_event.dart';
 

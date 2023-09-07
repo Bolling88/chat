@@ -42,7 +42,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
 
   void setUpDataListener() {
     Log.d("Setting up data listener");
-    String countryCode= WidgetsBinding.instance.platformDispatcher.locale.countryCode ?? 'en';
+    String countryCode= WidgetsBinding.instance.platformDispatcher.locale.countryCode?.toUpperCase() ?? 'US';
     Log.d('Current country Code: $countryCode');
     _firestoreRepository.streamChats(countryCode).listen((event) {
       final List<Chat> chats = event.docs
