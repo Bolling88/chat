@@ -1,3 +1,6 @@
+import 'dart:io';
+import 'dart:typed_data';
+
 import 'package:chat/model/chat_user.dart';
 import 'package:chat/repository/firestore_repository.dart';
 import 'package:chat/repository/storage_repository.dart';
@@ -16,11 +19,13 @@ class OnboardingPhotoBloc
     extends Bloc<OnboardingPhotoEvent, OnboardingPhotoState> {
   final FirestoreRepository _firestoreRepository;
   final StorageRepository _storageRepository;
+  final AppImageCropper _appImageCropper;
   final picker = ImagePicker();
 
   late ChatUser _chatUser;
 
-  OnboardingPhotoBloc(this._firestoreRepository, this._storageRepository)
+  OnboardingPhotoBloc(
+      this._firestoreRepository, this._storageRepository, this._appImageCropper)
       : super(OnboardingPhotoLoadingState()) {
     add(OnboardingPhotoInitialEvent());
   }
@@ -37,7 +42,8 @@ class OnboardingPhotoBloc
         final pickedFile = await picker.pickImage(
             source: ImageSource.camera, imageQuality: photoQuality);
         if (pickedFile != null) {
-          CroppedFile? croppedFile = await cropImage(pickedFile);
+          CroppedFile? croppedFile =
+              await _appImageCropper.cropImage(pickedFile);
           if (currentState is OnboardingPhotoBaseState && croppedFile != null) {
             yield OnboardingPhotoDoneState(croppedFile.path);
           } else if (currentState is OnboardingPhotoDoneState &&
@@ -48,13 +54,14 @@ class OnboardingPhotoBloc
       } else if (event is OnboardingPhotoGalleryClickedEvent) {
         XFile? pickedFile;
         try {
-           pickedFile = await picker.pickImage(
+          pickedFile = await picker.pickImage(
               source: ImageSource.gallery, imageQuality: photoQuality);
-        }catch(e){
+        } catch (e) {
           Log.e(e);
         }
         if (pickedFile != null) {
-          CroppedFile? croppedFile = await cropImage(pickedFile);
+          CroppedFile? croppedFile =
+              await _appImageCropper.cropImage(pickedFile);
           if (currentState is OnboardingPhotoBaseState && croppedFile != null) {
             yield OnboardingPhotoDoneState(croppedFile.path);
           } else if (currentState is OnboardingPhotoDoneState &&
@@ -101,5 +108,18 @@ class OnboardingPhotoBloc
       yield OnboardingPhotoErrorState();
       Log.e('OnboardingPhotoRedoState: $error', stackTrace: stacktrace);
     }
+  }
+}
+
+Future<File?> convertBlobToFile(Uint8List blobData, String filePath) async {
+  File file = File(filePath);
+
+  try {
+    await file.writeAsBytes(blobData);
+    return file;
+  } catch (e) {
+    // Handle any errors that occur during the file writing process
+    Log.e('Error converting Blob to File: $e');
+    return null;
   }
 }

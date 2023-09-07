@@ -13,6 +13,7 @@ import 'package:chat/screens/splash/splash_screen.dart';
 import 'package:chat/screens/terms/privacy.dart';
 import 'package:chat/screens/terms/terms.dart';
 import 'package:chat/utils/app_colors.dart';
+import 'package:chat/utils/image_util.dart';
 import 'package:chat/utils/log.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -78,6 +79,7 @@ class Chat extends StatelessWidget {
           final FirestoreRepository firestoreRepository = FirestoreRepository();
           final LoginRepository loginRepository = LoginRepository();
           final StorageRepository storageRepository = StorageRepository();
+          final AppImageCropper appImageCropper = AppImageCropper(context);
           final PresenceDatabase presenceDatabase =
               PresenceDatabase(firestoreRepository);
 
@@ -88,6 +90,7 @@ class Chat extends StatelessWidget {
               Provider<LoginRepository>.value(value: loginRepository),
               Provider<StorageRepository>.value(value: storageRepository),
               Provider<PresenceDatabase>.value(value: presenceDatabase),
+              Provider<AppImageCropper>.value(value: appImageCropper),
             ],
             child: MaterialApp(
               title: 'Chatta',

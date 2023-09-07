@@ -1,6 +1,8 @@
 import 'dart:io';
 
 import 'package:chat/utils/app_colors.dart';
+import 'package:chat/utils/image_util.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
@@ -21,10 +23,12 @@ class OnboardingPhotoScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final AppImageCropper appImageCropper = AppImageCropper(context);
     return BlocProvider(
       create: (BuildContext context) => OnboardingPhotoBloc(
           context.read<FirestoreRepository>(),
-          context.read<StorageRepository>()),
+          context.read<StorageRepository>(),
+          appImageCropper),
       child: const OnboardingPhotoScreenContent(),
     );
   }
@@ -34,6 +38,7 @@ class OnboardingPhotoScreenContent extends StatelessWidget {
   const OnboardingPhotoScreenContent({super.key});
 
   @override
+  // ignore: avoid_renaming_method_parameters
   Widget build(BuildContext appContext) {
     return Scaffold(
         body: BlocListener<OnboardingPhotoBloc, OnboardingPhotoState>(
@@ -114,14 +119,15 @@ class OnboardingPhotoScreenContent extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 30),
-          ElevatedButton(
-            onPressed: () {
-              BlocProvider.of<OnboardingPhotoBloc>(context)
-                  .add(OnboardingPhotoCameraClickedEvent());
-            },
-            child: Text(FlutterI18n.translate(context, "take_a_picture")),
-          ),
-          const SizedBox(height: 20),
+          if (!kIsWeb)
+            ElevatedButton(
+              onPressed: () {
+                BlocProvider.of<OnboardingPhotoBloc>(context)
+                    .add(OnboardingPhotoCameraClickedEvent());
+              },
+              child: Text(FlutterI18n.translate(context, "take_a_picture")),
+            ),
+          if (!kIsWeb) const SizedBox(height: 20),
           ElevatedButton(
             onPressed: () {
               BlocProvider.of<OnboardingPhotoBloc>(context)
@@ -161,8 +167,9 @@ class OnboardingPhotoScreenContent extends StatelessWidget {
                           width: 140,
                           height: 140,
                           child: CircleAvatar(
-                              backgroundImage: FileImage(
-                                  File.fromUri(Uri.parse(state.filePath)))))
+                              backgroundImage: FileImage(kIsWeb
+                                  ? File(state.filePath)
+                                  : File.fromUri(Uri.parse(state.filePath)))))
                       : const Icon(Icons.camera_alt_outlined))),
           const SizedBox(height: 20),
           Center(
