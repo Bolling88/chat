@@ -1,11 +1,10 @@
-import 'dart:io';
-
 import 'package:chat/utils/app_colors.dart';
 import 'package:chat/utils/image_util.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
+import 'package:universal_io/io.dart';
 import '../../repository/firestore_repository.dart';
 import '../../repository/storage_repository.dart';
 import '../../utils/app_widgets.dart';
@@ -164,12 +163,7 @@ class OnboardingPhotoScreenContent extends StatelessWidget {
                   borderRadius: BorderRadius.circular(70.0),
                   child: (state.filePath.isNotEmpty)
                       ? SizedBox(
-                          width: 140,
-                          height: 140,
-                          child: CircleAvatar(
-                              backgroundImage: FileImage(kIsWeb
-                                  ? File(state.filePath)
-                                  : File.fromUri(Uri.parse(state.filePath)))))
+                          width: 140, height: 140, child: getAvatar(state))
                       : const Icon(Icons.camera_alt_outlined))),
           const SizedBox(height: 20),
           Center(
@@ -230,6 +224,13 @@ class OnboardingPhotoScreenContent extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  CircleAvatar getAvatar(OnboardingPhotoDoneState state) {
+    final image = kIsWeb
+        ? NetworkImage(state.filePath)
+        : FileImage(File.fromUri(Uri.parse(state.filePath)));
+    return CircleAvatar(backgroundImage: image as ImageProvider<Object>);
   }
 
   void _showBottomSheet(BuildContext appContext) async {

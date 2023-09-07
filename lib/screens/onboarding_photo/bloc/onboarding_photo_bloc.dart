@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:chat/model/chat_user.dart';
@@ -9,6 +8,7 @@ import 'package:chat/utils/image_util.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:universal_io/io.dart';
 import '../../../utils/log.dart';
 import 'onboarding_photo_event.dart';
 import 'onboarding_photo_state.dart';
