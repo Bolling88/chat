@@ -32,13 +32,13 @@ class AppOtherMessageWidget extends StatelessWidget {
       },
       child: Padding(
         padding:
-            const EdgeInsets.only(left: 20, bottom: 10, top: 10, right: 40),
+            const EdgeInsets.only(left: 20, bottom: 5, top: 5, right: 40),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if (pictureData.isNotEmpty && pictureData != "nan")
               Padding(
-                padding: const EdgeInsets.only(left: 0, right: 20),
+                padding: const EdgeInsets.only(left: 0, right: 10),
                 child: AppUserImage(pictureData),
               ),
             Flexible(
@@ -70,26 +70,22 @@ class AppOtherMessageWidget extends StatelessWidget {
                                     AppColors.grey_4
                                   ])),
                           child: Padding(
-                            padding: const EdgeInsets.all(15),
+                            padding: const EdgeInsets.only(
+                                left: 10, right: 10, top: 5, bottom: 5),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(displayName,
                                     textAlign: TextAlign.left,
-                                    style: const TextStyle(
-                                        color: AppColors.grey_1,
-                                        fontSize: 13,
-                                        fontWeight: FontWeight.bold)),
+                                    style:
+                                        Theme.of(context).textTheme.bodySmall),
                                 const SizedBox(
-                                  height: 5,
+                                  height: 2,
                                 ),
                                 Text(
                                   message.text,
                                   textAlign: TextAlign.left,
-                                  style: const TextStyle(
-                                      color: AppColors.grey_1,
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w500),
+                                  style: Theme.of(context).textTheme.bodyMedium,
                                 ),
                               ],
                             ),

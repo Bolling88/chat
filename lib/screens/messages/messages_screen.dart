@@ -99,18 +99,14 @@ class ChatsScreenContentState extends State<ChatsScreenContent> {
                         } else if (state.messages[index].message?.chatType ==
                             ChatType.joined) {
                           return getChatInfoMessage(
-                              text: state.messages[index].message!.text +
-                                  ' ' +
-                                  FlutterI18n.translate(context, 'joined_chat'),
+                              text: '${state.messages[index].message!.text} ${FlutterI18n.translate(context, 'joined_chat')}',
                               state: state,
                               index: index,
                               context: context);
                         } else if (state.messages[index].message?.chatType ==
                             ChatType.left) {
                           return getChatInfoMessage(
-                              text: state.messages[index].message!.text +
-                                  ' ' +
-                                  FlutterI18n.translate(context, 'left_chat'),
+                              text: '${state.messages[index].message!.text} ${FlutterI18n.translate(context, 'left_chat')}',
                               state: state,
                               index: index,
                               context: context);

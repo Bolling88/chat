@@ -99,34 +99,33 @@ class ChatsScreenContent extends StatelessWidget {
         children: [
           state.chats[index].countryCode.isNotEmpty
               ? SizedBox(
-                width: 70,
-                height: 70,
-                child: Padding(
-                  padding: const EdgeInsets.only(left: 20),
-                  child: CachedNetworkImage(
-                    imageUrl: state.chats[index].imageUrl,
-                    imageBuilder: (context, imageProvider) => Container(
-                      width: 48,
-                      height: 48,
-                      decoration: BoxDecoration(
-                        shape:BoxShape.circle,
-                        image: DecorationImage(
-                            image: imageProvider,
-                            fit: BoxFit.cover),
+                  width: 70,
+                  height: 70,
+                  child: Padding(
+                    padding: const EdgeInsets.only(left: 20),
+                    child: CachedNetworkImage(
+                      imageUrl: state.chats[index].imageUrl,
+                      imageBuilder: (context, imageProvider) => Container(
+                        width: 48,
+                        height: 48,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          image: DecorationImage(
+                              image: imageProvider, fit: BoxFit.cover),
+                        ),
                       ),
-                    ),
-                    placeholder: (context, url) => const SizedBox(
-                      width: 48,
-                      height: 48,
-                      child: Center(
-                        child: AppSpinner(),
+                      placeholder: (context, url) => const SizedBox(
+                        width: 48,
+                        height: 48,
+                        child: Center(
+                          child: AppSpinner(),
+                        ),
                       ),
+                      errorWidget: (context, url, error) =>
+                          const Icon(Icons.error_outline),
                     ),
-                    errorWidget: (context, url, error) =>
-                        const Icon(Icons.error_outline),
                   ),
-                ),
-              )
+                )
               : Transform.translate(
                   offset: Offset(
                       state.chats[index].imageTranslationX.toDouble(), 0.0),
@@ -143,36 +142,24 @@ class ChatsScreenContent extends StatelessWidget {
           const SizedBox(width: 40),
           Expanded(
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               (state.chats[index].lastMessageReadBy
                       .contains(FirebaseAuth.instance.currentUser!.uid))
-                  ? Text(
-                      (state.chats[index].chatName.isNotEmpty)
-                          ? state.chats[index].chatName
-                          : state.chats[index].usersText,
-                      style: const TextStyle(
-                          fontSize: 15,
-                          color: AppColors.grey_1,
-                          fontWeight: FontWeight.bold),
-                    )
-                  : Text(
-                      (state.chats[index].chatName.isNotEmpty)
-                          ? state.chats[index].chatName
-                          : state.chats[index].usersText,
-                      style: const TextStyle(
-                          fontSize: 15,
-                          color: AppColors.grey_1,
-                          fontWeight: FontWeight.bold),
-                    ),
+                  ? Text(state.chats[index].chatName,
+                      style: Theme.of(context).textTheme.displaySmall?.merge(
+                            const TextStyle(color: AppColors.main),
+                          ))
+                  : Text(state.chats[index].chatName,
+                      style: Theme.of(context).textTheme.displaySmall),
+              const SizedBox(height: 5),
               Text(
                 '${state.chats[index].lastMessageByName}: ${state.chats[index].lastMessage}',
                 maxLines: 2,
-                style: const TextStyle(
-                    color: AppColors.grey_1,
-                    fontSize: 12,
-                    overflow: TextOverflow.ellipsis),
+                style: Theme.of(context).textTheme.bodySmall?.merge(
+                      const TextStyle(color: AppColors.grey_6, overflow: TextOverflow.ellipsis),
+                    )
               )
             ],
           )),

@@ -46,7 +46,7 @@ class _MessageEditTextWidgetState extends State<MessageEditTextWidget> {
                   autocorrect: false,
                   controller: controller,
                   style: const TextStyle(
-                      color: AppColors.main,
+                      color: AppColors.main_2,
                       fontSize: 15,
                       fontWeight: FontWeight.w500,
                       fontFamily: 'socialize'),

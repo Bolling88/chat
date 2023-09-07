@@ -115,7 +115,8 @@ class Chat extends StatelessWidget {
                   backgroundColor: AppColors.main,
                   elevation: 4,
                   surfaceTintColor: AppColors.main,
-                  titleTextStyle: GoogleFonts.lobster(fontSize: 30, color: AppColors.white),
+                  titleTextStyle:
+                      GoogleFonts.lobster(fontSize: 30, color: AppColors.white),
                   shadowColor: Colors.black,
                   toolbarTextStyle:
                       GoogleFonts.lobster(fontSize: 30, color: AppColors.white),
@@ -124,10 +125,13 @@ class Chat extends StatelessWidget {
                 textTheme: TextTheme(
                   displayLarge: GoogleFonts.lobster(),
                   displayMedium: GoogleFonts.lobster(),
-                  displaySmall: GoogleFonts.lobster(),
-                  bodyLarge: GoogleFonts.notoSans(),
-                  bodyMedium: GoogleFonts.notoSans(fontWeight: FontWeight.w700),
-                  bodySmall: GoogleFonts.notoSans(fontWeight: FontWeight.w500),
+                  displaySmall: GoogleFonts.lobster(fontSize: 20),
+                  bodyLarge: const TextStyle(
+                      fontSize: 16, fontWeight: FontWeight.w600),
+                  bodyMedium: const TextStyle(
+                      fontSize: 14, fontWeight: FontWeight.w600),
+                  bodySmall: const TextStyle(
+                      fontSize: 12, fontWeight: FontWeight.w400),
                 ),
               ),
               home: const SplashScreen(),

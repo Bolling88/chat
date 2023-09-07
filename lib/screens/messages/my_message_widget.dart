@@ -21,7 +21,7 @@ class AppMyMessageWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
         padding:
-            const EdgeInsets.only(left: 40, bottom: 10, top: 10, right: 20),
+            const EdgeInsets.only(left: 40, bottom: 5, top: 5, right: 20),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.end,
@@ -60,16 +60,17 @@ class AppMyMessageWidget extends StatelessWidget {
                                       AppColors.main_2
                                     ])),
                             child: Padding(
-                              padding: const EdgeInsets.all(15),
-                              child: Text(
-                                message.text,
-                                textAlign: TextAlign.left,
-                                style: const TextStyle(
-                                    color: AppColors.white,
-                                    fontSize: 15,
-                                    fontWeight: FontWeight.w500),
-                              ),
-                            ),
+                                padding: const EdgeInsets.only(top: 15, bottom: 15, left: 10, right: 10),
+                                child: Text(message.text,
+                                    textAlign: TextAlign.left,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium
+                                        ?.merge(
+                                          const TextStyle(
+                                            color: Colors.white,
+                                          ),
+                                        ))),
                           )
                         ],
                       ),
@@ -77,7 +78,7 @@ class AppMyMessageWidget extends StatelessWidget {
                   ),
             if (pictureData.isNotEmpty && pictureData != "nan")
               Padding(
-                padding: const EdgeInsets.only(left: 20),
+                padding: const EdgeInsets.only(left: 10),
                 child: AppUserImage(pictureData),
               )
           ],

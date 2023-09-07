@@ -82,9 +82,12 @@ class MessageHolderScreenContent extends StatelessWidget {
                               ? getSideMenu(state)
                               : const SizedBox.shrink(),
                           Expanded(
-                              child: IndexedStack(
-                                  index: state.selectedChatIndex,
-                                  children: getChatViews(state))),
+                              child: Material(
+                                elevation: 0,
+                                child: IndexedStack(
+                                    index: state.selectedChatIndex,
+                                    children: getChatViews(state)),
+                              )),
                         ])),
               );
             } else {
@@ -111,22 +114,28 @@ class MessageHolderScreenContent extends StatelessWidget {
                             : state.privateChats[index - 1]));
               },
               child: Padding(
-                padding: const EdgeInsets.all(4.0),
+                padding: (state.selectedChatIndex == index)
+                    ? const EdgeInsets.only(left: 4, top: 4, bottom: 4)
+                    : const EdgeInsets.all(4),
                 child: Material(
                   type: MaterialType.card,
-                  elevation: (state.selectedChatIndex == index) ? 0 : 2,
+                  elevation: 2,
                   color: (state.selectedChatIndex == index)
-                      ? AppColors.main_2
+                      ? AppColors.background
                       : (index == 0)
                           ? (state.chat.lastMessageReadBy.contains(getUserId()))
-                              ? AppColors.grey_2
+                              ? AppColors.grey_5
                               : AppColors.main
                           : (state.privateChats[index - 1].lastMessageReadBy
                                   .contains(getUserId()))
-                              ? AppColors.grey_2
+                              ? AppColors.grey_5
                               : AppColors.main,
-                  shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(5.0))),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: (state.selectedChatIndex == index)
+                          ? const BorderRadius.only(
+                              topLeft: Radius.circular(5.0),
+                              bottomLeft: Radius.circular(5.0))
+                          : const BorderRadius.all(Radius.circular(5.0))),
                   child: Container(
                       height: 50,
                       width: 50,
@@ -142,8 +151,11 @@ class MessageHolderScreenContent extends StatelessWidget {
                                       .textTheme
                                       .bodySmall
                                       ?.merge(
-                                        const TextStyle(
-                                            color: AppColors.white,
+                                        TextStyle(
+                                            color:
+                                                state.selectedChatIndex == index
+                                                    ? AppColors.grey_1
+                                                    : AppColors.white,
                                             fontWeight: FontWeight.bold),
                                       )),
                             )
@@ -155,8 +167,11 @@ class MessageHolderScreenContent extends StatelessWidget {
                                     .textTheme
                                     .bodySmall
                                     ?.merge(
-                                      const TextStyle(
-                                          color: AppColors.white,
+                                      TextStyle(
+                                          color:
+                                              state.selectedChatIndex == index
+                                                  ? AppColors.grey_1
+                                                  : AppColors.white,
                                           fontWeight: FontWeight.bold),
                                     ),
                               ),
