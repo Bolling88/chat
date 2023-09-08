@@ -51,9 +51,9 @@ class LoginRepository {
   Future<UserCredential?> signInWithApple() async {
     final appleProvider = AppleAuthProvider();
     if (kIsWeb) {
-      await FirebaseAuth.instance.signInWithPopup(appleProvider);
+      return await FirebaseAuth.instance.signInWithPopup(appleProvider);
     } else {
-      await FirebaseAuth.instance.signInWithProvider(appleProvider);
+      return await FirebaseAuth.instance.signInWithProvider(appleProvider);
     }
   }
 }

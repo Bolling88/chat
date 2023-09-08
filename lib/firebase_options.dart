@@ -52,9 +52,10 @@ class DefaultFirebaseOptions {
     messagingSenderId: '164406258776',
     projectId: 'chat-60225',
     authDomain: 'chat-60225.firebaseapp.com',
-    databaseURL: 'https://chat-60225-default-rtdb.europe-west1.firebasedatabase.app',
+    databaseURL:
+        'https://chat-60225-default-rtdb.europe-west1.firebasedatabase.app',
     storageBucket: 'chat-60225.appspot.com',
-    measurementId: 'G-4PRMM9Z99W',
+    measurementId: 'G-ZXS4REBS88',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
