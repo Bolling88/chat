@@ -131,6 +131,7 @@ class FirestoreRepository {
           'chatType': chatType.value,
           'createdById': getUserId(),
           'createdByName': user.displayName,
+          'createdByGender': user.gender,
           'createdByImageUrl': user.pictureData,
           'created': FieldValue.serverTimestamp()
         });
@@ -142,6 +143,7 @@ class FirestoreRepository {
         'chatType': chatType.value,
         'createdById': getUserId(),
         'createdByName': user.displayName,
+        'createdByGender': user.gender,
         'createdByImageUrl': user.pictureData,
         'created': FieldValue.serverTimestamp()
       });
@@ -153,6 +155,7 @@ class FirestoreRepository {
         await privateChats.doc(chatId).set({
           'lastMessage': message,
           'lastMessageByName': user.displayName,
+          'lastMessageByGender': user.gender,
           'lastMessageReadBy': [getUserId()],
           'lastMessageTimestamp': FieldValue.serverTimestamp(),
           'lastMessageUserId': getUserId()
@@ -161,6 +164,7 @@ class FirestoreRepository {
         await chats.doc(chatId).set({
           'lastMessage': message,
           'lastMessageByName': user.displayName,
+          'lastMessageByGender': user.gender,
           'lastMessageReadBy': [getUserId()],
           'lastMessageTimestamp': FieldValue.serverTimestamp(),
           'lastMessageUserId': getUserId()

@@ -3,8 +3,9 @@ import 'package:lottie/lottie.dart';
 
 class AppLottie extends StatefulWidget {
   final String url;
+  final bool animate;
 
-  const AppLottie({required this.url, super.key});
+  const AppLottie({required this.url, this.animate = true, super.key});
 
   @override
   State<AppLottie> createState() => _AppLottieState();
@@ -27,7 +28,11 @@ class _AppLottieState extends State<AppLottie> {
       builder: (context, snapshot) {
         var composition = snapshot.data;
         if (composition != null) {
-          return Lottie(composition: composition, fit: BoxFit.fitHeight,);
+          return Lottie(
+            composition: composition,
+            fit: BoxFit.fitHeight,
+            animate: widget.animate,
+          );
         } else {
           return const Center(child: CircularProgressIndicator());
         }

@@ -54,6 +54,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
           yield await checkIfOnboardingIsDone(chatUser);
         }
       } else if (event is LoginGuestClickedEvent) {
+        yield LoginLoadingState();
         final credentials = await FirebaseAuth.instance.signInAnonymously();
         await _firestoreRepository.setInitialUserData(
             "", credentials.user?.uid ?? "");

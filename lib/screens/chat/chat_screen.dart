@@ -145,22 +145,19 @@ class ChatsScreenContent extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              (state.chats[index].lastMessageReadBy
-                      .contains(FirebaseAuth.instance.currentUser!.uid))
-                  ? Text(state.chats[index].chatName,
-                      style: Theme.of(context).textTheme.displaySmall?.merge(
-                            const TextStyle(color: AppColors.main),
-                          ))
-                  : Text(state.chats[index].chatName,
-                      style: Theme.of(context).textTheme.displaySmall),
+              Text(state.chats[index].chatName,
+                  style: Theme.of(context).textTheme.displaySmall?.merge(
+                        TextStyle(color: Color(state.chats[index].chatColor)),
+                      )),
               const SizedBox(height: 5),
               Text(
-                '${state.chats[index].lastMessageByName}: ${state.chats[index].lastMessage}',
-                maxLines: 2,
-                style: Theme.of(context).textTheme.bodySmall?.merge(
-                      const TextStyle(color: AppColors.grey_6, overflow: TextOverflow.ellipsis),
-                    )
-              )
+                  '${state.chats[index].lastMessageByName}: ${state.chats[index].lastMessage}',
+                  maxLines: 2,
+                  style: Theme.of(context).textTheme.bodySmall?.merge(
+                        const TextStyle(
+                            color: AppColors.grey_6,
+                            overflow: TextOverflow.ellipsis),
+                      ))
             ],
           )),
           Text(

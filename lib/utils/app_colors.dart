@@ -15,6 +15,7 @@ class AppColors {
   static const Color black = Color(0xFF000000);
   static const Color transparent = Color(0x00000000);
   static const Color background = Color(0xFFf2ffff);
+  static const Color purple = Color(0xFF673AB7);
 
   const AppColors();
 }

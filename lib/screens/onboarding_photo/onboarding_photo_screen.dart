@@ -84,23 +84,13 @@ class OnboardingPhotoScreenContent extends StatelessWidget {
             child: Text(
               '${state.name},',
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 44,
-                color: AppColors.main,
-                fontWeight: FontWeight.w800,
-              ),
+              style: Theme.of(context).textTheme.titleLarge,
             ),
           ),
           Center(
-            child: Text(
-              FlutterI18n.translate(context, "say_cheese"),
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 44,
-                color: AppColors.grey_1,
-                fontWeight: FontWeight.w800,
-              ),
-            ),
+            child: Text(FlutterI18n.translate(context, "say_cheese"),
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.displayLarge),
           ),
           Padding(
             padding:
@@ -109,11 +99,7 @@ class OnboardingPhotoScreenContent extends StatelessWidget {
               child: Text(
                 FlutterI18n.translate(context, "lets_take_picture"),
                 textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 15,
-                  color: AppColors.grey_1,
-                  fontWeight: FontWeight.w500,
-                ),
+                style: Theme.of(context).textTheme.titleLarge,
               ),
             ),
           ),
@@ -167,40 +153,22 @@ class OnboardingPhotoScreenContent extends StatelessWidget {
                       : const Icon(Icons.camera_alt_outlined))),
           const SizedBox(height: 20),
           Center(
-            child: Text(
-              FlutterI18n.translate(context, "you_look_good"),
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 44,
-                color: AppColors.main,
-                fontWeight: FontWeight.w800,
-              ),
-            ),
+            child: Text(FlutterI18n.translate(context, "you_look_good"),
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.displayLarge),
           ),
           Center(
-            child: Text(
-              FlutterI18n.translate(context, "as_always"),
-              textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 44,
-                color: AppColors.grey_1,
-                fontWeight: FontWeight.w800,
-              ),
-            ),
+            child: Text(FlutterI18n.translate(context, "as_always"),
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.titleLarge),
           ),
           Padding(
             padding:
                 const EdgeInsets.only(left: 70, right: 70, top: 20, bottom: 20),
             child: Center(
-              child: Text(
-                FlutterI18n.translate(context, "continue_if_happy"),
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 15,
-                  color: AppColors.grey_1,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
+              child: Text(FlutterI18n.translate(context, "continue_if_happy"),
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.bodyMedium),
             ),
           ),
           const SizedBox(height: 30),

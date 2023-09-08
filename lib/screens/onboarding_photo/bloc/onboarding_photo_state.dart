@@ -19,22 +19,23 @@ class OnboardingPhotoBaseState extends OnboardingPhotoState {
 
 class OnboardingPhotoDoneState extends OnboardingPhotoState {
   final String filePath;
+  final String base64Image;
 
-  const OnboardingPhotoDoneState(this.filePath);
+  const OnboardingPhotoDoneState(this.filePath, this.base64Image);
 
-  OnboardingPhotoDoneState copyWith({String? filePath}) {
-    return OnboardingPhotoDoneState(filePath ?? this.filePath);
+  OnboardingPhotoDoneState copyWith({String? filePath, String? base64Image}) {
+    return OnboardingPhotoDoneState(filePath ?? this.filePath, base64Image ?? this.base64Image);
   }
 
   @override
-  List<Object> get props => [filePath];
+  List<Object> get props => [filePath, base64Image];
 }
 
 class OnboardingPhotoLoadingState extends OnboardingPhotoState {}
 class OnboardingPhotoErrorState extends OnboardingPhotoState {}
 
 class OnboardingPhotoRedoState extends OnboardingPhotoDoneState {
-  const OnboardingPhotoRedoState(String filePath) : super(filePath);
+  const OnboardingPhotoRedoState(String filePath, String base64Image) : super(filePath, base64Image);
 }
 
 class OnboardingPhotoSuccessState extends OnboardingPhotoState {

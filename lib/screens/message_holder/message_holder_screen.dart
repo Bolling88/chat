@@ -30,13 +30,16 @@ class MessageHolderScreen extends StatelessWidget {
     return BlocProvider(
       create: (BuildContext context) =>
           MessageHolderBloc(context.read<FirestoreRepository>(), args.chat),
-      child: const MessageHolderScreenContent(),
+      child: MessageHolderScreenContent(chat: args.chat),
     );
   }
 }
 
 class MessageHolderScreenContent extends StatelessWidget {
-  const MessageHolderScreenContent({Key? key}) : super(key: key);
+  final Chat chat;
+
+  const MessageHolderScreenContent({required this.chat, Key? key})
+      : super(key: key);
 
   Future<bool> _onWillPop(blocContext) async {
     return await showDialog(
@@ -74,7 +77,7 @@ class MessageHolderScreenContent extends StatelessWidget {
                     ? _onWillPop(context)
                     : Future.value(true),
                 child: Scaffold(
-                    appBar: getAppBar(context, state),
+                    appBar: getAppBar(context, state, chat),
                     body: Row(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
@@ -83,11 +86,11 @@ class MessageHolderScreenContent extends StatelessWidget {
                               : const SizedBox.shrink(),
                           Expanded(
                               child: Material(
-                                elevation: 0,
-                                child: IndexedStack(
-                                    index: state.selectedChatIndex,
-                                    children: getChatViews(state)),
-                              )),
+                            elevation: 0,
+                            child: IndexedStack(
+                                index: state.selectedChatIndex,
+                                children: getChatViews(state)),
+                          )),
                         ])),
               );
             } else {
@@ -200,11 +203,12 @@ class MessageHolderScreenContent extends StatelessWidget {
             .toList();
   }
 
-  AppBar getAppBar(BuildContext context, MessageHolderBaseState state) {
+  AppBar getAppBar(BuildContext context, MessageHolderBaseState state, Chat chat) {
     return AppBar(
       title: Text(
         state.selectedChat.chatName,
       ),
+      backgroundColor: Color(chat.chatColor),
       actions: [
         (state.selectedChatIndex == 0)
             ? IconButton(

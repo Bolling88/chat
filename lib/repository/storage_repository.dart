@@ -1,7 +1,9 @@
+import 'dart:convert';
 import 'dart:math';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/foundation.dart';
 import 'package:universal_io/io.dart';
 
 import '../utils/log.dart';
@@ -16,12 +18,17 @@ class StorageRepository {
   String getRandomString(int length) => String.fromCharCodes(Iterable.generate(
       length, (_) => _chars.codeUnitAt(_rnd.nextInt(_chars.length))));
 
-  Future<Reference?> uploadProfileImage(String filePath) async {
+  Future<Reference?> uploadProfileImage(
+      String filePath, String base64Image) async {
     File file = File(filePath);
     String userId = FirebaseAuth.instance.currentUser!.uid;
 
     try {
-      final task = await _storage.ref('images/$userId.png').putFile(file);
+      final task = kIsWeb
+          ? await _storage.ref('images/$userId.png').putData(
+              base64.decode(base64Image),
+              SettableMetadata(contentType: 'image/jpeg'))
+          : await _storage.ref('images/$userId.png').putFile(file);
       return task.ref;
     } on FirebaseException catch (e) {
       Log.e(e.toString());

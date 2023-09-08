@@ -148,23 +148,21 @@ class LoginScreenContent extends StatelessWidget {
                   FlutterI18n.translate(context, 'continue_google'),
                   style: Theme.of(context).textTheme.bodyMedium,
                 )),
-            if (!kIsWeb)
-              if (Platform.isIOS) const SizedBox(height: 20),
-            if (!kIsWeb)
-              if (Platform.isIOS)
-                ElevatedButton.icon(
-                    onPressed: () {
-                      BlocProvider.of<LoginBloc>(context)
-                          .add(LoginAppleClickedEvent());
-                    },
-                    icon: Image.asset(
-                      "assets/img/apple.png",
-                      height: 24,
-                    ),
-                    label: Text(
-                      FlutterI18n.translate(context, 'continue_apple'),
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    )),
+            if (kIsWeb || Platform.isIOS) const SizedBox(height: 20),
+            if (kIsWeb || Platform.isIOS)
+              ElevatedButton.icon(
+                  onPressed: () {
+                    BlocProvider.of<LoginBloc>(context)
+                        .add(LoginAppleClickedEvent());
+                  },
+                  icon: Image.asset(
+                    "assets/img/apple.png",
+                    height: 24,
+                  ),
+                  label: Text(
+                    FlutterI18n.translate(context, 'continue_apple'),
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  )),
             const SizedBox(height: 20),
             Padding(
               padding: const EdgeInsets.only(left: 20, right: 20),

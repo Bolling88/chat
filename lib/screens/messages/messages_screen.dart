@@ -126,6 +126,7 @@ class ChatsScreenContentState extends State<ChatsScreenContent> {
                             userId: state.messages[index].message!.createdById,
                             displayName:
                                 state.messages[index].message!.createdByName,
+                            gender: state.messages[index].message!.createdByGender,
                             chat: widget.chat,
                           );
                         }

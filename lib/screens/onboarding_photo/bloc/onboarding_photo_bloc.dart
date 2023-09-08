@@ -1,4 +1,4 @@
-import 'dart:typed_data';
+import 'dart:convert';
 
 import 'package:chat/model/chat_user.dart';
 import 'package:chat/repository/firestore_repository.dart';
@@ -8,7 +8,6 @@ import 'package:chat/utils/image_util.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:universal_io/io.dart';
 import '../../../utils/log.dart';
 import 'onboarding_photo_event.dart';
 import 'onboarding_photo_state.dart';
@@ -45,7 +44,7 @@ class OnboardingPhotoBloc
           CroppedFile? croppedFile =
               await _appImageCropper.cropImage(pickedFile);
           if (currentState is OnboardingPhotoBaseState && croppedFile != null) {
-            yield OnboardingPhotoDoneState(croppedFile.path);
+            yield OnboardingPhotoDoneState(croppedFile.path, '');
           } else if (currentState is OnboardingPhotoDoneState &&
               croppedFile != null) {
             yield currentState.copyWith(filePath: croppedFile.path);
@@ -63,7 +62,10 @@ class OnboardingPhotoBloc
           CroppedFile? croppedFile =
               await _appImageCropper.cropImage(pickedFile);
           if (currentState is OnboardingPhotoBaseState && croppedFile != null) {
-            yield OnboardingPhotoDoneState(croppedFile.path);
+            var imageForWeb = await croppedFile.readAsBytes();
+            String base64Image = base64Encode(imageForWeb);
+
+            yield OnboardingPhotoDoneState(croppedFile.path, base64Image);
           } else if (currentState is OnboardingPhotoDoneState &&
               croppedFile != null) {
             yield currentState.copyWith(filePath: croppedFile.path);
@@ -73,7 +75,7 @@ class OnboardingPhotoBloc
         if (currentState is OnboardingPhotoDoneState) {
           yield OnboardingPhotoLoadingState();
           final imageUrl = await _storageRepository
-              .uploadProfileImage(currentState.filePath);
+              .uploadProfileImage(currentState.filePath, currentState.base64Image);
           final finalUrl = await imageUrl?.getDownloadURL() ?? "";
           await _firestoreRepository.updateUserProfileImage(finalUrl);
 
@@ -86,12 +88,12 @@ class OnboardingPhotoBloc
         }
       } else if (event is OnboardingPhotoRedoClickedEvent) {
         if (currentState is OnboardingPhotoDoneState) {
-          yield OnboardingPhotoRedoState(currentState.filePath);
+          yield OnboardingPhotoRedoState(currentState.filePath, currentState.base64Image);
           yield currentState;
         }
       } else if (event is OnboardingPhotoBottomSheetClosedEvent) {
         if (currentState is OnboardingPhotoDoneState) {
-          yield OnboardingPhotoDoneState(currentState.filePath);
+          yield OnboardingPhotoDoneState(currentState.filePath, currentState.base64Image);
         }
       } else if (event is OnboardingPhotoSkipEvent) {
         await _firestoreRepository.updateUserProfileImage('nan');
@@ -106,20 +108,7 @@ class OnboardingPhotoBloc
       }
     } on Exception catch (error, stacktrace) {
       yield OnboardingPhotoErrorState();
-      Log.e('OnboardingPhotoRedoState: $error', stackTrace: stacktrace);
+      Log.e('OnboardingPhotoBloc: $error', stackTrace: stacktrace);
     }
-  }
-}
-
-Future<File?> convertBlobToFile(Uint8List blobData, String filePath) async {
-  File file = File(filePath);
-
-  try {
-    await file.writeAsBytes(blobData);
-    return file;
-  } catch (e) {
-    // Handle any errors that occur during the file writing process
-    Log.e('Error converting Blob to File: $e');
-    return null;
   }
 }

@@ -73,11 +73,7 @@ class OnboardingNameScreenContent extends StatelessWidget {
             child: Text(
               FlutterI18n.translate(context, "hey_you"),
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                fontSize: 44,
-                color: AppColors.main,
-                fontWeight: FontWeight.w800,
-              ),
+              style: Theme.of(context).textTheme.displayLarge,
             ),
           ),
           Center(
@@ -86,26 +82,18 @@ class OnboardingNameScreenContent extends StatelessWidget {
               child: Text(
                 FlutterI18n.translate(context, "nice_see_you_here"),
                 textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 44,
-                  color: AppColors.grey_1,
-                  fontWeight: FontWeight.w800,
-                ),
+                style: Theme.of(context).textTheme.titleLarge,
               ),
             ),
           ),
           Padding(
             padding:
-                const EdgeInsets.only(left: 70, right: 70, top: 20, bottom: 20),
+                const EdgeInsets.only(left: 70, right: 70, top: 30, bottom: 20),
             child: Center(
               child: Text(
                 FlutterI18n.translate(context, "nice_see_you_here_info"),
                 textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 15,
-                  color: AppColors.grey_1,
-                  fontWeight: FontWeight.w500,
-                ),
+                style: Theme.of(context).textTheme.bodyMedium,
               ),
             ),
           ),
@@ -162,8 +150,9 @@ class OnboardingNameScreenContent extends StatelessWidget {
               : (state.isValidatingName)
                   ? const ElevatedButton(
                       onPressed: null,
-                      child: Padding(
-                          padding: EdgeInsets.all(10),
+                      child: SizedBox(
+                          width: 20,
+                          height: 20,
                           child: CircularProgressIndicator()),
                     )
                   : ElevatedButton(

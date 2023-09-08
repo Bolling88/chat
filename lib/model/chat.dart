@@ -15,6 +15,7 @@ class Chat extends Equatable implements Comparable<Chat> {
   final List<String> lastMessageReadBy;
   final String initiatedBy;
   final String chatName;
+  final int chatColor;
   final String imageUrl;
   final int imageOverflow;
   final int imageTranslationX;
@@ -32,6 +33,7 @@ class Chat extends Equatable implements Comparable<Chat> {
         lastMessageReadBy = json['lastMessageReadBy']?.cast<String>() ?? [],
         initiatedBy = json['initiatedBy'] ?? "",
         chatName = json['chatName'] ?? "",
+        chatColor = json['chatColor'] ?? 0xFF30c7c2,
         imageUrl = json['imageUrl'] ?? "",
         imageOverflow = json['imageOverflow'] ?? 80,
         imageTranslationX = json['imageTranslationX'] ?? 0;
@@ -57,6 +59,7 @@ class Chat extends Equatable implements Comparable<Chat> {
         userInfos,
         lastMessageReadBy,
         chatName,
+    chatColor,
         initiatedBy,
         usersText,
         imageUrl,

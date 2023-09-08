@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:chat/utils/lottie.dart';
 import 'package:flutter/material.dart';
 
 import '../../model/chat.dart';
@@ -13,6 +14,7 @@ class AppOtherMessageWidget extends StatelessWidget {
   final String pictureData;
   final String displayName;
   final String userId;
+  final int gender;
   final Chat chat;
 
   const AppOtherMessageWidget({
@@ -21,6 +23,7 @@ class AppOtherMessageWidget extends StatelessWidget {
     required this.pictureData,
     required this.userId,
     required this.displayName,
+    required this.gender,
     required this.chat,
   }) : super(key: key);
 
@@ -31,8 +34,7 @@ class AppOtherMessageWidget extends StatelessWidget {
         showVisitScreen(context, userId, chat, false);
       },
       child: Padding(
-        padding:
-            const EdgeInsets.only(left: 20, bottom: 5, top: 5, right: 40),
+        padding: const EdgeInsets.only(left: 20, bottom: 5, top: 5, right: 40),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -75,12 +77,22 @@ class AppOtherMessageWidget extends StatelessWidget {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(displayName,
-                                    textAlign: TextAlign.left,
-                                    style:
-                                        Theme.of(context).textTheme.bodySmall),
-                                const SizedBox(
-                                  height: 2,
+                                Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(displayName,
+                                        textAlign: TextAlign.left,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodySmall),
+                                    SizedBox(
+                                        width: 18,
+                                        height: 18,
+                                        child: AppLottie(
+                                          url: getGenderUrl(gender),
+                                          animate: false,
+                                        ))
+                                  ],
                                 ),
                                 Text(
                                   message.text,
@@ -98,5 +110,15 @@ class AppOtherMessageWidget extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+String getGenderUrl(int gender) {
+  if (gender == 0) {
+    return 'https://firebasestorage.googleapis.com/v0/b/chat-60225.appspot.com/o/lottie%2Ffemale.json?alt=media&token=dabc5dd7-3f5e-446a-9f69-1325a343ce90';
+  } else if (gender == 1) {
+    return 'https://firebasestorage.googleapis.com/v0/b/chat-60225.appspot.com/o/lottie%2Fmale.json?alt=media&token=0a7e6edf-2112-471f-b5ef-d07fac83a9b3';
+  } else {
+    return 'https://firebasestorage.googleapis.com/v0/b/chat-60225.appspot.com/o/lottie%2Fnonbinary.json?alt=media&token=c53c9728-aef5-448a-b534-669d5fb6d3e0';
   }
 }

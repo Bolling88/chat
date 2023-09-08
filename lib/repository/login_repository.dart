@@ -1,3 +1,5 @@
+import 'dart:html';
+
 import 'package:crypto/crypto.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
@@ -80,6 +82,19 @@ class LoginRepository {
         AppleIDAuthorizationScopes.email,
         AppleIDAuthorizationScopes.fullName,
       ],
+      webAuthenticationOptions: WebAuthenticationOptions(
+        // TODO: Set the `clientId` and `redirectUri` arguments to the values you entered in the Apple Developer portal during the setup
+        clientId:
+        'com.xevenition.kvitter',
+        redirectUri:
+        // For web your redirect URI needs to be the host of the "current page",
+        // while for Android you will be using the API server that redirects back into your app via a deep link
+        kIsWeb
+            ? Uri.parse('https://chat-60225.firebaseapp.com/__/auth/handler')
+            : Uri.parse(
+          'https://flutter-sign-in-with-apple-example.glitch.me/callbacks/sign_in_with_apple',
+        ),
+      ),
       nonce: sha256.convert(utf8.encode(nonce)).toString(),
     );
   }
@@ -101,6 +116,7 @@ class LoginRepository {
       // propagate Apple ID token to BOTH accessToken and idToken parameters
       idToken: nativeAppleCred.identityToken,
       rawNonce: nonce,
+
     );
   }
 }
