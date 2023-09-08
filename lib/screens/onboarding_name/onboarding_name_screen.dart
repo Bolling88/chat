@@ -82,7 +82,7 @@ class OnboardingNameScreenContent extends StatelessWidget {
               child: Text(
                 FlutterI18n.translate(context, "nice_see_you_here"),
                 textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.titleLarge,
+                style: Theme.of(context).textTheme.displayMedium,
               ),
             ),
           ),
@@ -110,7 +110,7 @@ class OnboardingNameScreenContent extends StatelessWidget {
                   maxLength: 15,
                   autofocus: false,
                   autocorrect: false,
-                  style: const TextStyle(color: AppColors.main, fontSize: 15),
+                  style: Theme.of(context).textTheme.bodyMedium,
                   textCapitalization: TextCapitalization.sentences,
                   cursorColor: AppColors.main,
                   onChanged: (text) {

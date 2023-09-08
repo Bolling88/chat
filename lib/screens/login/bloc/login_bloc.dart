@@ -34,24 +34,26 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         }
       } else if (event is LoginAppleClickedEvent) {
         yield LoginLoadingState();
-        final nonce = _loginRepository.createNonce(32);
         final appleCredentials =
-            await _loginRepository.getAppleCredentials(nonce);
-        final credentials =
-            await _loginRepository.signInWithApple(appleCredentials, nonce);
+            await _loginRepository.signInWithApple();
 
-        final chatUser = await _firestoreRepository.getUser();
-        if (chatUser == null || chatUser.displayName.isEmpty) {
-          await _firestoreRepository.setInitialUserData(
-              credentials.user?.email ?? "", credentials.user?.uid ?? "");
-          Log.d("User logged in!");
-          if (chatUser != null) {
-            yield await checkIfOnboardingIsDone(chatUser);
+        if(appleCredentials != null) {
+          final chatUser = await _firestoreRepository.getUser();
+          if (chatUser == null || chatUser.displayName.isEmpty) {
+            await _firestoreRepository.setInitialUserData(
+                appleCredentials.user?.email ?? "",
+                appleCredentials.user?.uid ?? "");
+            Log.d("User logged in!");
+            if (chatUser != null) {
+              yield await checkIfOnboardingIsDone(chatUser);
+            } else {
+              yield LoginErrorState();
+            }
           } else {
-            yield LoginErrorState();
+            yield await checkIfOnboardingIsDone(chatUser);
           }
-        } else {
-          yield await checkIfOnboardingIsDone(chatUser);
+        }else{
+          yield LoginErrorState();
         }
       } else if (event is LoginGuestClickedEvent) {
         yield LoginLoadingState();

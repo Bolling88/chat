@@ -80,7 +80,7 @@ class OnboardingGenderScreenContent extends StatelessWidget {
               child: Text(
                 FlutterI18n.translate(context, "before_we_are_done"),
                 textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.titleLarge,
+                style: Theme.of(context).textTheme.displayMedium,
               ),
             ),
           ),
@@ -112,7 +112,7 @@ class OnboardingGenderScreenContent extends StatelessWidget {
               context: context,
               title: FlutterI18n.translate(context, "i_am_non_binary"),
               url:
-                  'https://firebasestorage.googleapis.com/v0/b/chat-60225.appspot.com/o/lottie%2Fnon_binary.json?alt=media&token=8c63f728-d463-4af0-b3cc-41066bea4600'),
+                  'https://firebasestorage.googleapis.com/v0/b/chat-60225.appspot.com/o/lottie%2Fnonbinary.json?alt=media&token=c53c9728-aef5-448a-b534-669d5fb6d3e0'),
         ],
       ),
     );

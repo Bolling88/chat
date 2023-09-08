@@ -126,29 +126,30 @@ class Chat extends StatelessWidget {
                   iconTheme: const IconThemeData(color: Colors.white),
                 ),
                 textTheme: TextTheme(
-                  displayLarge:
-                      GoogleFonts.lobster(fontSize: 50, color: AppColors.main),
-                  displayMedium:
-                      GoogleFonts.lobster(fontSize: 30, color: AppColors.main),
-                  displaySmall:
-                      GoogleFonts.lobster(fontSize: 20, color: AppColors.main),
+                  displayLarge: GoogleFonts.lobster(color: AppColors.main),
+                  displayMedium: const TextStyle(
+                    color: AppColors.grey_1,
+                    fontWeight: FontWeight.w800,
+                  ),
+                  displaySmall: GoogleFonts.lobster(color: AppColors.main),
                   titleLarge: const TextStyle(
-                    fontSize: 44,
+                    color: AppColors.grey_1,
+                    fontWeight: FontWeight.w800,
+                  ),
+                  titleMedium: const TextStyle(
+                    color: AppColors.grey_1,
+                    fontWeight: FontWeight.w800,
+                  ),
+                  titleSmall: const TextStyle(
                     color: AppColors.grey_1,
                     fontWeight: FontWeight.w800,
                   ),
                   bodyLarge: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.grey_1),
+                      fontWeight: FontWeight.w600, color: AppColors.grey_1),
                   bodyMedium: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.grey_1),
+                      fontWeight: FontWeight.w600, color: AppColors.grey_1),
                   bodySmall: const TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w400,
-                      color: AppColors.grey_1),
+                      fontWeight: FontWeight.w400, color: AppColors.grey_1),
                 ),
               ),
               home: const SplashScreen(),

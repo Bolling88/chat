@@ -84,7 +84,7 @@ class OnboardingPhotoScreenContent extends StatelessWidget {
             child: Text(
               '${state.name},',
               textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.titleLarge,
+              style: Theme.of(context).textTheme.displayMedium,
             ),
           ),
           Center(
@@ -99,7 +99,7 @@ class OnboardingPhotoScreenContent extends StatelessWidget {
               child: Text(
                 FlutterI18n.translate(context, "lets_take_picture"),
                 textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.titleLarge,
+                style: Theme.of(context).textTheme.bodyMedium,
               ),
             ),
           ),
@@ -160,7 +160,7 @@ class OnboardingPhotoScreenContent extends StatelessWidget {
           Center(
             child: Text(FlutterI18n.translate(context, "as_always"),
                 textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.titleLarge),
+                style: Theme.of(context).textTheme.displayMedium),
           ),
           Padding(
             padding:
