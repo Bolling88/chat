@@ -5,6 +5,7 @@ import 'package:flutter_i18n/flutter_i18n.dart';
 import '../../model/chat.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_widgets.dart';
+import '../../utils/constants.dart';
 import '../messages/messages_screen.dart';
 import '../people/people_screen.dart';
 import 'bloc/message_holder_bloc.dart';
@@ -78,26 +79,44 @@ class MessageHolderScreenContent extends StatelessWidget {
                     : Future.value(true),
                 child: Scaffold(
                     appBar: getAppBar(context, state, chat),
-                    body: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          state.privateChats.isNotEmpty
-                              ? getSideMenu(state)
-                              : const SizedBox.shrink(),
-                          Expanded(
-                              child: Material(
-                            elevation: 0,
-                            child: IndexedStack(
-                                index: state.selectedChatIndex,
-                                children: getChatViews(state)),
-                          )),
-                        ])),
+                    body: (getSize(context) == ScreenSize.large)
+                        ? largeScreenContent(state, context)
+                        : smallScreenContent(state)),
               );
             } else {
               return const Scaffold(body: Center(child: AppSpinner()));
             }
           },
         ));
+  }
+
+  Row largeScreenContent(MessageHolderBaseState state, BuildContext context) {
+    return Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+      state.privateChats.isNotEmpty
+          ? getSideMenu(state)
+          : const SizedBox.shrink(),
+      Expanded(
+          child: Material(
+        elevation: 0,
+        child: IndexedStack(
+            index: state.selectedChatIndex, children: getChatViews(state)),
+      )),
+      Expanded(child: PeopleScreen(chat: chat, parentContext: context))
+    ]);
+  }
+
+  Row smallScreenContent(MessageHolderBaseState state) {
+    return Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+      state.privateChats.isNotEmpty
+          ? getSideMenu(state)
+          : const SizedBox.shrink(),
+      Expanded(
+          child: Material(
+        elevation: 0,
+        child: IndexedStack(
+            index: state.selectedChatIndex, children: getChatViews(state)),
+      )),
+    ]);
   }
 
   Widget getSideMenu(MessageHolderBaseState state) {
@@ -203,33 +222,24 @@ class MessageHolderScreenContent extends StatelessWidget {
             .toList();
   }
 
-  AppBar getAppBar(BuildContext context, MessageHolderBaseState state, Chat chat) {
+  AppBar getAppBar(
+      BuildContext context, MessageHolderBaseState state, Chat chat) {
     return AppBar(
       title: Text(
         state.selectedChat.chatName,
       ),
       backgroundColor: Color(chat.chatColor),
       actions: [
-        (state.selectedChatIndex == 0)
-            ? IconButton(
-                icon: const Icon(
-                  Icons.people,
-                  color: AppColors.white,
-                ),
-                onPressed: () {
-                  showPeopleScreen(context, state.chat);
-                },
-              )
-            : IconButton(
-                icon: const Icon(
-                  Icons.close,
-                  color: AppColors.white,
-                ),
-                onPressed: () {
-                  BlocProvider.of<MessageHolderBloc>(context)
-                      .add(MessageHolderClosePrivateChatEvent());
-                },
-              ),
+        if (getSize(context) == ScreenSize.small)
+          IconButton(
+            icon: const Icon(
+              Icons.people,
+              color: AppColors.white,
+            ),
+            onPressed: () {
+              showPeopleScreen(context, state.chat);
+            },
+          )
       ],
     );
   }

@@ -9,6 +9,7 @@ import '../../model/chat.dart';
 import '../../repository/firestore_repository.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_widgets.dart';
+import '../../utils/constants.dart';
 import '../error/error_screen.dart';
 import '../hero/hero_screen.dart';
 import '../loading/loading_screen.dart';
@@ -50,7 +51,8 @@ class PeopleScreenBuilder extends StatelessWidget {
             return const ErrorScreen();
           } else if (state is PeopleBaseState) {
             return Container(
-              height: 400,
+              height:
+                  getSize(context) == ScreenSize.large ? double.infinity : 400,
               decoration: const BoxDecoration(
                 color: AppColors.white,
                 borderRadius: BorderRadius.only(
@@ -65,7 +67,8 @@ class PeopleScreenBuilder extends StatelessWidget {
                             child: SizedBox(
                                 height: 200,
                                 child: AppLottie(
-                                    url: 'https://firebasestorage.googleapis.com/v0/b/chat-60225.appspot.com/o/lottie%2Fshrug.json?alt=media&token=73407d43-f0b5-4762-9042-12f07b3646e5'))),
+                                    url:
+                                        'https://firebasestorage.googleapis.com/v0/b/chat-60225.appspot.com/o/lottie%2Fshrug.json?alt=media&token=73407d43-f0b5-4762-9042-12f07b3646e5'))),
                         Center(
                             child: Text(
                                 FlutterI18n.translate(context, 'no_users')))
@@ -100,9 +103,11 @@ class PeopleScreenBuilder extends StatelessWidget {
                                             state.chatUsers[index].pictureData))
                                     : const SizedBox.shrink(),
                                 onTap: () {
-                                  Navigator.pop(context);
+                                  if (getSize(context) == ScreenSize.small) {
+                                    Navigator.pop(context);
+                                  }
                                   showVisitScreen(parentContext,
-                                      state.chatUsers[index].id, chat, true);
+                                      state.chatUsers[index].id, chat, getSize(context) == ScreenSize.small);
                                 },
                               );
                             },
@@ -147,15 +152,16 @@ class PeopleScreenBuilder extends StatelessWidget {
           ),
           style: Theme.of(context).textTheme.displaySmall,
         ))),
-        ElevatedButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            style: ElevatedButton.styleFrom(
-              shape: const CircleBorder(),
-              padding: const EdgeInsets.all(10),
-            ),
-            child: const Icon(Icons.close))
+        if (getSize(context) == ScreenSize.small)
+          ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              style: ElevatedButton.styleFrom(
+                shape: const CircleBorder(),
+                padding: const EdgeInsets.all(10),
+              ),
+              child: const Icon(Icons.close))
       ],
     );
   }

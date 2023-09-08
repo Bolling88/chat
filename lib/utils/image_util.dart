@@ -17,7 +17,9 @@ class AppImageCropper {
   Future<CroppedFile?> cropImage(XFile pickedFile) async {
     final CroppedFile? croppedFile = await ImageCropper().cropImage(
       sourcePath: pickedFile.path,
-      uiSettings: [WebUiSettings(context: context)],
+      uiSettings: [
+        WebUiSettings(context: context, enableZoom: true, enableResize: true),
+      ],
       aspectRatio: const CropAspectRatio(ratioX: 1.0, ratioY: 1.0),
       aspectRatioPresets: [CropAspectRatioPreset.square],
     );

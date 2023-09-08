@@ -85,7 +85,7 @@ class VisitScreenContent extends StatelessWidget {
                       child: ElevatedButton(
                           onPressed: () {
                             Navigator.pop(context);
-                            showPeopleScreen(context, chat);
+                            showPeopleScreen(parentContext, chat);
                           },
                           style: ElevatedButton.styleFrom(
                             shape: const CircleBorder(),
