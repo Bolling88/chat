@@ -48,7 +48,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions web = FirebaseOptions(
     apiKey: 'AIzaSyChD4747kdf9R6l5WehknJfXeTgPmUK34o',
-    appId: '1:164406258776:web:fda99b951f39c6831c2e2d',
+    appId: '1:164406258776:web:a252174bd62c40c71c2e2d',
     messagingSenderId: '164406258776',
     projectId: 'chat-60225',
     authDomain: 'chat-60225.firebaseapp.com',
