@@ -1,13 +1,9 @@
-import 'dart:io';
-
 import 'package:chat/repository/firestore_repository.dart';
 import 'package:chat/repository/login_repository.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:lottie/lottie.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_widgets.dart';
 import '../chat/chat_screen.dart';
@@ -148,8 +144,7 @@ class LoginScreenContent extends StatelessWidget {
                   FlutterI18n.translate(context, 'continue_google'),
                   style: Theme.of(context).textTheme.bodyMedium,
                 )),
-            if (kIsWeb || Platform.isIOS) const SizedBox(height: 20),
-            if (kIsWeb || Platform.isIOS)
+            const SizedBox(height: 20),
               ElevatedButton.icon(
                   onPressed: () {
                     BlocProvider.of<LoginBloc>(context)
@@ -203,7 +198,4 @@ class LoginScreenContent extends StatelessWidget {
       ),
     );
   }
-
-  void _launchURL(String url) async =>
-      await canLaunch(url) ? await launch(url) : throw 'Could not launch $url';
 }
