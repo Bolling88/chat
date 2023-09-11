@@ -11,13 +11,13 @@ import 'message_holder_state.dart';
 
 class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
   final FirestoreRepository _firestoreRepository;
-  final RoomChat chat;
+  final RoomChat chatRoom;
 
   StreamSubscription<QuerySnapshot>? chatsStream;
 
   late ChatUser _chatUser;
 
-  MessageHolderBloc(this._firestoreRepository, this.chat)
+  MessageHolderBloc(this._firestoreRepository, this.chatRoom)
       : super(MessageHolderLoadingState()) {
     add(MessageHolderInitialEvent());
   }
@@ -35,12 +35,12 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
       //_firestoreRepository.updateUserPresence(DateTime.now().millisecondsSinceEpoch, true);
       _chatUser = (await _firestoreRepository.getUser())!;
       _firestoreRepository.setLastMessageRead(
-          chatId: chat.id, isPrivateChat: false);
+          chatId: chatRoom.id, isPrivateChat: false);
       yield MessageHolderBaseState(
-          roomChat: chat,
-          chatId: chat.id,
+          roomChat: chatRoom,
+          chatId: chatRoom.id,
           privateChats: const [],
-          selectedChat: chat,
+          selectedChat: chatRoom,
           selectedChatIndex: 0);
       setUpPrivateChatsListener();
       setUpChatsListener();
@@ -123,11 +123,12 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
       }
     } else if (event is MessageHolderExitChatEvent) {
       if (currentState is MessageHolderBaseState) {
-        _firestoreRepository.exitAllChats(chatId: chat.id);
+        _firestoreRepository.exitAllChats(chatId: chatRoom.id);
       }
     } else if (event is MessageHolderClosePrivateChatEvent) {
       if (currentState is MessageHolderBaseState) {
         _firestoreRepository.leavePrivateChat(currentState.selectedChat as PrivateChat);
+        yield currentState.copyWith(selectedChat: chatRoom, selectedChatIndex: 0);
       }
     } else {
       throw UnimplementedError();
@@ -150,7 +151,7 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
 
   void setUpChatsListener() async {
     Log.d('Setting up private chats stream');
-    _firestoreRepository.streamChat(chat.id, false).listen((event) async {
+    _firestoreRepository.streamChat(chatRoom.id, false).listen((event) async {
       final chat = RoomChat.fromJson(
           event.docs.first.id, event.docs.first.data() as Map<String, dynamic>);
       add(MessageHolderChatUpdatedEvent(chat));

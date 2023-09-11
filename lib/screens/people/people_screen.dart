@@ -11,6 +11,7 @@ import '../../utils/constants.dart';
 import '../error/error_screen.dart';
 import '../hero/hero_screen.dart';
 import '../loading/loading_screen.dart';
+import '../messages/other_message_widget.dart';
 import 'bloc/people_bloc.dart';
 import 'bloc/people_state.dart';
 
@@ -84,28 +85,40 @@ class PeopleScreenBuilder extends StatelessWidget {
                             shrinkWrap: true,
                             itemBuilder: (BuildContext context, int index) {
                               return ListTile(
-                                title: Text(state.chatUsers[index].displayName),
-                                subtitle: Text(
-                                    state.chatUsers[index].gender.toString()),
+                                title: Row(
+                                  children: [
+                                    Text(state.chatUsers[index].displayName,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .displaySmall
+                                            ?.merge(
+                                                const TextStyle(fontSize: 26))),
+                                    SizedBox(
+                                        width: 18,
+                                        height: 18,
+                                        child: AppLottie(
+                                          url: getGenderUrl(
+                                              state.chatUsers[index].gender),
+                                          animate: false,
+                                        ))
+                                  ],
+                                ),
                                 leading: (state.chatUsers[index].pictureData !=
                                         'nan')
-                                    ? GestureDetector(
-                                        onTap: () {
-                                          Navigator.pushNamed(
-                                              context, HeroScreen.routeName,
-                                              arguments: HeroScreenArguments(
-                                                  state.chatUsers[index]
-                                                      .pictureData));
-                                        },
-                                        child: AppUserImage(
-                                            state.chatUsers[index].pictureData))
+                                    ? AppUserImage(
+                                        state.chatUsers[index].pictureData,
+                                        size: 30,
+                                      )
                                     : const SizedBox.shrink(),
                                 onTap: () {
                                   if (getSize(context) == ScreenSize.small) {
                                     Navigator.pop(context);
                                   }
-                                  showVisitScreen(parentContext,
-                                      state.chatUsers[index].id, chat, getSize(context) == ScreenSize.small);
+                                  showVisitScreen(
+                                      parentContext,
+                                      state.chatUsers[index].id,
+                                      chat,
+                                      getSize(context) == ScreenSize.small);
                                 },
                               );
                             },

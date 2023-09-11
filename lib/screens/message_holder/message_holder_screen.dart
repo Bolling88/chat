@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
+import '../../model/private_chat.dart';
 import '../../model/room_chat.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_widgets.dart';
@@ -93,16 +94,19 @@ class MessageHolderScreenContent extends StatelessWidget {
 
   Row largeScreenContent(MessageHolderBaseState state, BuildContext context) {
     return Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+      Expanded(
+          flex: 1, child: PeopleScreen(chat: chat, parentContext: context)),
+      if (state.privateChats.isEmpty) const VerticalDivider(),
       state.privateChats.isNotEmpty
           ? getSideMenu(state)
           : const SizedBox.shrink(),
       Expanded(
+          flex: 3,
           child: Material(
-        elevation: 0,
-        child: IndexedStack(
-            index: state.selectedChatIndex, children: getChatViews(state)),
-      )),
-      Expanded(child: PeopleScreen(chat: chat, parentContext: context))
+            elevation: 0,
+            child: IndexedStack(
+                index: state.selectedChatIndex, children: getChatViews(state)),
+          )),
     ]);
   }
 
@@ -234,15 +238,27 @@ class MessageHolderScreenContent extends StatelessWidget {
       backgroundColor: Color(chat.chatColor),
       actions: [
         if (getSize(context) == ScreenSize.small)
-          IconButton(
-            icon: const Icon(
-              Icons.people,
-              color: AppColors.white,
-            ),
-            onPressed: () {
-              showPeopleScreen(context, state.roomChat);
-            },
-          )
+          if (state.selectedChat is PrivateChat)
+            IconButton(
+              icon: const Icon(
+                Icons.close,
+                color: AppColors.white,
+              ),
+              onPressed: () {
+                BlocProvider.of<MessageHolderBloc>(context)
+                    .add(MessageHolderClosePrivateChatEvent());
+              },
+            )
+          else
+            IconButton(
+              icon: const Icon(
+                Icons.people,
+                color: AppColors.white,
+              ),
+              onPressed: () {
+                showPeopleScreen(context, state.roomChat);
+              },
+            )
       ],
     );
   }
