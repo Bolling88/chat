@@ -224,9 +224,7 @@ class FirestoreRepository {
   }
 
   Stream<QuerySnapshot> streamChats(String countryCode) {
-    return chats
-        .where('countryCode', whereIn: [countryCode, ''])
-        .snapshots();
+    return chats.where('countryCode', whereIn: [countryCode, '']).snapshots();
   }
 
   Stream<QuerySnapshot> streamPrivateChats() {
@@ -277,14 +275,22 @@ class FirestoreRepository {
     }
   }
 
-  Future<Chat?> createPrivateChat(ChatUser user) async {
+  Future<Chat?> createPrivateChat({
+    required ChatUser myUser,
+    required ChatUser otherUser,
+  }) async {
     try {
       final reference = await privateChats.add({
         'created': FieldValue.serverTimestamp(),
+        'createdByUserId': myUser.id,
+        'createdByUserName': myUser.displayName,
+        'otherUserId': otherUser.id,
+        'otherUserName': otherUser.displayName,
+        'otherUserGender': otherUser.gender,
+        'otherUserPictureData': otherUser.pictureData,
         'lastMessageReadBy': [getUserId()],
-        'users': [getUserId(), user.id],
-        'initiatedBy': getUserId(),
-        'chatName': user.displayName,
+        'users': [myUser.id, otherUser.id],
+        'chatName': otherUser.displayName,
       });
       final querySnapshot = await privateChats.doc(reference.id).get()
         ..data();
@@ -296,6 +302,19 @@ class FirestoreRepository {
       Log.e(e);
     }
     return null;
+  }
+
+  Future<bool> isPrivateChatAvailable(String userId) async {
+    List<String> usersToCheck = [getUserId(), userId];
+
+    return await privateChats
+        .where('users', arrayContainsAny: usersToCheck)
+        .get()
+        .then((value) => value.docs.isEmpty)
+        .catchError((error) {
+      Log.e("Failed to get chat: $error");
+      return false;
+    });
   }
 
   Future<List<ChatUser>?> getUsersInChat(Chat chat) {
@@ -351,14 +370,14 @@ class FirestoreRepository {
         Log.d("Error deleting files: $e");
       }
 
-      try{
+      try {
         await users.doc(user.uid).delete();
         Log.d("User deleted in Firestore successfully");
       } catch (e) {
         Log.d("Error deleting user: $e");
       }
 
-      try{
+      try {
         await user.delete();
         Log.d("User account deleted successfully");
       } catch (e) {

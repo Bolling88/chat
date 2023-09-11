@@ -1,6 +1,5 @@
 import 'dart:async';
-
-import 'package:chat/repository/presence_database.dart';
+import 'package:chat/model/chat_user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../model/chat.dart';
@@ -14,6 +13,8 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
   final Chat chat;
 
   StreamSubscription<QuerySnapshot>? chatsStream;
+
+  late ChatUser _chatUser;
 
   MessageHolderBloc(this._firestoreRepository, this.chat)
       : super(MessageHolderLoadingState()) {
@@ -30,9 +31,8 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
   Stream<MessageHolderState> mapEventToState(MessageHolderEvent event) async* {
     final currentState = state;
     if (event is MessageHolderInitialEvent) {
-
       //_firestoreRepository.updateUserPresence(DateTime.now().millisecondsSinceEpoch, true);
-
+      _chatUser = (await _firestoreRepository.getUser())!;
       _firestoreRepository.setLastMessageRead(
           chatId: chat.id ?? '', isPrivateChat: false);
       yield MessageHolderBaseState(
@@ -45,7 +45,25 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
       setUpChatsListener();
     } else if (event is MessageHolderPrivateChatEvent) {
       if (currentState is MessageHolderBaseState) {
-        await _firestoreRepository.createPrivateChat(event.user);
+        final bool isChatAvailable =
+            await _firestoreRepository.isPrivateChatAvailable(event.user.id);
+        if (isChatAvailable) {
+          await _firestoreRepository.createPrivateChat(
+              otherUser: event.user, myUser: _chatUser);
+        } else {
+          final privateChat = currentState.privateChats
+              .where((element) => element.users.contains(event.user.id))
+              .firstOrNull;
+          if (privateChat != null) {
+            _firestoreRepository.setLastMessageRead(
+                chatId: privateChat.id, isPrivateChat: true);
+            final int index = currentState.privateChats.indexOf(privateChat);
+            yield currentState.copyWith(
+                selectedChatIndex: index + 1, selectedChat: privateChat);
+          } else {
+            Log.e("Private chat not found");
+          }
+        }
       }
     } else if (event is MessageHolderPrivateChatsUpdatedEvent) {
       if (currentState is MessageHolderBaseState) {
@@ -55,13 +73,13 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
             //If we are in the group chat
             if (event.privateChats.length > currentState.privateChats.length) {
               //And private chats have increased
-              if(event.privateChats.last.initiatedBy == getUserId()){
+              if (event.privateChats.last.initiatedBy == getUserId()) {
                 //And it was by you, move to that chat
                 yield currentState.copyWith(
                     privateChats: event.privateChats,
                     selectedChat: event.privateChats.last,
                     selectedChatIndex: event.privateChats.length);
-              }else {
+              } else {
                 yield currentState.copyWith(privateChats: event.privateChats);
               }
             } else {

@@ -131,12 +131,17 @@ class VisitScreenContent extends StatelessWidget {
                         .add(MessageHolderPrivateChatEvent(user));
                     Navigator.pop(context);
                   },
-                  child: Text(FlutterI18n.translate(context, 'private_chat')),
+                  child: state.isChatAvailable
+                      ? Text(FlutterI18n.translate(context, 'private_chat'))
+                      : Text(
+                          FlutterI18n.translate(context, 'go_to_private_chat')),
                 )
               ],
             ),
           );
-        } else if (state is VisitBaseState && state.user == null) {
+        } else if (state is VisitBaseState &&
+            state.user == null &&
+            state.userLoaded) {
           return Container(
             width: double.infinity,
             height: viewHeight,

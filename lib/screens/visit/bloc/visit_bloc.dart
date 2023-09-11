@@ -22,10 +22,15 @@ class VisitBloc extends Bloc<VisitEvent, VisitState> {
 
   @override
   Stream<VisitState> mapEventToState(VisitEvent event) async* {
+    final currentState = state;
     if (event is VisitInitialEvent) {
       setUpPeopleListener();
+      final isChatAvailable = await _firestoreRepository.isPrivateChatAvailable(userId);
+      yield VisitBaseState(null, isChatAvailable, false);
     }else if(event is VisitUserLoadedState){
-      yield VisitBaseState(event.user);
+      if(currentState is VisitBaseState){
+        yield currentState.copyWith(user: event.user, userLoaded: true);
+      }
     } else {
       throw UnimplementedError();
     }
