@@ -7,6 +7,7 @@ import 'package:collection/collection.dart';
 import '../../../model/room_chat.dart';
 import '../../../model/chat_user.dart';
 import '../../../repository/firestore_repository.dart';
+import '../../../repository/network_repository.dart';
 import '../../../utils/log.dart';
 import 'chat_event.dart';
 import 'chat_state.dart';
@@ -40,9 +41,10 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     }
   }
 
-  void setUpDataListener() {
+  void setUpDataListener() async {
     Log.d("Setting up data listener");
-    String countryCode= WidgetsBinding.instance.platformDispatcher.locale.countryCode?.toUpperCase() ?? 'US';
+    //String countryCode= WidgetsBinding.instance.platformDispatcher.locale.countryCode?.toUpperCase() ?? 'US';
+    String countryCode = await getCountry();
     Log.d('Current country Code: $countryCode');
     _firestoreRepository.streamChats(countryCode).listen((event) {
       final List<RoomChat> chats = event.docs
