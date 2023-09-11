@@ -44,11 +44,11 @@ Future<void> main() async {
   Bloc.observer = SimpleBlocObserver();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((_) {
-    runApp(Chat(flutterI18nDelegate: flutterI18nDelegate, prefs: prefs));
+    runApp(KvitterApp(flutterI18nDelegate: flutterI18nDelegate, prefs: prefs));
   });
 }
 
-class Chat extends StatelessWidget {
+class KvitterApp extends StatelessWidget {
   final Future<FirebaseApp> _initialization = Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
@@ -57,7 +57,7 @@ class Chat extends StatelessWidget {
 
   final SharedPreferences prefs;
 
-  Chat({Key? key, required this.flutterI18nDelegate, required this.prefs})
+  KvitterApp({Key? key, required this.flutterI18nDelegate, required this.prefs})
       : super(key: key);
 
   @override

@@ -1,7 +1,8 @@
+import 'package:chat/model/private_chat.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import '../model/chat.dart';
+import '../model/room_chat.dart';
 import '../model/chat_user.dart';
 import '../utils/log.dart';
 
@@ -94,12 +95,12 @@ class FirestoreRepository {
         .catchError((error) => Log.e("Failed to update user image: $error"));
   }
 
-  Future<Chat?> getChat(String chatId, bool isPrivateChat) async {
+  Future<RoomChat?> getChat(String chatId, bool isPrivateChat) async {
     return getChatType(isPrivateChat: isPrivateChat)
         .doc(chatId)
         .get()
         .then((value) => value.exists
-            ? Chat.fromJson(value.id, value.data() as Map<String, dynamic>)
+            ? RoomChat.fromJson(value.id, value.data() as Map<String, dynamic>)
             : null)
         .catchError((error) {
       Log.e("Failed to get chat: $error");
@@ -231,27 +232,6 @@ class FirestoreRepository {
     return privateChats.where('users', arrayContains: getUserId()).snapshots();
   }
 
-  Future<Chat?> createOpenChat({required String chatName}) async {
-    try {
-      final reference = await chats.add({
-        'created': FieldValue.serverTimestamp(),
-        'lastMessageReadBy': [getUserId()],
-        'users': [getUserId()],
-        'initiatedBy': getUserId(),
-        'chatName': chatName,
-      });
-      final querySnapshot = await chats.doc(reference.id).get()
-        ..data();
-      final data = querySnapshot.data();
-      if (data != null) {
-        return Chat.fromJson(querySnapshot.id, data as Map<String, dynamic>);
-      }
-    } catch (e) {
-      Log.e(e);
-    }
-    return null;
-  }
-
   void exitAllChats({required String chatId}) async {
     leaveChat(chatId);
     final chats =
@@ -275,28 +255,31 @@ class FirestoreRepository {
     }
   }
 
-  Future<Chat?> createPrivateChat({
+  Future<RoomChat?> createPrivateChat({
     required ChatUser myUser,
     required ChatUser otherUser,
   }) async {
     try {
       final reference = await privateChats.add({
         'created': FieldValue.serverTimestamp(),
-        'createdByUserId': myUser.id,
-        'createdByUserName': myUser.displayName,
+        'lastMessageReadBy': [getUserId()],
+        'users': [myUser.id, otherUser.id],
+        'initiatedBy': getUserId(),
+        'initiatedByUserName': myUser.displayName,
+        'initiatedByUserGender': myUser.gender,
+        'initiatedByPictureData': myUser.pictureData,
+        'chatName': '${otherUser.displayName} ${myUser.displayName}',
         'otherUserId': otherUser.id,
         'otherUserName': otherUser.displayName,
         'otherUserGender': otherUser.gender,
         'otherUserPictureData': otherUser.pictureData,
-        'lastMessageReadBy': [getUserId()],
-        'users': [myUser.id, otherUser.id],
-        'chatName': otherUser.displayName,
       });
       final querySnapshot = await privateChats.doc(reference.id).get()
         ..data();
       final data = querySnapshot.data();
       if (data != null) {
-        return Chat.fromJson(querySnapshot.id, data as Map<String, dynamic>);
+        return RoomChat.fromJson(
+            querySnapshot.id, data as Map<String, dynamic>);
       }
     } catch (e) {
       Log.e(e);
@@ -317,7 +300,7 @@ class FirestoreRepository {
     });
   }
 
-  Future<List<ChatUser>?> getUsersInChat(Chat chat) {
+  Future<List<ChatUser>> getUsersInChat(RoomChat chat) {
     return users
         .where(FieldPath.documentId, whereIn: chat.users)
         // .where('presence', isEqualTo: true)
@@ -328,10 +311,11 @@ class FirestoreRepository {
             .toList())
         .catchError((error) {
       Log.e("Failed to get chat: $error");
+      return [];
     });
   }
 
-  void leavePrivateChat(Chat selectedChat) {
+  void leavePrivateChat(PrivateChat selectedChat) {
     privateChats.doc(selectedChat.id).set({
       'users': FieldValue.arrayRemove([getUserId()]),
     }).catchError((error) {

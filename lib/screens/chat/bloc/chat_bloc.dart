@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:collection/collection.dart';
-import '../../../model/chat.dart';
+import '../../../model/room_chat.dart';
 import '../../../model/chat_user.dart';
 import '../../../repository/firestore_repository.dart';
 import '../../../utils/log.dart';
@@ -45,8 +45,8 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     String countryCode= WidgetsBinding.instance.platformDispatcher.locale.countryCode?.toUpperCase() ?? 'US';
     Log.d('Current country Code: $countryCode');
     _firestoreRepository.streamChats(countryCode).listen((event) {
-      final List<Chat> chats = event.docs
-          .map((e) => Chat.fromJson(e.id, e.data() as Map<String, dynamic>))
+      final List<RoomChat> chats = event.docs
+          .map((e) => RoomChat.fromJson(e.id, e.data() as Map<String, dynamic>))
           .toList()
           .sorted((a, b) => b.chatName.compareTo(a.chatName))
           .reversed
@@ -59,7 +59,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
 
 class ChatsAndUser {
   final ChatUser user;
-  final List<Chat> chats;
+  final List<RoomChat> chats;
 
   ChatsAndUser(this.user, this.chats);
 }

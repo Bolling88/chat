@@ -1,7 +1,9 @@
-import 'package:chat/model/chat.dart';
+import 'package:chat/model/room_chat.dart';
 import 'package:equatable/equatable.dart';
 
+import '../../../model/chat.dart';
 import '../../../model/chat_user.dart';
+import '../../../model/private_chat.dart';
 
 class MessageHolderEvent extends Equatable {
   @override
@@ -13,7 +15,7 @@ class MessageHolderExitChatEvent extends MessageHolderEvent {}
 class MessageHolderClosePrivateChatEvent extends MessageHolderEvent {}
 
 class MessageHolderPrivateChatsUpdatedEvent extends MessageHolderEvent {
-  final List<Chat> privateChats;
+  final List<PrivateChat> privateChats;
 
   MessageHolderPrivateChatsUpdatedEvent(this.privateChats);
 
@@ -22,7 +24,7 @@ class MessageHolderPrivateChatsUpdatedEvent extends MessageHolderEvent {
 }
 
 class MessageHolderChatUpdatedEvent extends MessageHolderEvent {
-  final Chat chat;
+  final RoomChat chat;
 
   MessageHolderChatUpdatedEvent(this.chat);
 

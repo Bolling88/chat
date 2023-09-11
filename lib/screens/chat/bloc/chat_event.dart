@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import '../../../model/chat.dart';
+import '../../../model/room_chat.dart';
 
 abstract class ChatEvent extends Equatable {
   @override
@@ -9,7 +9,7 @@ abstract class ChatEvent extends Equatable {
 class ChatInitialEvent extends ChatEvent {}
 
 class ChatUpdatedEvent extends ChatEvent {
-  final List<Chat> chats;
+  final List<RoomChat> chats;
 
   ChatUpdatedEvent(this.chats);
 

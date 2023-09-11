@@ -3,6 +3,7 @@ import 'package:chat/utils/lottie.dart';
 import 'package:flutter/material.dart';
 
 import '../../model/chat.dart';
+import '../../model/room_chat.dart';
 import '../../model/message.dart';
 import '../../repository/firestore_repository.dart';
 import '../../utils/app_colors.dart';

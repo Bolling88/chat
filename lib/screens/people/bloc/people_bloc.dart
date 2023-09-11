@@ -3,6 +3,7 @@ import 'package:chat/screens/people/bloc/people_event.dart';
 import 'package:chat/screens/people/bloc/people_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../model/chat.dart';
+import '../../../model/room_chat.dart';
 import '../../../utils/log.dart';
 import 'dart:async';
 
@@ -34,7 +35,7 @@ class PeopleBloc extends Bloc<PeopleEvent, PeopleState> {
 
   void setUpPeopleListener() {
     _firestoreRepository.streamChat(_chat.id, false).listen((event) async {
-      final chat = Chat.fromJson(
+      final chat = RoomChat.fromJson(
           event.docs.first.id, event.docs.first.data() as Map<String, dynamic>);
       final users = await _firestoreRepository.getUsersInChat(chat) ?? [];
       final filteredUsers = users.where((element) => element.id != getUserId()).toList();

@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:chat/screens/visit/bloc/visit_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../model/chat.dart';
+import '../../../model/room_chat.dart';
 import '../../../model/chat_user.dart';
 import '../../../repository/firestore_repository.dart';
 import 'visit_event.dart';
@@ -38,7 +38,7 @@ class VisitBloc extends Bloc<VisitEvent, VisitState> {
 
   void setUpPeopleListener() {
     _firestoreRepository.streamChat(chatId, false).listen((event) async {
-      final chat = Chat.fromJson(
+      final chat = RoomChat.fromJson(
           event.docs.first.id, event.docs.first.data() as Map<String, dynamic>);
       final users = await _firestoreRepository.getUsersInChat(chat) ?? [];
       final user = users.where((element) => element.id == userId).firstOrNull;

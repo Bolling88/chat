@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:giphy_get/giphy_get.dart';
 
-import '../../../model/chat.dart';
+import '../../../model/room_chat.dart';
 import '../../../model/message.dart';
 
 abstract class MessagesEvent extends Equatable {

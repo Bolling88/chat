@@ -1,5 +1,7 @@
+import 'package:chat/model/private_chat.dart';
 import 'package:equatable/equatable.dart';
 import '../../../model/chat.dart';
+import '../../../model/room_chat.dart';
 
 abstract class MessageHolderState extends Equatable {
   @override
@@ -10,32 +12,41 @@ class MessageHolderLoadingState extends MessageHolderState {}
 
 class MessageHolderBaseState extends MessageHolderState {
   final String chatId;
-  final Chat chat;
-  final List<Chat> privateChats;
+  final RoomChat roomChat;
+  final List<PrivateChat> privateChats;
   final Chat selectedChat;
   final int selectedChatIndex;
 
-  MessageHolderBaseState(
-      {required this.chat,
-      required this.privateChats,
-      required this.chatId,
-      required this.selectedChat,
-      required this.selectedChatIndex});
+  MessageHolderBaseState({
+    required this.roomChat,
+    required this.privateChats,
+    required this.chatId,
+    required this.selectedChat,
+    required this.selectedChatIndex,
+  });
 
-  MessageHolderBaseState copyWith(
-      {Chat? chat,
-      List<Chat>? privateChats,
-      String? chatId,
-      Chat? selectedChat,
-      int? selectedChatIndex}) {
+  MessageHolderBaseState copyWith({
+    RoomChat? roomChat,
+    List<PrivateChat>? privateChats,
+    String? chatId,
+    Chat? selectedChat,
+    int? selectedChatIndex,
+  }) {
     return MessageHolderBaseState(
-        chat: chat ?? this.chat,
-        privateChats: privateChats ?? this.privateChats,
-        chatId: chatId ?? this.chatId,
-        selectedChat: selectedChat ?? this.selectedChat,
-        selectedChatIndex: selectedChatIndex ?? this.selectedChatIndex);
+      roomChat: roomChat ?? this.roomChat,
+      privateChats: privateChats ?? this.privateChats,
+      chatId: chatId ?? this.chatId,
+      selectedChat: selectedChat ?? this.selectedChat,
+      selectedChatIndex: selectedChatIndex ?? this.selectedChatIndex,
+    );
   }
 
   @override
-  List<Object> get props => [chat, chatId, privateChats, selectedChat, selectedChatIndex];
+  List<Object> get props => [
+        roomChat,
+        chatId,
+        privateChats,
+        selectedChat,
+        selectedChatIndex,
+      ];
 }

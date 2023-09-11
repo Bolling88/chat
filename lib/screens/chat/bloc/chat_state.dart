@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import '../../../model/chat.dart';
+import '../../../model/room_chat.dart';
 import '../../../model/chat_user.dart';
 
 abstract class ChatState extends Equatable {
@@ -12,7 +12,7 @@ class ChatLoadingState extends ChatState {}
 class ChatEmptyState extends ChatState {}
 
 class ChatBaseState extends ChatState {
-  final List<Chat> chats;
+  final List<RoomChat> chats;
 
   ChatBaseState(this.chats);
 

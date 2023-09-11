@@ -3,8 +3,6 @@ import 'package:chat/utils/lottie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
-import 'package:lottie/lottie.dart';
-
 import '../../model/chat.dart';
 import '../../repository/firestore_repository.dart';
 import '../../utils/app_colors.dart';

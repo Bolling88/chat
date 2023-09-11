@@ -1,8 +1,9 @@
 import 'package:chat/repository/firestore_repository.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
-import '../../model/chat.dart';
+import '../../model/room_chat.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_widgets.dart';
 import '../../utils/constants.dart';
@@ -13,7 +14,7 @@ import 'bloc/message_holder_event.dart';
 import 'bloc/message_holder_state.dart';
 
 class MessageHolderScreenArguments {
-  final Chat chat;
+  final RoomChat chat;
 
   const MessageHolderScreenArguments({required this.chat});
 }
@@ -37,7 +38,7 @@ class MessageHolderScreen extends StatelessWidget {
 }
 
 class MessageHolderScreenContent extends StatelessWidget {
-  final Chat chat;
+  final RoomChat chat;
 
   const MessageHolderScreenContent({required this.chat, Key? key})
       : super(key: key);
@@ -132,7 +133,7 @@ class MessageHolderScreenContent extends StatelessWidget {
                     MessageHolderChatClickedEvent(
                         index,
                         (index == 0)
-                            ? state.chat
+                            ? state.roomChat
                             : state.privateChats[index - 1]));
               },
               child: Padding(
@@ -145,7 +146,8 @@ class MessageHolderScreenContent extends StatelessWidget {
                   color: (state.selectedChatIndex == index)
                       ? AppColors.background
                       : (index == 0)
-                          ? (state.chat.lastMessageReadBy.contains(getUserId()))
+                          ? (state.roomChat.lastMessageReadBy
+                                  .contains(getUserId()))
                               ? AppColors.grey_5
                               : AppColors.main
                           : (state.privateChats[index - 1].lastMessageReadBy
@@ -167,7 +169,7 @@ class MessageHolderScreenContent extends StatelessWidget {
                       ),
                       child: (index == 0)
                           ? Center(
-                              child: Text(state.chat.chatName,
+                              child: Text(state.roomChat.chatName,
                                   textAlign: TextAlign.center,
                                   style: Theme.of(context)
                                       .textTheme
@@ -183,7 +185,8 @@ class MessageHolderScreenContent extends StatelessWidget {
                             )
                           : Center(
                               child: Text(
-                                state.privateChats[index - 1].chatName,
+                                state.privateChats[index - 1].getChatName(
+                                    FirebaseAuth.instance.currentUser!.uid),
                                 textAlign: TextAlign.center,
                                 style: Theme.of(context)
                                     .textTheme
@@ -208,9 +211,9 @@ class MessageHolderScreenContent extends StatelessWidget {
   List<Widget> getChatViews(MessageHolderBaseState state) {
     return {
           MessagesScreen(
-            state.chat,
+            state.roomChat,
             false,
-            key: Key(state.chat.id),
+            key: Key(state.roomChat.id),
           )
         }.toList() +
         Iterable.generate(state.privateChats.length)
@@ -223,10 +226,10 @@ class MessageHolderScreenContent extends StatelessWidget {
   }
 
   AppBar getAppBar(
-      BuildContext context, MessageHolderBaseState state, Chat chat) {
+      BuildContext context, MessageHolderBaseState state, RoomChat chat) {
     return AppBar(
       title: Text(
-        state.selectedChat.chatName,
+        state.selectedChat.getChatName(FirebaseAuth.instance.currentUser!.uid),
       ),
       backgroundColor: Color(chat.chatColor),
       actions: [
@@ -237,7 +240,7 @@ class MessageHolderScreenContent extends StatelessWidget {
               color: AppColors.white,
             ),
             onPressed: () {
-              showPeopleScreen(context, state.chat);
+              showPeopleScreen(context, state.roomChat);
             },
           )
       ],

@@ -1,69 +1,27 @@
-import 'package:chat/model/chat_user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 
-import '../utils/time_util.dart';
-
-class Chat extends Equatable implements Comparable<Chat> {
+abstract class Chat extends Equatable {
   final String id;
   final List<String> users;
   final String lastMessage;
   final String lastMessageByName;
-  final String countryCode;
   final Timestamp lastMessageTimestamp;
   final String lastMessageUserId;
   final List<String> lastMessageReadBy;
-  final String initiatedBy;
-  final String chatName;
-  final int chatColor;
-  final String imageUrl;
-  final int imageOverflow;
-  final int imageTranslationX;
 
-  final List<ChatUser> userInfos = [];
-  final String usersText = "";
+  const Chat({
+    required this.id,
+    required this.users,
+    required this.lastMessage,
+    required this.lastMessageByName,
+    required this.lastMessageTimestamp,
+    required this.lastMessageUserId,
+    required this.lastMessageReadBy,
+  });
 
-  Chat.fromJson(this.id, Map<String, dynamic> json)
-      : countryCode = json['countryCode'] ?? 'en',
-        users = json['users']?.cast<String>() ?? [],
-        lastMessage = json['lastMessage'] ?? "",
-        lastMessageByName = json['lastMessageByName'] ?? "",
-        lastMessageTimestamp = json['lastMessageTimestamp'] ?? Timestamp.now(),
-        lastMessageUserId = json['lastMessageUserId'] ?? "",
-        lastMessageReadBy = json['lastMessageReadBy']?.cast<String>() ?? [],
-        initiatedBy = json['initiatedBy'] ?? "",
-        chatName = json['chatName'] ?? "",
-        chatColor = json['chatColor'] ?? 0xFF30c7c2,
-        imageUrl = json['imageUrl'] ?? "",
-        imageOverflow = json['imageOverflow'] ?? 80,
-        imageTranslationX = json['imageTranslationX'] ?? 0;
-
-  String getLastMessageReadableDate() {
-    return getLastMessageTimeFromTimeStamp(lastMessageTimestamp);
-  }
+  String getChatName(String userId);
 
   @override
-  int compareTo(Chat other) {
-    return lastMessageTimestamp.compareTo(other.lastMessageTimestamp);
-  }
-
-  @override
-  List<Object> get props => [
-        id,
-        countryCode,
-        lastMessage,
-        lastMessageByName,
-        lastMessageTimestamp,
-        lastMessageUserId,
-        users,
-        userInfos,
-        lastMessageReadBy,
-        chatName,
-    chatColor,
-        initiatedBy,
-        usersText,
-        imageUrl,
-    imageOverflow,
-    imageTranslationX
-      ];
+  List<Object> get props => [];
 }
