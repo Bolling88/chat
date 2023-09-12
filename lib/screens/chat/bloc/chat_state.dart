@@ -13,9 +13,10 @@ class ChatEmptyState extends ChatState {}
 
 class ChatBaseState extends ChatState {
   final List<RoomChat> chats;
+  final ChatUser user;
 
-  ChatBaseState(this.chats);
+  ChatBaseState(this.chats, this.user);
 
   @override
-  List<Object?> get props => [chats];
+  List<Object?> get props => [chats, user];
 }

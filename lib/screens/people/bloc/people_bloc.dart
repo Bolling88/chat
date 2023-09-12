@@ -3,6 +3,7 @@ import 'package:chat/screens/people/bloc/people_event.dart';
 import 'package:chat/screens/people/bloc/people_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../model/chat.dart';
+import '../../../model/chat_user.dart';
 import '../../../model/room_chat.dart';
 import '../../../utils/log.dart';
 import 'dart:async';
@@ -10,8 +11,9 @@ import 'dart:async';
 class PeopleBloc extends Bloc<PeopleEvent, PeopleState> {
   final FirestoreRepository _firestoreRepository;
   final Chat _chat;
+  final ChatUser _user;
 
-  PeopleBloc(this._firestoreRepository, this._chat)
+  PeopleBloc(this._firestoreRepository, this._chat, this._user)
       : super(const PeopleBaseState([])) {
     add(PeopleInitialEvent());
   }
@@ -38,7 +40,18 @@ class PeopleBloc extends Bloc<PeopleEvent, PeopleState> {
       final chat = RoomChat.fromJson(
           event.docs.first.id, event.docs.first.data() as Map<String, dynamic>);
       final users = await _firestoreRepository.getUsersInChat(chat) ?? [];
-      final filteredUsers = users.where((element) => element.id != getUserId()).toList();
+      final filteredUsers =
+          users.where((element) => element.id != getUserId()).toList();
+      //Sort users with the same country code as my users first
+      filteredUsers.sort((a, b) {
+        if (a.countryCode == _user.countryCode) {
+          return -1;
+        } else if (b.countryCode == _user.countryCode) {
+          return 1;
+        } else {
+          return 0;
+        }
+      });
       add(PeopleLoadedEvent(filteredUsers));
     });
   }

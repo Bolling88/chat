@@ -138,7 +138,7 @@ class ChatsScreenContent extends StatelessWidget {
       onTap: () {
         Navigator.of(context, rootNavigator: true).pushNamed(
             MessageHolderScreen.routeName,
-            arguments: MessageHolderScreenArguments(chat: state.chats[index]));
+            arguments: MessageHolderScreenArguments(chat: state.chats[index], user: state.user));
       },
       child: Row(
         children: [

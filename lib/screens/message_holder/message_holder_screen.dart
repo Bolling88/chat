@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
+import '../../model/chat_user.dart';
 import '../../model/private_chat.dart';
 import '../../model/room_chat.dart';
 import '../../utils/app_colors.dart';
@@ -16,8 +17,9 @@ import 'bloc/message_holder_state.dart';
 
 class MessageHolderScreenArguments {
   final RoomChat chat;
+  final ChatUser user;
 
-  const MessageHolderScreenArguments({required this.chat});
+  const MessageHolderScreenArguments({required this.chat, required this.user});
 }
 
 class MessageHolderScreen extends StatelessWidget {
@@ -33,15 +35,16 @@ class MessageHolderScreen extends StatelessWidget {
     return BlocProvider(
       create: (BuildContext context) =>
           MessageHolderBloc(context.read<FirestoreRepository>(), args.chat),
-      child: MessageHolderScreenContent(chat: args.chat),
+      child: MessageHolderScreenContent(chat: args.chat, user: args.user),
     );
   }
 }
 
 class MessageHolderScreenContent extends StatelessWidget {
   final RoomChat chat;
+  final ChatUser user;
 
-  const MessageHolderScreenContent({required this.chat, Key? key})
+  const MessageHolderScreenContent({required this.chat, required this.user, Key? key})
       : super(key: key);
 
   Future<bool> _onWillPop(blocContext) async {
@@ -95,7 +98,7 @@ class MessageHolderScreenContent extends StatelessWidget {
   Row largeScreenContent(MessageHolderBaseState state, BuildContext context) {
     return Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
       Expanded(
-          flex: 1, child: PeopleScreen(chat: chat, parentContext: context)),
+          flex: 1, child: PeopleScreen(chat: chat, user: user, parentContext: context)),
       if (state.privateChats.isEmpty) const VerticalDivider(),
       state.privateChats.isNotEmpty
           ? getSideMenu(state, context)
@@ -266,7 +269,7 @@ class MessageHolderScreenContent extends StatelessWidget {
                 color: AppColors.white,
               ),
               onPressed: () {
-                showPeopleScreen(context, state.roomChat);
+                showPeopleScreen(context, state.roomChat, user);
               },
             )
       ],

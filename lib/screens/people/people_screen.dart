@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import '../../model/chat.dart';
+import '../../model/chat_user.dart';
 import '../../repository/firestore_repository.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_widgets.dart';
@@ -16,17 +17,21 @@ import 'bloc/people_state.dart';
 
 class PeopleScreen extends StatelessWidget {
   final Chat chat;
+  final ChatUser user;
   final BuildContext parentContext;
 
   const PeopleScreen(
-      {required this.chat, required this.parentContext, Key? key})
+      {required this.chat,
+      required this.user,
+      required this.parentContext,
+      Key? key})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (BuildContext context) =>
-          PeopleBloc(context.read<FirestoreRepository>(), chat),
+          PeopleBloc(context.read<FirestoreRepository>(), chat, user),
       child: PeopleScreenBuilder(chat: chat, parentContext: parentContext),
     );
   }
@@ -105,9 +110,8 @@ class PeopleScreenBuilder extends StatelessWidget {
                                 ),
                                 subtitle: Text(
                                     '${state.chatUsers[index].city}, ${state.chatUsers[index].country}',
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyMedium),
+                                    style:
+                                        Theme.of(context).textTheme.bodyMedium),
                                 leading: (state.chatUsers[index].pictureData !=
                                         'nan')
                                     ? AppUserImage(
@@ -183,13 +187,14 @@ class PeopleScreenBuilder extends StatelessWidget {
   }
 }
 
-Future showPeopleScreen(BuildContext parentContext, Chat chat) async {
+Future showPeopleScreen(
+    BuildContext parentContext, Chat chat, ChatUser user) async {
   await showModalBottomSheet(
     useRootNavigator: true,
     context: parentContext,
     backgroundColor: AppColors.transparent,
     builder: (BuildContext context) {
-      return PeopleScreen(chat: chat, parentContext: parentContext);
+      return PeopleScreen(chat: chat, user: user, parentContext: parentContext);
     },
   );
 }

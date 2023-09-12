@@ -93,7 +93,7 @@ class KvitterApp extends StatelessWidget {
               Provider<AppImageCropper>.value(value: appImageCropper),
             ],
             child: MaterialApp(
-              title: 'Chatta',
+              title: 'Kvitter',
               debugShowCheckedModeBanner: false,
               localizationsDelegates: [
                 flutterI18nDelegate,

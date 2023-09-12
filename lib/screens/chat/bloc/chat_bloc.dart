@@ -21,6 +21,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   @override
   Stream<ChatState> mapEventToState(ChatEvent event) async* {
     if (event is ChatInitialEvent) {
+      user = (await _firestoreRepository.getUser())!;
       setUpDataListener();
       updateUserLocation();
     } else if (event is ChatUpdatedEvent) {
@@ -33,7 +34,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
           userIds.addAll(chat.users);
         }
 
-        yield ChatBaseState(chats);
+        yield ChatBaseState(chats, user);
       }
     } else {
       throw UnimplementedError();

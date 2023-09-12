@@ -60917,7 +60917,7 @@ m=A.a([this.a.d,B.Nl,B.No,B.Nu],t.a9)
 n=A.byb()
 o=A.bvP(B.qz,B.aj,B.ay)
 o=A.b9h(A.bdB(j,B.ay,j,4,j,B.iB,j,B.q,j,B.ay,j,j,A.b5t().$2$color$fontSize(B.k,30),j,A.b5t().$2$color$fontSize(B.k,30)),j,o,B.iB,B.ay,A.aQ6(B.JQ,B.JQ,B.aaS,A.b5t().$1$color(B.ay),B.ky,A.b5t().$1$color(B.ay),j,j,j,j,j,j,B.ky,B.ky,B.ky),!0)
-return A.bgW(new A.KQ(B.a9l,A.a9(["/login_screen",new A.aCD(),"/onboarding_gender_screen",new A.aCE(),"/onboarding_name_screen",new A.aCF(),"/onboarding_photo_screen",new A.aCG(),"/home_screen",new A.aCH(),"/message_holder_screen",new A.aCI(),"/hero_screen",new A.aCJ(),"/profile_screen",new A.aCK(),"/terms_screen",new A.aCL(),"/privacy_screen",new A.aCM()],t.N,t.Ab),n,"Chatta",o,m,B.WD,!1,j),s)}return B.mT},
+return A.bgW(new A.KQ(B.a9l,A.a9(["/login_screen",new A.aCD(),"/onboarding_gender_screen",new A.aCE(),"/onboarding_name_screen",new A.aCF(),"/onboarding_photo_screen",new A.aCG(),"/home_screen",new A.aCH(),"/message_holder_screen",new A.aCI(),"/hero_screen",new A.aCJ(),"/profile_screen",new A.aCK(),"/terms_screen",new A.aCL(),"/privacy_screen",new A.aCM()],t.N,t.Ab),n,"Kvitter",o,m,B.WD,!1,j),s)}return B.mT},
 $S:410}
 A.aCD.prototype={
 $1(a){return B.a2E},
@@ -62432,7 +62432,7 @@ if(A.vx(a)===B.eJ){r=A.a([A.jH(new A.xE(r,a,o),1)],t.p)
 p=b.c
 if(p.length===0)r.push(B.aha)
 r.push(p.length!==0?s.TL(b,a):B.aC)
-r.push(A.jH(A.jO(B.S,o,A.bfT(s.Tt(b),b.e),B.l,o,0,o,o,o,o,o,B.cr),3))
+r.push(A.jH(A.jO(B.S,o,A.bfT(s.Tt(b),b.e),B.l,o,0,o,o,o,o,o,B.cr),2))
 r=A.fu(r,B.P,B.R,B.Y,o)}else{r=b.c.length!==0?s.TL(b,a):B.aC
 r=A.fu(A.a([r,A.jH(A.jO(B.S,o,A.bfT(s.Tt(b),b.e),B.l,o,0,o,o,o,o,o,B.cr),1)],t.p),B.P,B.R,B.Y,o)}return new A.Ql(A.qw(q,o,r),new A.aEC(s,b,a),o)}else return B.a7A},
 $S:559}
