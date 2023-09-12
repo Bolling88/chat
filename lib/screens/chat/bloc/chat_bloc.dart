@@ -47,8 +47,9 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
           .map((e) => RoomChat.fromJson(e.id, e.data() as Map<String, dynamic>))
           .toList();
       chats.sort((a, b) => b.chatName.compareTo(a.chatName));
+      final reversedChats = chats.reversed;
 
-      add(ChatUpdatedEvent(chats));
+      add(ChatUpdatedEvent(reversedChats.toList()));
     });
   }
 
