@@ -39,7 +39,7 @@ class PeopleBloc extends Bloc<PeopleEvent, PeopleState> {
     _firestoreRepository.streamChat(_chat.id, false).listen((event) async {
       final chat = RoomChat.fromJson(
           event.docs.first.id, event.docs.first.data() as Map<String, dynamic>);
-      final users = await _firestoreRepository.getUsersInChat(chat) ?? [];
+      final users = await _firestoreRepository.getUsersInChat(chat);
       final filteredUsers =
           users.where((element) => element.id != getUserId()).toList();
       //Sort users with the same country code as my users first

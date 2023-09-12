@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:collection/collection.dart';
 import '../../../model/room_chat.dart';
 import '../../../model/chat_user.dart';
 import '../../../model/user_location.dart';
@@ -46,10 +45,8 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     _firestoreRepository.streamChats().listen((event) {
       final List<RoomChat> chats = event.docs
           .map((e) => RoomChat.fromJson(e.id, e.data() as Map<String, dynamic>))
-          .toList()
-          .sorted((a, b) => b.chatName.compareTo(a.chatName))
-          .reversed
           .toList();
+      chats.sort((a, b) => b.chatName.compareTo(a.chatName));
 
       add(ChatUpdatedEvent(chats));
     });
