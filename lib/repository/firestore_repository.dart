@@ -226,7 +226,9 @@ class FirestoreRepository {
   }
 
   Stream<QuerySnapshot> streamChats() {
-    return chats.snapshots();
+    return chats.snapshots().handleError((error) {
+      Log.e("Failed to get chats: $error");
+    });
   }
 
   Stream<QuerySnapshot> streamPrivateChats() {

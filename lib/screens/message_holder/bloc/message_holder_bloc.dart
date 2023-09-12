@@ -13,7 +13,8 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
   final FirestoreRepository _firestoreRepository;
   final RoomChat chatRoom;
 
-  StreamSubscription<QuerySnapshot>? chatsStream;
+  StreamSubscription<QuerySnapshot>? privateChatStream;
+  StreamSubscription<QuerySnapshot>? roomChatStream;
 
   late ChatUser _chatUser;
 
@@ -24,7 +25,8 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
 
   @override
   Future<void> close() {
-    chatsStream?.cancel();
+    privateChatStream?.cancel();
+    roomChatStream?.cancel();
     return super.close();
   }
 
@@ -137,7 +139,7 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
 
   void setUpPrivateChatsListener() async {
     Log.d('Setting up private chats stream');
-    chatsStream = _firestoreRepository.streamPrivateChats().listen((data) {
+    privateChatStream = _firestoreRepository.streamPrivateChats().listen((data) {
       Log.d("Got private chats");
       final chats = data.docs
           .map((e) => PrivateChat.fromJson(e.id, e.data() as Map<String, dynamic>))
@@ -151,7 +153,7 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
 
   void setUpChatsListener() async {
     Log.d('Setting up private chats stream');
-    _firestoreRepository.streamChat(chatRoom.id, false).listen((event) async {
+    roomChatStream = _firestoreRepository.streamChat(chatRoom.id, false).listen((event) async {
       final chat = RoomChat.fromJson(
           event.docs.first.id, event.docs.first.data() as Map<String, dynamic>);
       add(MessageHolderChatUpdatedEvent(chat));

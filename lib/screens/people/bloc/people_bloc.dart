@@ -1,6 +1,7 @@
 import 'package:chat/repository/firestore_repository.dart';
 import 'package:chat/screens/people/bloc/people_event.dart';
 import 'package:chat/screens/people/bloc/people_state.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../model/chat.dart';
 import '../../../model/chat_user.dart';
@@ -13,9 +14,17 @@ class PeopleBloc extends Bloc<PeopleEvent, PeopleState> {
   final Chat _chat;
   final ChatUser _user;
 
+  StreamSubscription<QuerySnapshot>? chatStream;
+
   PeopleBloc(this._firestoreRepository, this._chat, this._user)
       : super(const PeopleBaseState([])) {
     add(PeopleInitialEvent());
+  }
+
+  @override
+  Future<void> close() {
+    chatStream?.cancel();
+    return super.close();
   }
 
   @override
@@ -36,7 +45,7 @@ class PeopleBloc extends Bloc<PeopleEvent, PeopleState> {
   }
 
   void setUpPeopleListener() {
-    _firestoreRepository.streamChat(_chat.id, false).listen((event) async {
+    chatStream = _firestoreRepository.streamChat(_chat.id, false).listen((event) async {
       final chat = RoomChat.fromJson(
           event.docs.first.id, event.docs.first.data() as Map<String, dynamic>);
       final users = await _firestoreRepository.getUsersInChat(chat);

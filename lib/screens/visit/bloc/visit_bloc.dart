@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:chat/screens/visit/bloc/visit_state.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../model/room_chat.dart';
 import '../../../model/chat_user.dart';
@@ -14,10 +15,17 @@ class VisitBloc extends Bloc<VisitEvent, VisitState> {
 
   ChatUser? user;
   late ChatUser me;
+  StreamSubscription<QuerySnapshot>? chatStream;
 
   VisitBloc(this._firestoreRepository, this.userId, this.chatId)
       : super(VisitLoadingState()) {
     add(VisitInitialEvent());
+  }
+
+  @override
+  Future<void> close() {
+    chatStream?.cancel();
+    return super.close();
   }
 
   @override
@@ -37,7 +45,7 @@ class VisitBloc extends Bloc<VisitEvent, VisitState> {
   }
 
   void setUpPeopleListener() {
-    _firestoreRepository.streamChat(chatId, false).listen((event) async {
+    chatStream = _firestoreRepository.streamChat(chatId, false).listen((event) async {
       final chat = RoomChat.fromJson(
           event.docs.first.id, event.docs.first.data() as Map<String, dynamic>);
       final users = await _firestoreRepository.getUsersInChat(chat) ?? [];
