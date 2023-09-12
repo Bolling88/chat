@@ -9,23 +9,45 @@ class ChatUser extends Equatable {
   final String pictureData;
   final bool onboardingCompleted;
   final Timestamp created;
+  final String city;
+  final String countryCode;
+  final String country;
+  final String regionName;
 
-  const ChatUser(this.id, this.displayName, this.gender,
-      this.pictureData, this.onboardingCompleted, this.created);
+  const ChatUser({
+    required this.id,
+    required this.displayName,
+    required this.gender,
+    required this.pictureData,
+    required this.onboardingCompleted,
+    required this.created,
+    required this.city,
+    required this.countryCode,
+    required this.country,
+    required this.regionName,
+  });
 
   ChatUser.fromJson(this.id, Map<String, dynamic> json)
       : created = json['created'] ?? Timestamp.now(),
         displayName = json['displayName'] ?? "",
         onboardingCompleted = json['onboardingCompleted'] ?? false,
         gender = json['gender'] ?? -1,
-        pictureData = json['pictureData'] ?? "";
+        pictureData = json['pictureData'] ?? "",
+        city = json['city'] ?? "",
+        countryCode = json['countryCode'] ?? "",
+        country = json['country'] ?? "",
+        regionName = json['regionName'] ?? "";
 
   ChatUser.asUnknown(this.id)
       : created = Timestamp.now(),
         displayName = "",
         onboardingCompleted = false,
         gender = -1,
-        pictureData = "";
+        pictureData = "",
+        city = "",
+        countryCode = "",
+        country = "",
+        regionName = "";
 
   ChatUser copyWith(
       {String? name,
@@ -33,14 +55,22 @@ class ChatUser extends Equatable {
       int? gender,
       String? pictureData,
       bool? onboardingCompleted,
-      Timestamp? created}) {
+      Timestamp? created,
+      String? city,
+      String? countryCode,
+      String? country,
+      String? regionName}) {
     return ChatUser(
-        id,
-        displayName ?? this.displayName,
-        gender ?? this.gender,
-        pictureData ?? this.pictureData,
-        onboardingCompleted ?? this.onboardingCompleted,
-        created ?? this.created);
+        id: id,
+        displayName: displayName ?? this.displayName,
+        gender: gender ?? this.gender,
+        pictureData: pictureData ?? this.pictureData,
+        onboardingCompleted: onboardingCompleted ?? this.onboardingCompleted,
+        created: created ?? this.created,
+        city: city ?? this.city,
+        countryCode: countryCode ?? this.countryCode,
+        country: country ?? this.country,
+        regionName: regionName ?? this.regionName);
   }
 
   @override
@@ -51,5 +81,9 @@ class ChatUser extends Equatable {
         pictureData,
         onboardingCompleted,
         created,
+        city,
+        countryCode,
+        country,
+        regionName,
       ];
 }

@@ -142,36 +142,7 @@ class ChatsScreenContent extends StatelessWidget {
       },
       child: Row(
         children: [
-          state.chats[index].countryCode.isNotEmpty
-              ? SizedBox(
-                  width: 70,
-                  height: 70,
-                  child: Padding(
-                    padding: const EdgeInsets.only(left: 20),
-                    child: CachedNetworkImage(
-                      imageUrl: state.chats[index].imageUrl,
-                      imageBuilder: (context, imageProvider) => Container(
-                        width: 48,
-                        height: 48,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          image: DecorationImage(
-                              image: imageProvider, fit: BoxFit.cover),
-                        ),
-                      ),
-                      placeholder: (context, url) => const SizedBox(
-                        width: 48,
-                        height: 48,
-                        child: Center(
-                          child: AppSpinner(),
-                        ),
-                      ),
-                      errorWidget: (context, url, error) =>
-                          const Icon(Icons.error_outline),
-                    ),
-                  ),
-                )
-              : Transform.translate(
+          Transform.translate(
                   offset: Offset(
                       state.chats[index].imageTranslationX.toDouble(), 0.0),
                   child: SizedBox(

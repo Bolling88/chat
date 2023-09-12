@@ -1,4 +1,5 @@
 import 'package:chat/model/private_chat.dart';
+import 'package:chat/model/user_location.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -224,8 +225,8 @@ class FirestoreRepository {
     }
   }
 
-  Stream<QuerySnapshot> streamChats(String countryCode) {
-    return chats.where('countryCode', whereIn: [countryCode, '']).snapshots();
+  Stream<QuerySnapshot> streamChats() {
+    return chats.snapshots();
   }
 
   Stream<QuerySnapshot> streamPrivateChats() {
@@ -387,6 +388,15 @@ class FirestoreRepository {
     users.doc(getUserId()).set({
       'presence': presence,
       'last_seen': lastSeen,
+    }, SetOptions(merge: true));
+  }
+
+  void updateUserLocation(UserLocation userLocation) {
+    users.doc(getUserId()).set({
+      'city': userLocation.city,
+      'countryCode': userLocation.countryCode,
+      'country': userLocation.country,
+      'regionName': userLocation.regionName,
     }, SetOptions(merge: true));
   }
 }

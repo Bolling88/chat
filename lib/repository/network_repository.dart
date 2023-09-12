@@ -3,6 +3,8 @@ import 'dart:io';
 
 import 'package:http/http.dart' as http;
 
+import '../model/user_location.dart';
+
 class Network {
   final String url;
 
@@ -41,9 +43,9 @@ class Network {
   }
 }
 
-Future<String> getCountry() async {
+Future<UserLocation> getUserLocation() async {
   Network n = Network("http://ip-api.com/json");
   final locationSTR = (await n.getData());
-  final locationX = jsonDecode(locationSTR);
-  return locationX["countryCode"];
+  final userLocation = UserLocation.fromJson(jsonDecode(locationSTR));
+  return userLocation;
 }

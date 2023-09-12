@@ -18,7 +18,7 @@
   "yes": "yes",
   "no": "no",
   "exit_chat_title": "Leave all chats?",
-  "exit_chat_message": "Are you sure you want to leave the group chat and all the private chats?",
+  "exit_chat_message": "Are you sure you want to leave the room and close all the private chats?",
   "no_users": "No users are online in this chat currently",
   "profile": "Profile",
   "sign_out": "Sign out",

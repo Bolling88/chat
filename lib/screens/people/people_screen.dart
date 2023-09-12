@@ -9,7 +9,6 @@ import '../../utils/app_colors.dart';
 import '../../utils/app_widgets.dart';
 import '../../utils/constants.dart';
 import '../error/error_screen.dart';
-import '../hero/hero_screen.dart';
 import '../loading/loading_screen.dart';
 import '../messages/other_message_widget.dart';
 import 'bloc/people_bloc.dart';
@@ -92,7 +91,8 @@ class PeopleScreenBuilder extends StatelessWidget {
                                             .textTheme
                                             .displaySmall
                                             ?.merge(
-                                                const TextStyle(fontSize: 26))),
+                                                const TextStyle(fontSize: 20))),
+                                    const SizedBox(width: 2),
                                     SizedBox(
                                         width: 18,
                                         height: 18,
@@ -103,11 +103,16 @@ class PeopleScreenBuilder extends StatelessWidget {
                                         ))
                                   ],
                                 ),
+                                subtitle: Text(
+                                    '${state.chatUsers[index].city}, ${state.chatUsers[index].country}',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium),
                                 leading: (state.chatUsers[index].pictureData !=
                                         'nan')
                                     ? AppUserImage(
                                         state.chatUsers[index].pictureData,
-                                        size: 30,
+                                        size: 40,
                                       )
                                     : const SizedBox.shrink(),
                                 onTap: () {

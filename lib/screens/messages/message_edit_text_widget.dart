@@ -13,14 +13,13 @@ class MessageEditTextWidget extends StatefulWidget {
 
   const MessageEditTextWidget(
       {Key? key,
-        required this.currentMessage,
-        required this.onTextChanged,
-        required this.onTapGiphy})
+      required this.currentMessage,
+      required this.onTextChanged,
+      required this.onTapGiphy})
       : super(key: key);
 
   @override
-  State<MessageEditTextWidget> createState() =>
-      _MessageEditTextWidgetState();
+  State<MessageEditTextWidget> createState() => _MessageEditTextWidgetState();
 }
 
 class _MessageEditTextWidgetState extends State<MessageEditTextWidget> {
@@ -45,11 +44,10 @@ class _MessageEditTextWidgetState extends State<MessageEditTextWidget> {
                   autofocus: false,
                   autocorrect: false,
                   controller: controller,
-                  style: const TextStyle(
-                      color: AppColors.main_2,
-                      fontSize: 15,
-                      fontWeight: FontWeight.w500,
-                      fontFamily: 'socialize'),
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyMedium
+                      ?.merge(const TextStyle(color: AppColors.main)),
                   textCapitalization: TextCapitalization.sentences,
                   cursorColor: AppColors.main,
                   onChanged: widget.onTextChanged,
@@ -92,12 +90,9 @@ class _MessageEditTextWidgetState extends State<MessageEditTextWidget> {
                             style: BorderStyle.solid,
                           )),
                       fillColor: AppColors.grey_4,
-                      hintStyle: const TextStyle(
-                          color: AppColors.grey_1,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 15),
+                      hintStyle: Theme.of(context).textTheme.bodyMedium,
                       contentPadding:
-                      const EdgeInsets.only(left: 15, right: 15),
+                          const EdgeInsets.only(left: 15, right: 15),
                       hintText: FlutterI18n.translate(
                           context, "write_message_hint"))),
             ),
@@ -107,31 +102,32 @@ class _MessageEditTextWidgetState extends State<MessageEditTextWidget> {
             (widget.currentMessage.isNotEmpty)
                 ? const SizedBox.shrink()
                 : Material(
-              child: InkWell(
-                splashColor: AppColors.main.withOpacity(0.5),
-                hoverColor: AppColors.main.withOpacity(0.5),
-                highlightColor: AppColors.main.withOpacity(0.5),
-                borderRadius: BorderRadius.circular(25.0),
-                onTap: widget.onTapGiphy,
-                child: Container(
-                  width: 50,
-                  height: 50,
-                  decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10.0),
-                      border: Border.all(color: AppColors.main, width: 3)),
-                  child: const Icon(
-                    Icons.gif,
-                    size: 30,
-                    color: AppColors.main,
+                    child: InkWell(
+                      splashColor: AppColors.main.withOpacity(0.5),
+                      hoverColor: AppColors.main.withOpacity(0.5),
+                      highlightColor: AppColors.main.withOpacity(0.5),
+                      borderRadius: BorderRadius.circular(25.0),
+                      onTap: widget.onTapGiphy,
+                      child: Container(
+                        width: 50,
+                        height: 50,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10.0),
+                            border:
+                                Border.all(color: AppColors.main, width: 3)),
+                        child: const Icon(
+                          Icons.gif,
+                          size: 30,
+                          color: AppColors.main,
+                        ),
+                      ),
+                    ),
                   ),
-                ),
-              ),
-            ),
             (widget.currentMessage.isNotEmpty)
                 ? const SizedBox.shrink()
                 : const SizedBox(
-              width: 10,
-            ),
+                    width: 10,
+                  ),
           ],
         ),
       ),

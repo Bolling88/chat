@@ -83,7 +83,7 @@ class MessageHolderScreenContent extends StatelessWidget {
                     appBar: getAppBar(context, state, chat),
                     body: (getSize(context) == ScreenSize.large)
                         ? largeScreenContent(state, context)
-                        : smallScreenContent(state)),
+                        : smallScreenContent(state, context)),
               );
             } else {
               return const Scaffold(body: Center(child: AppSpinner()));
@@ -98,10 +98,10 @@ class MessageHolderScreenContent extends StatelessWidget {
           flex: 1, child: PeopleScreen(chat: chat, parentContext: context)),
       if (state.privateChats.isEmpty) const VerticalDivider(),
       state.privateChats.isNotEmpty
-          ? getSideMenu(state)
+          ? getSideMenu(state, context)
           : const SizedBox.shrink(),
       Expanded(
-          flex: 3,
+          flex: 2,
           child: Material(
             elevation: 0,
             child: IndexedStack(
@@ -110,10 +110,10 @@ class MessageHolderScreenContent extends StatelessWidget {
     ]);
   }
 
-  Row smallScreenContent(MessageHolderBaseState state) {
+  Row smallScreenContent(MessageHolderBaseState state, BuildContext context) {
     return Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
       state.privateChats.isNotEmpty
-          ? getSideMenu(state)
+          ? getSideMenu(state, context)
           : const SizedBox.shrink(),
       Expanded(
           child: Material(
@@ -124,10 +124,10 @@ class MessageHolderScreenContent extends StatelessWidget {
     ]);
   }
 
-  Widget getSideMenu(MessageHolderBaseState state) {
+  Widget getSideMenu(MessageHolderBaseState state, BuildContext context) {
     return Container(
       color: AppColors.grey_3,
-      width: 60,
+      width: getSize(context) == ScreenSize.large ? 120 : 60,
       child: ListView.builder(
           itemCount: state.privateChats.length + 1,
           itemBuilder: (context, index) {
@@ -140,75 +140,85 @@ class MessageHolderScreenContent extends StatelessWidget {
                             ? state.roomChat
                             : state.privateChats[index - 1]));
               },
-              child: Padding(
-                padding: (state.selectedChatIndex == index)
-                    ? const EdgeInsets.only(left: 4, top: 4, bottom: 4)
-                    : const EdgeInsets.all(4),
-                child: Material(
-                  type: MaterialType.card,
-                  elevation: 2,
-                  color: (state.selectedChatIndex == index)
-                      ? AppColors.background
-                      : (index == 0)
-                          ? (state.roomChat.lastMessageReadBy
-                                  .contains(getUserId()))
-                              ? AppColors.grey_5
-                              : AppColors.main
-                          : (state.privateChats[index - 1].lastMessageReadBy
-                                  .contains(getUserId()))
-                              ? AppColors.grey_5
-                              : AppColors.main,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: (state.selectedChatIndex == index)
-                          ? const BorderRadius.only(
-                              topLeft: Radius.circular(5.0),
-                              bottomLeft: Radius.circular(5.0))
-                          : const BorderRadius.all(Radius.circular(5.0))),
-                  child: Container(
-                      height: 50,
-                      width: 50,
-                      decoration: const BoxDecoration(
-                        shape: BoxShape.rectangle,
-                        borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                      ),
-                      child: (index == 0)
-                          ? Center(
-                              child: Text(state.roomChat.chatName,
-                                  textAlign: TextAlign.center,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodySmall
-                                      ?.merge(
-                                        TextStyle(
-                                            color:
-                                                state.selectedChatIndex == index
-                                                    ? AppColors.grey_1
-                                                    : AppColors.white,
-                                            fontWeight: FontWeight.bold),
-                                      )),
-                            )
-                          : Center(
-                              child: Text(
-                                state.privateChats[index - 1].getChatName(
-                                    FirebaseAuth.instance.currentUser!.uid),
-                                textAlign: TextAlign.center,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodySmall
-                                    ?.merge(
-                                      TextStyle(
-                                          color:
-                                              state.selectedChatIndex == index
-                                                  ? AppColors.grey_1
-                                                  : AppColors.white,
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                              ),
-                            )),
-                ),
-              ),
+              child: getSize(context) == ScreenSize.large
+                  ? Row(
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        if (index != 0)
+                          IconButton(
+                            onPressed: () {
+                              BlocProvider.of<MessageHolderBloc>(context)
+                                  .add(MessageHolderClosePrivateChatEvent());
+                            },
+                            icon: const Icon(
+                              Icons.close,
+                              color: AppColors.main,
+                            ),
+                          ),
+                        Expanded(child: getCard(state, index, context))
+                      ],
+                    )
+                  : getCard(state, index, context),
             );
           }),
+    );
+  }
+
+  Widget getCard(
+      MessageHolderBaseState state, int index, BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 4, top: 4, bottom: 4),
+      child: Material(
+        type: MaterialType.card,
+        elevation: 2,
+        color: (state.selectedChatIndex == index)
+            ? AppColors.background
+            : (index == 0)
+                ? (state.roomChat.lastMessageReadBy.contains(getUserId()))
+                    ? AppColors.grey_5
+                    : AppColors.main
+                : (state.privateChats[index - 1].lastMessageReadBy
+                        .contains(getUserId()))
+                    ? AppColors.grey_5
+                    : AppColors.main,
+        shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(5.0),
+                bottomLeft: Radius.circular(5.0))),
+        child: Container(
+            height: 50,
+            width: 50,
+            decoration: const BoxDecoration(
+              shape: BoxShape.rectangle,
+              borderRadius: BorderRadius.all(Radius.circular(5.0)),
+            ),
+            child: (index == 0)
+                ? Center(
+                    child: Text(state.roomChat.chatName,
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.bodySmall?.merge(
+                              TextStyle(
+                                  color: state.selectedChatIndex == index
+                                      ? AppColors.grey_1
+                                      : AppColors.white,
+                                  fontWeight: FontWeight.bold),
+                            )),
+                  )
+                : Center(
+                    child: Text(
+                      state.privateChats[index - 1]
+                          .getChatName(FirebaseAuth.instance.currentUser!.uid),
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.bodySmall?.merge(
+                            TextStyle(
+                                color: state.selectedChatIndex == index
+                                    ? AppColors.grey_1
+                                    : AppColors.white,
+                                fontWeight: FontWeight.bold),
+                          ),
+                    ),
+                  )),
+      ),
     );
   }
 
