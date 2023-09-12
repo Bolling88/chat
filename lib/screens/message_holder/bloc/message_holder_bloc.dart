@@ -128,9 +128,20 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
         _firestoreRepository.exitAllChats(chatId: chatRoom.id);
       }
     } else if (event is MessageHolderClosePrivateChatEvent) {
+      Log.d("Closing private chat");
       if (currentState is MessageHolderBaseState) {
-        _firestoreRepository.leavePrivateChat(currentState.selectedChat as PrivateChat);
-        yield currentState.copyWith(selectedChat: chatRoom, selectedChatIndex: 0);
+        if(event.privateChat != null){
+          //This is called on big screens, and can be called from any other chat
+          _firestoreRepository.leavePrivateChat(event.privateChat!);
+          if(event.privateChat == currentState.selectedChat){
+            yield currentState.copyWith(selectedChat: chatRoom, selectedChatIndex: 0);
+          }
+        }else {
+          //This is called from a small screen, and the current chat, so we must move to the room again
+          _firestoreRepository.leavePrivateChat(
+              currentState.selectedChat as PrivateChat);
+          yield currentState.copyWith(selectedChat: chatRoom, selectedChatIndex: 0);
+        }
       }
     } else {
       throw UnimplementedError();

@@ -151,7 +151,7 @@ class MessageHolderScreenContent extends StatelessWidget {
                           IconButton(
                             onPressed: () {
                               BlocProvider.of<MessageHolderBloc>(context)
-                                  .add(MessageHolderClosePrivateChatEvent());
+                                  .add(MessageHolderClosePrivateChatEvent(state.privateChats[index - 1]));
                             },
                             icon: const Icon(
                               Icons.close,
@@ -259,7 +259,7 @@ class MessageHolderScreenContent extends StatelessWidget {
               ),
               onPressed: () {
                 BlocProvider.of<MessageHolderBloc>(context)
-                    .add(MessageHolderClosePrivateChatEvent());
+                    .add(MessageHolderClosePrivateChatEvent(null));
               },
             )
           else

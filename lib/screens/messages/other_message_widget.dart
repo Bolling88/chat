@@ -38,75 +38,81 @@ class AppOtherMessageWidget extends StatelessWidget {
         padding: const EdgeInsets.only(left: 20, bottom: 5, top: 5, right: 40),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.max,
           children: [
             if (pictureData.isNotEmpty && pictureData != "nan")
               Padding(
                 padding: const EdgeInsets.only(left: 0, right: 10),
                 child: AppUserImage(pictureData),
               ),
-            Flexible(
-              child: (message.chatType == ChatType.giphy)
-                  ? ClipRRect(
+            (message.chatType == ChatType.giphy)
+                ? Align(
+                    alignment: Alignment.bottomLeft,
+                    child: ClipRRect(
                       borderRadius: BorderRadius.circular(20.0),
-                      child: CachedNetworkImage(
-                        imageUrl: message.text,
-                        placeholder: (context, url) =>
-                            const Center(child: AppSpinner()),
-                        errorWidget: (context, url, error) =>
-                            const Icon(Icons.error),
+                      child: SizedBox(
+                        width: 200,
+                        height: 200,
+                        child: CachedNetworkImage(
+                          imageUrl: message.text,
+                          placeholder: (context, url) =>
+                              const Center(child: AppSpinner()),
+                          errorWidget: (context, url, error) =>
+                              const Icon(Icons.error),
+                        ),
                       ),
-                    )
-                  : Stack(
-                      children: [
-                        DecoratedBox(
-                          decoration: const BoxDecoration(
-                              borderRadius: BorderRadius.only(
-                                bottomLeft: Radius.circular(10.0),
-                                bottomRight: Radius.circular(10.0),
-                                topRight: Radius.circular(10.0),
-                              ),
-                              gradient: LinearGradient(
-                                  begin: Alignment.topCenter,
-                                  end: Alignment.bottomCenter,
-                                  colors: [
-                                    AppColors.grey_4,
-                                    AppColors.grey_4
-                                  ])),
-                          child: Padding(
-                            padding: const EdgeInsets.only(
-                                left: 10, right: 10, top: 5, bottom: 5),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Text(displayName,
-                                        textAlign: TextAlign.left,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .bodySmall),
-                                    SizedBox(
-                                        width: 18,
-                                        height: 18,
-                                        child: AppLottie(
-                                          url: getGenderUrl(gender),
-                                          animate: false,
-                                        ))
-                                  ],
-                                ),
-                                Text(
-                                  message.text,
-                                  textAlign: TextAlign.left,
-                                  style: Theme.of(context).textTheme.bodyMedium,
-                                ),
-                              ],
-                            ),
-                          ),
-                        )
-                      ],
                     ),
-            ),
+                  )
+                : Stack(
+                    children: [
+                      DecoratedBox(
+                        decoration: const BoxDecoration(
+                            borderRadius: BorderRadius.only(
+                              bottomLeft: Radius.circular(10.0),
+                              bottomRight: Radius.circular(10.0),
+                              topRight: Radius.circular(10.0),
+                            ),
+                            gradient: LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [
+                                  AppColors.grey_4,
+                                  AppColors.grey_4
+                                ])),
+                        child: Padding(
+                          padding: const EdgeInsets.only(
+                              left: 10, right: 10, top: 5, bottom: 5),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(displayName,
+                                      textAlign: TextAlign.left,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodySmall),
+                                  SizedBox(
+                                      width: 18,
+                                      height: 18,
+                                      child: AppLottie(
+                                        url: getGenderUrl(gender),
+                                        animate: false,
+                                      ))
+                                ],
+                              ),
+                              Text(
+                                message.text,
+                                textAlign: TextAlign.left,
+                                style: Theme.of(context).textTheme.bodyMedium,
+                              ),
+                            ],
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
           ],
         ),
       ),

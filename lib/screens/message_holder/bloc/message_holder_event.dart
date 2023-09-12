@@ -7,12 +7,19 @@ import '../../../model/private_chat.dart';
 
 class MessageHolderEvent extends Equatable {
   @override
-  List<Object> get props => [];
+  List<Object?> get props => [];
 }
 
 class MessageHolderInitialEvent extends MessageHolderEvent {}
 class MessageHolderExitChatEvent extends MessageHolderEvent {}
-class MessageHolderClosePrivateChatEvent extends MessageHolderEvent {}
+class MessageHolderClosePrivateChatEvent extends MessageHolderEvent {
+  final PrivateChat? privateChat;
+
+  MessageHolderClosePrivateChatEvent(this.privateChat);
+
+  @override
+  List<Object?> get props => [privateChat];
+}
 
 class MessageHolderPrivateChatsUpdatedEvent extends MessageHolderEvent {
   final List<PrivateChat> privateChats;

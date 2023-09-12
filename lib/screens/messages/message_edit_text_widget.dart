@@ -10,12 +10,14 @@ class MessageEditTextWidget extends StatefulWidget {
   final String currentMessage;
   final ValueChanged<String> onTextChanged;
   final GestureTapCallback onTapGiphy;
+  final bool showGiphy;
 
   const MessageEditTextWidget(
       {Key? key,
       required this.currentMessage,
       required this.onTextChanged,
-      required this.onTapGiphy})
+      required this.onTapGiphy,
+      required this.showGiphy})
       : super(key: key);
 
   @override
@@ -99,7 +101,7 @@ class _MessageEditTextWidgetState extends State<MessageEditTextWidget> {
             const SizedBox(
               width: 10,
             ),
-            (widget.currentMessage.isNotEmpty)
+            (widget.currentMessage.isNotEmpty && widget.showGiphy)
                 ? const SizedBox.shrink()
                 : Material(
                     child: InkWell(

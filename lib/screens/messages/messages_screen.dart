@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:giphy_get/giphy_get.dart';
 import '../../model/chat.dart';
+import '../../model/private_chat.dart';
 import '../../model/room_chat.dart';
 import '../../repository/firestore_repository.dart';
 import '../../utils/app_colors.dart';
@@ -141,6 +142,7 @@ class ChatsScreenContentState extends State<ChatsScreenContent> {
                         BlocProvider.of<MessagesBloc>(context)
                             .add(MessagesChangedEvent(text));
                       },
+                      showGiphy: widget.chat.runtimeType is PrivateChat && widget.chat.runtimeType is! RoomChat,
                       onTapGiphy: () async {
                         final GiphyGif? gif = await GiphyGet.getGif(
                           context: context, //Required
