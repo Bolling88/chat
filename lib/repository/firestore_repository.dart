@@ -291,7 +291,7 @@ class FirestoreRepository {
   }
 
   Future<bool> isPrivateChatAvailable(String userId) async {
-    List<String> usersToCheck = [getUserId(), userId];
+    List<String> usersToCheck = [userId];
 
     return await privateChats
         .where('users', arrayContainsAny: usersToCheck)
