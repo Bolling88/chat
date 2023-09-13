@@ -10,9 +10,11 @@ import '../../utils/app_widgets.dart';
 class AppMyMessageWidget extends StatelessWidget {
   final Message message;
   final String pictureData;
+  final int gender;
 
-  const AppMyMessageWidget(
-    this.message, {
+  const AppMyMessageWidget({
+    required this.message,
+    required this.gender,
     Key? key,
     required this.pictureData,
   }) : super(key: key);
@@ -45,45 +47,44 @@ class AppMyMessageWidget extends StatelessWidget {
                     ),
                   )
                 : Align(
-                  alignment: Alignment.bottomRight,
-                  child: Stack(
-                    children: [
-                      DecoratedBox(
-                        decoration: const BoxDecoration(
-                            borderRadius: BorderRadius.only(
-                              bottomLeft: Radius.circular(10.0),
-                              bottomRight: Radius.circular(10.0),
-                              topLeft: Radius.circular(10.0),
-                            ),
-                            gradient: LinearGradient(
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                                colors: [
-                                  AppColors.main,
-                                  AppColors.main_2
-                                ])),
-                        child: Padding(
-                            padding: const EdgeInsets.only(
-                                top: 15, bottom: 15, left: 10, right: 10),
-                            child: Text(message.text,
-                                textAlign: TextAlign.left,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyMedium
-                                    ?.merge(
-                                      const TextStyle(
-                                        color: Colors.white,
-                                      ),
-                                    ))),
-                      )
-                    ],
+                    alignment: Alignment.bottomRight,
+                    child: Stack(
+                      children: [
+                        DecoratedBox(
+                          decoration: const BoxDecoration(
+                              borderRadius: BorderRadius.only(
+                                bottomLeft: Radius.circular(10.0),
+                                bottomRight: Radius.circular(10.0),
+                                topLeft: Radius.circular(10.0),
+                              ),
+                              gradient: LinearGradient(
+                                  begin: Alignment.topCenter,
+                                  end: Alignment.bottomCenter,
+                                  colors: [AppColors.main, AppColors.main_2])),
+                          child: Padding(
+                              padding: const EdgeInsets.only(
+                                  top: 15, bottom: 15, left: 10, right: 10),
+                              child: Text(message.text,
+                                  textAlign: TextAlign.left,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium
+                                      ?.merge(
+                                        const TextStyle(
+                                          color: Colors.white,
+                                        ),
+                                      ))),
+                        )
+                      ],
+                    ),
                   ),
-                ),
-            if (pictureData.isNotEmpty && pictureData != "nan")
-              Padding(
-                padding: const EdgeInsets.only(left: 10),
-                child: AppUserImage(pictureData),
-              )
+            Padding(
+              padding: const EdgeInsets.only(left: 10),
+              child: AppUserImage(
+                url: pictureData,
+                gender: gender,
+              ),
+            )
           ],
         ));
   }

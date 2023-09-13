@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import '../../repository/firestore_repository.dart';
-import '../../utils/app_colors.dart';
 import '../../utils/app_widgets.dart';
 import '../login/bloc/login_state.dart';
 import 'bloc/onboarding_gender_bloc.dart';
@@ -60,10 +59,11 @@ class OnboardingGenderScreenContent extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          if (state.filePath.isNotEmpty && state.filePath != "nan")
+          if (state.filePath.isNotEmpty)
             Center(
                 child: AppUserImage(
-              state.filePath,
+              url: state.filePath,
+              gender: 0,
               size: 110,
             )),
           const SizedBox(height: 20),
@@ -98,18 +98,21 @@ class OnboardingGenderScreenContent extends StatelessWidget {
           const SizedBox(height: 30),
           getGenderButton(
               context: context,
+              gender: 0,
               title: FlutterI18n.translate(context, "i_am_woman"),
               url:
                   'https://firebasestorage.googleapis.com/v0/b/chat-60225.appspot.com/o/lottie%2Ffemale.json?alt=media&token=dabc5dd7-3f5e-446a-9f69-1325a343ce90'),
           const SizedBox(height: 20),
           getGenderButton(
               context: context,
+              gender: 1,
               title: FlutterI18n.translate(context, "i_am_man"),
               url:
-              'https://firebasestorage.googleapis.com/v0/b/chat-60225.appspot.com/o/lottie%2Fmale.json?alt=media&token=0a7e6edf-2112-471f-b5ef-d07fac83a9b3'),
+                  'https://firebasestorage.googleapis.com/v0/b/chat-60225.appspot.com/o/lottie%2Fmale.json?alt=media&token=0a7e6edf-2112-471f-b5ef-d07fac83a9b3'),
           const SizedBox(height: 20),
           getGenderButton(
               context: context,
+              gender: 2,
               title: FlutterI18n.translate(context, "i_am_non_binary"),
               url:
                   'https://firebasestorage.googleapis.com/v0/b/chat-60225.appspot.com/o/lottie%2Fnonbinary.json?alt=media&token=c53c9728-aef5-448a-b534-669d5fb6d3e0'),
@@ -119,11 +122,26 @@ class OnboardingGenderScreenContent extends StatelessWidget {
   }
 
   ElevatedButton getGenderButton(
-      {required BuildContext context, required String url, required String title}) {
+      {required BuildContext context,
+      required String url,
+      required int gender,
+      required String title}) {
     return ElevatedButton(
       onPressed: () {
-        BlocProvider.of<OnboardingGenderBloc>(context)
-            .add(OnboardingGenderNonBinaryClickedEvent());
+        switch (gender) {
+          case 0:
+            BlocProvider.of<OnboardingGenderBloc>(context)
+                .add(OnboardingGenderFemaleClickedEvent());
+            break;
+          case 1:
+            BlocProvider.of<OnboardingGenderBloc>(context)
+                .add(OnboardingGenderMaleClickedEvent());
+            break;
+          case 2:
+            BlocProvider.of<OnboardingGenderBloc>(context)
+                .add(OnboardingGenderNonBinaryClickedEvent());
+            break;
+        }
       },
       child: Row(
         mainAxisSize: MainAxisSize.min,

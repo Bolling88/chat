@@ -112,13 +112,11 @@ class PeopleScreenBuilder extends StatelessWidget {
                                     '${state.chatUsers[index].city}, ${state.chatUsers[index].country}',
                                     style:
                                         Theme.of(context).textTheme.bodyMedium),
-                                leading: (state.chatUsers[index].pictureData !=
-                                        'nan')
-                                    ? AppUserImage(
-                                        state.chatUsers[index].pictureData,
+                                leading: AppUserImage(
+                                        url:state.chatUsers[index].pictureData,
+                                        gender: state.chatUsers[index].gender,
                                         size: 40,
-                                      )
-                                    : const SizedBox.shrink(),
+                                      ),
                                 onTap: () {
                                   if (getSize(context) == ScreenSize.small) {
                                     Navigator.pop(context);

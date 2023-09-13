@@ -119,7 +119,8 @@ class VisitScreenContent extends StatelessWidget {
                   child: Hero(
                     tag: "imageHero",
                     child: AppUserImage(
-                      user.pictureData,
+                      url: user.pictureData,
+                      gender: user.gender,
                       size: 110,
                     ),
                   ),

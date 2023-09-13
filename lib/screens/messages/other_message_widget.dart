@@ -3,7 +3,6 @@ import 'package:chat/utils/lottie.dart';
 import 'package:flutter/material.dart';
 
 import '../../model/chat.dart';
-import '../../model/room_chat.dart';
 import '../../model/message.dart';
 import '../../repository/firestore_repository.dart';
 import '../../utils/app_colors.dart';
@@ -40,10 +39,12 @@ class AppOtherMessageWidget extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.max,
           children: [
-            if (pictureData.isNotEmpty && pictureData != "nan")
               Padding(
                 padding: const EdgeInsets.only(left: 0, right: 10),
-                child: AppUserImage(pictureData),
+                child: AppUserImage(
+                  url: pictureData,
+                  gender: gender,
+                ),
               ),
             (message.chatType == ChatType.giphy)
                 ? Align(
@@ -75,10 +76,7 @@ class AppOtherMessageWidget extends StatelessWidget {
                             gradient: LinearGradient(
                                 begin: Alignment.topCenter,
                                 end: Alignment.bottomCenter,
-                                colors: [
-                                  AppColors.grey_4,
-                                  AppColors.grey_4
-                                ])),
+                                colors: [AppColors.grey_4, AppColors.grey_4])),
                         child: Padding(
                           padding: const EdgeInsets.only(
                               left: 10, right: 10, top: 5, bottom: 5),

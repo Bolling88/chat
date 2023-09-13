@@ -96,7 +96,7 @@ class OnboardingPhotoBloc
           yield OnboardingPhotoDoneState(currentState.filePath, currentState.base64Image);
         }
       } else if (event is OnboardingPhotoSkipEvent) {
-        await _firestoreRepository.updateUserProfileImage('nan');
+        await _firestoreRepository.updateUserProfileImage('');
         if (_chatUser.gender == -1) {
           yield const OnboardingPhotoSuccessState(OnboardingNavigation.GENDER);
         } else {

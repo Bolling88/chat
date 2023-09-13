@@ -3,8 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:giphy_get/giphy_get.dart';
 import '../../model/chat.dart';
-import '../../model/private_chat.dart';
-import '../../model/room_chat.dart';
 import '../../repository/firestore_repository.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_widgets.dart';
@@ -120,7 +118,9 @@ class ChatsScreenContentState extends State<ChatsScreenContent> {
                         } else if (state.messages[index].message!.createdById ==
                             state.userId) {
                           return AppMyMessageWidget(
-                            state.messages[index].message!,
+                            message: state.messages[index].message!,
+                            gender:
+                                state.messages[index].message!.createdByGender,
                             pictureData: state
                                 .messages[index].message!.createdByImageUrl,
                           );

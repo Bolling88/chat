@@ -56,14 +56,11 @@ class ProfileScreenBuilder extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  if (state.user.pictureData != null &&
-                      state.user.pictureData != 'nan')
-                    const SizedBox(height: 20),
-                  if (state.user.pictureData != null &&
-                      state.user.pictureData != 'nan')
+                  const SizedBox(height: 20),
                     GestureDetector(
                       child: AppUserImage(
-                        state.user.pictureData,
+                        url: state.user.pictureData,
+                        gender: state.user.gender,
                         size: 120,
                       ),
                       onTap: () {
@@ -71,6 +68,8 @@ class ProfileScreenBuilder extends StatelessWidget {
                             blocContext, OnboardingPhotoScreen.routeName);
                       },
                     ),
+                  const SizedBox(height: 20),
+                  Text(state.user.displayName, style: Theme.of(context).textTheme.displaySmall),
                   const SizedBox(height: 20),
                   ElevatedButton.icon(
                     icon: const Icon(Icons.camera_alt),
