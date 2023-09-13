@@ -4,7 +4,6 @@ import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:giphy_get/giphy_get.dart';
 import '../../model/chat.dart';
 import '../../repository/firestore_repository.dart';
-import '../../utils/app_colors.dart';
 import '../../utils/app_widgets.dart';
 import '../../utils/constants.dart';
 import 'bloc/messages_bloc.dart';
@@ -190,10 +189,7 @@ class ChatsScreenContentState extends State<ChatsScreenContent> {
             padding: const EdgeInsets.only(top: 5, bottom: 5),
             child: Text(
               text,
-              style: const TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.normal,
-                  color: AppColors.grey_1),
+              style: Theme.of(context).textTheme.bodySmall,
             )));
   }
 }

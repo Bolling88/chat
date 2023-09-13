@@ -1,4 +1,4 @@
-# Xevenition PRIVACY POLICY
+## Xevenition PRIVACY POLICY
 
 Last Revised: 2023.09.01
 

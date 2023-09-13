@@ -1,4 +1,4 @@
-# Xevenition TERMS OF SERVICE
+## Xevenition TERMS OF SERVICE
 
 Last Updated: 2023.09.01
 

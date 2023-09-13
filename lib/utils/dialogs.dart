@@ -26,8 +26,7 @@ class AppDialog extends StatelessWidget {
       title: Center(
           child: Text(
         title,
-        style: const TextStyle(
-            fontSize: 18, color: AppColors.black, fontFamily: 'Brown'),
+        style: Theme.of(context).textTheme.bodyMedium,
       )),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8.0),
@@ -40,10 +39,7 @@ class AppDialog extends StatelessWidget {
             child: Text(
               message,
               textAlign: TextAlign.center,
-              style: const TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w500,
-                  color: AppColors.grey_1),
+              style: Theme.of(context).textTheme.bodyMedium,
             ),
           ),
           const SizedBox(
@@ -59,7 +55,7 @@ class AppDialog extends StatelessWidget {
                         onPressed: button2Pressed,
                         child: Text(
                           button2Text!,
-                          style: getDialogTextStyle(),
+                          style: Theme.of(context).textTheme.bodyMedium,
                         ),
                       ),
                     )
@@ -69,7 +65,7 @@ class AppDialog extends StatelessWidget {
                       padding: const EdgeInsets.only(left: 5, right: 5),
                       child: TextButton(
                         onPressed: button1Pressed,
-                        child: Text(button1Text!, style: getDialogTextStyle()),
+                        child: Text(button1Text!, style: Theme.of(context).textTheme.bodyMedium),
                       ),
                     )
                   : const SizedBox.shrink(),
@@ -80,10 +76,5 @@ class AppDialog extends StatelessWidget {
     );
   }
 }
-TextStyle getDialogTextStyle() {
-  return const TextStyle(fontSize: 20, fontFamily: 'Brown', color: AppColors.black);
-}
 
-TextStyle getDialogTextStyleDisabled() {
-  return const TextStyle(fontSize: 20, fontFamily: 'Brown', color: AppColors.grey_1);
-}
+

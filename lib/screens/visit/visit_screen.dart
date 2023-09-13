@@ -161,10 +161,7 @@ class VisitScreenContent extends StatelessWidget {
                                 'https://firebasestorage.googleapis.com/v0/b/chat-60225.appspot.com/o/lottie%2Fshrug.json?alt=media&token=73407d43-f0b5-4762-9042-12f07b3646e5'))),
                 Text(
                   FlutterI18n.translate(context, 'user_offline'),
-                  style: const TextStyle(
-                      color: AppColors.main,
-                      fontSize: 15,
-                      fontWeight: FontWeight.w500),
+                  style: Theme.of(context).textTheme.bodyMedium,
                 ),
               ],
             ),

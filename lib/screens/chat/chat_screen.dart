@@ -178,7 +178,7 @@ class ChatsScreenContent extends StatelessWidget {
           )),
           Text(
             state.chats[index].users.length.toString(),
-            style: const TextStyle(fontSize: 14, color: AppColors.grey_1),
+            style: Theme.of(context).textTheme.bodySmall,
           ),
           Icon(
             Icons.person,

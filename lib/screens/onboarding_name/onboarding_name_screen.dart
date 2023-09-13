@@ -129,7 +129,7 @@ class OnboardingNameScreenContent extends StatelessWidget {
                             style: BorderStyle.none,
                           )),
                       fillColor: AppColors.white,
-                      hintStyle: const TextStyle(color: AppColors.grey_1),
+                      hintStyle: Theme.of(context).textTheme.bodyMedium,
                       contentPadding:
                           const EdgeInsets.only(left: 15, right: 15),
                       hintText:

@@ -186,8 +186,7 @@ class OnboardingPhotoScreenContent extends StatelessWidget {
                   .add(OnboardingPhotoRedoClickedEvent());
             },
             child: Text(FlutterI18n.translate(context, "take_new_picture"),
-                style: const TextStyle(
-                    fontWeight: FontWeight.w600, color: AppColors.main)),
+                style: Theme.of(context).textTheme.bodyMedium),
           )
         ],
       ),
@@ -217,10 +216,7 @@ class OnboardingPhotoScreenContent extends StatelessWidget {
             const SizedBox(height: 24),
             Text(
               FlutterI18n.translate(context, "select_source"),
-              style: const TextStyle(
-                  color: AppColors.grey_1,
-                  fontWeight: FontWeight.w600,
-                  fontSize: 16),
+              style: Theme.of(context).textTheme.bodyMedium,
             ),
             const SizedBox(height: 40),
             Row(
@@ -296,10 +292,10 @@ Flexible getOptionWidget(
                   ),
                 ),
               ),
+              onPressed: onPressed,
               child: Center(
                 child: icon,
               ),
-              onPressed: onPressed,
             ),
           ),
           const SizedBox(height: 10),
@@ -308,10 +304,7 @@ Flexible getOptionWidget(
             child: Center(
               child: Text(
                 title,
-                style: const TextStyle(
-                    color: AppColors.grey_1,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 11),
+                style: Theme.of(context).textTheme.bodyMedium,
               ),
             ),
           ),
@@ -322,10 +315,7 @@ Flexible getOptionWidget(
               child: Text(
                 message,
                 textAlign: TextAlign.center,
-                style: const TextStyle(
-                    color: AppColors.grey_1,
-                    fontWeight: FontWeight.w400,
-                    fontSize: 11),
+                style: Theme.of(context).textTheme.bodyMedium,
               ),
             ),
           )

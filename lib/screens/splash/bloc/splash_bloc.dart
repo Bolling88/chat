@@ -24,8 +24,6 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
             yield SplashLoginState();
           } else if (chatUser.displayName.isEmpty) {
             yield const SplashSuccessState(OnboardingNavigation.NAME);
-          } else if (chatUser.pictureData.isEmpty) {
-            yield const SplashSuccessState(OnboardingNavigation.PICTURE);
           } else if (chatUser.gender == -1) {
             yield const SplashSuccessState(OnboardingNavigation.GENDER);
           } else {
