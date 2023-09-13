@@ -10,6 +10,7 @@ import '../../utils/lottie.dart';
 import '../hero/hero_screen.dart';
 import '../message_holder/bloc/message_holder_bloc.dart';
 import '../message_holder/bloc/message_holder_event.dart';
+import '../messages/other_message_widget.dart';
 import '../people/people_screen.dart';
 import 'bloc/visit_bloc.dart';
 import 'bloc/visit_state.dart';
@@ -85,7 +86,6 @@ class VisitScreenContent extends StatelessWidget {
                       child: ElevatedButton(
                           onPressed: () {
                             Navigator.pop(context);
-                            showPeopleScreen(parentContext, chat, user);
                           },
                           style: ElevatedButton.styleFrom(
                             shape: const CircleBorder(),
@@ -93,12 +93,7 @@ class VisitScreenContent extends StatelessWidget {
                           ),
                           child: const Icon(Icons.arrow_back)),
                     ),
-                    Expanded(
-                        child: Center(
-                            child: Text(
-                      state.user?.displayName ?? '',
-                      style: Theme.of(context).textTheme.displaySmall,
-                    ))),
+                    Expanded(child: Container()),
                     ElevatedButton(
                         onPressed: () {
                           Navigator.pop(context);
@@ -125,12 +120,33 @@ class VisitScreenContent extends StatelessWidget {
                     ),
                   ),
                 )),
+                Center(
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        state.user?.displayName ?? '',
+                        style: Theme.of(context).textTheme.displaySmall,
+                      ),
+                      const SizedBox(width: 2),
+                      SizedBox(
+                          width: 30,
+                          height: 30,
+                          child: AppLottie(
+                            url: getGenderUrl(user.gender),
+                            animate: false,
+                          ))
+                    ],
+                  ),
+                ),
+                Text('${user.city}, ${user.country}',
+                    style: Theme.of(context).textTheme.bodyMedium),
                 const SizedBox(height: 40),
                 ElevatedButton(
                   onPressed: () {
                     BlocProvider.of<MessageHolderBloc>(parentContext)
                         .add(MessageHolderPrivateChatEvent(user));
-                    Navigator.pop(context);
+                    Navigator.popUntil(context, ModalRoute.withName('/message_holder_screen'));
                   },
                   child: state.isChatAvailable
                       ? Text(FlutterI18n.translate(context, 'private_chat'))

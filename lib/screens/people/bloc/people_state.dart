@@ -19,3 +19,4 @@ class PeopleBaseState extends PeopleState {
 }
 
 class PeopleErrorState extends PeopleState {}
+class PeopleLoadingState extends PeopleState {}

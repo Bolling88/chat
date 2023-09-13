@@ -119,7 +119,7 @@ class PeopleScreenBuilder extends StatelessWidget {
                                       ),
                                 onTap: () {
                                   if (getSize(context) == ScreenSize.small) {
-                                    Navigator.pop(context);
+                                    //Navigator.pop(context);
                                   }
                                   showVisitScreen(
                                       parentContext,
@@ -135,11 +135,17 @@ class PeopleScreenBuilder extends StatelessWidget {
                     ),
             );
           } else {
-            return Column(
-              children: [
-                getTopBar(context),
-                const LoadingScreen(),
-              ],
+            return Container(
+              width: double.infinity,
+              height: viewHeight,
+              decoration: const BoxDecoration(
+                  color: AppColors.white,
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(20),
+                      topRight: Radius.circular(20))),
+              child: const Center(
+                child: AppSpinner(),
+              ),
             );
           }
         }));

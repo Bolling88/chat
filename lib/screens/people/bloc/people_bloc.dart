@@ -17,7 +17,7 @@ class PeopleBloc extends Bloc<PeopleEvent, PeopleState> {
   StreamSubscription<QuerySnapshot>? chatStream;
 
   PeopleBloc(this._firestoreRepository, this._chat, this._user)
-      : super(const PeopleBaseState([])) {
+      : super(PeopleLoadingState()) {
     add(PeopleInitialEvent());
   }
 
