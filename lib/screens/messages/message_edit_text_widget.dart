@@ -101,31 +101,30 @@ class _MessageEditTextWidgetState extends State<MessageEditTextWidget> {
             const SizedBox(
               width: 10,
             ),
-            (widget.currentMessage.isNotEmpty && widget.showGiphy)
-                ? const SizedBox.shrink()
-                : Material(
-                    child: InkWell(
-                      splashColor: AppColors.main.withOpacity(0.5),
-                      hoverColor: AppColors.main.withOpacity(0.5),
-                      highlightColor: AppColors.main.withOpacity(0.5),
-                      borderRadius: BorderRadius.circular(25.0),
-                      onTap: widget.onTapGiphy,
-                      child: Container(
-                        width: 50,
-                        height: 50,
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10.0),
-                            border:
-                                Border.all(color: AppColors.main, width: 3)),
-                        child: const Icon(
-                          Icons.gif,
-                          size: 30,
-                          color: AppColors.main,
-                        ),
-                      ),
+            if(widget.currentMessage.isEmpty && widget.showGiphy)
+              Material(
+                child: InkWell(
+                  splashColor: AppColors.main.withOpacity(0.5),
+                  hoverColor: AppColors.main.withOpacity(0.5),
+                  highlightColor: AppColors.main.withOpacity(0.5),
+                  borderRadius: BorderRadius.circular(25.0),
+                  onTap: widget.onTapGiphy,
+                  child: Container(
+                    width: 50,
+                    height: 50,
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10.0),
+                        border:
+                        Border.all(color: AppColors.main, width: 3)),
+                    child: const Icon(
+                      Icons.gif,
+                      size: 30,
+                      color: AppColors.main,
                     ),
                   ),
-            (widget.currentMessage.isNotEmpty)
+                ),
+              ),
+            (widget.currentMessage.isNotEmpty && widget.showGiphy)
                 ? const SizedBox.shrink()
                 : const SizedBox(
                     width: 10,

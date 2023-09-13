@@ -23,8 +23,7 @@ class MessagesScreen extends StatelessWidget {
 
   final bool isPrivateChat;
 
-  const MessagesScreen(this.chat, this.isPrivateChat,
-      {this.userIds, Key? key})
+  const MessagesScreen(this.chat, this.isPrivateChat, {this.userIds, Key? key})
       : super(key: key);
 
   @override
@@ -35,6 +34,7 @@ class MessagesScreen extends StatelessWidget {
           isPrivateChat: isPrivateChat),
       child: ChatsScreenContent(
         chat: chat,
+        isPrivateChat: isPrivateChat,
       ),
     );
   }
@@ -42,8 +42,11 @@ class MessagesScreen extends StatelessWidget {
 
 class ChatsScreenContent extends StatefulWidget {
   final Chat chat;
+  final bool isPrivateChat;
 
-  const ChatsScreenContent({required this.chat, Key? key}) : super(key: key);
+  const ChatsScreenContent(
+      {required this.chat, required this.isPrivateChat, Key? key})
+      : super(key: key);
 
   @override
   State<StatefulWidget> createState() {
@@ -101,14 +104,16 @@ class ChatsScreenContentState extends State<ChatsScreenContent> {
                         } else if (state.messages[index].message?.chatType ==
                             ChatType.joined) {
                           return getChatInfoMessage(
-                              text: '${state.messages[index].message!.text} ${FlutterI18n.translate(context, 'joined_chat')}',
+                              text:
+                                  '${state.messages[index].message!.text} ${FlutterI18n.translate(context, 'joined_chat')}',
                               state: state,
                               index: index,
                               context: context);
                         } else if (state.messages[index].message?.chatType ==
                             ChatType.left) {
                           return getChatInfoMessage(
-                              text: '${state.messages[index].message!.text} ${FlutterI18n.translate(context, 'left_chat')}',
+                              text:
+                                  '${state.messages[index].message!.text} ${FlutterI18n.translate(context, 'left_chat')}',
                               state: state,
                               index: index,
                               context: context);
@@ -128,7 +133,8 @@ class ChatsScreenContentState extends State<ChatsScreenContent> {
                             userId: state.messages[index].message!.createdById,
                             displayName:
                                 state.messages[index].message!.createdByName,
-                            gender: state.messages[index].message!.createdByGender,
+                            gender:
+                                state.messages[index].message!.createdByGender,
                             chat: widget.chat,
                           );
                         }
@@ -142,7 +148,7 @@ class ChatsScreenContentState extends State<ChatsScreenContent> {
                         BlocProvider.of<MessagesBloc>(context)
                             .add(MessagesChangedEvent(text));
                       },
-                      showGiphy: widget.chat.runtimeType is PrivateChat && widget.chat.runtimeType is! RoomChat,
+                      showGiphy: widget.isPrivateChat,
                       onTapGiphy: () async {
                         final GiphyGif? gif = await GiphyGet.getGif(
                           context: context, //Required
