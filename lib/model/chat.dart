@@ -8,7 +8,7 @@ abstract class Chat extends Equatable {
   final String lastMessageByName;
   final Timestamp lastMessageTimestamp;
   final String lastMessageUserId;
-  final List<String> lastMessageReadBy;
+  final bool lastMessageReadByUser;
 
   const Chat({
     required this.id,
@@ -17,11 +17,21 @@ abstract class Chat extends Equatable {
     required this.lastMessageByName,
     required this.lastMessageTimestamp,
     required this.lastMessageUserId,
-    required this.lastMessageReadBy,
+    required this.lastMessageReadByUser,
   });
 
   String getChatName(String userId);
 
   @override
   List<Object> get props => [];
+
+  Chat copyWith({
+    String? id,
+    List<String>? users,
+    String? lastMessage,
+    String? lastMessageByName,
+    Timestamp? lastMessageTimestamp,
+    String? lastMessageUserId,
+    bool? lastMessageReadByUser,
+  });
 }

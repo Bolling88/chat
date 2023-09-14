@@ -158,7 +158,6 @@ class FirestoreRepository {
           'lastMessage': message,
           'lastMessageByName': user.displayName,
           'lastMessageByGender': user.gender,
-          'lastMessageReadBy': [getUserId()],
           'lastMessageTimestamp': FieldValue.serverTimestamp(),
           'lastMessageUserId': getUserId()
         }, SetOptions(merge: true));
@@ -167,7 +166,6 @@ class FirestoreRepository {
           'lastMessage': message,
           'lastMessageByName': user.displayName,
           'lastMessageByGender': user.gender,
-          'lastMessageReadBy': [getUserId()],
           'lastMessageTimestamp': FieldValue.serverTimestamp(),
           'lastMessageUserId': getUserId()
         }, SetOptions(merge: true));
@@ -214,17 +212,6 @@ class FirestoreRepository {
         .snapshots();
   }
 
-  Future<void> setLastMessageRead(
-      {required String chatId, required bool isPrivateChat}) async {
-    try {
-      await getChatType(isPrivateChat: isPrivateChat).doc(chatId).set({
-        'lastMessageReadBy': FieldValue.arrayUnion([getUserId()]),
-      }, SetOptions(merge: true));
-    } catch (e) {
-      Log.e(e);
-    }
-  }
-
   Stream<QuerySnapshot> streamChats() {
     return chats.snapshots().handleError((error) {
       Log.e("Failed to get chats: $error");
@@ -265,7 +252,6 @@ class FirestoreRepository {
     try {
       final reference = await privateChats.add({
         'created': FieldValue.serverTimestamp(),
-        'lastMessageReadBy': [getUserId()],
         'users': [myUser.id, otherUser.id],
         'initiatedBy': getUserId(),
         'initiatedByUserName': myUser.displayName,

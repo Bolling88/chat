@@ -173,15 +173,14 @@ class MessageHolderScreenContent extends StatelessWidget {
       padding: const EdgeInsets.only(left: 4, top: 4, bottom: 4),
       child: Material(
         type: MaterialType.card,
-        elevation: 2,
+        elevation: state.selectedChatIndex == index? 2 : 0,
         color: (state.selectedChatIndex == index)
             ? AppColors.background
             : (index == 0)
-                ? (state.roomChat.lastMessageReadBy.contains(getUserId()))
+                ? (state.roomChat.lastMessageReadByUser)
                     ? AppColors.grey_5
                     : AppColors.main
-                : (state.privateChats[index - 1].lastMessageReadBy
-                        .contains(getUserId()))
+                : (state.privateChats[index - 1].lastMessageReadByUser)
                     ? AppColors.grey_5
                     : AppColors.main,
         shape: const RoundedRectangleBorder(

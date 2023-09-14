@@ -12,8 +12,6 @@ abstract class MessagesEvent extends Equatable {
 class MessagesInitialEvent extends MessagesEvent {}
 
 class MessagesSendEvent extends MessagesEvent {}
-class MessagesFetchMoreEvent extends MessagesEvent {}
-class MessagesFetchedEvent extends MessagesEvent {}
 
 class MessagesUpdatedEvent extends MessagesEvent {
   final List<Message> messages;
