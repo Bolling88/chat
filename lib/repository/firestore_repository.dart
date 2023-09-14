@@ -291,12 +291,14 @@ class FirestoreRepository {
   }
 
   Future<bool> isPrivateChatAvailable(String userId) async {
-    List<String> usersToCheck = [userId];
-
     return await privateChats
-        .where('users', arrayContainsAny: usersToCheck)
+        .where('users', arrayContains: getUserId())
         .get()
-        .then((value) => value.docs.isEmpty)
+        .then((value) => value.docs
+            .map((e) =>
+                PrivateChat.fromJson(e.id, e.data() as Map<String, dynamic>))
+            .where((element) => element.users.contains(userId))
+            .isEmpty)
         .catchError((error) {
       Log.e("Failed to get chat: $error");
       return false;
@@ -306,7 +308,6 @@ class FirestoreRepository {
   Future<List<ChatUser>> getUsersInChat(RoomChat chat) {
     return users
         .where(FieldPath.documentId, whereIn: chat.users)
-        // .where('presence', isEqualTo: true)
         .get()
         .then((value) => value.docs
             .map((e) =>
