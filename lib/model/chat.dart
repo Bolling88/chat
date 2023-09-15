@@ -8,7 +8,6 @@ abstract class Chat extends Equatable {
   final String lastMessageByName;
   final Timestamp lastMessageTimestamp;
   final String lastMessageUserId;
-  final bool lastMessageReadByUser;
 
   const Chat({
     required this.id,
@@ -17,7 +16,6 @@ abstract class Chat extends Equatable {
     required this.lastMessageByName,
     required this.lastMessageTimestamp,
     required this.lastMessageUserId,
-    required this.lastMessageReadByUser,
   });
 
   String getChatName(String userId);
@@ -32,6 +30,5 @@ abstract class Chat extends Equatable {
     String? lastMessageByName,
     Timestamp? lastMessageTimestamp,
     String? lastMessageUserId,
-    bool? lastMessageReadByUser,
   });
 }

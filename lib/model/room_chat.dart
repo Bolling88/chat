@@ -10,6 +10,7 @@ class RoomChat extends Chat implements Comparable<RoomChat> {
   final String imageUrl;
   final int imageOverflow;
   final int imageTranslationX;
+  final bool lastMessageReadByUser;
 
   final List<ChatUser> userInfos = [];
   final String usersText = "";
@@ -21,13 +22,13 @@ class RoomChat extends Chat implements Comparable<RoomChat> {
     required this.imageUrl,
     required this.imageOverflow,
     required this.imageTranslationX,
+    required this.lastMessageReadByUser,
     required String id,
     required List<String> users,
     required String lastMessage,
     required String lastMessageByName,
     required Timestamp lastMessageTimestamp,
     required String lastMessageUserId,
-    required bool lastMessageReadByUser,
   }) : super(
           id: id,
           users: users,
@@ -35,7 +36,6 @@ class RoomChat extends Chat implements Comparable<RoomChat> {
           lastMessageByName: lastMessageByName,
           lastMessageTimestamp: lastMessageTimestamp,
           lastMessageUserId: lastMessageUserId,
-          lastMessageReadByUser: lastMessageReadByUser,
         );
 
   RoomChat.fromJson(String id, Map<String, dynamic> json)
@@ -45,6 +45,7 @@ class RoomChat extends Chat implements Comparable<RoomChat> {
         imageUrl = json['imageUrl'] ?? "",
         imageOverflow = json['imageOverflow'] ?? 80,
         imageTranslationX = json['imageTranslationX'] ?? 0,
+        lastMessageReadByUser = false,
         super(
           id: id,
           users: json['users']?.cast<String>() ?? [],
@@ -52,7 +53,6 @@ class RoomChat extends Chat implements Comparable<RoomChat> {
           lastMessageByName: json['lastMessageByName'] ?? "",
           lastMessageTimestamp: json['lastMessageTimestamp'] ?? Timestamp.now(),
           lastMessageUserId: json['lastMessageUserId'] ?? "",
-          lastMessageReadByUser: false,
         ); // Call the superclass constructor;
 
   String getLastMessageReadableDate() {

@@ -3,7 +3,6 @@ import 'package:chat/model/chat_user.dart';
 import 'package:chat/model/private_chat.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../model/chat.dart';
 import '../../../model/room_chat.dart';
 import '../../../repository/firestore_repository.dart';
 import '../../../utils/log.dart';
@@ -56,6 +55,8 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
               .where((element) => element.users.contains(event.user.id))
               .firstOrNull;
           if (privateChat != null) {
+            _firestoreRepository.setLastMessageRead(
+                chatId: privateChat.id);
             final int index = currentState.privateChats.indexOf(privateChat);
             yield currentState.copyWith(
                 selectedChatIndex: index + 1, selectedChat: privateChat);
@@ -75,12 +76,8 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
               if (event.privateChats.last.initiatedBy == getUserId()) {
                 //And it was by you, move to that chat
                 yield currentState.copyWith(
-                    privateChats: markChatAsRead(
-                      event.privateChats,
-                      event.privateChats.last,
-                    ),
-                    selectedChat: event.privateChats.last
-                        .copyWith(lastMessageReadByUser: true),
+                    privateChats: event.privateChats,
+                    selectedChat: event.privateChats.last,
                     selectedChatIndex: event.privateChats.length);
               } else {
                 yield currentState.copyWith(privateChats: event.privateChats);
@@ -92,12 +89,8 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
             if (event.privateChats.contains(currentState.selectedChat)) {
               //If the private chat we are on still exists
               yield currentState.copyWith(
-                  privateChats: markChatAsRead(
-                    event.privateChats,
-                    currentState.selectedChat as PrivateChat,
-                  ),
-                  selectedChat: currentState.selectedChat
-                      .copyWith(lastMessageReadByUser: true),
+                  privateChats:event.privateChats,
+                  selectedChat: currentState.selectedChat,
                   selectedChatIndex: event.privateChats
                           .indexOf(currentState.selectedChat as PrivateChat) +
                       1);
@@ -113,16 +106,7 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
           }
         } else {
           // The number of private chats did not change
-          //yield currentState.copyWith(privateChats: event.privateChats);
-          if(currentState.selectedChat is PrivateChat) {
-            yield currentState.copyWith(
-                privateChats: markChatAsRead(
-                  event.privateChats,
-                  currentState.selectedChat as PrivateChat,
-                ));
-          }else{
-            yield currentState.copyWith(privateChats: event.privateChats);
-          }
+          yield currentState.copyWith(privateChats: event.privateChats);
         }
       }
     } else if (event is MessageHolderChatUpdatedEvent) {
@@ -142,12 +126,11 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
               selectedChat: chatRoom.copyWith(lastMessageReadByUser: true),
               roomChat: chatRoom.copyWith(lastMessageReadByUser: true));
         } else {
+          _firestoreRepository.setLastMessageRead(
+              chatId: event.chat.id);
           yield currentState.copyWith(
               selectedChatIndex: event.index,
-              selectedChat: currentState.privateChats[event.index - 1]
-                  .copyWith(lastMessageReadByUser: true),
-              privateChats: markChatAsRead(currentState.privateChats,
-                  currentState.privateChats[event.index - 1]));
+              selectedChat: event.chat);
         }
       }
     } else if (event is MessageHolderExitChatEvent) {
@@ -177,31 +160,12 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
     }
   }
 
-  List<PrivateChat> markChatAsRead<T>(
-    List<PrivateChat> list,
-    PrivateChat privateChat,
-  ) {
-    final chatToBeReplaced =
-        list.where((element) => element.id == privateChat.id).firstOrNull;
-    if (chatToBeReplaced == null) {
-      return list;
-    } else {
-      final index = list.indexOf(chatToBeReplaced);
-      if (index != -1) {
-        list[index] = chatToBeReplaced.copyWith(lastMessageReadByUser: true);
-      }
-      return list;
-    }
-  }
-
   void setUpPrivateChatsListener() async {
     Log.d('Setting up private chats stream');
-    privateChatStream =
-        _firestoreRepository.streamPrivateChats().listen((data) {
+    privateChatStream = _firestoreRepository.streamPrivateChats().listen((data) {
       Log.d("Got private chats");
       final chats = data.docs
-          .map((e) =>
-              PrivateChat.fromJson(e.id, e.data() as Map<String, dynamic>))
+          .map((e) => PrivateChat.fromJson(e.id, e.data() as Map<String, dynamic>))
           .toList()
           .reversed
           .toList();
