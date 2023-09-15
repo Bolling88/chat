@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:audioplayers/audioplayers.dart';
 import 'package:chat/model/chat_user.dart';
 import 'package:chat/model/private_chat.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -43,7 +44,7 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
           selectedChatIndex: 0);
       setUpPrivateChatsListener();
       setUpChatsListener();
-    } else if (event is MessageHolderPrivateChatEvent) {
+    } else if (event is MessageHolderStartPrivateChatEvent) {
       if (currentState is MessageHolderBaseState) {
         final bool isChatAvailable =
             await _firestoreRepository.isPrivateChatAvailable(event.user.id);
@@ -55,8 +56,7 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
               .where((element) => element.users.contains(event.user.id))
               .firstOrNull;
           if (privateChat != null) {
-            _firestoreRepository.setLastMessageRead(
-                chatId: privateChat.id);
+            _firestoreRepository.setLastMessageRead(chatId: privateChat.id);
             final int index = currentState.privateChats.indexOf(privateChat);
             yield currentState.copyWith(
                 selectedChatIndex: index + 1, selectedChat: privateChat);
@@ -80,6 +80,10 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
                     selectedChat: event.privateChats.last,
                     selectedChatIndex: event.privateChats.length);
               } else {
+                //else just update the chats and play a sound
+                final player = AudioPlayer();
+                await player.play(UrlSource(
+                    'https://firebasestorage.googleapis.com/v0/b/chat-60225.appspot.com/o/audio%2Fstop.mp3?alt=media&token=88032575-9833-4bf5-86fb-554b61820c27'));
                 yield currentState.copyWith(privateChats: event.privateChats);
               }
             } else {
@@ -89,7 +93,7 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
             if (event.privateChats.contains(currentState.selectedChat)) {
               //If the private chat we are on still exists
               yield currentState.copyWith(
-                  privateChats:event.privateChats,
+                  privateChats: event.privateChats,
                   selectedChat: currentState.selectedChat,
                   selectedChatIndex: event.privateChats
                           .indexOf(currentState.selectedChat as PrivateChat) +
@@ -126,11 +130,9 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
               selectedChat: chatRoom.copyWith(lastMessageReadByUser: true),
               roomChat: chatRoom.copyWith(lastMessageReadByUser: true));
         } else {
-          _firestoreRepository.setLastMessageRead(
-              chatId: event.chat.id);
+          _firestoreRepository.setLastMessageRead(chatId: event.chat.id);
           yield currentState.copyWith(
-              selectedChatIndex: event.index,
-              selectedChat: event.chat);
+              selectedChatIndex: event.index, selectedChat: event.chat);
         }
       }
     } else if (event is MessageHolderExitChatEvent) {
@@ -162,10 +164,12 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
 
   void setUpPrivateChatsListener() async {
     Log.d('Setting up private chats stream');
-    privateChatStream = _firestoreRepository.streamPrivateChats().listen((data) {
+    privateChatStream =
+        _firestoreRepository.streamPrivateChats().listen((data) {
       Log.d("Got private chats");
       final chats = data.docs
-          .map((e) => PrivateChat.fromJson(e.id, e.data() as Map<String, dynamic>))
+          .map((e) =>
+              PrivateChat.fromJson(e.id, e.data() as Map<String, dynamic>))
           .toList()
           .reversed
           .toList();

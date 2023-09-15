@@ -57,6 +57,7 @@ dependencies:
   extended_image: ^8.1.1
   universal_io: ^2.2.2
   http: ^1.1.0
+  audioplayers: ^5.1.0
 
 dev_dependencies:
   flutter_test:

@@ -145,7 +145,7 @@ class VisitScreenContent extends StatelessWidget {
                 ElevatedButton(
                   onPressed: () {
                     BlocProvider.of<MessageHolderBloc>(parentContext)
-                        .add(MessageHolderPrivateChatEvent(user));
+                        .add(MessageHolderStartPrivateChatEvent(user));
                     Navigator.popUntil(context, ModalRoute.withName('/message_holder_screen'));
                   },
                   child: state.isChatAvailable
