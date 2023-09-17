@@ -107,6 +107,9 @@ class ChatsScreenContent extends StatelessWidget {
                           gender:
                               state.messages[index].message!.createdByGender,
                           chat: chat,
+                          countryCode: state.messages[index].message
+                                  ?.createdByCountryCode.toLowerCase() ??
+                              '',
                         );
                       }
                     },
@@ -118,6 +121,8 @@ class ChatsScreenContent extends StatelessWidget {
                       BlocProvider.of<MessagesBloc>(context)
                           .add(MessagesChangedEvent(text));
                     },
+                    hintText: FlutterI18n.translate(
+                        context, "write_message_hint"),
                     showGiphy: isPrivateChat,
                     onTapGiphy: () async {
                       final GiphyGif? gif = await GiphyGet.getGif(

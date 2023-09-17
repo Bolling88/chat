@@ -134,6 +134,7 @@ class FirestoreRepository {
           'createdById': getUserId(),
           'createdByName': user.displayName,
           'createdByGender': user.gender,
+          'createdByCountryCode': user.countryCode,
           'createdByImageUrl': user.pictureData,
           'created': FieldValue.serverTimestamp()
         });
@@ -146,6 +147,7 @@ class FirestoreRepository {
         'createdById': getUserId(),
         'createdByName': user.displayName,
         'createdByGender': user.gender,
+        'createdByCountryCode': user.countryCode,
         'createdByImageUrl': user.pictureData,
         'created': FieldValue.serverTimestamp()
       });

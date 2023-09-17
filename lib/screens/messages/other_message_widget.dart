@@ -7,6 +7,7 @@ import '../../model/message.dart';
 import '../../repository/firestore_repository.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_widgets.dart';
+import '../../utils/flag.dart';
 import '../visit/visit_screen.dart';
 
 class AppOtherMessageWidget extends StatelessWidget {
@@ -15,6 +16,7 @@ class AppOtherMessageWidget extends StatelessWidget {
   final String displayName;
   final String userId;
   final int gender;
+  final String countryCode;
   final Chat chat;
 
   const AppOtherMessageWidget({
@@ -24,6 +26,7 @@ class AppOtherMessageWidget extends StatelessWidget {
     required this.userId,
     required this.displayName,
     required this.gender,
+    required this.countryCode,
     required this.chat,
   }) : super(key: key);
 
@@ -39,13 +42,13 @@ class AppOtherMessageWidget extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.max,
           children: [
-              Padding(
-                padding: const EdgeInsets.only(left: 0, right: 10),
-                child: AppUserImage(
-                  url: pictureData,
-                  gender: gender,
-                ),
+            Padding(
+              padding: const EdgeInsets.only(left: 0, right: 10),
+              child: AppUserImage(
+                url: pictureData,
+                gender: gender,
               ),
+            ),
             (message.chatType == ChatType.giphy)
                 ? Align(
                     alignment: Alignment.bottomLeft,
@@ -97,7 +100,8 @@ class AppOtherMessageWidget extends StatelessWidget {
                                       child: AppLottie(
                                         url: getGenderUrl(gender),
                                         animate: false,
-                                      ))
+                                      )),
+                                  getFlag(countryCode: countryCode, fontSize: 18),
                                 ],
                               ),
                               Text(

@@ -9,6 +9,7 @@ import '../../repository/firestore_repository.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_widgets.dart';
 import '../../utils/constants.dart';
+import '../../utils/flag.dart';
 import '../error/error_screen.dart';
 import '../loading/loading_screen.dart';
 import '../messages/other_message_widget.dart';
@@ -105,18 +106,22 @@ class PeopleScreenBuilder extends StatelessWidget {
                                           url: getGenderUrl(
                                               state.chatUsers[index].gender),
                                           animate: false,
-                                        ))
+                                        )),
                                   ],
                                 ),
+                                trailing: getFlag(
+                                    countryCode:
+                                        state.chatUsers[index].countryCode,
+                                    fontSize: 30),
                                 subtitle: Text(
                                     '${state.chatUsers[index].city}, ${state.chatUsers[index].country}',
                                     style:
                                         Theme.of(context).textTheme.bodyMedium),
                                 leading: AppUserImage(
-                                        url:state.chatUsers[index].pictureData,
-                                        gender: state.chatUsers[index].gender,
-                                        size: 40,
-                                      ),
+                                  url: state.chatUsers[index].pictureData,
+                                  gender: state.chatUsers[index].gender,
+                                  size: 40,
+                                ),
                                 onTap: () {
                                   if (getSize(context) == ScreenSize.small) {
                                     //Navigator.pop(context);

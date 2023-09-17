@@ -134,34 +134,37 @@ class MessageHolderScreenContent extends StatelessWidget {
       child: ListView.builder(
           itemCount: state.privateChats.length + 1,
           itemBuilder: (context, index) {
-            return GestureDetector(
-              onTap: () {
-                BlocProvider.of<MessageHolderBloc>(context).add(
-                    MessageHolderChatClickedEvent(
-                        index,
-                        (index == 0)
-                            ? state.roomChat
-                            : state.privateChats[index - 1]));
-              },
-              child: getSize(context) == ScreenSize.large
-                  ? Row(
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        if (index != 0)
-                          IconButton(
-                            onPressed: () {
-                              BlocProvider.of<MessageHolderBloc>(context)
-                                  .add(MessageHolderClosePrivateChatEvent(state.privateChats[index - 1]));
-                            },
-                            icon: const Icon(
-                              Icons.close,
-                              color: AppColors.main,
+            return MouseRegion(
+              cursor: SystemMouseCursors.click,
+              child: GestureDetector(
+                onTap: () {
+                  BlocProvider.of<MessageHolderBloc>(context).add(
+                      MessageHolderChatClickedEvent(
+                          index,
+                          (index == 0)
+                              ? state.roomChat
+                              : state.privateChats[index - 1]));
+                },
+                child: getSize(context) == ScreenSize.large
+                    ? Row(
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          if (index != 0)
+                            IconButton(
+                              onPressed: () {
+                                BlocProvider.of<MessageHolderBloc>(context)
+                                    .add(MessageHolderClosePrivateChatEvent(state.privateChats[index - 1]));
+                              },
+                              icon: const Icon(
+                                Icons.close,
+                                color: AppColors.main,
+                              ),
                             ),
-                          ),
-                        Expanded(child: getCard(state, index, context))
-                      ],
-                    )
-                  : getCard(state, index, context),
+                          Expanded(child: getCard(state, index, context))
+                        ],
+                      )
+                    : getCard(state, index, context),
+              ),
             );
           }),
     );
@@ -202,7 +205,7 @@ class MessageHolderScreenContent extends StatelessWidget {
                         style: Theme.of(context).textTheme.bodySmall?.merge(
                               TextStyle(
                                   color: state.selectedChatIndex == index
-                                      ? AppColors.grey_1
+                                      ? AppColors.main
                                       : AppColors.white,
                                   fontWeight: FontWeight.bold),
                             )),
@@ -215,7 +218,7 @@ class MessageHolderScreenContent extends StatelessWidget {
                       style: Theme.of(context).textTheme.bodySmall?.merge(
                             TextStyle(
                                 color: state.selectedChatIndex == index
-                                    ? AppColors.grey_1
+                                    ? AppColors.main
                                     : AppColors.white,
                                 fontWeight: FontWeight.bold),
                           ),

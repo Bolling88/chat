@@ -6,6 +6,7 @@ import 'package:flutter_i18n/flutter_i18n.dart';
 import '../../model/chat.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_widgets.dart';
+import '../../utils/flag.dart';
 import '../../utils/lottie.dart';
 import '../hero/hero_screen.dart';
 import '../message_holder/bloc/message_holder_bloc.dart';
@@ -135,7 +136,11 @@ class VisitScreenContent extends StatelessWidget {
                           child: AppLottie(
                             url: getGenderUrl(user.gender),
                             animate: false,
-                          ))
+                          )),
+                      getFlag(
+                          countryCode:
+                          state.user?.countryCode ?? '',
+                          fontSize: 30)
                     ],
                   ),
                 ),
@@ -149,6 +154,8 @@ class VisitScreenContent extends StatelessWidget {
                           currentMessage: '',
                           onTextChanged: (String value) {},
                           onTapGiphy: () {},
+                          hintText: FlutterI18n.translate(
+                              context, "write_private_message_hint"),
                           showGiphy: false,
                           onSendTapped: (String message) {
                             BlocProvider.of<MessageHolderBloc>(parentContext)

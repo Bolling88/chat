@@ -4,6 +4,7 @@ import '../../utils/app_colors.dart';
 
 class MessageEditTextWidget extends StatefulWidget {
   final String currentMessage;
+  final String hintText;
   final ValueChanged<String> onTextChanged;
   final ValueChanged<String> onSendTapped;
   final GestureTapCallback onTapGiphy;
@@ -12,6 +13,7 @@ class MessageEditTextWidget extends StatefulWidget {
   const MessageEditTextWidget(
       {Key? key,
       required this.currentMessage,
+      required this.hintText,
       required this.onTextChanged,
       required this.onSendTapped,
       required this.onTapGiphy,
@@ -91,8 +93,7 @@ class _MessageEditTextWidgetState extends State<MessageEditTextWidget> {
                       hintStyle: Theme.of(context).textTheme.bodyMedium,
                       contentPadding:
                           const EdgeInsets.only(left: 15, right: 15),
-                      hintText: FlutterI18n.translate(
-                          context, "write_message_hint"))),
+                      hintText: widget.hintText)),
             ),
             const SizedBox(
               width: 10,

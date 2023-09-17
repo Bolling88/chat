@@ -8,6 +8,7 @@ class Message extends Equatable implements Comparable<Message> {
   final String createdById;
   final String createdByName;
   final int createdByGender;
+  final String createdByCountryCode;
   final String createdByImageUrl;
   final ChatType chatType;
   final Timestamp created;
@@ -17,6 +18,7 @@ class Message extends Equatable implements Comparable<Message> {
         createdById = json['createdById'] ?? "",
         createdByName = json['createdByName'] ?? "",
         createdByGender = json['createdByGender'] ?? 0,
+        createdByCountryCode = json['createdByCountryCode'] ?? '',
         chatType = ChatType.values[json['chatType'] ?? 0],
         createdByImageUrl = json['createdByImageUrl'] ?? "",
         text = json['text'] ?? "";
@@ -28,7 +30,8 @@ class Message extends Equatable implements Comparable<Message> {
         chatType,
         createdById,
         createdByName,
-    createdByGender,
+        createdByGender,
+        createdByCountryCode,
         createdByImageUrl,
         created
       ];
