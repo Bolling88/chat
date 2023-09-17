@@ -94,7 +94,8 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
             }
           } else {
             if (event.privateChats.contains(currentState.selectedChat)) {
-              //If the private chat we are on still exists
+              setMessageAsRead(event, currentState);
+
               yield currentState.copyWith(
                   privateChats: event.privateChats,
                   selectedChat: currentState.selectedChat,
@@ -112,6 +113,10 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
             }
           }
         } else {
+          if (currentState.selectedChatIndex != 0) {
+            setMessageAsRead(event, currentState);
+          }
+
           // The number of private chats did not change
           yield currentState.copyWith(privateChats: event.privateChats);
         }
@@ -162,6 +167,20 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
       }
     } else {
       throw UnimplementedError();
+    }
+  }
+
+  void setMessageAsRead(MessageHolderPrivateChatsUpdatedEvent event,
+      MessageHolderBaseState currentState) {
+    //If the private chat the user have still exists
+    //Make sure we set the message as read since we are on that chat
+    final currentChat = event.privateChats
+        .where((element) => element.id == currentState.selectedChat.id)
+        .firstOrNull;
+    if (currentChat != null) {
+      if (currentState.selectedChat.lastMessage != currentChat.lastMessage) {
+        _firestoreRepository.setLastMessageRead(chatId: currentChat.id);
+      }
     }
   }
 
