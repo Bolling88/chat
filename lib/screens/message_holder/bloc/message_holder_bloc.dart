@@ -50,7 +50,10 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
             await _firestoreRepository.isPrivateChatAvailable(event.user.id);
         if (isChatAvailable) {
           await _firestoreRepository.createPrivateChat(
-              otherUser: event.user, myUser: _chatUser);
+            otherUser: event.user,
+            myUser: _chatUser,
+            initialMessage: event.message,
+          );
         } else {
           final privateChat = currentState.privateChats
               .where((element) => element.users.contains(event.user.id))

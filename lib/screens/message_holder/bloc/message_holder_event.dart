@@ -41,11 +41,12 @@ class MessageHolderChatUpdatedEvent extends MessageHolderEvent {
 
 class MessageHolderStartPrivateChatEvent extends MessageHolderEvent {
   final ChatUser user;
+  final String message;
 
-  MessageHolderStartPrivateChatEvent(this.user);
+  MessageHolderStartPrivateChatEvent(this.user, this.message);
 
   @override
-  List<Object> get props => [user];
+  List<Object> get props => [user, message];
 }
 
 class MessageHolderChatClickedEvent extends MessageHolderEvent {

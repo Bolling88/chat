@@ -113,24 +113,29 @@ class ChatsScreenContent extends StatelessWidget {
                   )),
                   const Divider(),
                   MessageEditTextWidget(
-                      currentMessage: state.currentMessage,
-                      onTextChanged: (text) {
+                    currentMessage: state.currentMessage,
+                    onTextChanged: (text) {
+                      BlocProvider.of<MessagesBloc>(context)
+                          .add(MessagesChangedEvent(text));
+                    },
+                    showGiphy: isPrivateChat,
+                    onTapGiphy: () async {
+                      final GiphyGif? gif = await GiphyGet.getGif(
+                        context: context, //Required
+                        apiKey: giphyKey, //Required.
+                        randomID: state
+                            .userId, // Optional - An ID/proxy for a specific user.
+                      );
+                      if (gif != null) {
                         BlocProvider.of<MessagesBloc>(context)
-                            .add(MessagesChangedEvent(text));
-                      },
-                      showGiphy: isPrivateChat,
-                      onTapGiphy: () async {
-                        final GiphyGif? gif = await GiphyGet.getGif(
-                          context: context, //Required
-                          apiKey: giphyKey, //Required.
-                          randomID: state
-                              .userId, // Optional - An ID/proxy for a specific user.
-                        );
-                        if (gif != null) {
-                          BlocProvider.of<MessagesBloc>(context)
-                              .add(MessagesGiphyPickedEvent(gif));
-                        }
-                      })
+                            .add(MessagesGiphyPickedEvent(gif));
+                      }
+                    },
+                    onSendTapped: (String message) {
+                      BlocProvider.of<MessagesBloc>(context)
+                          .add(MessagesSendEvent());
+                    },
+                  )
                 ],
               );
             } else if (state is MessagesEmptyState) {

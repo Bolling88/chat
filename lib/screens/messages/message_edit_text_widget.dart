@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
-
 import '../../utils/app_colors.dart';
-import 'bloc/messages_bloc.dart';
-import 'bloc/messages_event.dart';
 
 class MessageEditTextWidget extends StatefulWidget {
   final String currentMessage;
   final ValueChanged<String> onTextChanged;
+  final ValueChanged<String> onSendTapped;
   final GestureTapCallback onTapGiphy;
   final bool showGiphy;
 
@@ -16,6 +13,7 @@ class MessageEditTextWidget extends StatefulWidget {
       {Key? key,
       required this.currentMessage,
       required this.onTextChanged,
+      required this.onSendTapped,
       required this.onTapGiphy,
       required this.showGiphy})
       : super(key: key);
@@ -54,8 +52,7 @@ class _MessageEditTextWidgetState extends State<MessageEditTextWidget> {
                   cursorColor: AppColors.main,
                   onChanged: widget.onTextChanged,
                   onEditingComplete: () {
-                    BlocProvider.of<MessagesBloc>(context)
-                        .add(MessagesSendEvent());
+                    widget.onSendTapped.call(controller.text);
                     controller.text = "";
                   },
                   decoration: InputDecoration(
@@ -67,8 +64,7 @@ class _MessageEditTextWidgetState extends State<MessageEditTextWidget> {
                         color: Colors.transparent,
                         child: IconButton(
                           onPressed: () {
-                            BlocProvider.of<MessagesBloc>(context)
-                                .add(MessagesSendEvent());
+                            widget.onSendTapped.call(controller.text);
                             controller.text = "";
                           },
                           icon: Icon(Icons.send,

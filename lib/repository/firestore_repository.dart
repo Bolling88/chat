@@ -259,6 +259,7 @@ class FirestoreRepository {
   Future<RoomChat?> createPrivateChat({
     required ChatUser myUser,
     required ChatUser otherUser,
+    required String initialMessage,
   }) async {
     try {
       final reference = await privateChats.add({
@@ -279,8 +280,15 @@ class FirestoreRepository {
         ..data();
       final data = querySnapshot.data();
       if (data != null) {
-        return RoomChat.fromJson(
-            querySnapshot.id, data as Map<String, dynamic>);
+        final chat =
+            RoomChat.fromJson(querySnapshot.id, data as Map<String, dynamic>);
+        postMessage(
+            chatId: chat.id,
+            user: myUser,
+            message: initialMessage,
+            isPrivateChat: true,
+            chatType: ChatType.message);
+        return chat;
       }
     } catch (e) {
       Log.e(e);

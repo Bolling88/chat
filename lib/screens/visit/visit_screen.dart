@@ -10,8 +10,8 @@ import '../../utils/lottie.dart';
 import '../hero/hero_screen.dart';
 import '../message_holder/bloc/message_holder_bloc.dart';
 import '../message_holder/bloc/message_holder_event.dart';
+import '../messages/message_edit_text_widget.dart';
 import '../messages/other_message_widget.dart';
-import '../people/people_screen.dart';
 import 'bloc/visit_bloc.dart';
 import 'bloc/visit_state.dart';
 
@@ -142,17 +142,35 @@ class VisitScreenContent extends StatelessWidget {
                 Text('${user.city}, ${user.country}',
                     style: Theme.of(context).textTheme.bodyMedium),
                 const SizedBox(height: 40),
-                ElevatedButton(
-                  onPressed: () {
-                    BlocProvider.of<MessageHolderBloc>(parentContext)
-                        .add(MessageHolderStartPrivateChatEvent(user));
-                    Navigator.popUntil(context, ModalRoute.withName('/message_holder_screen'));
-                  },
-                  child: state.isChatAvailable
-                      ? Text(FlutterI18n.translate(context, 'private_chat'))
-                      : Text(
-                          FlutterI18n.translate(context, 'go_to_private_chat')),
-                )
+                state.isChatAvailable
+                    ? Padding(
+                        padding: const EdgeInsets.only(left: 20, right: 20),
+                        child: MessageEditTextWidget(
+                          currentMessage: '',
+                          onTextChanged: (String value) {},
+                          onTapGiphy: () {},
+                          showGiphy: false,
+                          onSendTapped: (String message) {
+                            BlocProvider.of<MessageHolderBloc>(parentContext)
+                                .add(
+                              MessageHolderStartPrivateChatEvent(user, message),
+                            );
+                            Navigator.popUntil(context,
+                                ModalRoute.withName('/message_holder_screen'));
+                          },
+                        ),
+                      )
+                    : ElevatedButton(
+                        onPressed: () {
+                          BlocProvider.of<MessageHolderBloc>(parentContext).add(
+                            MessageHolderStartPrivateChatEvent(user, ''),
+                          );
+                          Navigator.popUntil(context,
+                              ModalRoute.withName('/message_holder_screen'));
+                        },
+                        child: Text(FlutterI18n.translate(
+                            context, 'go_to_private_chat')),
+                      )
               ],
             ),
           );
