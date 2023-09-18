@@ -5,6 +5,7 @@ import 'package:chat/repository/firestore_repository.dart';
 import 'package:chat/repository/storage_repository.dart';
 import 'package:chat/screens/login/bloc/login_state.dart';
 import 'package:chat/utils/image_util.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
@@ -36,7 +37,7 @@ class OnboardingPhotoBloc
     try {
       if (event is OnboardingPhotoInitialEvent) {
         _chatUser = (await _firestoreRepository.getUser())!;
-        yield OnboardingPhotoBaseState(_chatUser.displayName ?? '');
+        yield OnboardingPhotoBaseState(_chatUser.displayName);
       } else if (event is OnboardingPhotoCameraClickedEvent) {
         final pickedFile = await picker.pickImage(
             source: ImageSource.camera, imageQuality: photoQuality);
@@ -62,8 +63,11 @@ class OnboardingPhotoBloc
           CroppedFile? croppedFile =
               await _appImageCropper.cropImage(pickedFile);
           if (currentState is OnboardingPhotoBaseState && croppedFile != null) {
-            var imageForWeb = await croppedFile.readAsBytes();
-            String base64Image = base64Encode(imageForWeb);
+            String base64Image = '';
+            if (kIsWeb) {
+              var imageForWeb = await croppedFile.readAsBytes();
+              base64Image = base64Encode(imageForWeb);
+            }
 
             yield OnboardingPhotoDoneState(croppedFile.path, base64Image);
           } else if (currentState is OnboardingPhotoDoneState &&
@@ -74,8 +78,8 @@ class OnboardingPhotoBloc
       } else if (event is OnboardingPhotoContinueClickedEvent) {
         if (currentState is OnboardingPhotoDoneState) {
           yield OnboardingPhotoLoadingState();
-          final imageUrl = await _storageRepository
-              .uploadProfileImage(currentState.filePath, currentState.base64Image);
+          final imageUrl = await _storageRepository.uploadProfileImage(
+              currentState.filePath, currentState.base64Image);
           final finalUrl = await imageUrl?.getDownloadURL() ?? "";
           await _firestoreRepository.updateUserProfileImage(finalUrl);
 
@@ -88,12 +92,14 @@ class OnboardingPhotoBloc
         }
       } else if (event is OnboardingPhotoRedoClickedEvent) {
         if (currentState is OnboardingPhotoDoneState) {
-          yield OnboardingPhotoRedoState(currentState.filePath, currentState.base64Image);
+          yield OnboardingPhotoRedoState(
+              currentState.filePath, currentState.base64Image);
           yield currentState;
         }
       } else if (event is OnboardingPhotoBottomSheetClosedEvent) {
         if (currentState is OnboardingPhotoDoneState) {
-          yield OnboardingPhotoDoneState(currentState.filePath, currentState.base64Image);
+          yield OnboardingPhotoDoneState(
+              currentState.filePath, currentState.base64Image);
         }
       } else if (event is OnboardingPhotoSkipEvent) {
         await _firestoreRepository.updateUserProfileImage('');

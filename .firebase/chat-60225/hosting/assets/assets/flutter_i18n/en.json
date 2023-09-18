@@ -55,5 +55,6 @@
   "you_look_good": "Looking good,",
   "one_more_thing": "One more thing",
   "change_image": "Change image",
-  "go_to_private_chat": "Go to private chat"
+  "go_to_private_chat": "Go to private chat",
+  "write_private_message_hint": "Enter message to start chat..."
 }

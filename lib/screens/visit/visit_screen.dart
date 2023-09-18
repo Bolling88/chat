@@ -253,14 +253,19 @@ Future showVisitScreen(BuildContext parentContext, String userId, Chat chat,
     bool showBackButton) async {
   await showModalBottomSheet(
     useRootNavigator: true,
+    isScrollControlled: true,
     context: parentContext,
     backgroundColor: AppColors.transparent,
     builder: (BuildContext context) {
-      return VisitScreen(
-          userId: userId,
-          parentContext: parentContext,
-          chat: chat,
-          showBackButton: showBackButton);
+      return Padding(
+        padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom),
+        child: VisitScreen(
+            userId: userId,
+            parentContext: parentContext,
+            chat: chat,
+            showBackButton: showBackButton),
+      );
     },
   );
 }

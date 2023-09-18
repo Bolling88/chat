@@ -1,6 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 
+import 'chat_user.dart';
+
 abstract class Chat extends Equatable {
   final String id;
   final List<String> users;

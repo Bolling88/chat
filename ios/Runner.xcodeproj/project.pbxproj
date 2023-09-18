@@ -414,7 +414,7 @@
 				DEVELOPMENT_TEAM = 52H63YXF36;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = Chat;
+				INFOPLIST_KEY_CFBundleDisplayName = "Kvitter - Chat rooms";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.social-networking";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -546,7 +546,7 @@
 				DEVELOPMENT_TEAM = 52H63YXF36;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = Chat;
+				INFOPLIST_KEY_CFBundleDisplayName = "Kvitter - Chat rooms";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.social-networking";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -572,7 +572,7 @@
 				DEVELOPMENT_TEAM = 52H63YXF36;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Runner/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = Chat;
+				INFOPLIST_KEY_CFBundleDisplayName = "Kvitter - Chat rooms";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.social-networking";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

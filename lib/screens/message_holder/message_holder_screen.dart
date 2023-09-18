@@ -249,7 +249,7 @@ class MessageHolderScreenContent extends StatelessWidget {
       BuildContext context, MessageHolderBaseState state, RoomChat chat) {
     return AppBar(
       title: Text(
-        state.selectedChat.getChatName(FirebaseAuth.instance.currentUser!.uid),
+        state.selectedChat.getChatName(FirebaseAuth.instance.currentUser!.uid)
       ),
       backgroundColor: Color(chat.chatColor),
       actions: [
