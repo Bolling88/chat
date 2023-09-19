@@ -9,12 +9,14 @@ import '../../utils/app_widgets.dart';
 import '../../utils/flag.dart';
 import '../../utils/gender.dart';
 import '../../utils/lottie.dart';
+import '../../utils/translate.dart';
 import '../hero/hero_screen.dart';
 import '../message_holder/bloc/message_holder_bloc.dart';
 import '../message_holder/bloc/message_holder_event.dart';
 import '../messages/message_edit_text_widget.dart';
 import '../messages/other_message_widget.dart';
 import 'bloc/visit_bloc.dart';
+import 'bloc/visit_event.dart';
 import 'bloc/visit_state.dart';
 
 class VisitScreen extends StatelessWidget {
@@ -35,7 +37,7 @@ class VisitScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (BuildContext context) =>
-          VisitBloc(context.read<FirestoreRepository>(), userId, chat.id),
+          VisitBloc(context.read<FirestoreRepository>(), userId, chat),
       child: VisitScreenContent(
           parentContext: parentContext,
           chat: chat,
@@ -44,7 +46,7 @@ class VisitScreen extends StatelessWidget {
   }
 }
 
-const viewHeight = 400.0;
+const bottomsheetHeight = 450.0;
 
 class VisitScreenContent extends StatelessWidget {
   final BuildContext parentContext;
@@ -62,11 +64,11 @@ class VisitScreenContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocListener<VisitBloc, VisitState>(
       listener: (context, state) {},
-      child: BlocBuilder<VisitBloc, VisitState>(builder: (context, state) {
+      child: BlocBuilder<VisitBloc, VisitState>(builder: (blocContext, state) {
         if (state is VisitBaseState && state.user != null) {
           final user = state.user!;
           return Container(
-            height: viewHeight,
+            height: bottomsheetHeight,
             width: double.infinity,
             decoration: const BoxDecoration(
                 color: AppColors.white,
@@ -108,42 +110,33 @@ class VisitScreenContent extends StatelessWidget {
                   ],
                 ),
                 Center(
-                    child: GestureDetector(
-                  onTap: () {
-                    Navigator.pushNamed(context, HeroScreen.routeName,
-                        arguments: HeroScreenArguments(user.pictureData));
-                  },
-                  child: Hero(
-                    tag: "imageHero",
                     child: AppUserImage(
                       url: user.pictureData,
                       gender: user.gender,
                       size: 110,
-                    ),
-                  ),
-                )),
+                    )),
                 Center(
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       Text(
                         state.user?.displayName ?? '',
-                        style: Theme.of(context).textTheme.displaySmall ?.merge(TextStyle(
-                            color: getGenderColor(
-                                Gender.fromValue(user.gender)))),
+                        style: Theme.of(context).textTheme.displaySmall?.merge(
+                            TextStyle(
+                                color: getGenderColor(
+                                    Gender.fromValue(user.gender)))),
                       ),
                       const SizedBox(width: 2),
-                      if(user.gender != Gender.secret.value)
-                      SizedBox(
-                          width: 30,
-                          height: 30,
-                          child: AppLottie(
-                            url: getGenderUrl(user.gender),
-                            animate: false,
-                          )),
+                      if (user.gender != Gender.secret.value)
+                        SizedBox(
+                            width: 30,
+                            height: 30,
+                            child: AppLottie(
+                              url: getGenderUrl(user.gender),
+                              animate: false,
+                            )),
                       getFlag(
-                          countryCode:
-                          state.user?.countryCode ?? '',
+                          countryCode: state.user?.countryCode ?? '',
                           fontSize: 30)
                     ],
                   ),
@@ -151,37 +144,58 @@ class VisitScreenContent extends StatelessWidget {
                 Text('${user.city}, ${user.country}',
                     style: Theme.of(context).textTheme.bodyMedium),
                 const SizedBox(height: 40),
-                state.isChatAvailable
-                    ? Padding(
-                        padding: const EdgeInsets.only(left: 20, right: 20),
-                        child: MessageEditTextWidget(
-                          currentMessage: '',
-                          onTextChanged: (String value) {},
-                          onTapGiphy: () {},
-                          hintText: FlutterI18n.translate(
-                              context, "write_private_message_hint"),
-                          showGiphy: false,
-                          onSendTapped: (String message) {
+                if (!state.userBlocked && !state.myUser.blockedBy.contains(user.id))
+                  state.isChatAvailable
+                      ? Padding(
+                          padding: const EdgeInsets.only(left: 20, right: 20),
+                          child: MessageEditTextWidget(
+                            currentMessage: '',
+                            onTextChanged: (String value) {},
+                            onTapGiphy: () {},
+                            hintText: FlutterI18n.translate(
+                                context, "write_private_message_hint"),
+                            showGiphy: false,
+                            onSendTapped: (String message) {
+                              BlocProvider.of<MessageHolderBloc>(parentContext)
+                                  .add(
+                                MessageHolderStartPrivateChatEvent(
+                                    user, message),
+                              );
+                              Navigator.popUntil(
+                                  context,
+                                  ModalRoute.withName(
+                                      '/message_holder_screen'));
+                            },
+                          ),
+                        )
+                      : ElevatedButton(
+                          onPressed: () {
                             BlocProvider.of<MessageHolderBloc>(parentContext)
                                 .add(
-                              MessageHolderStartPrivateChatEvent(user, message),
+                              MessageHolderStartPrivateChatEvent(user, ''),
                             );
                             Navigator.popUntil(context,
                                 ModalRoute.withName('/message_holder_screen'));
                           },
+                          child: Text(FlutterI18n.translate(
+                              context, 'go_to_private_chat')),
                         ),
-                      )
-                    : ElevatedButton(
-                        onPressed: () {
-                          BlocProvider.of<MessageHolderBloc>(parentContext).add(
-                            MessageHolderStartPrivateChatEvent(user, ''),
-                          );
-                          Navigator.popUntil(context,
-                              ModalRoute.withName('/message_holder_screen'));
-                        },
-                        child: Text(FlutterI18n.translate(
-                            context, 'go_to_private_chat')),
-                      )
+                TextButton(
+                  onPressed: () {
+                    if (state.userBlocked) {
+                      BlocProvider.of<VisitBloc>(blocContext)
+                          .add(VisitUnblocUserEvent());
+                    } else {
+                      showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return getBlockAccountDialog(blocContext, context);
+                          });
+                    }
+                  },
+                  child: Text(translate(context,
+                      state.userBlocked ? 'unblock_user' : 'block_user')),
+                ),
               ],
             ),
           );
@@ -190,7 +204,7 @@ class VisitScreenContent extends StatelessWidget {
             state.userLoaded) {
           return Container(
             width: double.infinity,
-            height: viewHeight,
+            height: bottomsheetHeight,
             decoration: const BoxDecoration(
                 color: AppColors.white,
                 borderRadius: BorderRadius.only(
@@ -214,7 +228,7 @@ class VisitScreenContent extends StatelessWidget {
         } else {
           return Container(
             width: double.infinity,
-            height: viewHeight,
+            height: bottomsheetHeight,
             decoration: const BoxDecoration(
                 color: AppColors.white,
                 borderRadius: BorderRadius.only(
@@ -230,27 +244,27 @@ class VisitScreenContent extends StatelessWidget {
   }
 }
 
-class DetailScreen extends StatelessWidget {
-  const DetailScreen({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: GestureDetector(
-        onTap: () {
-          Navigator.pop(context);
+AlertDialog getBlockAccountDialog(
+    BuildContext blocContext, BuildContext context) {
+  return AlertDialog(
+    title: Text(translate(context, 'block_user')),
+    content: Text(translate(context, 'block_user_info')),
+    actions: [
+      TextButton(
+        onPressed: () {
+          BlocProvider.of<VisitBloc>(blocContext).add(VisitBlocUserEvent());
+          Navigator.of(context).pop();
         },
-        child: Center(
-          child: Hero(
-            tag: 'profile',
-            child: Image.network(
-              'https://picsum.photos/250?image=9',
-            ),
-          ),
-        ),
+        child: Text(translate(context, 'yes')),
       ),
-    );
-  }
+      TextButton(
+        onPressed: () {
+          Navigator.of(context).pop();
+        },
+        child: Text(translate(context, 'no')),
+      ),
+    ],
+  );
 }
 
 Future showVisitScreen(BuildContext parentContext, String userId, Chat chat,
@@ -262,8 +276,8 @@ Future showVisitScreen(BuildContext parentContext, String userId, Chat chat,
     backgroundColor: AppColors.transparent,
     builder: (BuildContext context) {
       return Padding(
-        padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom),
+        padding:
+            EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
         child: VisitScreen(
             userId: userId,
             parentContext: parentContext,

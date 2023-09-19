@@ -166,7 +166,6 @@ class KvitterApp extends StatelessWidget {
                 ChatScreen.routeName: (context) => const ChatScreen(),
                 MessageHolderScreen.routeName: (context) =>
                     const MessageHolderScreen(),
-                HeroScreen.routeName: (context) => const HeroScreen(),
                 ProfileScreen.routeName: (context) => const ProfileScreen(),
                 TermsScreen.routeName: (context) => const TermsScreen(),
                 PrivacyScreen.routeName: (context) => const PrivacyScreen(),

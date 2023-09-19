@@ -57,7 +57,7 @@ class PeopleScreenBuilder extends StatelessWidget {
           } else if (state is PeopleBaseState) {
             return Container(
               height:
-                  getSize(context) == ScreenSize.large ? double.infinity : 400,
+                  getSize(context) == ScreenSize.large ? double.infinity : bottomsheetHeight,
               decoration: const BoxDecoration(
                 color: AppColors.white,
                 borderRadius: BorderRadius.only(
@@ -149,7 +149,7 @@ class PeopleScreenBuilder extends StatelessWidget {
           } else {
             return Container(
               width: double.infinity,
-              height: viewHeight,
+              height: bottomsheetHeight,
               decoration: const BoxDecoration(
                   color: AppColors.white,
                   borderRadius: BorderRadius.only(

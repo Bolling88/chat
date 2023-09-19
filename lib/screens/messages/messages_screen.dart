@@ -115,31 +115,33 @@ class ChatsScreenContent extends StatelessWidget {
                     },
                   )),
                   const Divider(),
-                  MessageEditTextWidget(
-                    currentMessage: state.currentMessage,
-                    onTextChanged: (text) {
-                      BlocProvider.of<MessagesBloc>(context)
-                          .add(MessagesChangedEvent(text));
-                    },
-                    hintText: FlutterI18n.translate(
-                        context, "write_message_hint"),
-                    showGiphy: isPrivateChat,
-                    onTapGiphy: () async {
-                      final GiphyGif? gif = await GiphyGet.getGif(
-                        context: context, //Required
-                        apiKey: giphyKey, //Required.
-                        randomID: state
-                            .userId, // Optional - An ID/proxy for a specific user.
-                      );
-                      if (gif != null) {
+                  SafeArea(
+                    child: MessageEditTextWidget(
+                      currentMessage: state.currentMessage,
+                      onTextChanged: (text) {
                         BlocProvider.of<MessagesBloc>(context)
-                            .add(MessagesGiphyPickedEvent(gif));
-                      }
-                    },
-                    onSendTapped: (String message) {
-                      BlocProvider.of<MessagesBloc>(context)
-                          .add(MessagesSendEvent());
-                    },
+                            .add(MessagesChangedEvent(text));
+                      },
+                      hintText: FlutterI18n.translate(
+                          context, "write_message_hint"),
+                      showGiphy: isPrivateChat,
+                      onTapGiphy: () async {
+                        final GiphyGif? gif = await GiphyGet.getGif(
+                          context: context, //Required
+                          apiKey: giphyKey, //Required.
+                          randomID: state
+                              .userId, // Optional - An ID/proxy for a specific user.
+                        );
+                        if (gif != null) {
+                          BlocProvider.of<MessagesBloc>(context)
+                              .add(MessagesGiphyPickedEvent(gif));
+                        }
+                      },
+                      onSendTapped: (String message) {
+                        BlocProvider.of<MessagesBloc>(context)
+                            .add(MessagesSendEvent());
+                      },
+                    ),
                   )
                 ],
               );

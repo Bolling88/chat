@@ -15,7 +15,7 @@ enum Gender {
 
   const Gender(this.value);
 
-  static Gender fromValue(num i){
+  static Gender fromValue(num i) {
     return Gender.values.firstWhere((x) => x.value == i);
   }
 
@@ -338,11 +338,25 @@ class FirestoreRepository {
     });
   }
 
-  void leavePrivateChat(PrivateChat selectedChat) {
-    privateChats.doc(selectedChat.id).set({
+  Future<void> leavePrivateChat(PrivateChat selectedChat) {
+    return privateChats.doc(selectedChat.id).set({
       'users': FieldValue.arrayRemove([getUserId()]),
     }).catchError((error) {
       Log.e("Failed to leave private chat: $error");
+    });
+  }
+
+  Future<PrivateChat?> getPrivateChat(String userId) {
+    return privateChats
+        .where('users', arrayContains: getUserId())
+        .get()
+        .then((value) => value.docs
+            .map((e) =>
+                PrivateChat.fromJson(e.id, e.data() as Map<String, dynamic>))
+            .where((element) => element.users.contains(userId))
+            .firstOrNull)
+        .catchError((error) {
+      Log.e("Failed to delete private chat: $error");
     });
   }
 
@@ -419,6 +433,18 @@ class FirestoreRepository {
       'countryCode': userLocation.countryCode,
       'country': userLocation.country,
       'regionName': userLocation.regionName,
+    }, SetOptions(merge: true));
+  }
+
+  void blockUser(String id) {
+    users.doc(id).set({
+      'blockedBy': FieldValue.arrayUnion([getUserId()]),
+    }, SetOptions(merge: true));
+  }
+
+  void unblockUser(String id) {
+    users.doc(id).set({
+      'blockedBy': FieldValue.arrayRemove([getUserId()]),
     }, SetOptions(merge: true));
   }
 }

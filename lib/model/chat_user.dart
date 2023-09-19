@@ -1,8 +1,7 @@
+import 'package:chat/repository/firestore_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'dart:core';
-
-import '../repository/firestore_repository.dart';
 
 class ChatUser extends Equatable {
   final String id;
@@ -15,6 +14,7 @@ class ChatUser extends Equatable {
   final String countryCode;
   final String country;
   final String regionName;
+  final List<String> blockedBy;
 
   const ChatUser({
     required this.id,
@@ -27,6 +27,7 @@ class ChatUser extends Equatable {
     required this.countryCode,
     required this.country,
     required this.regionName,
+    required this.blockedBy,
   });
 
   ChatUser.fromJson(this.id, Map<String, dynamic> json)
@@ -38,7 +39,8 @@ class ChatUser extends Equatable {
         city = json['city'] ?? "",
         countryCode = json['countryCode'] ?? "",
         country = json['country'] ?? "",
-        regionName = json['regionName'] ?? "";
+        regionName = json['regionName'] ?? "",
+        blockedBy = json['blockedBy']?.cast<String>() ?? [];
 
   ChatUser.asUnknown(this.id)
       : created = Timestamp.now(),
@@ -49,7 +51,8 @@ class ChatUser extends Equatable {
         city = "",
         countryCode = "",
         country = "",
-        regionName = "";
+        regionName = "",
+        blockedBy = [];
 
   ChatUser copyWith(
       {String? name,
@@ -61,7 +64,8 @@ class ChatUser extends Equatable {
       String? city,
       String? countryCode,
       String? country,
-      String? regionName}) {
+      String? regionName,
+      List<String>? blockedBy}) {
     return ChatUser(
         id: id,
         displayName: displayName ?? this.displayName,
@@ -72,7 +76,8 @@ class ChatUser extends Equatable {
         city: city ?? this.city,
         countryCode: countryCode ?? this.countryCode,
         country: country ?? this.country,
-        regionName: regionName ?? this.regionName);
+        regionName: regionName ?? this.regionName,
+        blockedBy: blockedBy ?? this.blockedBy);
   }
 
   @override
@@ -87,5 +92,10 @@ class ChatUser extends Equatable {
         countryCode,
         country,
         regionName,
+        blockedBy,
       ];
+
+  bool isUserBlocked() {
+    return blockedBy.contains(getUserId());
+  }
 }

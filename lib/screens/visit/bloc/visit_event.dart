@@ -8,6 +8,8 @@ abstract class VisitEvent extends Equatable {
 }
 
 class VisitInitialEvent extends VisitEvent {}
+class VisitBlocUserEvent extends VisitEvent {}
+class VisitUnblocUserEvent extends VisitEvent {}
 
 class VisitUserLoadedState extends VisitEvent {
   final ChatUser? user;

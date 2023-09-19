@@ -62,5 +62,8 @@
   "write_private_message_hint": "Enter message to start chat...",
   "change_name": "Change name",
   "change_photo": "Change photo",
-  "save": "Save changes"
+  "save": "Save changes",
+  "block_user": "Block user",
+  "unblock_user": "Unblock user",
+  "block_user_info": "If you block this user they will not be able to send you messages. Are you sure you wish to do that?"
 }

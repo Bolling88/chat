@@ -8,21 +8,37 @@ abstract class VisitState extends Equatable {
 
 class VisitBaseState extends VisitState {
   final ChatUser? user;
+  final ChatUser myUser;
   final bool isChatAvailable;
   final bool userLoaded;
+  final bool userBlocked;
 
-  VisitBaseState(this.user, this.isChatAvailable, this.userLoaded);
+  VisitBaseState({
+    required this.user,
+    required this.myUser,
+    required this.isChatAvailable,
+    required this.userLoaded,
+    required this.userBlocked,
+  });
 
-  VisitBaseState copyWith(
-      {ChatUser? user, bool? isChatAvailable, bool? userLoaded}) {
-    return VisitBaseState(user ?? this.user,
-        isChatAvailable ?? this.isChatAvailable, userLoaded ?? this.userLoaded);
+  VisitBaseState copyWith({
+    ChatUser? user,
+    ChatUser? myUser,
+    bool? isChatAvailable,
+    bool? userLoaded,
+    bool? userBlocked,
+  }) {
+    return VisitBaseState(
+      user: user ?? this.user,
+      myUser: myUser ?? this.myUser,
+      isChatAvailable: isChatAvailable ?? this.isChatAvailable,
+      userLoaded: userLoaded ?? this.userLoaded,
+      userBlocked: userBlocked ?? this.userBlocked,
+    );
   }
 
   @override
-  List<Object?> get props => [user, isChatAvailable, userLoaded];
+  List<Object?> get props => [user, myUser, isChatAvailable, userLoaded];
 }
 
 class VisitLoadingState extends VisitState {}
-
-class VisitMoveToClubState extends VisitState {}
