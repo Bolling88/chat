@@ -3,7 +3,6 @@ import 'package:chat/repository/login_repository.dart';
 import 'package:chat/repository/presence_database.dart';
 import 'package:chat/repository/storage_repository.dart';
 import 'package:chat/screens/chat/chat_screen.dart';
-import 'package:chat/screens/hero/hero_screen.dart';
 import 'package:chat/screens/message_holder/message_holder_screen.dart';
 import 'package:chat/screens/onboarding_gender/onboarding_gender_screen.dart';
 import 'package:chat/screens/onboarding_name/onboarding_name_screen.dart';
