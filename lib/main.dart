@@ -10,6 +10,7 @@ import 'package:chat/screens/onboarding_name/onboarding_name_screen.dart';
 import 'package:chat/screens/onboarding_photo/onboarding_photo_screen.dart';
 import 'package:chat/screens/profile/profile_screen.dart';
 import 'package:chat/screens/splash/splash_screen.dart';
+import 'package:chat/screens/terms/copyright.dart';
 import 'package:chat/screens/terms/privacy.dart';
 import 'package:chat/screens/terms/terms.dart';
 import 'package:chat/utils/app_colors.dart';
@@ -168,6 +169,7 @@ class KvitterApp extends StatelessWidget {
                 ProfileScreen.routeName: (context) => const ProfileScreen(),
                 TermsScreen.routeName: (context) => const TermsScreen(),
                 PrivacyScreen.routeName: (context) => const PrivacyScreen(),
+                CopyrightScreen.routeName: (context) => const CopyrightScreen(),
               },
             ),
           );
