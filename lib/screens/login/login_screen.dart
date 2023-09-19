@@ -171,11 +171,21 @@ class LoginScreenContent extends StatelessWidget {
               onTap: () {
                 Navigator.pushNamed(context, "/terms_screen");
               },
-              child: Text(FlutterI18n.translate(context, "terms"),
+              child: Text('${FlutterI18n.translate(context, "terms")},',
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodySmall?.merge(
                         const TextStyle(color: AppColors.main),
                       )),
+            ),
+            GestureDetector(
+              onTap: () {
+                Navigator.pushNamed(context, "/privacy_screen");
+              },
+              child: Text(FlutterI18n.translate(context, "privacy"),
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.bodySmall?.merge(
+                    const TextStyle(color: AppColors.main),
+                  )),
             ),
             Text(
               FlutterI18n.translate(context, "and"),
@@ -184,9 +194,9 @@ class LoginScreenContent extends StatelessWidget {
             ),
             GestureDetector(
               onTap: () {
-                Navigator.pushNamed(context, "/privacy_screen");
+                Navigator.pushNamed(context, "/eula_screen");
               },
-              child: Text(FlutterI18n.translate(context, "privacy"),
+              child: Text(FlutterI18n.translate(context, "eula"),
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodySmall?.merge(
                         const TextStyle(color: AppColors.main),

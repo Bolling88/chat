@@ -28,6 +28,9 @@ class OnboardingGenderBloc
     } else if (event is OnboardingGenderNonBinaryClickedEvent) {
       await _firestoreRepository.updateUserGender(Gender.nonBinary);
       yield const OnboardingGenderSuccessState(OnboardingNavigation.DONE);
+    }else if (event is OnboardingGenderSecretClickedEvent) {
+      await _firestoreRepository.updateUserGender(Gender.secret);
+      yield const OnboardingGenderSuccessState(OnboardingNavigation.DONE);
     }
   }
 }

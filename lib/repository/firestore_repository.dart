@@ -10,11 +10,16 @@ import '../utils/log.dart';
 enum Gender {
   female(0),
   male(1),
-  nonBinary(2);
+  nonBinary(2),
+  secret(3);
 
   const Gender(this.value);
 
-  final num value;
+  static Gender fromValue(num i){
+    return Gender.values.firstWhere((x) => x.value == i);
+  }
+
+  final int value;
 }
 
 enum ChatType {

@@ -1,6 +1,7 @@
 //a bloc builder widget class for creating a chat
 import 'package:chat/screens/login/login_screen.dart';
 import 'package:chat/screens/onboarding_name/onboarding_name_screen.dart';
+import 'package:chat/utils/gender.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../repository/firestore_repository.dart';
@@ -83,14 +84,21 @@ class ProfileScreenBuilder extends StatelessWidget {
                       children: [
                         Text(state.user.displayName,
                             textAlign: TextAlign.left,
-                            style: Theme.of(context).textTheme.displaySmall),
-                        SizedBox(
-                            width: 30,
-                            height: 30,
-                            child: AppLottie(
-                              url: getGenderUrl(state.user.gender),
-                              animate: false,
-                            )),
+                            style: Theme.of(context)
+                                .textTheme
+                                .displaySmall
+                                ?.merge(TextStyle(
+                                    color: getGenderColor(
+                                        Gender.fromValue(state.user.gender))))),
+                        if (state.user.gender != Gender.secret.value)
+                          SizedBox(
+                              width: 30,
+                              height: 30,
+                              child: AppLottie(
+                                url: getGenderUrl(state.user.gender),
+                                animate: false,
+                              )),
+                        const SizedBox(width: 2),
                         getFlag(
                             countryCode: state.user.countryCode, fontSize: 30),
                       ],

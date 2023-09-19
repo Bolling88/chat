@@ -1,4 +1,5 @@
 import 'package:chat/screens/visit/visit_screen.dart';
+import 'package:chat/utils/gender.dart';
 import 'package:chat/utils/lottie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -96,17 +97,23 @@ class PeopleScreenBuilder extends StatelessWidget {
                                         style: Theme.of(context)
                                             .textTheme
                                             .displaySmall
-                                            ?.merge(
-                                                const TextStyle(fontSize: 20))),
+                                            ?.merge(TextStyle(
+                                                fontSize: 20,
+                                                color: getGenderColor(
+                                                    Gender.fromValue(state
+                                                        .chatUsers[index]
+                                                        .gender))))),
                                     const SizedBox(width: 2),
-                                    SizedBox(
-                                        width: 18,
-                                        height: 18,
-                                        child: AppLottie(
-                                          url: getGenderUrl(
-                                              state.chatUsers[index].gender),
-                                          animate: false,
-                                        )),
+                                    if (state.chatUsers[index].gender !=
+                                        Gender.secret.value)
+                                      SizedBox(
+                                          width: 18,
+                                          height: 18,
+                                          child: AppLottie(
+                                            url: getGenderUrl(
+                                                state.chatUsers[index].gender),
+                                            animate: false,
+                                          )),
                                   ],
                                 ),
                                 trailing: getFlag(

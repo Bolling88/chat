@@ -8,6 +8,7 @@ import '../../repository/firestore_repository.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_widgets.dart';
 import '../../utils/flag.dart';
+import '../../utils/gender.dart';
 import '../visit/visit_screen.dart';
 
 class AppOtherMessageWidget extends StatelessWidget {
@@ -93,15 +94,21 @@ class AppOtherMessageWidget extends StatelessWidget {
                                       textAlign: TextAlign.left,
                                       style: Theme.of(context)
                                           .textTheme
-                                          .bodySmall),
-                                  SizedBox(
-                                      width: 18,
-                                      height: 18,
-                                      child: AppLottie(
-                                        url: getGenderUrl(gender),
-                                        animate: false,
-                                      )),
-                                  getFlag(countryCode: countryCode, fontSize: 18),
+                                          .bodySmall
+                                          ?.merge(TextStyle(
+                                              color: getGenderColor(
+                                                  Gender.fromValue(gender)), fontWeight: FontWeight.bold))),
+                                  if (gender != Gender.secret.value)
+                                    SizedBox(
+                                        width: 18,
+                                        height: 18,
+                                        child: AppLottie(
+                                          url: getGenderUrl(gender),
+                                          animate: false,
+                                        )),
+                                  const SizedBox(width: 2),
+                                  getFlag(
+                                      countryCode: countryCode, fontSize: 16),
                                 ],
                               ),
                               Text(
@@ -123,11 +130,13 @@ class AppOtherMessageWidget extends StatelessWidget {
 }
 
 String getGenderUrl(int gender) {
-  if (gender == 0) {
+  if (gender == Gender.female.value) {
     return 'https://firebasestorage.googleapis.com/v0/b/chat-60225.appspot.com/o/lottie%2Ffemale.json?alt=media&token=dabc5dd7-3f5e-446a-9f69-1325a343ce90';
-  } else if (gender == 1) {
+  } else if (gender == Gender.male.value) {
     return 'https://firebasestorage.googleapis.com/v0/b/chat-60225.appspot.com/o/lottie%2Fmale.json?alt=media&token=0a7e6edf-2112-471f-b5ef-d07fac83a9b3';
-  } else {
+  } else if (gender == Gender.nonBinary.value) {
     return 'https://firebasestorage.googleapis.com/v0/b/chat-60225.appspot.com/o/lottie%2Fnonbinary.json?alt=media&token=c53c9728-aef5-448a-b534-669d5fb6d3e0';
+  } else {
+    return '';
   }
 }

@@ -7,6 +7,7 @@ import '../../model/chat.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_widgets.dart';
 import '../../utils/flag.dart';
+import '../../utils/gender.dart';
 import '../../utils/lottie.dart';
 import '../hero/hero_screen.dart';
 import '../message_holder/bloc/message_holder_bloc.dart';
@@ -127,9 +128,12 @@ class VisitScreenContent extends StatelessWidget {
                     children: [
                       Text(
                         state.user?.displayName ?? '',
-                        style: Theme.of(context).textTheme.displaySmall,
+                        style: Theme.of(context).textTheme.displaySmall ?.merge(TextStyle(
+                            color: getGenderColor(
+                                Gender.fromValue(user.gender)))),
                       ),
                       const SizedBox(width: 2),
+                      if(user.gender != Gender.secret.value)
                       SizedBox(
                           width: 30,
                           height: 30,

@@ -13,3 +13,4 @@ class OnboardingGenderInitialState extends OnboardingGenderEvent{}
 class OnboardingGenderMaleClickedEvent extends OnboardingGenderEvent{}
 class OnboardingGenderFemaleClickedEvent extends OnboardingGenderEvent{}
 class OnboardingGenderNonBinaryClickedEvent extends OnboardingGenderEvent{}
+class OnboardingGenderSecretClickedEvent extends OnboardingGenderEvent{}

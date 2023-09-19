@@ -1,8 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chat/utils/translate.dart';
 import 'package:flutter/material.dart';
+import '../repository/firestore_repository.dart';
 import 'app_colors.dart';
-import 'gender_image.dart';
+import 'gender.dart';
 
 class AppSpinner extends StatelessWidget {
   const AppSpinner({Key? key}) : super(key: key);
@@ -29,7 +30,8 @@ class AppUserImage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ClipOval(
       child: CachedNetworkImage(
-        imageUrl: url.isEmpty ? getGenderImageUrl(gender) : url,
+        imageUrl:
+            url.isEmpty ? getGenderImageUrl(Gender.fromValue(gender)) : url,
         width: size ?? 48,
         height: size ?? 48,
         fit: BoxFit.cover,
