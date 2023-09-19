@@ -10,7 +10,6 @@ import '../../utils/flag.dart';
 import '../../utils/gender.dart';
 import '../../utils/lottie.dart';
 import '../../utils/translate.dart';
-import '../hero/hero_screen.dart';
 import '../message_holder/bloc/message_holder_bloc.dart';
 import '../message_holder/bloc/message_holder_event.dart';
 import '../messages/message_edit_text_widget.dart';

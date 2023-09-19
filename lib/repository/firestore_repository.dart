@@ -357,6 +357,7 @@ class FirestoreRepository {
             .firstOrNull)
         .catchError((error) {
       Log.e("Failed to delete private chat: $error");
+      return null;
     });
   }
 
