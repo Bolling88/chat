@@ -1,14 +1,15 @@
 //a bloc builder widget class for creating a chat
 import 'package:chat/screens/login/login_screen.dart';
-import 'package:chat/utils/lottie.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:chat/screens/onboarding_name/onboarding_name_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../repository/firestore_repository.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_widgets.dart';
-import '../../utils/dialogs.dart';
+import '../../utils/flag.dart';
+import '../../utils/lottie.dart';
 import '../../utils/translate.dart';
+import '../messages/other_message_widget.dart';
 import '../onboarding_photo/onboarding_photo_screen.dart';
 import 'bloc/profile_bloc.dart';
 import 'bloc/profile_event.dart';
@@ -49,62 +50,98 @@ class ProfileScreenBuilder extends StatelessWidget {
         if (state is ProfileErrorState) {
           return const AppErrorScreen();
         } else if (state is ProfileBaseState) {
-          return SingleChildScrollView(
-            child: Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.max,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const SizedBox(height: 20),
-                    GestureDetector(
-                      child: AppUserImage(
-                        url: state.user.pictureData,
-                        gender: state.user.gender,
-                        size: 120,
-                      ),
-                      onTap: () {
-                        Navigator.pushNamed(
-                            blocContext, OnboardingPhotoScreen.routeName);
-                      },
-                    ),
-                  const SizedBox(height: 20),
-                  Text(state.user.displayName, style: Theme.of(context).textTheme.displaySmall),
-                  const SizedBox(height: 20),
-                  ElevatedButton.icon(
-                    icon: const Icon(Icons.camera_alt),
-                    onPressed: () {
+          return Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.max,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const SizedBox(height: 20),
+                GestureDetector(
+                  child: AppUserImage(
+                    url: state.user.pictureData,
+                    gender: state.user.gender,
+                    size: 120,
+                  ),
+                  onTap: () {
+                    Navigator.pushNamed(
+                        blocContext, OnboardingPhotoScreen.routeName,
+                        arguments:
+                            OnboardingPhotoScreenArguments(isEditMode: true));
+                  },
+                ),
+                const SizedBox(height: 20),
+                GestureDetector(
+                    onTap: () {
                       Navigator.pushNamed(
-                          blocContext, OnboardingPhotoScreen.routeName);
+                          blocContext, OnboardingNameScreen.routeName,
+                          arguments:
+                              OnboardingNameScreenArguments(isEditMode: true));
                     },
-                    label: Text(translate(context, 'change_image')),
-                  ),
-                  const SizedBox(height: 20),
-                  ElevatedButton.icon(
-                    icon: const Icon(Icons.exit_to_app),
-                    onPressed: () {
-                      showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return getSignOutDialog(blocContext);
-                          });
-                    },
-                    label: Text(translate(context, 'sign_out')),
-                  ),
-                  const SizedBox(height: 20),
-                  ElevatedButton.icon(
-                    icon: const Icon(Icons.delete_outline),
-                    onPressed: () {
-                      showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return getDeleteAccountDialog(blocContext, context);
-                          });
-                    },
-                    label: Text(translate(context, 'delete_account')),
-                  ),
-                ],
-              ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(state.user.displayName,
+                            textAlign: TextAlign.left,
+                            style: Theme.of(context).textTheme.displaySmall),
+                        SizedBox(
+                            width: 30,
+                            height: 30,
+                            child: AppLottie(
+                              url: getGenderUrl(state.user.gender),
+                              animate: false,
+                            )),
+                        getFlag(
+                            countryCode: state.user.countryCode, fontSize: 30),
+                      ],
+                    )),
+                const SizedBox(height: 20),
+                ElevatedButton.icon(
+                  icon: const Icon(Icons.camera_alt),
+                  onPressed: () {
+                    Navigator.pushNamed(
+                        blocContext, OnboardingPhotoScreen.routeName,
+                        arguments:
+                            OnboardingPhotoScreenArguments(isEditMode: true));
+                  },
+                  label: Text(translate(context, 'change_image')),
+                ),
+                const SizedBox(height: 20),
+                ElevatedButton.icon(
+                  icon: const Icon(Icons.edit),
+                  onPressed: () {
+                    Navigator.pushNamed(
+                        blocContext, OnboardingNameScreen.routeName,
+                        arguments:
+                            OnboardingNameScreenArguments(isEditMode: true));
+                  },
+                  label: Text(translate(context, 'change_name')),
+                ),
+                Expanded(child: Container()),
+                ElevatedButton.icon(
+                  icon: const Icon(Icons.exit_to_app),
+                  onPressed: () {
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return getSignOutDialog(blocContext);
+                        });
+                  },
+                  label: Text(translate(context, 'sign_out')),
+                ),
+                const SizedBox(height: 20),
+                TextButton(
+                  onPressed: () {
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return getDeleteAccountDialog(blocContext, context);
+                        });
+                  },
+                  child: Text(translate(context, 'delete_account')),
+                ),
+                const SizedBox(height: 20),
+              ],
             ),
           );
         } else {

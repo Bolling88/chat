@@ -1,5 +1,7 @@
 import 'package:equatable/equatable.dart';
 
+import '../../../model/chat_user.dart';
+
 abstract class ProfileEvent extends Equatable {
   const ProfileEvent();
 
@@ -11,12 +13,11 @@ class ProfileInitialEvent extends ProfileEvent {}
 class ProfileDeleteAccountEvent extends ProfileEvent {}
 class ProfileLogoutEvent extends ProfileEvent {}
 class ProfileContinueClickedEvent extends ProfileEvent {}
+class ProfileUserChangedEvent extends ProfileEvent {
+  final ChatUser user;
 
-class ProfileNameChangedEvent extends ProfileEvent {
-  final String name;
-
-  const ProfileNameChangedEvent(this.name);
+  const ProfileUserChangedEvent(this.user);
 
   @override
-  List<Object> get props => [name];
+  List<Object> get props => [user];
 }

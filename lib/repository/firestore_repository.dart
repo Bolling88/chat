@@ -215,6 +215,12 @@ class FirestoreRepository {
         .snapshots();
   }
 
+  Stream<QuerySnapshot> streamUser() {
+    return users
+        .where(FieldPath.documentId, isEqualTo: getUserId())
+        .snapshots();
+  }
+
   Future<void> setLastMessageRead({required String chatId}) async {
     try {
       await getChatType(isPrivateChat: true).doc(chatId).set({

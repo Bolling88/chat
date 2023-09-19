@@ -12,6 +12,12 @@ import 'bloc/onboarding_name_bloc.dart';
 import 'bloc/onboarding_name_event.dart';
 import 'bloc/onboarding_name_state.dart';
 
+class OnboardingNameScreenArguments {
+  final bool isEditMode;
+
+  OnboardingNameScreenArguments({required this.isEditMode});
+}
+
 class OnboardingNameScreen extends StatelessWidget {
   static const routeName = "/onboarding_name_screen";
 
@@ -32,39 +38,51 @@ class OnboardingNameScreenContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final args = ModalRoute.of(context)?.settings.arguments
+        as OnboardingNameScreenArguments?;
+    final isEditMode = args?.isEditMode ?? false;
     return Scaffold(
+        appBar: isEditMode
+            ? AppBar(
+                title: Text(
+                  FlutterI18n.translate(context, "change_name"),
+                ),
+              )
+            : null,
         body: BlocListener<OnboardingNameBloc, OnboardingNameState>(
-      listener: (context, state) {
-        if (state is OnboardingNameSuccessState) {
-          if (state.navigation == OnboardingNavigation.PICTURE) {
-            Navigator.of(context).popUntil((route) => route.isFirst);
-            Navigator.pushReplacementNamed(
-                context, OnboardingPhotoScreen.routeName);
-          } else if (state.navigation == OnboardingNavigation.GENDER) {
-            Navigator.of(context).popUntil((route) => route.isFirst);
-            Navigator.pushReplacementNamed(
-                context, OnboardingGenderScreen.routeName);
-          } else if (state.navigation == OnboardingNavigation.DONE) {
-            Navigator.of(context).popUntil((route) => route.isFirst);
-            Navigator.pushReplacementNamed(context, ChatScreen.routeName);
-          }
-        }
-      },
-      child: BlocBuilder<OnboardingNameBloc, OnboardingNameState>(
-        builder: (context, state) {
-          if (state is OnboardingNameBaseState) {
-            return showBaseUi(context, state);
-          } else {
-            return const Center(
-              child: AppSpinner(),
-            );
-          }
-        },
-      ),
-    ));
+          listener: (context, state) {
+            if (state is OnboardingNameSuccessState) {
+              if (isEditMode) {
+                Navigator.of(context).pop();
+              } else if (state.navigation == OnboardingNavigation.PICTURE) {
+                Navigator.of(context).popUntil((route) => route.isFirst);
+                Navigator.pushReplacementNamed(
+                    context, OnboardingPhotoScreen.routeName);
+              } else if (state.navigation == OnboardingNavigation.GENDER) {
+                Navigator.of(context).popUntil((route) => route.isFirst);
+                Navigator.pushReplacementNamed(
+                    context, OnboardingGenderScreen.routeName);
+              } else if (state.navigation == OnboardingNavigation.DONE) {
+                Navigator.of(context).popUntil((route) => route.isFirst);
+                Navigator.pushReplacementNamed(context, ChatScreen.routeName);
+              }
+            }
+          },
+          child: BlocBuilder<OnboardingNameBloc, OnboardingNameState>(
+            builder: (context, state) {
+              if (state is OnboardingNameBaseState) {
+                return showBaseUi(context, state, isEditMode);
+              } else {
+                return const Center(
+                  child: AppSpinner(),
+                );
+              }
+            },
+          ),
+        ));
   }
 
-  Widget showBaseUi(BuildContext context, OnboardingNameBaseState state) {
+  Widget showBaseUi(BuildContext context, OnboardingNameBaseState state, bool isEditMode) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -145,7 +163,7 @@ class OnboardingNameScreenContent extends StatelessWidget {
                     BlocProvider.of<OnboardingNameBloc>(context)
                         .add(OnboardingNameContinueClickedEvent());
                   },
-                  child: Text(FlutterI18n.translate(context, "continue")),
+                  child: Text(FlutterI18n.translate(context, isEditMode? 'save' : "continue")),
                 )
               : (state.isValidatingName)
                   ? const ElevatedButton(
@@ -157,7 +175,7 @@ class OnboardingNameScreenContent extends StatelessWidget {
                     )
                   : ElevatedButton(
                       onPressed: null,
-                      child: Text(FlutterI18n.translate(context, "continue")),
+                      child: Text(FlutterI18n.translate(context, isEditMode? 'save' :"continue")),
                     )
         ],
       ),

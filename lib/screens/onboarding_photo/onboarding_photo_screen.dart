@@ -15,6 +15,12 @@ import 'bloc/onboarding_photo_bloc.dart';
 import 'bloc/onboarding_photo_event.dart';
 import 'bloc/onboarding_photo_state.dart';
 
+class OnboardingPhotoScreenArguments {
+  final bool isEditMode;
+
+  OnboardingPhotoScreenArguments({required this.isEditMode});
+}
+
 class OnboardingPhotoScreen extends StatelessWidget {
   static const routeName = "/onboarding_photo_screen";
 
@@ -37,45 +43,64 @@ class OnboardingPhotoScreenContent extends StatelessWidget {
   const OnboardingPhotoScreenContent({super.key});
 
   @override
-  // ignore: avoid_renaming_method_parameters
   Widget build(BuildContext appContext) {
+    final args = ModalRoute.of(appContext)?.settings.arguments
+        as OnboardingPhotoScreenArguments?;
+    final isEditMode = args?.isEditMode ?? false;
+
     return Scaffold(
+        appBar: isEditMode
+            ? AppBar(
+                title: Text(
+                  FlutterI18n.translate(appContext, "change_photo"),
+                ),
+              )
+            : null,
         body: BlocListener<OnboardingPhotoBloc, OnboardingPhotoState>(
-      listener: (context, state) {
-        if (state is OnboardingPhotoRedoState) {
-          _showBottomSheet(appContext);
-        } else if (state is OnboardingPhotoSuccessState) {
-          if (state.navigation == OnboardingNavigation.PICTURE) {
-            Navigator.of(context).popUntil((route) => route.isFirst);
-            Navigator.pushReplacementNamed(
-                context, OnboardingPhotoScreen.routeName);
-          } else if (state.navigation == OnboardingNavigation.GENDER) {
-            Navigator.of(context).popUntil((route) => route.isFirst);
-            Navigator.pushReplacementNamed(
-                context, OnboardingGenderScreen.routeName);
-          } else if (state.navigation == OnboardingNavigation.DONE) {
-            Navigator.of(context).popUntil((route) => route.isFirst);
-            Navigator.pushReplacementNamed(context, ChatScreen.routeName);
-          }
-        }
-      },
-      child: BlocBuilder<OnboardingPhotoBloc, OnboardingPhotoState>(
-        builder: (context, state) {
-          if (state is OnboardingPhotoBaseState) {
-            return showBaseUi(context, state);
-          } else if (state is OnboardingPhotoDoneState) {
-            return showPhotoTakenUi(context, state);
-          } else {
-            return const Center(
-              child: AppSpinner(),
-            );
-          }
-        },
-      ),
-    ));
+          listener: (context, state) {
+            if (state is OnboardingPhotoRedoState) {
+              _showBottomSheet(appContext);
+            } else if (state is OnboardingPhotoSuccessState) {
+              if (state.navigation == OnboardingNavigation.PICTURE) {
+                Navigator.of(context).popUntil((route) => route.isFirst);
+                Navigator.pushReplacementNamed(
+                    context, OnboardingPhotoScreen.routeName);
+              } else if (state.navigation == OnboardingNavigation.GENDER) {
+                if (isEditMode) {
+                  Navigator.of(context).pop();
+                } else {
+                  Navigator.of(context).popUntil((route) => route.isFirst);
+                  Navigator.pushReplacementNamed(
+                      context, OnboardingGenderScreen.routeName);
+                }
+              } else if (state.navigation == OnboardingNavigation.DONE) {
+                if (isEditMode) {
+                  Navigator.of(context).pop();
+                } else {
+                  Navigator.of(context).popUntil((route) => route.isFirst);
+                  Navigator.pushReplacementNamed(context, ChatScreen.routeName);
+                }
+              }
+            }
+          },
+          child: BlocBuilder<OnboardingPhotoBloc, OnboardingPhotoState>(
+            builder: (context, state) {
+              if (state is OnboardingPhotoBaseState) {
+                return showBaseUi(context, state, isEditMode);
+              } else if (state is OnboardingPhotoDoneState) {
+                return showPhotoTakenUi(context, state);
+              } else {
+                return const Center(
+                  child: AppSpinner(),
+                );
+              }
+            },
+          ),
+        ));
   }
 
-  Widget showBaseUi(BuildContext context, OnboardingPhotoBaseState state) {
+  Widget showBaseUi(
+      BuildContext context, OnboardingPhotoBaseState state, bool isEditMode) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -121,15 +146,16 @@ class OnboardingPhotoScreenContent extends StatelessWidget {
             child: Text(FlutterI18n.translate(context, "select_from_images")),
           ),
           const SizedBox(height: 20),
-          Text(FlutterI18n.translate(context, 'or')),
-          const SizedBox(height: 20),
-          ElevatedButton(
-            onPressed: () {
-              BlocProvider.of<OnboardingPhotoBloc>(context)
-                  .add(OnboardingPhotoSkipEvent());
-            },
-            child: Text(FlutterI18n.translate(context, "skip_this_step")),
-          )
+          if (!isEditMode) Text(FlutterI18n.translate(context, 'or')),
+          if (!isEditMode) const SizedBox(height: 20),
+          if (!isEditMode)
+            ElevatedButton(
+              onPressed: () {
+                BlocProvider.of<OnboardingPhotoBloc>(context)
+                    .add(OnboardingPhotoSkipEvent());
+              },
+              child: Text(FlutterI18n.translate(context, "skip_this_step")),
+            )
         ],
       ),
     );
