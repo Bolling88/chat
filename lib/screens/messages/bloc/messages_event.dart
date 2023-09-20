@@ -39,3 +39,12 @@ class MessagesChangedEvent extends MessagesEvent {
   @override
   List<Object> get props => [message];
 }
+
+class MessagesReportMessageEvent extends MessagesEvent {
+  final Message message;
+
+  MessagesReportMessageEvent(this.message);
+
+  @override
+  List<Object> get props => [message];
+}

@@ -100,6 +100,8 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
             isGiphy: true);
         yield currentState.copyWith(currentMessage: "");
       }
+    }else if( event is MessagesReportMessageEvent){
+      _firestoreRepository.reportMessage(event.message);
     } else {
       yield MessagesErrorState();
       Log.e("Error in messages");

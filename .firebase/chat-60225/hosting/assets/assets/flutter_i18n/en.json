@@ -4,6 +4,7 @@
   "chat_rooms_intro": "chat rooms",
   "terms_intro": "By signing in or creating an\naccount your accept Kvitter's",
   "terms": "Terms of use",
+  "eula": "EULA",
   "privacy": "Privacy policy",
   "copyright": "Copyright",
   "camera": "Camera",
@@ -41,6 +42,7 @@
   "i_am_woman": "I'm a female",
   "i_am_man": "I'm a male",
   "i_am_non_binary": "I'm non-binary",
+  "i_do_not_want_to_say": "It's a secret...",
   "hey_you": "Hello you,",
   "nice_see_you_here": "thrilled to see you here!",
   "nice_see_you_here_info": "Please select you chat name!",
@@ -57,5 +59,14 @@
   "one_more_thing": "One more thing",
   "change_image": "Change image",
   "go_to_private_chat": "Go to private chat",
-  "write_private_message_hint": "Enter message to start chat..."
+  "write_private_message_hint": "Enter message to start chat...",
+  "change_name": "Change name",
+  "change_photo": "Change photo",
+  "save": "Save changes",
+  "block_user": "Block user",
+  "unblock_user": "Unblock user",
+  "block_user_info": "If you block this user they will not be able to send you messages. Are you sure you wish to do that?",
+  "report_message": "Report message",
+  "report_message_info": "Are you sure you wish to report this message? We will review it and in worst case scenario block the user.",
+  "message_reported": "Message reported"
 }

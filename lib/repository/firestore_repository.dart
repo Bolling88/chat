@@ -1,3 +1,4 @@
+import 'package:chat/model/message.dart';
 import 'package:chat/model/private_chat.dart';
 import 'package:chat/model/user_location.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -47,6 +48,8 @@ class FirestoreRepository {
       FirebaseFirestore.instance.collection('privateChats');
   final CollectionReference messages =
       FirebaseFirestore.instance.collection('messages');
+  final CollectionReference reports =
+  FirebaseFirestore.instance.collection('reports');
 
   Future<ChatUser?> getUser({String? userId}) async {
     return users
@@ -447,5 +450,20 @@ class FirestoreRepository {
     users.doc(id).set({
       'blockedBy': FieldValue.arrayRemove([getUserId()]),
     }, SetOptions(merge: true));
+  }
+
+  void reportMessage(Message message) {
+    reports.add({
+      'messageId': message.id,
+      'messageText': message.text,
+      'messageCreated': message.created,
+      'messageCreatedBy': message.createdById,
+      'messageCreatedByGender': message.createdByGender,
+      'messageCreatedByCountryCode': message.createdByCountryCode,
+      'messageCreatedByImageUrl': message.createdByImageUrl,
+      'messageCreatedByDisplayName': message.createdByName,
+      'reportedBy': getUserId(),
+      'reportedAt': FieldValue.serverTimestamp(),
+    });
   }
 }
