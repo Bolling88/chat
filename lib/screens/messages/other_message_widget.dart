@@ -48,7 +48,7 @@ class AppOtherMessageWidget extends StatelessWidget {
         padding: const EdgeInsets.only(left: 20, bottom: 5, top: 5, right: 40),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.max,
+          mainAxisSize: MainAxisSize.min,
           children: [
             Padding(
               padding: const EdgeInsets.only(left: 0, right: 10),
@@ -57,25 +57,28 @@ class AppOtherMessageWidget extends StatelessWidget {
                 gender: gender,
               ),
             ),
-            (message.chatType == ChatType.giphy)
-                ? Align(
-                    alignment: Alignment.bottomLeft,
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(20.0),
-                      child: SizedBox(
-                        width: 200,
-                        height: 200,
-                        child: CachedNetworkImage(
-                          imageUrl: message.text,
-                          placeholder: (context, url) =>
-                              const Center(child: AppSpinner()),
-                          errorWidget: (context, url, error) =>
-                              const Icon(Icons.error),
-                        ),
-                      ),
+            if (message.chatType == ChatType.giphy)
+              Align(
+                alignment: Alignment.bottomLeft,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(20.0),
+                  child: SizedBox(
+                    width: 200,
+                    height: 200,
+                    child: CachedNetworkImage(
+                      imageUrl: message.text,
+                      placeholder: (context, url) =>
+                          const Center(child: AppSpinner()),
+                      errorWidget: (context, url, error) =>
+                          const Icon(Icons.error),
                     ),
-                  )
-                : Expanded(
+                  ),
+                ),
+              )
+            else
+              Expanded(
+                child: Align(
+                  alignment: Alignment.bottomLeft,
                   child: DecoratedBox(
                     decoration: const BoxDecoration(
                         borderRadius: BorderRadius.only(
@@ -92,6 +95,7 @@ class AppOtherMessageWidget extends StatelessWidget {
                           left: 10, right: 10, top: 5, bottom: 5),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
                         children: [
                           Row(
                             mainAxisSize: MainAxisSize.min,
@@ -114,8 +118,7 @@ class AppOtherMessageWidget extends StatelessWidget {
                                       animate: false,
                                     )),
                               const SizedBox(width: 2),
-                              getFlag(
-                                  countryCode: countryCode, fontSize: 16),
+                              getFlag(countryCode: countryCode, fontSize: 16),
                             ],
                           ),
                           Text(
@@ -128,6 +131,7 @@ class AppOtherMessageWidget extends StatelessWidget {
                     ),
                   ),
                 ),
+              ),
           ],
         ),
       ),
