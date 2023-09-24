@@ -1,3 +1,4 @@
+import 'package:chat/screens/message_holder/message_holder_screen.dart';
 import 'package:chat/utils/app_colors.dart';
 import 'package:chat/utils/image_util.dart';
 import 'package:flutter/foundation.dart';
@@ -78,7 +79,7 @@ class OnboardingPhotoScreenContent extends StatelessWidget {
                   Navigator.of(context).pop();
                 } else {
                   Navigator.of(context).popUntil((route) => route.isFirst);
-                  Navigator.pushReplacementNamed(context, ChatScreen.routeName);
+                  Navigator.pushReplacementNamed(context, MessageHolderScreen.routeName);
                 }
               }
             }

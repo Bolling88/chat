@@ -13,11 +13,12 @@ import 'visit_event.dart';
 class VisitBloc extends Bloc<VisitEvent, VisitState> {
   final FirestoreRepository _firestoreRepository;
   final String userId;
-  final Chat chat;
+  final Chat? chat;
 
   ChatUser? user;
   late ChatUser me;
   StreamSubscription<QuerySnapshot>? chatStream;
+  StreamSubscription<QuerySnapshot>? userStream;
 
   VisitBloc(this._firestoreRepository, this.userId, this.chat)
       : super(VisitLoadingState()) {
@@ -27,6 +28,7 @@ class VisitBloc extends Bloc<VisitEvent, VisitState> {
   @override
   Future<void> close() {
     chatStream?.cancel();
+    userStream?.cancel();
     return super.close();
   }
 
@@ -47,7 +49,7 @@ class VisitBloc extends Bloc<VisitEvent, VisitState> {
     } else if (event is VisitUserLoadedState) {
       if (currentState is VisitBaseState) {
         yield currentState.copyWith(
-            user: event.user,
+            user: event.user?.presence == true ? event.user : null,
             userLoaded: true,
             userBlocked: event.user?.isUserBlocked());
       }
@@ -58,11 +60,11 @@ class VisitBloc extends Bloc<VisitEvent, VisitState> {
         final privateChat =
             await _firestoreRepository.getPrivateChat(currentState.user!.id);
         if (privateChat != null) {
-           await _firestoreRepository.leavePrivateChat(privateChat);
+          await _firestoreRepository.leavePrivateChat(privateChat);
         }
         yield currentState.copyWith(userBlocked: true);
       }
-    }else if(event is VisitUnblocUserEvent){
+    } else if (event is VisitUnblocUserEvent) {
       if (currentState is VisitBaseState) {
         yield VisitLoadingState();
         _firestoreRepository.unblockUser(currentState.user!.id);
@@ -74,14 +76,25 @@ class VisitBloc extends Bloc<VisitEvent, VisitState> {
   }
 
   void setUpPeopleListener() {
-    chatStream = _firestoreRepository
-        .streamChat(chat.id, chat is PrivateChat)
-        .listen((event) async {
-      final chat = RoomChat.fromJson(
-          event.docs.first.id, event.docs.first.data() as Map<String, dynamic>);
-      final users = await _firestoreRepository.getUsersInChat(chat);
-      final user = users.where((element) => element.id == userId).firstOrNull;
-      add(VisitUserLoadedState(user));
-    });
+    //Todo show everyone online, but filter by room
+    final currentChat = chat;
+    if (currentChat != null) {
+      chatStream = _firestoreRepository
+          .streamChat(currentChat.id, chat is PrivateChat)
+          .listen((event) async {
+        final chat = RoomChat.fromJson(event.docs.first.id,
+            event.docs.first.data() as Map<String, dynamic>);
+        final users = await _firestoreRepository.getUsersInChat(chat);
+        final user = users.where((element) => element.id == userId).firstOrNull;
+        add(VisitUserLoadedState(user));
+      });
+    } else {
+      userStream =
+          _firestoreRepository.streamUserById(userId).listen((event) async {
+        final user =
+            ChatUser.fromJson(userId, event.docs.first.data() as Map<String, dynamic>);
+        add(VisitUserLoadedState(user));
+      });
+    }
   }
 }

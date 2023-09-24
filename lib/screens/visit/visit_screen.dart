@@ -20,7 +20,7 @@ import 'bloc/visit_state.dart';
 
 class VisitScreen extends StatelessWidget {
   final String userId;
-  final Chat chat;
+  final Chat? chat;
   final BuildContext parentContext;
   final bool showBackButton;
 
@@ -49,7 +49,7 @@ const bottomsheetHeight = 450.0;
 
 class VisitScreenContent extends StatelessWidget {
   final BuildContext parentContext;
-  final Chat chat;
+  final Chat? chat;
   final bool showBackButton;
 
   const VisitScreenContent(
@@ -160,10 +160,7 @@ class VisitScreenContent extends StatelessWidget {
                                 MessageHolderStartPrivateChatEvent(
                                     user, message),
                               );
-                              Navigator.popUntil(
-                                  context,
-                                  ModalRoute.withName(
-                                      '/message_holder_screen'));
+                              Navigator.of(context).popUntil((route) => route.isFirst);
                             },
                           ),
                         )
@@ -173,8 +170,7 @@ class VisitScreenContent extends StatelessWidget {
                                 .add(
                               MessageHolderStartPrivateChatEvent(user, ''),
                             );
-                            Navigator.popUntil(context,
-                                ModalRoute.withName('/message_holder_screen'));
+                            Navigator.of(context).popUntil((route) => route.isFirst);
                           },
                           child: Text(FlutterI18n.translate(
                               context, 'go_to_private_chat')),
@@ -266,7 +262,7 @@ AlertDialog getBlockAccountDialog(
   );
 }
 
-Future showVisitScreen(BuildContext parentContext, String userId, Chat chat,
+Future showVisitScreen(BuildContext parentContext, String userId, Chat? chat,
     bool showBackButton) async {
   await showModalBottomSheet(
     useRootNavigator: true,

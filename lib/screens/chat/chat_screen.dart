@@ -1,7 +1,6 @@
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:chat/screens/message_holder/bloc/message_holder_bloc.dart';
+import 'package:chat/screens/message_holder/bloc/message_holder_event.dart';
 import 'package:chat/utils/lottie.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
@@ -10,13 +9,10 @@ import '../../repository/presence_database.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_widgets.dart';
 import '../../utils/constants.dart';
-import '../message_holder/message_holder_screen.dart';
-import '../profile/profile_screen.dart';
 import 'bloc/chat_bloc.dart';
 import 'bloc/chat_state.dart';
 
 class ChatScreen extends StatelessWidget {
-  static const routeName = "/home_screen";
 
   const ChatScreen({Key? key}) : super(key: key);
 
@@ -37,21 +33,6 @@ class ChatsScreenContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text(
-            FlutterI18n.translate(context, "chat_rooms"),
-          ),
-          actions: [
-            IconButton(
-              icon: const Icon(
-                Icons.settings,
-              ),
-              onPressed: () {
-                Navigator.pushNamed(context, ProfileScreen.routeName);
-              },
-            )
-          ],
-        ),
         body: BlocListener<ChatBloc, ChatState>(
             listener: (context, state) {},
             child: BlocBuilder<ChatBloc, ChatState>(
@@ -60,10 +41,8 @@ class ChatsScreenContent extends StatelessWidget {
                   if (getSize(context) == ScreenSize.large) {
                     return Row(
                       children: [
-                        Expanded(
-                            child: getLargeView(context)),
-                        Expanded(
-                            child: getSmallView(state))
+                        Expanded(child: getSmallView(state)),
+                        Expanded(child: getLargeView(context)),
                       ],
                     );
                   } else {
@@ -84,38 +63,35 @@ class ChatsScreenContent extends StatelessWidget {
 
   Container getLargeView(BuildContext context) {
     return Container(
-                        width: double.infinity,
-                        height: double.infinity,
-                        color: AppColors.main,
-                        child: Center(
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                FlutterI18n.translate(context, "app_name"),
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .displayLarge
-                                    ?.merge(
-                                        const TextStyle(color: Colors.white)),
-                              ),
-                              Text(
-                                FlutterI18n.translate(context, "chat_rooms"),
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .displaySmall
-                                    ?.merge(
-                                    const TextStyle(color: Colors.white)),
-                              )
-                            ],
-                          ),
-                        ),
-                      );
+      width: double.infinity,
+      height: double.infinity,
+      color: AppColors.main,
+      child: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              FlutterI18n.translate(context, "app_name"),
+              style: Theme.of(context)
+                  .textTheme
+                  .displayLarge
+                  ?.merge(const TextStyle(color: Colors.white)),
+            ),
+            Text(
+              FlutterI18n.translate(context, "chat_rooms"),
+              style: Theme.of(context)
+                  .textTheme
+                  .displaySmall
+                  ?.merge(const TextStyle(color: Colors.white)),
+            )
+          ],
+        ),
+      ),
+    );
   }
 
   ListView getSmallView(ChatBaseState state) {
-    return ListView(
-                              children: <Widget>[getRegularChats(state)]);
+    return ListView(children: <Widget>[getRegularChats(state)]);
   }
 
   ListView getRegularChats(ChatBaseState state) {
@@ -136,25 +112,22 @@ class ChatsScreenContent extends StatelessWidget {
     return GestureDetector(
       behavior: HitTestBehavior.translucent,
       onTap: () {
-        Navigator.of(context, rootNavigator: true).pushNamed(
-            MessageHolderScreen.routeName,
-            arguments: MessageHolderScreenArguments(chat: state.chats[index], user: state.user));
+        BlocProvider.of<MessageHolderBloc>(context)
+            .add(MessageHolderChatClickedEvent(index, state.chats[index]));
       },
       child: Row(
         children: [
           Transform.translate(
-                  offset: Offset(
-                      state.chats[index].imageTranslationX.toDouble(), 0.0),
-                  child: SizedBox(
-                      width: 70,
-                      height: 70,
-                      child: OverflowBox(
-                          minHeight:
-                              state.chats[index].imageOverflow.toDouble(),
-                          maxHeight:
-                              state.chats[index].imageOverflow.toDouble(),
-                          child: AppLottie(url: state.chats[index].imageUrl))),
-                ),
+            offset:
+                Offset(state.chats[index].imageTranslationX.toDouble(), 0.0),
+            child: SizedBox(
+                width: 70,
+                height: 70,
+                child: OverflowBox(
+                    minHeight: state.chats[index].imageOverflow.toDouble(),
+                    maxHeight: state.chats[index].imageOverflow.toDouble(),
+                    child: AppLottie(url: state.chats[index].imageUrl))),
+          ),
           const SizedBox(width: 40),
           Expanded(
               child: Column(

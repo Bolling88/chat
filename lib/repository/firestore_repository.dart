@@ -49,7 +49,7 @@ class FirestoreRepository {
   final CollectionReference messages =
       FirebaseFirestore.instance.collection('messages');
   final CollectionReference reports =
-  FirebaseFirestore.instance.collection('reports');
+      FirebaseFirestore.instance.collection('reports');
 
   Future<ChatUser?> getUser({String? userId}) async {
     return users
@@ -249,8 +249,10 @@ class FirestoreRepository {
     return privateChats.where('users', arrayContains: getUserId()).snapshots();
   }
 
-  void exitAllChats({required String chatId}) async {
-    leaveChat(chatId);
+  void exitAllChats({required String? chatId}) async {
+    if (chatId != null) {
+      await leaveRoomChat(chatId);
+    }
     final chats =
         await privateChats.where('users', arrayContains: getUserId()).get();
     for (var element in chats.docs) {
@@ -258,7 +260,7 @@ class FirestoreRepository {
     }
   }
 
-  Future<void> leaveChat(String chatId) async {
+  Future<void> leaveRoomChat(String chatId) async {
     if (chatId.isNotEmpty) {
       try {
         await chats.doc(chatId).set({
@@ -465,5 +467,39 @@ class FirestoreRepository {
       'reportedBy': getUserId(),
       'reportedAt': FieldValue.serverTimestamp(),
     });
+  }
+
+  Stream<QuerySnapshot> streamUserById(String userId) {
+    return users
+        .where(FieldPath.documentId, isEqualTo: userId)
+        .snapshots()
+        .handleError((error) {
+      Log.e("Failed to get user: $error");
+    });
+  }
+
+  Stream<QuerySnapshot> streamOnlineUsers() {
+    return users
+        .where('presence', isEqualTo: true)
+        .snapshots()
+        .handleError((error) {
+      Log.e("Failed to get online users: $error");
+    });
+  }
+
+  void updateCurrentUsersCurrentChat({required String chatId}) {
+    users.doc(getUserId()).set({
+      'currentRoomChatId': chatId,
+      'presence': true,
+    }, SetOptions(merge: true));
+  }
+
+  List<ChatUser> _onlineUsers = [];
+  void setCachedOnlineUsers(List<ChatUser> filteredUsers) {
+    _onlineUsers = filteredUsers;
+  }
+
+  List<ChatUser> getCachedUsers() {
+    return _onlineUsers;
   }
 }

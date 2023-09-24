@@ -1,3 +1,4 @@
+import 'package:chat/screens/message_holder/message_holder_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../repository/firestore_repository.dart';
@@ -54,7 +55,7 @@ class SplashScreenBuilder extends StatelessWidget {
           Navigator.pushReplacement(
             context,
             PageRouteBuilder(
-              pageBuilder: (c, a1, a2) => const ChatScreen(),
+              pageBuilder: (c, a1, a2) => const MessageHolderScreen(),
               transitionsBuilder: (c, anim, a2, child) =>
                   FadeTransition(opacity: anim, child: child),
               transitionDuration: const Duration(milliseconds: 2000),

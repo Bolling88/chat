@@ -14,6 +14,8 @@ class ChatUser extends Equatable {
   final String countryCode;
   final String country;
   final String regionName;
+  final bool presence;
+  final String currentRoomChatId;
   final List<String> blockedBy;
 
   const ChatUser({
@@ -28,6 +30,8 @@ class ChatUser extends Equatable {
     required this.country,
     required this.regionName,
     required this.blockedBy,
+    required this.presence,
+    required this.currentRoomChatId,
   });
 
   ChatUser.fromJson(this.id, Map<String, dynamic> json)
@@ -40,6 +44,8 @@ class ChatUser extends Equatable {
         countryCode = json['countryCode'] ?? "",
         country = json['country'] ?? "",
         regionName = json['regionName'] ?? "",
+        presence = json['presence'] ?? false,
+        currentRoomChatId = json['currentRoomChatId'] ?? '',
         blockedBy = json['blockedBy']?.cast<String>() ?? [];
 
   ChatUser.asUnknown(this.id)
@@ -51,6 +57,8 @@ class ChatUser extends Equatable {
         city = "",
         countryCode = "",
         country = "",
+        presence = false,
+        currentRoomChatId = '',
         regionName = "",
         blockedBy = [];
 
@@ -65,6 +73,8 @@ class ChatUser extends Equatable {
       String? countryCode,
       String? country,
       String? regionName,
+      bool? presence,
+      String? currentRoomChatId,
       List<String>? blockedBy}) {
     return ChatUser(
         id: id,
@@ -76,6 +86,8 @@ class ChatUser extends Equatable {
         city: city ?? this.city,
         countryCode: countryCode ?? this.countryCode,
         country: country ?? this.country,
+        presence: presence ?? this.presence,
+        currentRoomChatId: currentRoomChatId ?? this.currentRoomChatId,
         regionName: regionName ?? this.regionName,
         blockedBy: blockedBy ?? this.blockedBy);
   }
@@ -91,6 +103,8 @@ class ChatUser extends Equatable {
         city,
         countryCode,
         country,
+        presence,
+        currentRoomChatId,
         regionName,
         blockedBy,
       ];

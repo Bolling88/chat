@@ -1,16 +1,18 @@
 import 'package:chat/repository/firestore_repository.dart';
+import 'package:chat/screens/chat/chat_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
+import '../../model/chat.dart';
 import '../../model/chat_user.dart';
-import '../../model/private_chat.dart';
 import '../../model/room_chat.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_widgets.dart';
 import '../../utils/constants.dart';
 import '../messages/messages_screen.dart';
 import '../people/people_screen.dart';
+import '../profile/profile_screen.dart';
 import 'bloc/message_holder_bloc.dart';
 import 'bloc/message_holder_event.dart';
 import 'bloc/message_holder_state.dart';
@@ -29,23 +31,16 @@ class MessageHolderScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final MessageHolderScreenArguments args = ModalRoute.of(context)
-        ?.settings
-        .arguments as MessageHolderScreenArguments;
     return BlocProvider(
       create: (BuildContext context) =>
-          MessageHolderBloc(context.read<FirestoreRepository>(), args.chat),
-      child: MessageHolderScreenContent(chat: args.chat, user: args.user),
+          MessageHolderBloc(context.read<FirestoreRepository>()),
+      child: const MessageHolderScreenContent(),
     );
   }
 }
 
 class MessageHolderScreenContent extends StatelessWidget {
-  final RoomChat chat;
-  final ChatUser user;
-
-  const MessageHolderScreenContent({required this.chat, required this.user, Key? key})
-      : super(key: key);
+  const MessageHolderScreenContent({Key? key}) : super(key: key);
 
   Future<bool> _onWillPop(blocContext) async {
     return await showDialog(
@@ -83,7 +78,7 @@ class MessageHolderScreenContent extends StatelessWidget {
                     ? _onWillPop(context)
                     : Future.value(true),
                 child: Scaffold(
-                    appBar: getAppBar(context, state, chat),
+                    appBar: getAppBar(context, state, state.selectedChat),
                     body: (getSize(context) == ScreenSize.large)
                         ? largeScreenContent(state, context)
                         : smallScreenContent(state, context)),
@@ -98,7 +93,9 @@ class MessageHolderScreenContent extends StatelessWidget {
   Row largeScreenContent(MessageHolderBaseState state, BuildContext context) {
     return Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
       Expanded(
-          flex: 1, child: PeopleScreen(chat: chat, user: user, parentContext: context)),
+          flex: 1,
+          child: PeopleScreen(
+              chat: state.roomChat, user: state.user, parentContext: context)),
       if (state.privateChats.isEmpty) const VerticalDivider(),
       state.privateChats.isNotEmpty
           ? getSideMenu(state, context)
@@ -152,8 +149,9 @@ class MessageHolderScreenContent extends StatelessWidget {
                           if (index != 0)
                             IconButton(
                               onPressed: () {
-                                BlocProvider.of<MessageHolderBloc>(context)
-                                    .add(MessageHolderClosePrivateChatEvent(state.privateChats[index - 1]));
+                                BlocProvider.of<MessageHolderBloc>(context).add(
+                                    MessageHolderClosePrivateChatEvent(
+                                        state.privateChats[index - 1]));
                               },
                               icon: const Icon(
                                 Icons.close,
@@ -180,7 +178,8 @@ class MessageHolderScreenContent extends StatelessWidget {
         color: (state.selectedChatIndex == index)
             ? AppColors.background
             : (index == 0)
-                ? (state.roomChat.lastMessageReadByUser)
+                ? (state.roomChat?.lastMessageReadByUser == true ||
+                        state.roomChat == null)
                     ? AppColors.grey_5
                     : AppColors.main
                 : (state.privateChats[index - 1].lastMessageReadBy
@@ -200,7 +199,10 @@ class MessageHolderScreenContent extends StatelessWidget {
             ),
             child: (index == 0)
                 ? Center(
-                    child: Text(state.roomChat.chatName,
+                    child: Text(
+                        state.roomChat != null
+                            ? state.roomChat!.chatName
+                            : FlutterI18n.translate(context, "chat_rooms"),
                         textAlign: TextAlign.center,
                         style: Theme.of(context).textTheme.bodySmall?.merge(
                               TextStyle(
@@ -230,11 +232,13 @@ class MessageHolderScreenContent extends StatelessWidget {
 
   List<Widget> getChatViews(MessageHolderBaseState state) {
     return {
-          MessagesScreen(
-            state.roomChat,
-            false,
-            key: Key(state.roomChat.id),
-          )
+          state.roomChat == null
+              ? const ChatScreen()
+              : MessagesScreen(
+                  state.roomChat as RoomChat,
+                  false,
+                  key: Key(state.roomChat!.id),
+                )
         }.toList() +
         Iterable.generate(state.privateChats.length)
             .map((e) => MessagesScreen(
@@ -246,35 +250,33 @@ class MessageHolderScreenContent extends StatelessWidget {
   }
 
   AppBar getAppBar(
-      BuildContext context, MessageHolderBaseState state, RoomChat chat) {
+      BuildContext context, MessageHolderBaseState state, Chat? chat) {
     return AppBar(
-      title: Text(
-        state.selectedChat.getChatName(FirebaseAuth.instance.currentUser!.uid)
-      ),
-      backgroundColor: Color(chat.chatColor),
+      title: Text(state.selectedChat
+              ?.getChatName(FirebaseAuth.instance.currentUser!.uid) ??
+          FlutterI18n.translate(context, "chat_rooms")),
+      backgroundColor: chat != null && chat is RoomChat
+          ? Color(chat.chatColor)
+          : AppColors.main,
       actions: [
         if (getSize(context) == ScreenSize.small)
-          if (state.selectedChat is PrivateChat)
-            IconButton(
-              icon: const Icon(
-                Icons.close,
-                color: AppColors.white,
-              ),
-              onPressed: () {
-                BlocProvider.of<MessageHolderBloc>(context)
-                    .add(MessageHolderClosePrivateChatEvent(null));
-              },
-            )
-          else
-            IconButton(
-              icon: const Icon(
-                Icons.people,
-                color: AppColors.white,
-              ),
-              onPressed: () {
-                showPeopleScreen(context, state.roomChat, user);
-              },
-            )
+          IconButton(
+            icon: const Icon(
+              Icons.people,
+              color: AppColors.white,
+            ),
+            onPressed: () {
+              showPeopleScreen(context, state.roomChat, state.user);
+            },
+          ),
+        IconButton(
+          icon: const Icon(
+            Icons.settings,
+          ),
+          onPressed: () {
+            Navigator.pushNamed(context, ProfileScreen.routeName);
+          },
+        )
       ],
     );
   }

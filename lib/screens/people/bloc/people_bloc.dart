@@ -5,25 +5,26 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../model/chat.dart';
 import '../../../model/chat_user.dart';
-import '../../../model/room_chat.dart';
 import '../../../utils/log.dart';
 import 'dart:async';
 
 class PeopleBloc extends Bloc<PeopleEvent, PeopleState> {
   final FirestoreRepository _firestoreRepository;
-  final Chat _chat;
+  final Chat? _chat;
   final ChatUser _user;
 
   StreamSubscription<QuerySnapshot>? chatStream;
+  StreamSubscription<QuerySnapshot>? onlineUsersStream;
 
   PeopleBloc(this._firestoreRepository, this._chat, this._user)
-      : super(PeopleLoadingState()) {
+      : super(PeopleBaseState(_firestoreRepository.getCachedUsers())) {
     add(PeopleInitialEvent());
   }
 
   @override
   Future<void> close() {
     chatStream?.cancel();
+    onlineUsersStream?.cancel();
     return super.close();
   }
 
@@ -33,7 +34,7 @@ class PeopleBloc extends Bloc<PeopleEvent, PeopleState> {
       if (event is PeopleInitialEvent) {
         setUpPeopleListener();
       } else if (event is PeopleLoadedEvent) {
-        yield PeopleBaseState(event.chatUsers);
+        yield PeopleBaseState(event.onlineUser);
       } else {
         Log.e('PeopleBloc: Not implemented');
         throw UnimplementedError();
@@ -45,10 +46,12 @@ class PeopleBloc extends Bloc<PeopleEvent, PeopleState> {
   }
 
   void setUpPeopleListener() {
-    chatStream = _firestoreRepository.streamChat(_chat.id, false).listen((event) async {
-      final chat = RoomChat.fromJson(
-          event.docs.first.id, event.docs.first.data() as Map<String, dynamic>);
-      final users = await _firestoreRepository.getUsersInChat(chat);
+    final currentChat = _chat;
+    onlineUsersStream = _firestoreRepository.streamOnlineUsers().listen((event) async {
+      final users = event.docs
+          .map((e) => ChatUser.fromJson(e.id, e.data() as Map<String, dynamic>))
+          .toList();
+
       final filteredUsers =
           users.where((element) => element.id != getUserId()).toList();
       //Sort users with the same country code as my users first
@@ -61,7 +64,15 @@ class PeopleBloc extends Bloc<PeopleEvent, PeopleState> {
           return 0;
         }
       });
-      add(PeopleLoadedEvent(filteredUsers));
+
+      if (currentChat != null) {
+        // add(PeopleLoadedEvent(filteredUsers
+        //     .where((element) => element.currentRoomChatId == currentChat.id)
+        //     .toList()));
+        add(PeopleLoadedEvent(filteredUsers));
+      } else {
+        add(PeopleLoadedEvent(filteredUsers));
+      }
     });
   }
 }

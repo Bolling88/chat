@@ -18,7 +18,7 @@ import 'bloc/people_bloc.dart';
 import 'bloc/people_state.dart';
 
 class PeopleScreen extends StatelessWidget {
-  final Chat chat;
+  final Chat? chat;
   final ChatUser user;
   final BuildContext parentContext;
 
@@ -41,7 +41,7 @@ class PeopleScreen extends StatelessWidget {
 
 class PeopleScreenBuilder extends StatelessWidget {
   final BuildContext parentContext;
-  final Chat chat;
+  final Chat? chat;
 
   const PeopleScreenBuilder(
       {required this.chat, required this.parentContext, Key? key})
@@ -65,7 +65,7 @@ class PeopleScreenBuilder extends StatelessWidget {
                   topRight: Radius.circular(20),
                 ),
               ),
-              child: (state.chatUsers.isEmpty)
+              child: (state.onlineUser.isEmpty)
                   ? Column(
                       children: [
                         const Center(
@@ -84,65 +84,8 @@ class PeopleScreenBuilder extends StatelessWidget {
                         const SizedBox(
                           height: 10,
                         ),
-                        getTopBar(context),
-                        Expanded(
-                          child: ListView.builder(
-                            itemCount: state.chatUsers.length,
-                            shrinkWrap: true,
-                            itemBuilder: (BuildContext context, int index) {
-                              return ListTile(
-                                title: Row(
-                                  children: [
-                                    Text(state.chatUsers[index].displayName,
-                                        style: Theme.of(context)
-                                            .textTheme
-                                            .displaySmall
-                                            ?.merge(TextStyle(
-                                                fontSize: 20,
-                                                color: getGenderColor(
-                                                    Gender.fromValue(state
-                                                        .chatUsers[index]
-                                                        .gender))))),
-                                    const SizedBox(width: 2),
-                                    if (state.chatUsers[index].gender !=
-                                        Gender.secret.value)
-                                      SizedBox(
-                                          width: 18,
-                                          height: 18,
-                                          child: AppLottie(
-                                            url: getGenderUrl(
-                                                state.chatUsers[index].gender),
-                                            animate: false,
-                                          )),
-                                  ],
-                                ),
-                                trailing: getFlag(
-                                    countryCode:
-                                        state.chatUsers[index].countryCode,
-                                    fontSize: 30),
-                                subtitle: Text(
-                                    '${state.chatUsers[index].city}, ${state.chatUsers[index].country}',
-                                    style:
-                                        Theme.of(context).textTheme.bodyMedium),
-                                leading: AppUserImage(
-                                  url: state.chatUsers[index].pictureData,
-                                  gender: state.chatUsers[index].gender,
-                                  size: 40,
-                                ),
-                                onTap: () {
-                                  if (getSize(context) == ScreenSize.small) {
-                                    //Navigator.pop(context);
-                                  }
-                                  showVisitScreen(
-                                      parentContext,
-                                      state.chatUsers[index].id,
-                                      chat,
-                                      getSize(context) == ScreenSize.small);
-                                },
-                              );
-                            },
-                          ),
-                        )
+                        getTopBar(context, chat),
+                        getList(state.onlineUser),
                       ],
                     ),
             );
@@ -163,7 +106,67 @@ class PeopleScreenBuilder extends StatelessWidget {
         }));
   }
 
-  Row getTopBar(BuildContext context) {
+  Expanded getList(List<ChatUser> users) {
+    return Expanded(
+                        child: ListView.builder(
+                          itemCount: users.length,
+                          shrinkWrap: true,
+                          itemBuilder: (BuildContext context, int index) {
+                            return ListTile(
+                              title: Row(
+                                children: [
+                                  Text(users[index].displayName,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .displaySmall
+                                          ?.merge(TextStyle(
+                                              fontSize: 20,
+                                              color: getGenderColor(
+                                                  Gender.fromValue(users[index]
+                                                      .gender))))),
+                                  const SizedBox(width: 2),
+                                  if (users[index].gender !=
+                                      Gender.secret.value)
+                                    SizedBox(
+                                        width: 18,
+                                        height: 18,
+                                        child: AppLottie(
+                                          url: getGenderUrl(
+                                              users[index].gender),
+                                          animate: false,
+                                        )),
+                                ],
+                              ),
+                              trailing: getFlag(
+                                  countryCode:
+                                  users[index].countryCode,
+                                  fontSize: 30),
+                              subtitle: Text(
+                                  '${users[index].city}, ${users[index].country}',
+                                  style:
+                                      Theme.of(context).textTheme.bodyMedium),
+                              leading: AppUserImage(
+                                url: users[index].pictureData,
+                                gender: users[index].gender,
+                                size: 40,
+                              ),
+                              onTap: () {
+                                if (getSize(context) == ScreenSize.small) {
+                                  //Navigator.pop(context);
+                                }
+                                showVisitScreen(
+                                    parentContext,
+                                    users[index].id,
+                                    chat,
+                                    getSize(context) == ScreenSize.small);
+                              },
+                            );
+                          },
+                        ),
+                      );
+  }
+
+  Row getTopBar(BuildContext context, Chat? chat) {
     return Row(
       children: [
         Visibility(
@@ -204,7 +207,7 @@ class PeopleScreenBuilder extends StatelessWidget {
 }
 
 Future showPeopleScreen(
-    BuildContext parentContext, Chat chat, ChatUser user) async {
+    BuildContext parentContext, Chat? chat, ChatUser user) async {
   await showModalBottomSheet(
     useRootNavigator: true,
     context: parentContext,

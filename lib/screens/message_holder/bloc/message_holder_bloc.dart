@@ -12,14 +12,14 @@ import 'message_holder_state.dart';
 
 class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
   final FirestoreRepository _firestoreRepository;
-  final RoomChat chatRoom;
 
   StreamSubscription<QuerySnapshot>? privateChatStream;
   StreamSubscription<QuerySnapshot>? roomChatStream;
+  StreamSubscription<QuerySnapshot>? onlineUsersStream;
 
   late ChatUser _chatUser;
 
-  MessageHolderBloc(this._firestoreRepository, this.chatRoom)
+  MessageHolderBloc(this._firestoreRepository)
       : super(MessageHolderLoadingState()) {
     add(MessageHolderInitialEvent());
   }
@@ -28,6 +28,7 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
   Future<void> close() {
     privateChatStream?.cancel();
     roomChatStream?.cancel();
+    onlineUsersStream?.cancel();
     return super.close();
   }
 
@@ -35,15 +36,17 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
   Stream<MessageHolderState> mapEventToState(MessageHolderEvent event) async* {
     final currentState = state;
     if (event is MessageHolderInitialEvent) {
+      _firestoreRepository.updateCurrentUsersCurrentChat(chatId: '');
       _chatUser = (await _firestoreRepository.getUser())!;
+      setUpOnlineUsersListener(_chatUser);
       yield MessageHolderBaseState(
-          roomChat: chatRoom,
-          chatId: chatRoom.id,
+          roomChat: null,
+          user: _chatUser,
+          onlineUsers: const [],
           privateChats: const [],
-          selectedChat: chatRoom,
+          selectedChat: null,
           selectedChatIndex: 0);
       setUpPrivateChatsListener();
-      setUpChatsListener();
     } else if (event is MessageHolderStartPrivateChatEvent) {
       if (currentState is MessageHolderBaseState) {
         final bool isChatAvailable =
@@ -108,8 +111,9 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
                   privateChats: event.privateChats,
                   selectedChatIndex: 0,
                   roomChat: currentState.roomChat
-                      .copyWith(lastMessageReadByUser: true),
-                  selectedChat: chatRoom.copyWith(lastMessageReadByUser: true));
+                      ?.copyWith(lastMessageReadByUser: true),
+                  selectedChat: currentState.roomChat
+                      ?.copyWith(lastMessageReadByUser: true));
             }
           }
         } else {
@@ -121,9 +125,9 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
           yield currentState.copyWith(privateChats: event.privateChats);
         }
       }
-    } else if (event is MessageHolderChatUpdatedEvent) {
+    } else if (event is MessageHolderRoomChatUpdatedEvent) {
       if (currentState is MessageHolderBaseState) {
-        if (currentState.selectedChat.id == event.chat.id) {
+        if (currentState.selectedChat?.id == event.chat.id) {
           yield currentState.copyWith(
               roomChat: event.chat.copyWith(lastMessageReadByUser: true));
         } else {
@@ -132,20 +136,27 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
       }
     } else if (event is MessageHolderChatClickedEvent) {
       if (currentState is MessageHolderBaseState) {
-        if (event.index == 0) {
+        if (event.chat is RoomChat) {
+          final RoomChat chat =
+              (event.chat as RoomChat).copyWith(lastMessageReadByUser: true);
+          //Set user current chat and mark as present
+          _firestoreRepository.updateCurrentUsersCurrentChat(chatId: chat.id);
           yield currentState.copyWith(
-              selectedChatIndex: event.index,
-              selectedChat: chatRoom.copyWith(lastMessageReadByUser: true),
-              roomChat: chatRoom.copyWith(lastMessageReadByUser: true));
-        } else {
-          _firestoreRepository.setLastMessageRead(chatId: event.chat.id);
+              selectedChatIndex: 0,
+              selectedChat: chat,
+              roomChat: chat);
+        } else if(event.chat is PrivateChat){
+          _firestoreRepository.setLastMessageRead(chatId: event.chat!.id);
           yield currentState.copyWith(
               selectedChatIndex: event.index, selectedChat: event.chat);
+        }else{
+          yield currentState.copyWith(
+              selectedChatIndex: 0, selectedChat: null);
         }
       }
     } else if (event is MessageHolderExitChatEvent) {
       if (currentState is MessageHolderBaseState) {
-        _firestoreRepository.exitAllChats(chatId: chatRoom.id);
+        _firestoreRepository.exitAllChats(chatId: currentState.roomChat?.id);
       }
     } else if (event is MessageHolderClosePrivateChatEvent) {
       Log.d("Closing private chat");
@@ -155,15 +166,30 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
           _firestoreRepository.leavePrivateChat(event.privateChat!);
           if (event.privateChat == currentState.selectedChat) {
             yield currentState.copyWith(
-                selectedChat: chatRoom, selectedChatIndex: 0);
+                selectedChat: currentState.roomChat, selectedChatIndex: 0);
           }
         } else {
           //This is called from a small screen, and the current chat, so we must move to the room again
           _firestoreRepository
               .leavePrivateChat(currentState.selectedChat as PrivateChat);
           yield currentState.copyWith(
-              selectedChat: chatRoom, selectedChatIndex: 0);
+              selectedChat: currentState.roomChat, selectedChatIndex: 0);
         }
+      }
+    } else if (event is MessageHolderChangeChatRoomEvent) {
+      if (currentState is MessageHolderBaseState) {
+        _firestoreRepository.updateCurrentUsersCurrentChat(chatId: '');
+        yield MessageHolderBaseState(
+            roomChat: null,
+            user: currentState.user,
+            onlineUsers: currentState.onlineUsers,
+            privateChats: currentState.privateChats,
+            selectedChat: null,
+            selectedChatIndex: 0);
+      }
+    }else if(event is MessageHolderUsersUpdatedEvent){
+      if (currentState is MessageHolderBaseState) {
+        yield currentState.copyWith(onlineUsers: event.users);
       }
     } else {
       throw UnimplementedError();
@@ -175,10 +201,10 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
     //If the private chat the user have still exists
     //Make sure we set the message as read since we are on that chat
     final currentChat = event.privateChats
-        .where((element) => element.id == currentState.selectedChat.id)
+        .where((element) => element.id == currentState.selectedChat?.id)
         .firstOrNull;
     if (currentChat != null) {
-      if (currentState.selectedChat.lastMessage != currentChat.lastMessage) {
+      if (currentState.selectedChat?.lastMessage != currentChat.lastMessage) {
         _firestoreRepository.setLastMessageRead(chatId: currentChat.id);
       }
     }
@@ -200,14 +226,38 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
     });
   }
 
-  void setUpChatsListener() async {
+  void setUpChatsListener(RoomChat chat) async {
     Log.d('Setting up private chats stream');
-    roomChatStream = _firestoreRepository
-        .streamChat(chatRoom.id, false)
-        .listen((event) async {
+    roomChatStream =
+        _firestoreRepository.streamChat(chat.id, false).listen((event) async {
       final chat = RoomChat.fromJson(
           event.docs.first.id, event.docs.first.data() as Map<String, dynamic>);
-      add(MessageHolderChatUpdatedEvent(chat));
+      add(MessageHolderRoomChatUpdatedEvent(chat));
+    });
+  }
+
+  void setUpOnlineUsersListener(ChatUser user){
+    onlineUsersStream = _firestoreRepository.streamOnlineUsers().listen((event) async {
+      final users = event.docs
+          .map((e) => ChatUser.fromJson(e.id, e.data() as Map<String, dynamic>))
+          .toList();
+
+      final filteredUsers =
+      users.where((element) => element.id != user.id).toList();
+
+      _firestoreRepository.setCachedOnlineUsers(filteredUsers);
+      //Sort users with the same country code as my users first
+      filteredUsers.sort((a, b) {
+        if (a.countryCode == user.countryCode) {
+          return -1;
+        } else if (b.countryCode == user.countryCode) {
+          return 1;
+        } else {
+          return 0;
+        }
+      });
+
+      add(MessageHolderUsersUpdatedEvent(filteredUsers));
     });
   }
 }

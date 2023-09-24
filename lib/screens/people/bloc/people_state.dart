@@ -10,12 +10,12 @@ abstract class PeopleState extends Equatable {
 }
 
 class PeopleBaseState extends PeopleState {
-  final List<ChatUser> chatUsers;
+  final List<ChatUser> onlineUser;
 
-  const PeopleBaseState(this.chatUsers);
+  const PeopleBaseState(this.onlineUser);
 
   @override
-  List<Object> get props => [chatUsers];
+  List<Object> get props => [onlineUser];
 }
 
 class PeopleErrorState extends PeopleState {}

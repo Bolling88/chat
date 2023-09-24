@@ -162,7 +162,6 @@ class KvitterApp extends StatelessWidget {
                     const OnboardingNameScreen(),
                 OnboardingPhotoScreen.routeName: (context) =>
                     const OnboardingPhotoScreen(),
-                ChatScreen.routeName: (context) => const ChatScreen(),
                 MessageHolderScreen.routeName: (context) =>
                     const MessageHolderScreen(),
                 ProfileScreen.routeName: (context) => const ProfileScreen(),

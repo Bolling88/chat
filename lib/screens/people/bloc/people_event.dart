@@ -11,10 +11,10 @@ abstract class PeopleEvent extends Equatable{
 
 class PeopleInitialEvent extends PeopleEvent{}
 class PeopleLoadedEvent extends PeopleEvent{
-  final List<ChatUser> chatUsers;
+  final List<ChatUser> onlineUser;
 
-  const PeopleLoadedEvent(this.chatUsers);
+  const PeopleLoadedEvent(this.onlineUser);
 
   @override
-  List<Object> get props => [chatUsers];
+  List<Object> get props => [onlineUser];
 }

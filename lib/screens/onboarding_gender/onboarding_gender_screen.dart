@@ -1,4 +1,5 @@
 import 'package:chat/screens/chat/chat_screen.dart';
+import 'package:chat/screens/message_holder/message_holder_screen.dart';
 import 'package:chat/utils/lottie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -36,7 +37,7 @@ class OnboardingGenderScreenContent extends StatelessWidget {
         if (state is OnboardingGenderSuccessState) {
           if (state.navigation == OnboardingNavigation.DONE) {
             Navigator.of(context).popUntil((route) => route.isFirst);
-            Navigator.pushReplacementNamed(context, ChatScreen.routeName);
+            Navigator.pushReplacementNamed(context, MessageHolderScreen.routeName);
           }
         }
       },
