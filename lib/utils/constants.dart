@@ -7,7 +7,7 @@ enum ScreenSize { small, large }
 
 ScreenSize getSize(BuildContext context) {
   double deviceWidth = MediaQuery.of(context).size.width;
-  if (deviceWidth >= 600) {
+  if (deviceWidth >= 855) {
     return ScreenSize.large;
   } else {
     return ScreenSize.small;

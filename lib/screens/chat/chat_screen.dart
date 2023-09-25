@@ -8,7 +8,6 @@ import '../../repository/firestore_repository.dart';
 import '../../repository/presence_database.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_widgets.dart';
-import '../../utils/constants.dart';
 import 'bloc/chat_bloc.dart';
 import 'bloc/chat_state.dart';
 
@@ -38,16 +37,7 @@ class ChatsScreenContent extends StatelessWidget {
             child: BlocBuilder<ChatBloc, ChatState>(
               builder: (context, state) {
                 if (state is ChatBaseState) {
-                  if (getSize(context) == ScreenSize.large) {
-                    return Row(
-                      children: [
-                        Expanded(child: getSmallView(state)),
-                        Expanded(child: getLargeView(context)),
-                      ],
-                    );
-                  } else {
-                    return getSmallView(state);
-                  }
+                  return getSmallView(state);
                 } else if (state is ChatEmptyState) {
                   return Center(
                     child: Text(FlutterI18n.translate(context, "no_chats")),
@@ -59,35 +49,6 @@ class ChatsScreenContent extends StatelessWidget {
                 }
               },
             )));
-  }
-
-  Container getLargeView(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      height: double.infinity,
-      color: AppColors.main,
-      child: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              FlutterI18n.translate(context, "app_name"),
-              style: Theme.of(context)
-                  .textTheme
-                  .displayLarge
-                  ?.merge(const TextStyle(color: Colors.white)),
-            ),
-            Text(
-              FlutterI18n.translate(context, "chat_rooms"),
-              style: Theme.of(context)
-                  .textTheme
-                  .displaySmall
-                  ?.merge(const TextStyle(color: Colors.white)),
-            )
-          ],
-        ),
-      ),
-    );
   }
 
   ListView getSmallView(ChatBaseState state) {

@@ -79,9 +79,13 @@ class MessageHolderScreenContent extends StatelessWidget {
                     : Future.value(true),
                 child: Scaffold(
                     appBar: getAppBar(context, state, state.selectedChat),
-                    body: (getSize(context) == ScreenSize.large)
-                        ? largeScreenContent(state, context)
-                        : smallScreenContent(state, context)),
+                    body: LayoutBuilder(
+                        builder: (BuildContext context,
+                                BoxConstraints constraints) =>
+                            constraints.maxWidth >
+                                    (state.privateChats.isEmpty ? 855 : 970)
+                                ? largeScreenContent(state, context)
+                                : smallScreenContent(state, context))),
               );
             } else {
               return const Scaffold(body: Center(child: AppSpinner()));
@@ -92,21 +96,27 @@ class MessageHolderScreenContent extends StatelessWidget {
 
   Row largeScreenContent(MessageHolderBaseState state, BuildContext context) {
     return Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-      Expanded(
-          flex: 1,
+      SizedBox(
+          width: 350,
           child: PeopleScreen(
               chat: state.roomChat, user: state.user, parentContext: context)),
-      if (state.privateChats.isEmpty) const VerticalDivider(),
+      if (state.privateChats.isEmpty)
+        const VerticalDivider(
+          width: 5,
+        ),
       state.privateChats.isNotEmpty
           ? getSideMenu(state, context)
           : const SizedBox.shrink(),
-      Expanded(
-          flex: 2,
-          child: Material(
-            elevation: 0,
-            child: IndexedStack(
-                index: state.selectedChatIndex, children: getChatViews(state)),
-          )),
+      Container(
+        width: double.infinity,
+        constraints: const BoxConstraints(maxWidth: 500),
+        child: Material(
+          elevation: 0,
+          child: IndexedStack(
+              index: state.selectedChatIndex, children: getChatViews(state)),
+        ),
+      ),
+      Expanded(child: getBrandNameView(context)),
     ]);
   }
 
@@ -122,6 +132,35 @@ class MessageHolderScreenContent extends StatelessWidget {
             index: state.selectedChatIndex, children: getChatViews(state)),
       )),
     ]);
+  }
+
+  Container getBrandNameView(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      height: double.infinity,
+      color: AppColors.main,
+      child: Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              FlutterI18n.translate(context, "app_name"),
+              style: Theme.of(context)
+                  .textTheme
+                  .displayLarge
+                  ?.merge(const TextStyle(color: Colors.white)),
+            ),
+            Text(
+              FlutterI18n.translate(context, "chat_rooms"),
+              style: Theme.of(context)
+                  .textTheme
+                  .displaySmall
+                  ?.merge(const TextStyle(color: Colors.white)),
+            )
+          ],
+        ),
+      ),
+    );
   }
 
   Widget getSideMenu(MessageHolderBaseState state, BuildContext context) {
@@ -252,23 +291,55 @@ class MessageHolderScreenContent extends StatelessWidget {
   AppBar getAppBar(
       BuildContext context, MessageHolderBaseState state, Chat? chat) {
     return AppBar(
-      title: Text(state.selectedChat
-              ?.getChatName(FirebaseAuth.instance.currentUser!.uid) ??
-          FlutterI18n.translate(context, "chat_rooms")),
+      title: GestureDetector(
+        onTap: () {
+          if (state.selectedChatIndex == 0) {
+            BlocProvider.of<MessageHolderBloc>(context)
+                .add(MessageHolderChangeChatRoomEvent());
+          }
+        },
+        child: Text(
+          (chat?.getChatName(FirebaseAuth.instance.currentUser!.uid) ?? '')
+                  .isNotEmpty
+              ? chat!.getChatName(FirebaseAuth.instance.currentUser!.uid)
+              : FlutterI18n.translate(context, "chat_rooms"),
+        ),
+      ),
       backgroundColor: chat != null && chat is RoomChat
           ? Color(chat.chatColor)
           : AppColors.main,
       actions: [
-        if (getSize(context) == ScreenSize.small)
-          IconButton(
-            icon: const Icon(
-              Icons.people,
-              color: AppColors.white,
-            ),
-            onPressed: () {
-              showPeopleScreen(context, state.roomChat, state.user);
-            },
-          ),
+        MediaQuery.of(context).size.width > (state.privateChats.isEmpty ? 855 : 970)
+              ? const SizedBox.shrink()
+              : Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    customBorder: const CircleBorder(),
+                    onTap: () {
+                      showPeopleScreen(context, state.roomChat, state.user);
+                    },
+                    child: SizedBox(
+                      height: 60,
+                      width: 60,
+                      child: Row(
+                        children: [
+                          Text(
+                            state.onlineUsers.length.toString(),
+                            style: Theme.of(context).textTheme.bodyLarge?.merge(
+                                const TextStyle(
+                                    color: AppColors.white,
+                                    fontWeight: FontWeight.bold)),
+                          ),
+                          const SizedBox(width: 5),
+                          const Icon(
+                            Icons.people,
+                            color: AppColors.white,
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+        ),
         IconButton(
           icon: const Icon(
             Icons.settings,
