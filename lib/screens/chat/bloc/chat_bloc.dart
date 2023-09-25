@@ -12,9 +12,9 @@ import 'chat_state.dart';
 
 class ChatBloc extends Bloc<ChatEvent, ChatState> {
   final FirestoreRepository _firestoreRepository;
-  late ChatUser user;
 
   late StreamSubscription<QuerySnapshot> chatStream;
+  late StreamSubscription<QuerySnapshot> onlineUsersStream;
 
   ChatBloc(this._firestoreRepository) : super(ChatLoadingState()) {
     add(ChatInitialEvent());
@@ -23,34 +23,35 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   @override
   Future<void> close() {
     chatStream.cancel();
+    onlineUsersStream.cancel();
     return super.close();
   }
 
   @override
   Stream<ChatState> mapEventToState(ChatEvent event) async* {
+    final currentState = state;
     if (event is ChatInitialEvent) {
-      user = (await _firestoreRepository.getUser())!;
-      Log.d('Got User: ${user.displayName}');
-      setUpDataListener();
+      setUpChatListener();
+      setUpPeopleListener();
       updateUserLocation();
     } else if (event is ChatUpdatedEvent) {
-      final chats = event.chats;
-      if (chats.isEmpty) {
-        yield ChatEmptyState();
+      if (currentState is ChatBaseState) {
+        yield currentState.copyWith(chats: event.chats);
       } else {
-        Set<String> userIds = {};
-        for (var chat in chats) {
-          userIds.addAll(chat.users);
-        }
-
-        yield ChatBaseState(chats, user);
+        yield ChatBaseState(event.chats, const {});
+      }
+    } else if (event is ChatOnlineUsersUpdatedEvent) {
+      if (currentState is ChatBaseState) {
+        yield currentState.copyWith(onlineUsers: event.onlineUsers);
+      } else {
+        yield ChatBaseState(const [], event.onlineUsers);
       }
     } else {
       throw UnimplementedError();
     }
   }
 
-  void setUpDataListener() async {
+  void setUpChatListener() async {
     Log.d("Setting up chat listener");
     chatStream = _firestoreRepository.streamChats().listen((event) {
       final List<RoomChat> chats = event.docs
@@ -64,15 +65,29 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     });
   }
 
-  void updateUserLocation()async{
+  void updateUserLocation() async {
     UserLocation userLocation = await getUserLocation();
     _firestoreRepository.updateUserLocation(userLocation);
   }
-}
 
-class ChatsAndUser {
-  final ChatUser user;
-  final List<RoomChat> chats;
+  void setUpPeopleListener() {
+    onlineUsersStream =
+        _firestoreRepository.streamOnlineUsers().listen((event) async {
+      final users = event.docs
+          .map((e) => ChatUser.fromJson(e.id, e.data() as Map<String, dynamic>))
+          .toList();
 
-  ChatsAndUser(this.user, this.chats);
+      final usersPerChat = <String, List<ChatUser>>{};
+      for (var user in users) {
+        if (user.currentRoomChatId.isNotEmpty) {
+          if (usersPerChat.containsKey(user.currentRoomChatId)) {
+            usersPerChat[user.currentRoomChatId]!.add(user);
+          } else {
+            usersPerChat[user.currentRoomChatId] = [user];
+          }
+        }
+      }
+      add(ChatOnlineUsersUpdatedEvent(usersPerChat));
+    });
+  }
 }

@@ -329,20 +329,6 @@ class FirestoreRepository {
     });
   }
 
-  Future<List<ChatUser>> getUsersInChat(RoomChat chat) {
-    return users
-        .where(FieldPath.documentId, whereIn: chat.users)
-        .get()
-        .then((value) => value.docs
-            .map((e) =>
-                ChatUser.fromJson(e.id, e.data() as Map<String, dynamic>))
-            .toList())
-        .catchError((error) {
-      Log.e("Failed to get chat: $error");
-      return [];
-    });
-  }
-
   Future<void> leavePrivateChat(PrivateChat selectedChat) {
     return privateChats.doc(selectedChat.id).set({
       'users': FieldValue.arrayRemove([getUserId()]),

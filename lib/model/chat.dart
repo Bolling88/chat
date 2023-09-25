@@ -5,7 +5,6 @@ import 'chat_user.dart';
 
 abstract class Chat extends Equatable {
   final String id;
-  final List<String> users;
   final String lastMessage;
   final String lastMessageByName;
   final Timestamp lastMessageTimestamp;
@@ -13,7 +12,6 @@ abstract class Chat extends Equatable {
 
   const Chat({
     required this.id,
-    required this.users,
     required this.lastMessage,
     required this.lastMessageByName,
     required this.lastMessageTimestamp,
@@ -27,7 +25,6 @@ abstract class Chat extends Equatable {
 
   Chat copyWith({
     String? id,
-    List<String>? users,
     String? lastMessage,
     String? lastMessageByName,
     Timestamp? lastMessageTimestamp,

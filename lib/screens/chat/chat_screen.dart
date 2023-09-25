@@ -150,12 +150,14 @@ class ChatsScreenContent extends StatelessWidget {
             ],
           )),
           Text(
-            state.chats[index].users.length.toString(),
+            state.onlineUsers.containsKey(state.chats[index].id)
+                ? state.onlineUsers[state.chats[index].id]?.length.toString() ?? '0'
+                : '0',
             style: Theme.of(context).textTheme.bodySmall,
           ),
           Icon(
             Icons.person,
-            color: state.chats[index].users.isNotEmpty
+            color: (state.onlineUsers[state.chats[index].id]?.length ?? 0) > 0
                 ? AppColors.main
                 : AppColors.grey_1,
           ),

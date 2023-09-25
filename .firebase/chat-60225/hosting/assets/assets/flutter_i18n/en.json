@@ -68,5 +68,8 @@
   "block_user_info": "If you block this user they will not be able to send you messages. Are you sure you wish to do that?",
   "report_message": "Report message",
   "report_message_info": "Are you sure you wish to report this message? We will review it and in worst case scenario block the user.",
-  "message_reported": "Message reported"
+  "message_reported": "Message reported",
+  "leave_chat": "Leave chat",
+  "change_room": "Change room",
+  "users_in_room": "Users in room"
 }

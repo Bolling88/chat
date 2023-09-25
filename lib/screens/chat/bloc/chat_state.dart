@@ -13,10 +13,17 @@ class ChatEmptyState extends ChatState {}
 
 class ChatBaseState extends ChatState {
   final List<RoomChat> chats;
-  final ChatUser user;
+  final Map<String, List<ChatUser>> onlineUsers;
 
-  ChatBaseState(this.chats, this.user);
+  ChatBaseState(this.chats, this.onlineUsers);
+
+  ChatBaseState copyWith(
+      {List<RoomChat>? chats,
+      Map<String, List<ChatUser>>? onlineUsers,
+      ChatUser? user}) {
+    return ChatBaseState(chats ?? this.chats, onlineUsers ?? this.onlineUsers);
+  }
 
   @override
-  List<Object?> get props => [chats, user];
+  List<Object?> get props => [chats, onlineUsers];
 }

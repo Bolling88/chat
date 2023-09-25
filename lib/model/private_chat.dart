@@ -13,6 +13,7 @@ class PrivateChat extends Chat implements Comparable<PrivateChat> {
   final int otherUserGender;
   final String otherUserPictureData;
   final List<String> lastMessageReadBy;
+  final List<String> users;
   final List<ChatUser> userInfos = [];
   final String usersText = "";
 
@@ -26,15 +27,14 @@ class PrivateChat extends Chat implements Comparable<PrivateChat> {
     required this.otherUserGender,
     required this.otherUserPictureData,
     required this.lastMessageReadBy,
+    required this.users,
     required String id,
-    required List<String> users,
     required String lastMessage,
     required String lastMessageByName,
     required Timestamp lastMessageTimestamp,
     required String lastMessageUserId,
   }) : super(
           id: id,
-          users: users,
           lastMessage: lastMessage,
           lastMessageByName: lastMessageByName,
           lastMessageTimestamp: lastMessageTimestamp,
@@ -86,13 +86,13 @@ class PrivateChat extends Chat implements Comparable<PrivateChat> {
         initiatedByUserGender = json['initiatedByUserGender'] ?? 0,
         initiatedByPictureData = json['initiatedByPictureData'] ?? '',
         otherUserId = json['otherUserId'] ?? '',
+        users = json['users']?.cast<String>() ?? [],
         otherUserName = json['otherUserName'] ?? '',
         otherUserGender = json['otherUserGender'] ?? 0,
         otherUserPictureData = json['otherUserPictureData'] ?? '',
         lastMessageReadBy = json['lastMessageReadBy']?.cast<String>() ?? [],
         super(
           id: id,
-          users: json['users']?.cast<String>() ?? [],
           lastMessage: json['lastMessage'] ?? "",
           lastMessageByName: json['lastMessageByName'] ?? "",
           lastMessageTimestamp: json['lastMessageTimestamp'] ?? Timestamp.now(),
