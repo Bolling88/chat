@@ -11,7 +11,6 @@ class MessageHolderEvent extends Equatable {
 }
 
 class MessageHolderInitialEvent extends MessageHolderEvent {}
-class MessageHolderExitChatEvent extends MessageHolderEvent {}
 class MessageHolderChangeChatRoomEvent extends MessageHolderEvent {}
 class MessageHolderClosePrivateChatEvent extends MessageHolderEvent {
   final PrivateChat? privateChat;

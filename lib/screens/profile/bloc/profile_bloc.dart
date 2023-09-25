@@ -34,6 +34,8 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         if (currentState is ProfileBaseState) {
           yield ProfileLoadingState();
           Log.d('Deleting user');
+          _firestoreRepository.updateUserPresence(present: false);
+          _firestoreRepository.leaveAllPrivateChats();
           await _firestoreRepository.deleteUserAndFiles();
           yield ProfileLogoutState();
         }
@@ -42,6 +44,8 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       } else if (event is ProfileLogoutEvent) {
         yield ProfileLoadingState();
         //Check if user is anonymous
+        _firestoreRepository.updateUserPresence(present: false);
+        _firestoreRepository.leaveAllPrivateChats();
         if (FirebaseAuth.instance.currentUser?.isAnonymous == true) {
           //Delete user
           await _firestoreRepository.deleteUserAndFiles();

@@ -44,10 +44,18 @@ class VisitBloc extends Bloc<VisitEvent, VisitState> {
           userBlocked: false);
     } else if (event is VisitUserLoadedState) {
       if (currentState is VisitBaseState) {
-        yield currentState.copyWith(
-            user: event.user?.presence == true ? event.user : null,
-            userLoaded: true,
-            userBlocked: event.user?.isUserBlocked());
+        if(event.user != null) {
+          yield currentState.copyWith(
+              user: event.user?.presence == true ? event.user : null,
+              userLoaded: true,
+              userBlocked: event.user?.isUserBlocked());
+        }else{
+          //User most likely deleted his account
+          yield currentState.copyWith(
+              user: null,
+              userLoaded: true,
+              userBlocked: false);
+        }
       }
     } else if (event is VisitBlocUserEvent) {
       if (currentState is VisitBaseState) {
@@ -74,9 +82,14 @@ class VisitBloc extends Bloc<VisitEvent, VisitState> {
   void setUpPeopleListener() {
     userStream =
         _firestoreRepository.streamUserById(userId).listen((event) async {
-      final user = ChatUser.fromJson(
-          userId, event.docs.first.data() as Map<String, dynamic>);
-      add(VisitUserLoadedState(user));
+          if(event.docs.isEmpty){
+            add(VisitUserLoadedState(null));
+            return;
+          }else {
+            final user = ChatUser.fromJson(
+                userId, event.docs.first.data() as Map<String, dynamic>);
+            add(VisitUserLoadedState(user));
+          }
     });
   }
 }

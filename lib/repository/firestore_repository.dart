@@ -249,31 +249,6 @@ class FirestoreRepository {
     return privateChats.where('users', arrayContains: getUserId()).snapshots();
   }
 
-  void exitAllChats({required String? chatId}) async {
-    if (chatId != null) {
-      await leaveRoomChat(chatId);
-    }
-    final chats =
-        await privateChats.where('users', arrayContains: getUserId()).get();
-    for (var element in chats.docs) {
-      element.reference.delete();
-    }
-  }
-
-  Future<void> leaveRoomChat(String chatId) async {
-    if (chatId.isNotEmpty) {
-      try {
-        await chats.doc(chatId).set({
-          'users': FieldValue.arrayRemove([getUserId()]),
-        }, SetOptions(merge: true));
-      } catch (e) {
-        Log.e(e);
-      }
-    } else {
-      Log.e("leaveChat: Chat is was empty");
-    }
-  }
-
   Future<RoomChat?> createPrivateChat({
     required ChatUser myUser,
     required ChatUser otherUser,
@@ -412,11 +387,18 @@ class FirestoreRepository {
     });
   }
 
-  void updateUserPresence(int lastSeen, bool presence) {
+  void updateUserPresence({required bool present}) {
     users.doc(getUserId()).set({
-      'presence': presence,
-      'last_seen': lastSeen,
+      'presence': present,
     }, SetOptions(merge: true));
+  }
+
+  void leaveAllPrivateChats()  {
+     privateChats.where('users', arrayContains: getUserId()).get().then(
+        (value) => value.docs.forEach((element) {
+              leavePrivateChat(PrivateChat.fromJson(
+                  element.id, element.data() as Map<String, dynamic>));
+            }));
   }
 
   void updateUserLocation(UserLocation userLocation) {
@@ -481,6 +463,7 @@ class FirestoreRepository {
   }
 
   List<ChatUser> _onlineUsers = [];
+
   void setCachedOnlineUsers(List<ChatUser> filteredUsers) {
     _onlineUsers = filteredUsers;
   }

@@ -55,8 +55,6 @@ class MessageHolderScreenContent extends StatelessWidget {
           ),
           TextButton(
             onPressed: () {
-              BlocProvider.of<MessageHolderBloc>(blocContext)
-                  .add(MessageHolderExitChatEvent());
               return Navigator.of(context).pop(true);
             },
             child: Text(FlutterI18n.translate(context, 'yes')),

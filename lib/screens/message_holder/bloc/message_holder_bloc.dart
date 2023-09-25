@@ -26,6 +26,7 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
 
   @override
   Future<void> close() {
+    //This will probably not never be called since the app will be fried before the widget tree is unmounted.
     privateChatStream?.cancel();
     roomChatStream?.cancel();
     onlineUsersStream?.cancel();
@@ -168,10 +169,6 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
               selectedChat: null,
               selectedChatIndex: 0);
         }
-      }
-    } else if (event is MessageHolderExitChatEvent) {
-      if (currentState is MessageHolderBaseState) {
-        _firestoreRepository.exitAllChats(chatId: currentState.roomChat?.id);
       }
     } else if (event is MessageHolderClosePrivateChatEvent) {
       Log.d("Closing private chat");
