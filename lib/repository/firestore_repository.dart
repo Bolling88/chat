@@ -17,6 +17,9 @@ enum Gender {
   const Gender(this.value);
 
   static Gender fromValue(num i) {
+    if(i < 0 || i > 3) {
+      i = 3;
+    }
     return Gender.values.firstWhere((x) => x.value == i);
   }
 
@@ -249,7 +252,7 @@ class FirestoreRepository {
     return privateChats.where('users', arrayContains: getUserId()).snapshots();
   }
 
-  Future<RoomChat?> createPrivateChat({
+  Future<PrivateChat?> createPrivateChat({
     required ChatUser myUser,
     required ChatUser otherUser,
     required String initialMessage,
@@ -274,7 +277,7 @@ class FirestoreRepository {
       final data = querySnapshot.data();
       if (data != null) {
         final chat =
-            RoomChat.fromJson(querySnapshot.id, data as Map<String, dynamic>);
+            PrivateChat.fromJson(querySnapshot.id, data as Map<String, dynamic>);
         postMessage(
             chatId: chat.id,
             user: myUser,
