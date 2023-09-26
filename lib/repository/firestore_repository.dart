@@ -456,14 +456,4 @@ class FirestoreRepository {
       'presence': true,
     }, SetOptions(merge: true));
   }
-
-  List<ChatUser> _onlineUsers = [];
-
-  void setCachedOnlineUsers(List<ChatUser> filteredUsers) {
-    _onlineUsers = filteredUsers;
-  }
-
-  List<ChatUser> getCachedUsers() {
-    return _onlineUsers;
-  }
 }

@@ -46,7 +46,7 @@ class VisitBloc extends Bloc<VisitEvent, VisitState> {
       if (currentState is VisitBaseState) {
         if(event.user != null) {
           yield currentState.copyWith(
-              user: event.user?.presence == true ? event.user : null,
+              user: event.user,
               userLoaded: true,
               userBlocked: event.user?.isUserBlocked());
         }else{

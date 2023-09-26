@@ -39,10 +39,10 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
     if (event is MessageHolderInitialEvent) {
       _firestoreRepository.updateCurrentUsersCurrentChat(chatId: '');
       setUpUserListener();
-    }else if(event is MessageHolderUserUpdatedEvent){
+    } else if (event is MessageHolderUserUpdatedEvent) {
       if (currentState is MessageHolderBaseState) {
         yield currentState.copyWith(user: event.user);
-      }else if(state is MessageHolderLoadingState){
+      } else if (state is MessageHolderLoadingState) {
         yield MessageHolderBaseState(
             roomChat: null,
             user: event.user,
@@ -82,7 +82,8 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
       if (currentState is MessageHolderBaseState) {
         //If the number of chats have changed...
         if (currentState.privateChats.length != event.privateChats.length) {
-          if (currentState.selectedChatIndex == 0 || currentState.selectedChat == null) {
+          if (currentState.selectedChatIndex == 0 ||
+              currentState.selectedChat == null) {
             //If we are in the group chat or in all chats
             if (event.privateChats.length > currentState.privateChats.length) {
               //And private chats have increased
@@ -94,13 +95,7 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
                     selectedChatIndex: event.privateChats.length);
               } else {
                 //else just update the chats and play a sound
-                try {
-                  final player = AudioPlayer();
-                  await player.play(UrlSource(
-                      'https://firebasestorage.googleapis.com/v0/b/chat-60225.appspot.com/o/audio%2Fstop.mp3?alt=media&token=88032575-9833-4bf5-86fb-554b61820c27'));
-                }catch(e){
-                  Log.e(e);
-                }
+                playSound();
                 yield currentState.copyWith(privateChats: event.privateChats);
               }
             } else {
@@ -109,14 +104,27 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
           } else {
             //We are not in the group chat
             if (event.privateChats.contains(currentState.selectedChat)) {
+              //The private chat was not removed
               setMessageAsRead(event, currentState);
-
-              yield currentState.copyWith(
-                  privateChats: event.privateChats,
-                  selectedChat: currentState.selectedChat,
-                  selectedChatIndex: event.privateChats
-                          .indexOf(currentState.selectedChat as PrivateChat) +
-                      1);
+              if (event.privateChats.length >
+                  currentState.privateChats.length) {
+                //The private chats have increased
+                if (event.privateChats.last.initiatedBy == getUserId()) {
+                  //And it was by you, move to that chat
+                  yield currentState.copyWith(
+                      privateChats: event.privateChats,
+                      selectedChat: event.privateChats.last,
+                      selectedChatIndex: event.privateChats.length);
+                } else {
+                  //Someone sent the user a private chat
+                  //else just update the chats and play a sound
+                  playSound();
+                  yield currentState.copyWith(privateChats: event.privateChats);
+                }
+              } else {
+                //else just update the chats
+                yield currentState.copyWith(privateChats: event.privateChats);
+              }
             } else {
               //The private chat has been removed, move the user to the group chat
               if (currentState.roomChat != null) {
@@ -212,6 +220,16 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
     }
   }
 
+  Future<void> playSound() async {
+    try {
+      final player = AudioPlayer();
+      await player.play(UrlSource(
+          'https://firebasestorage.googleapis.com/v0/b/chat-60225.appspot.com/o/audio%2Fstop.mp3?alt=media&token=88032575-9833-4bf5-86fb-554b61820c27'));
+    } catch (e) {
+      Log.e(e);
+    }
+  }
+
   void setMessageAsRead(MessageHolderPrivateChatsUpdatedEvent event,
       MessageHolderBaseState currentState) {
     //If the private chat the user have still exists
@@ -262,7 +280,6 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
       final filteredUsers =
           users.where((element) => element.id != getUserId()).toList();
 
-      _firestoreRepository.setCachedOnlineUsers(filteredUsers);
       //Sort users with the same country code as my users first
       filteredUsers.sort((a, b) {
         if (a.countryCode == myUser.countryCode) {

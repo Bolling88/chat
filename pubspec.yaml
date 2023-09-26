@@ -58,7 +58,6 @@ dependencies:
   universal_io: ^2.2.2
   http: ^1.1.0
   audioplayers: ^5.1.0
-  google_mobile_ads: ^3.0.0
 
 dev_dependencies:
   flutter_test:
