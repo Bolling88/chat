@@ -272,20 +272,12 @@ class FirestoreRepository {
         'otherUserGender': otherUser.gender,
         'otherUserPictureData': otherUser.pictureData,
       });
-      final querySnapshot = await privateChats.doc(reference.id).get()
-        ..data();
-      final data = querySnapshot.data();
-      if (data != null) {
-        final chat =
-            PrivateChat.fromJson(querySnapshot.id, data as Map<String, dynamic>);
-        postMessage(
-            chatId: chat.id,
-            user: myUser,
-            message: initialMessage,
-            isPrivateChat: true,
-            chatType: ChatType.message);
-        return chat;
-      }
+      postMessage(
+          chatId: reference.id,
+          user: myUser,
+          message: initialMessage,
+          isPrivateChat: true,
+          chatType: ChatType.message);
     } catch (e) {
       Log.e(e);
     }
