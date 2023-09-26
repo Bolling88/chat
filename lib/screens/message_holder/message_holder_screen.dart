@@ -7,6 +7,7 @@ import 'package:flutter_i18n/flutter_i18n.dart';
 import '../../model/chat.dart';
 import '../../model/chat_user.dart';
 import '../../model/room_chat.dart';
+import '../../repository/presence_database.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_widgets.dart';
 import '../../utils/constants.dart';
@@ -31,6 +32,7 @@ class MessageHolderScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    context.read<PresenceDatabase>().updateUserPresence();
     return BlocProvider(
       create: (BuildContext context) =>
           MessageHolderBloc(context.read<FirestoreRepository>()),

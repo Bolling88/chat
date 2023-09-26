@@ -79,8 +79,8 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
       if (currentState is MessageHolderBaseState) {
         //If the number of chats have changed...
         if (currentState.privateChats.length != event.privateChats.length) {
-          if (currentState.selectedChatIndex == 0) {
-            //If we are in the group chat
+          if (currentState.selectedChatIndex == 0 || currentState.selectedChat == null) {
+            //If we are in the group chat or in all chats
             if (event.privateChats.length > currentState.privateChats.length) {
               //And private chats have increased
               if (event.privateChats.last.initiatedBy == getUserId()) {

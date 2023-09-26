@@ -4,10 +4,9 @@ import 'package:firebase_database/firebase_database.dart';
 import '../utils/log.dart';
 
 class PresenceDatabase {
-  final FirestoreRepository _firestoreRepository;
   final DatabaseReference databaseReference = FirebaseDatabase.instance.ref();
 
-  PresenceDatabase(this._firestoreRepository);
+  PresenceDatabase();
 
   updateUserPresence() async {
     Map<String, dynamic> presenceStatusTrue = {

@@ -82,7 +82,7 @@ class KvitterApp extends StatelessWidget {
           final StorageRepository storageRepository = StorageRepository();
           final AppImageCropper appImageCropper = AppImageCropper(context);
           final PresenceDatabase presenceDatabase =
-              PresenceDatabase(firestoreRepository);
+              PresenceDatabase();
 
           return MultiProvider(
             providers: [

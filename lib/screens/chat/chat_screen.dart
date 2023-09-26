@@ -17,7 +17,6 @@ class ChatScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    context.read<PresenceDatabase>().updateUserPresence();
     return BlocProvider(
       create: (BuildContext context) =>
           ChatBloc(context.read<FirestoreRepository>()),
