@@ -62,7 +62,7 @@ class FirestoreRepository {
             ? ChatUser.fromJson(value.id, value.data() as Map<String, dynamic>)
             : null)
         .catchError((error) {
-      Log.e("Failed to add user: $error");
+      Log.e("Failed to fetch user: $error");
       return null;
     });
   }

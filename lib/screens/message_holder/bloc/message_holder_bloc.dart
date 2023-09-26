@@ -16,8 +16,7 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
   StreamSubscription<QuerySnapshot>? privateChatStream;
   StreamSubscription<QuerySnapshot>? roomChatStream;
   StreamSubscription<QuerySnapshot>? onlineUsersStream;
-
-  late ChatUser _chatUser;
+  StreamSubscription<QuerySnapshot>? userStream;
 
   MessageHolderBloc(this._firestoreRepository)
       : super(MessageHolderLoadingState()) {
@@ -30,6 +29,7 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
     privateChatStream?.cancel();
     roomChatStream?.cancel();
     onlineUsersStream?.cancel();
+    userStream?.cancel();
     return super.close();
   }
 
@@ -38,15 +38,18 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
     final currentState = state;
     if (event is MessageHolderInitialEvent) {
       _firestoreRepository.updateCurrentUsersCurrentChat(chatId: '');
-      _chatUser = (await _firestoreRepository.getUser())!;
-      setUpOnlineUsersListener(_chatUser);
+      final user = await _firestoreRepository.getUser();
+
       yield MessageHolderBaseState(
           roomChat: null,
-          user: _chatUser,
+          user: user!,
           onlineUsers: const [],
           privateChats: const [],
           selectedChat: null,
           selectedChatIndex: 0);
+
+      setUpOnlineUsersListener(user);
+      setUpUserListener();
       setUpPrivateChatsListener();
     } else if (event is MessageHolderStartPrivateChatEvent) {
       if (currentState is MessageHolderBaseState) {
@@ -55,7 +58,7 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
         if (isChatAvailable) {
           await _firestoreRepository.createPrivateChat(
             otherUser: event.user,
-            myUser: _chatUser,
+            myUser: currentState.user,
             initialMessage: event.message,
           );
         } else {
@@ -197,6 +200,10 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
       if (currentState is MessageHolderBaseState) {
         yield currentState.copyWith(onlineUsers: event.users);
       }
+    }else if(event is MessageHolderUserUpdatedEvent){
+      if (currentState is MessageHolderBaseState) {
+        yield currentState.copyWith(user: event.user);
+      }
     } else {
       throw UnimplementedError();
     }
@@ -242,7 +249,7 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
     });
   }
 
-  void setUpOnlineUsersListener(ChatUser user) {
+  void setUpOnlineUsersListener(ChatUser myUser) {
     onlineUsersStream =
         _firestoreRepository.streamOnlineUsers().listen((event) async {
       final users = event.docs
@@ -250,14 +257,14 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
           .toList();
 
       final filteredUsers =
-          users.where((element) => element.id != user.id).toList();
+          users.where((element) => element.id != getUserId()).toList();
 
       _firestoreRepository.setCachedOnlineUsers(filteredUsers);
       //Sort users with the same country code as my users first
       filteredUsers.sort((a, b) {
-        if (a.countryCode == user.countryCode) {
+        if (a.countryCode == myUser.countryCode) {
           return -1;
-        } else if (b.countryCode == user.countryCode) {
+        } else if (b.countryCode == myUser.countryCode) {
           return 1;
         } else {
           return 0;
@@ -265,6 +272,15 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
       });
 
       add(MessageHolderUsersUpdatedEvent(filteredUsers));
+    });
+  }
+
+  void setUpUserListener() async {
+    Log.d('Setting up private chats stream');
+    userStream = _firestoreRepository.streamUser().listen((event) async {
+      final user = ChatUser.fromJson(
+          event.docs.first.id, event.docs.first.data() as Map<String, dynamic>);
+      add(MessageHolderUserUpdatedEvent(user));
     });
   }
 }
