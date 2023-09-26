@@ -12,7 +12,6 @@ import 'bloc/chat_bloc.dart';
 import 'bloc/chat_state.dart';
 
 class ChatScreen extends StatelessWidget {
-
   const ChatScreen({Key? key}) : super(key: key);
 
   @override
@@ -57,6 +56,7 @@ class ChatsScreenContent extends StatelessWidget {
   ListView getRegularChats(ChatBaseState state) {
     return ListView.separated(
       shrinkWrap: true,
+      key: const PageStorageKey(0),
       itemCount: state.chats.length,
       physics: const NeverScrollableScrollPhysics(),
       itemBuilder: (BuildContext context, int index) {
@@ -86,7 +86,9 @@ class ChatsScreenContent extends StatelessWidget {
                 child: OverflowBox(
                     minHeight: state.chats[index].imageOverflow.toDouble(),
                     maxHeight: state.chats[index].imageOverflow.toDouble(),
-                    child: AppLottie(url: state.chats[index].imageUrl))),
+                    child: AppLottie(
+                        key: Key(state.chats[index].imageUrl),
+                        url: state.chats[index].imageUrl))),
           ),
           const SizedBox(width: 40),
           Expanded(
@@ -111,7 +113,8 @@ class ChatsScreenContent extends StatelessWidget {
           )),
           Text(
             state.onlineUsers.containsKey(state.chats[index].id)
-                ? state.onlineUsers[state.chats[index].id]?.length.toString() ?? '0'
+                ? state.onlineUsers[state.chats[index].id]?.length.toString() ??
+                    '0'
                 : '0',
             style: Theme.of(context).textTheme.bodySmall,
           ),

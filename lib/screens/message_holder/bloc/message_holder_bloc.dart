@@ -38,19 +38,22 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
     final currentState = state;
     if (event is MessageHolderInitialEvent) {
       _firestoreRepository.updateCurrentUsersCurrentChat(chatId: '');
-      final user = await _firestoreRepository.getUser();
-
-      yield MessageHolderBaseState(
-          roomChat: null,
-          user: user!,
-          onlineUsers: const [],
-          privateChats: const [],
-          selectedChat: null,
-          selectedChatIndex: 0);
-
-      setUpOnlineUsersListener(user);
       setUpUserListener();
-      setUpPrivateChatsListener();
+    }else if(event is MessageHolderUserUpdatedEvent){
+      if (currentState is MessageHolderBaseState) {
+        yield currentState.copyWith(user: event.user);
+      }else if(state is MessageHolderLoadingState){
+        yield MessageHolderBaseState(
+            roomChat: null,
+            user: event.user,
+            onlineUsers: const [],
+            privateChats: const [],
+            selectedChat: null,
+            selectedChatIndex: 0);
+
+        setUpOnlineUsersListener(event.user);
+        setUpPrivateChatsListener(event.user);
+      }
     } else if (event is MessageHolderStartPrivateChatEvent) {
       if (currentState is MessageHolderBaseState) {
         final bool isChatAvailable =
@@ -91,9 +94,13 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
                     selectedChatIndex: event.privateChats.length);
               } else {
                 //else just update the chats and play a sound
-                final player = AudioPlayer();
-                await player.play(UrlSource(
-                    'https://firebasestorage.googleapis.com/v0/b/chat-60225.appspot.com/o/audio%2Fstop.mp3?alt=media&token=88032575-9833-4bf5-86fb-554b61820c27'));
+                try {
+                  final player = AudioPlayer();
+                  await player.play(UrlSource(
+                      'https://firebasestorage.googleapis.com/v0/b/chat-60225.appspot.com/o/audio%2Fstop.mp3?alt=media&token=88032575-9833-4bf5-86fb-554b61820c27'));
+                }catch(e){
+                  Log.e(e);
+                }
                 yield currentState.copyWith(privateChats: event.privateChats);
               }
             } else {
@@ -200,10 +207,6 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
       if (currentState is MessageHolderBaseState) {
         yield currentState.copyWith(onlineUsers: event.users);
       }
-    }else if(event is MessageHolderUserUpdatedEvent){
-      if (currentState is MessageHolderBaseState) {
-        yield currentState.copyWith(user: event.user);
-      }
     } else {
       throw UnimplementedError();
     }
@@ -223,10 +226,10 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
     }
   }
 
-  void setUpPrivateChatsListener() async {
+  void setUpPrivateChatsListener(ChatUser user) async {
     Log.d('Setting up private chats stream');
     privateChatStream =
-        _firestoreRepository.streamPrivateChats().listen((data) {
+        _firestoreRepository.streamPrivateChats(user.id).listen((data) {
       Log.d("Got private chats");
       final chats = data.docs
           .map((e) =>

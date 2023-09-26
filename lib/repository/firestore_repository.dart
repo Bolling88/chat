@@ -248,8 +248,8 @@ class FirestoreRepository {
     });
   }
 
-  Stream<QuerySnapshot> streamPrivateChats() {
-    return privateChats.where('users', arrayContains: getUserId()).snapshots();
+  Stream<QuerySnapshot> streamPrivateChats(String userId) {
+    return privateChats.where('users', arrayContains: userId).snapshots();
   }
 
   Future<PrivateChat?> createPrivateChat({
