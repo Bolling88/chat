@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:chat/model/chat_user.dart';
+import 'package:chat/model/private_chat.dart';
+import 'package:chat/repository/fcm_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -67,7 +69,8 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
               user: _chatUser,
               chatType: ChatType.message,
               message: currentState.currentMessage,
-              isPrivateChat: isPrivateChat);
+              isPrivateChat: isPrivateChat,
+              fcmToken: getFcmToken());
           yield currentState.copyWith(currentMessage: "");
         }
       }
@@ -97,10 +100,11 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
             chatType: ChatType.giphy,
             message: giphyUrl,
             isPrivateChat: isPrivateChat,
+            fcmToken: getFcmToken(),
             isGiphy: true);
         yield currentState.copyWith(currentMessage: "");
       }
-    }else if( event is MessagesReportMessageEvent){
+    } else if (event is MessagesReportMessageEvent) {
       _firestoreRepository.reportMessage(event.message);
     } else {
       yield MessagesErrorState();
@@ -173,6 +177,19 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
       datedList.add(MessageItem(null, getMessageDate(messages.last.created)));
     }
     return datedList;
+  }
+
+  String getFcmToken() {
+    if (chat is PrivateChat) {
+      final privateChat = chat as PrivateChat;
+      if (privateChat.initiatedBy == getUserId()) {
+        return privateChat.initiatedByFcmToken;
+      } else {
+        return privateChat.otherUserFcmToken;
+      }
+    } else {
+      return '';
+    }
   }
 
   @override

@@ -17,7 +17,7 @@ enum Gender {
   const Gender(this.value);
 
   static Gender fromValue(num i) {
-    if(i < 0 || i > 3) {
+    if (i < 0 || i > 3) {
       i = 3;
     }
     return Gender.values.firstWhere((x) => x.value == i);
@@ -73,6 +73,7 @@ class FirestoreRepository {
         .set({
           'email': email,
           'created': FieldValue.serverTimestamp(),
+          'lastActive': FieldValue.serverTimestamp(),
         }, SetOptions(merge: true))
         .then((value) => Log.d("User updated"))
         .catchError((error) => Log.e("Failed to add user: $error"));
@@ -81,7 +82,10 @@ class FirestoreRepository {
   Future<void> updateUserGender(Gender gender) async {
     return users
         .doc(getUserId())
-        .set({'gender': gender.value}, SetOptions(merge: true))
+        .set({
+          'gender': gender.value,
+          'lastActive': FieldValue.serverTimestamp(),
+        }, SetOptions(merge: true))
         .then((value) => Log.d("User gender updated"))
         .catchError((error) => Log.e("Failed to update user gender: $error"));
   }
@@ -93,6 +97,7 @@ class FirestoreRepository {
         .set({
           'displayName': fullName,
           'searchArray': searchArray,
+          'lastActive': FieldValue.serverTimestamp(),
         }, SetOptions(merge: true))
         .then((value) => Log.d("User displayName updated"))
         .catchError(
@@ -102,7 +107,10 @@ class FirestoreRepository {
   Future<void> updateUserProfileImage(String profileImageUrl) async {
     return users
         .doc(getUserId())
-        .set({'pictureData': profileImageUrl}, SetOptions(merge: true))
+        .set({
+          'pictureData': profileImageUrl,
+          'lastActive': FieldValue.serverTimestamp(),
+        }, SetOptions(merge: true))
         .then((value) => Log.d("User profile image updated"))
         .catchError((error) => Log.e("Failed to update user image: $error"));
   }
@@ -125,17 +133,19 @@ class FirestoreRepository {
         .doc(chatId)
         .collection("messages")
         .orderBy("created", descending: true)
-        .limit(20)
+        .limit(40)
         .get();
   }
 
-  Future<void> postMessage(
-      {required String chatId,
-      required ChatUser user,
-      required String message,
-      required bool isPrivateChat,
-      required ChatType chatType,
-      bool isGiphy = false}) async {
+  Future<void> postMessage({
+    required String chatId,
+    required ChatUser user,
+    required String message,
+    required bool isPrivateChat,
+    required ChatType chatType,
+    bool isGiphy = false,
+    String fcmToken = '',
+  }) async {
     if (isPrivateChat) {
       //Do not post joined and left messages in private chats
       if (chatType == ChatType.message || chatType == ChatType.giphy) {
@@ -173,7 +183,8 @@ class FirestoreRepository {
           'lastMessageByGender': user.gender,
           'lastMessageReadBy': [getUserId()],
           'lastMessageTimestamp': FieldValue.serverTimestamp(),
-          'lastMessageUserId': getUserId()
+          'lastMessageUserId': getUserId(),
+          'lastMessageFcmToken': fcmToken,
         }, SetOptions(merge: true));
       } else {
         await chats.doc(chatId).set({
@@ -184,14 +195,6 @@ class FirestoreRepository {
           'lastMessageUserId': getUserId()
         }, SetOptions(merge: true));
       }
-    } else if (chatType == ChatType.joined && !isPrivateChat) {
-      await chats.doc(chatId).set({
-        'users': FieldValue.arrayUnion([getUserId()]),
-      }, SetOptions(merge: true));
-    } else if (chatType == ChatType.left && !isPrivateChat) {
-      await chats.doc(chatId).set({
-        'users': FieldValue.arrayRemove([getUserId()]),
-      }, SetOptions(merge: true));
     }
   }
 
@@ -266,17 +269,20 @@ class FirestoreRepository {
         'initiatedByUserName': myUser.displayName,
         'initiatedByUserGender': myUser.gender,
         'initiatedByPictureData': myUser.pictureData,
+        'initiatedByFcmToken': myUser.fcmToken,
         'chatName': '${otherUser.displayName} ${myUser.displayName}',
         'otherUserId': otherUser.id,
         'otherUserName': otherUser.displayName,
         'otherUserGender': otherUser.gender,
         'otherUserPictureData': otherUser.pictureData,
+        'otherUserFcmToken': otherUser.fcmToken,
       });
       postMessage(
           chatId: reference.id,
           user: myUser,
           message: initialMessage,
           isPrivateChat: true,
+          fcmToken: otherUser.fcmToken,
           chatType: ChatType.message);
     } catch (e) {
       Log.e(e);
@@ -317,7 +323,7 @@ class FirestoreRepository {
             .where((element) => element.users.contains(userId))
             .firstOrNull)
         .catchError((error) {
-      Log.e("Failed to delete private chat: $error");
+      Log.e("Failed to fetch private chat: $error");
       return null;
     });
   }
@@ -385,12 +391,15 @@ class FirestoreRepository {
   void updateUserPresence({required bool present}) {
     users.doc(getUserId()).set({
       'presence': present,
+      'lastActive': FieldValue.serverTimestamp(),
     }, SetOptions(merge: true));
   }
 
-  void leaveAllPrivateChats()  {
-     privateChats.where('users', arrayContains: getUserId()).get().then(
-        (value) => value.docs.forEach((element) {
+  void leaveAllPrivateChats() {
+    privateChats
+        .where('users', arrayContains: getUserId())
+        .get()
+        .then((value) => value.docs.forEach((element) {
               leavePrivateChat(PrivateChat.fromJson(
                   element.id, element.data() as Map<String, dynamic>));
             }));
@@ -402,6 +411,7 @@ class FirestoreRepository {
       'countryCode': userLocation.countryCode,
       'country': userLocation.country,
       'regionName': userLocation.regionName,
+      'lastActive': FieldValue.serverTimestamp(),
     }, SetOptions(merge: true));
   }
 
@@ -442,18 +452,39 @@ class FirestoreRepository {
   }
 
   Stream<QuerySnapshot> streamOnlineUsers() {
+    //The correct way to show actually online persons
+    // return users
+    //     .where('presence', isEqualTo: true)
+    //     .snapshots()
+    //     .handleError((error) {
+    //   Log.e("Failed to get online users: $error");
+    // });
+
+    //Show online persons depending on the timestamp instead
+    //Everyone that has been active in the last 2 hours is considered online
+    // Calculate the timestamp for 2 hours ago
+    DateTime twoHoursAgo = DateTime.now().subtract(const Duration(hours: 2));
+
     return users
-        .where('presence', isEqualTo: true)
+        .where('lastActive', isGreaterThan: Timestamp.fromDate(twoHoursAgo))
         .snapshots()
         .handleError((error) {
       Log.e("Failed to get online users: $error");
     });
   }
 
-  void updateCurrentUsersCurrentChat({required String chatId}) {
+  void updateCurrentUsersCurrentChatRoom({required String chatId}) {
     users.doc(getUserId()).set({
       'currentRoomChatId': chatId,
       'presence': true,
+      'lastActive': FieldValue.serverTimestamp(),
+    }, SetOptions(merge: true));
+  }
+
+  void saveFcmTokenOnUser(fcmToken) {
+    users.doc(getUserId()).set({
+      'fcmToken': fcmToken,
+      'lastActive': FieldValue.serverTimestamp(),
     }, SetOptions(merge: true));
   }
 }

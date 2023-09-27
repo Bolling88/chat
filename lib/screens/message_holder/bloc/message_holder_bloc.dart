@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:chat/model/chat_user.dart';
 import 'package:chat/model/private_chat.dart';
+import 'package:chat/repository/fcm_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../model/room_chat.dart';
@@ -12,13 +13,14 @@ import 'message_holder_state.dart';
 
 class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
   final FirestoreRepository _firestoreRepository;
+  final FcmRepository _fcmRepository;
 
   StreamSubscription<QuerySnapshot>? privateChatStream;
   StreamSubscription<QuerySnapshot>? roomChatStream;
   StreamSubscription<QuerySnapshot>? onlineUsersStream;
   StreamSubscription<QuerySnapshot>? userStream;
 
-  MessageHolderBloc(this._firestoreRepository)
+  MessageHolderBloc(this._firestoreRepository, this._fcmRepository)
       : super(MessageHolderLoadingState()) {
     add(MessageHolderInitialEvent());
   }
@@ -37,7 +39,8 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
   Stream<MessageHolderState> mapEventToState(MessageHolderEvent event) async* {
     final currentState = state;
     if (event is MessageHolderInitialEvent) {
-      _firestoreRepository.updateCurrentUsersCurrentChat(chatId: '');
+      _firestoreRepository.updateCurrentUsersCurrentChatRoom(chatId: '');
+      _fcmRepository.setUpPushNotification();
       setUpUserListener();
     } else if (event is MessageHolderUserUpdatedEvent) {
       if (currentState is MessageHolderBaseState) {
@@ -171,7 +174,7 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
           final RoomChat chat =
               (event.chat as RoomChat).copyWith(lastMessageReadByUser: true);
           //Set user current chat and mark as present
-          _firestoreRepository.updateCurrentUsersCurrentChat(chatId: chat.id);
+          _firestoreRepository.updateCurrentUsersCurrentChatRoom(chatId: chat.id);
           yield currentState.copyWith(
               selectedChatIndex: 0, selectedChat: chat, roomChat: chat);
         } else if (event.chat is PrivateChat) {
@@ -202,7 +205,7 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
       }
     } else if (event is MessageHolderChangeChatRoomEvent) {
       if (currentState is MessageHolderBaseState) {
-        _firestoreRepository.updateCurrentUsersCurrentChat(chatId: '');
+        _firestoreRepository.updateCurrentUsersCurrentChatRoom(chatId: '');
         yield MessageHolderBaseState(
             roomChat: null,
             user: currentState.user,

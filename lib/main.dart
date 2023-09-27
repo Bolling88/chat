@@ -1,8 +1,8 @@
+import 'package:chat/repository/fcm_repository.dart';
 import 'package:chat/repository/firestore_repository.dart';
 import 'package:chat/repository/login_repository.dart';
 import 'package:chat/repository/presence_database.dart';
 import 'package:chat/repository/storage_repository.dart';
-import 'package:chat/screens/chat/chat_screen.dart';
 import 'package:chat/screens/message_holder/message_holder_screen.dart';
 import 'package:chat/screens/onboarding_gender/onboarding_gender_screen.dart';
 import 'package:chat/screens/onboarding_name/onboarding_name_screen.dart';
@@ -80,6 +80,7 @@ class KvitterApp extends StatelessWidget {
           final FirestoreRepository firestoreRepository = FirestoreRepository();
           final LoginRepository loginRepository = LoginRepository();
           final StorageRepository storageRepository = StorageRepository();
+          final FcmRepository fcmRepository = FcmRepository(firestoreRepository);
           final AppImageCropper appImageCropper = AppImageCropper(context);
           final PresenceDatabase presenceDatabase =
               PresenceDatabase();
@@ -92,6 +93,7 @@ class KvitterApp extends StatelessWidget {
               Provider<StorageRepository>.value(value: storageRepository),
               Provider<PresenceDatabase>.value(value: presenceDatabase),
               Provider<AppImageCropper>.value(value: appImageCropper),
+              Provider<FcmRepository>.value(value: fcmRepository),
             ],
             child: MaterialApp(
               title: 'Kvitter',

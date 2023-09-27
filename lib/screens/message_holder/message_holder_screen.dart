@@ -1,3 +1,4 @@
+import 'package:chat/repository/fcm_repository.dart';
 import 'package:chat/repository/firestore_repository.dart';
 import 'package:chat/screens/chat/chat_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -35,7 +36,7 @@ class MessageHolderScreen extends StatelessWidget {
     context.read<PresenceDatabase>().updateUserPresence();
     return BlocProvider(
       create: (BuildContext context) =>
-          MessageHolderBloc(context.read<FirestoreRepository>()),
+          MessageHolderBloc(context.read<FirestoreRepository>(), context.read<FcmRepository>()),
       child: const MessageHolderScreenContent(),
     );
   }

@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:giphy_get/giphy_get.dart';
 import '../../model/chat.dart';
+import '../../repository/fcm_repository.dart';
 import '../../repository/firestore_repository.dart';
 import '../../utils/app_widgets.dart';
 import '../../utils/constants.dart';
@@ -30,8 +31,8 @@ class MessagesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (BuildContext context) => MessagesBloc(
-          chat, context.read<FirestoreRepository>(),
+      create: (BuildContext context) => MessagesBloc(chat,
+          context.read<FirestoreRepository>(),
           isPrivateChat: isPrivateChat),
       child: ChatsScreenContent(
         chat: chat,
@@ -209,7 +210,10 @@ class ChatsScreenContent extends StatelessWidget {
             padding: const EdgeInsets.only(top: 5, bottom: 5),
             child: Text(
               text,
-              style: Theme.of(context).textTheme.bodySmall,
+              style:
+                  Theme.of(context).textTheme.bodySmall?.merge(const TextStyle(
+                        fontSize: 10,
+                      )),
             )));
   }
 }

@@ -12,8 +12,6 @@ class RoomChat extends Chat implements Comparable<RoomChat> {
   final int imageTranslationX;
   final bool lastMessageReadByUser;
 
-  final List<ChatUser> userInfos = [];
-  final String usersText = "";
 
   RoomChat({
     required this.countryCode,
@@ -102,11 +100,9 @@ class RoomChat extends Chat implements Comparable<RoomChat> {
         lastMessageByName,
         lastMessageTimestamp,
         lastMessageUserId,
-        userInfos,
         lastMessageReadByUser,
         chatName,
         chatColor,
-        usersText,
         imageUrl,
         imageOverflow,
         imageTranslationX
