@@ -183,9 +183,9 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
     if (chat is PrivateChat) {
       final privateChat = chat as PrivateChat;
       if (privateChat.initiatedBy == getUserId()) {
-        return privateChat.initiatedByFcmToken;
-      } else {
         return privateChat.otherUserFcmToken;
+      } else {
+        return privateChat.initiatedByFcmToken;
       }
     } else {
       return '';
