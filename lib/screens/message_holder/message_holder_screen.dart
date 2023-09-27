@@ -45,28 +45,6 @@ class MessageHolderScreen extends StatelessWidget {
 class MessageHolderScreenContent extends StatelessWidget {
   const MessageHolderScreenContent({Key? key}) : super(key: key);
 
-  Future<bool> _onWillPop(blocContext) async {
-    return await showDialog(
-      context: blocContext,
-      builder: (context) => AlertDialog(
-        title: Text(FlutterI18n.translate(context, 'exit_chat_title')),
-        content: Text(FlutterI18n.translate(context, 'exit_chat_message')),
-        actions: <Widget>[
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(false),
-            child: Text(FlutterI18n.translate(context, 'no')),
-          ),
-          TextButton(
-            onPressed: () {
-              return Navigator.of(context).pop(true);
-            },
-            child: Text(FlutterI18n.translate(context, 'yes')),
-          ),
-        ],
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return BlocListener<MessageHolderBloc, MessageHolderState>(
@@ -74,20 +52,15 @@ class MessageHolderScreenContent extends StatelessWidget {
         child: BlocBuilder<MessageHolderBloc, MessageHolderState>(
           builder: (context, state) {
             if (state is MessageHolderBaseState) {
-              return WillPopScope(
-                onWillPop: () => state.privateChats.isNotEmpty
-                    ? _onWillPop(context)
-                    : Future.value(true),
-                child: Scaffold(
-                    appBar: getAppBar(context, state, state.selectedChat),
-                    body: LayoutBuilder(
-                        builder: (BuildContext context,
-                                BoxConstraints constraints) =>
-                            constraints.maxWidth >
-                                    (state.privateChats.isEmpty ? 855 : 970)
-                                ? largeScreenContent(state, context)
-                                : smallScreenContent(state, context))),
-              );
+              return Scaffold(
+                  appBar: getAppBar(context, state, state.selectedChat),
+                  body: LayoutBuilder(
+                      builder: (BuildContext context,
+                              BoxConstraints constraints) =>
+                          constraints.maxWidth >
+                                  (state.privateChats.isEmpty ? 855 : 970)
+                              ? largeScreenContent(state, context)
+                              : smallScreenContent(state, context)));
             } else {
               return const Scaffold(body: Center(child: AppSpinner()));
             }
