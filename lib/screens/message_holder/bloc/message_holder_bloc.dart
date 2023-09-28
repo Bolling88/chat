@@ -255,9 +255,8 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
       final chats = data.docs
           .map((e) =>
               PrivateChat.fromJson(e.id, e.data() as Map<String, dynamic>))
-          .toList()
-          .reversed
           .toList();
+      chats.sort((a, b) => a.created.compareTo(b.created));
       Log.d("Chats: ${chats.length}");
       add(MessageHolderPrivateChatsUpdatedEvent(chats));
     });

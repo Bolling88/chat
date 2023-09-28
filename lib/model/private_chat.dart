@@ -14,6 +14,7 @@ class PrivateChat extends Chat implements Comparable<PrivateChat> {
   final int otherUserGender;
   final String otherUserPictureData;
   final String otherUserFcmToken;
+  final Timestamp created;
   final List<String> lastMessageReadBy;
   final List<String> users;
   final List<ChatUser> userInfos = [];
@@ -30,6 +31,7 @@ class PrivateChat extends Chat implements Comparable<PrivateChat> {
     required this.otherUserGender,
     required this.otherUserPictureData,
     required this.otherUserFcmToken,
+    required this.created,
     required this.lastMessageReadBy,
     required this.users,
     required String id,
@@ -57,6 +59,7 @@ class PrivateChat extends Chat implements Comparable<PrivateChat> {
     int? otherUserGender,
     String? otherUserPictureData,
     String? otherUserFcmToken,
+    Timestamp? created,
     List<String>? lastMessageReadBy,
     String? id,
     List<String>? users,
@@ -78,6 +81,7 @@ class PrivateChat extends Chat implements Comparable<PrivateChat> {
       otherUserGender: otherUserGender ?? this.otherUserGender,
       otherUserPictureData: otherUserPictureData ?? this.otherUserPictureData,
       otherUserFcmToken: otherUserFcmToken ?? this.otherUserFcmToken,
+      created: created ?? this.created,
       lastMessageReadBy: lastMessageReadBy ?? this.lastMessageReadBy,
       id: id ?? this.id,
       users: users ?? this.users,
@@ -100,6 +104,7 @@ class PrivateChat extends Chat implements Comparable<PrivateChat> {
         otherUserGender = json['otherUserGender'] ?? 0,
         otherUserPictureData = json['otherUserPictureData'] ?? '',
         otherUserFcmToken = json['otherUserFcmToken'] ?? '',
+        created = json['created'] ?? Timestamp.now(),
         lastMessageReadBy = json['lastMessageReadBy']?.cast<String>() ?? [],
         super(
           id: id,
@@ -138,6 +143,7 @@ class PrivateChat extends Chat implements Comparable<PrivateChat> {
         otherUserGender,
         otherUserPictureData,
         otherUserFcmToken,
+    created,
         lastMessageReadBy,
       ];
 

@@ -5,7 +5,8 @@ class AppLottie extends StatefulWidget {
   final String url;
   final bool animate;
 
-  const AppLottie({required this.url, this.animate = true, super.key});
+  AppLottie({required this.url, this.animate = true, key = null})
+      : super(key: key ?? Key(url));
 
   @override
   State<AppLottie> createState() => _AppLottieState();

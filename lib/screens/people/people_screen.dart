@@ -68,7 +68,7 @@ class PeopleScreenBuilder extends StatelessWidget {
               child: (state.onlineUser.isEmpty)
                   ? Column(
                       children: [
-                        const Center(
+                         Center(
                             child: SizedBox(
                                 height: 200,
                                 child: AppLottie(
@@ -109,6 +109,7 @@ class PeopleScreenBuilder extends StatelessWidget {
   Expanded getList(List<ChatUser> users) {
     return Expanded(
                         child: ListView.builder(
+                          key: const PageStorageKey('PeopleList'),
                           itemCount: users.length,
                           shrinkWrap: true,
                           itemBuilder: (BuildContext context, int index) {

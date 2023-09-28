@@ -110,10 +110,10 @@ class VisitScreenContent extends StatelessWidget {
                 ),
                 Center(
                     child: AppUserImage(
-                      url: user.pictureData,
-                      gender: user.gender,
-                      size: 110,
-                    )),
+                  url: user.pictureData,
+                  gender: user.gender,
+                  size: 110,
+                )),
                 Center(
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
@@ -143,7 +143,8 @@ class VisitScreenContent extends StatelessWidget {
                 Text('${user.city}, ${user.country}',
                     style: Theme.of(context).textTheme.bodyMedium),
                 const SizedBox(height: 40),
-                if (!state.userBlocked && !state.myUser.blockedBy.contains(user.id))
+                if (!state.userBlocked &&
+                    !state.myUser.blockedBy.contains(user.id))
                   state.isChatAvailable
                       ? Padding(
                           padding: const EdgeInsets.only(left: 20, right: 20),
@@ -160,7 +161,8 @@ class VisitScreenContent extends StatelessWidget {
                                 MessageHolderStartPrivateChatEvent(
                                     user, message),
                               );
-                              Navigator.of(context).popUntil((route) => route.isFirst);
+                              Navigator.of(context)
+                                  .popUntil((route) => route.isFirst);
                             },
                           ),
                         )
@@ -170,7 +172,8 @@ class VisitScreenContent extends StatelessWidget {
                                 .add(
                               MessageHolderStartPrivateChatEvent(user, ''),
                             );
-                            Navigator.of(context).popUntil((route) => route.isFirst);
+                            Navigator.of(context)
+                                .popUntil((route) => route.isFirst);
                           },
                           child: Text(FlutterI18n.translate(
                               context, 'go_to_private_chat')),
@@ -207,7 +210,7 @@ class VisitScreenContent extends StatelessWidget {
                     topRight: Radius.circular(20))),
             child: Column(
               children: [
-                const Center(
+                Center(
                     child: SizedBox(
                         height: 200,
                         child: AppLottie(

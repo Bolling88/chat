@@ -56,7 +56,7 @@ class ChatsScreenContent extends StatelessWidget {
   ListView getRegularChats(ChatBaseState state) {
     return ListView.separated(
       shrinkWrap: true,
-      key: const PageStorageKey(0),
+      key: const PageStorageKey('ChatList'),
       itemCount: state.chats.length,
       physics: const NeverScrollableScrollPhysics(),
       itemBuilder: (BuildContext context, int index) {
@@ -87,7 +87,6 @@ class ChatsScreenContent extends StatelessWidget {
                     minHeight: state.chats[index].imageOverflow.toDouble(),
                     maxHeight: state.chats[index].imageOverflow.toDouble(),
                     child: AppLottie(
-                        key: Key(state.chats[index].imageUrl),
                         url: state.chats[index].imageUrl))),
           ),
           const SizedBox(width: 40),

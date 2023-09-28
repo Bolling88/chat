@@ -73,7 +73,6 @@ class FirestoreRepository {
         .set({
           'email': email,
           'created': FieldValue.serverTimestamp(),
-          'lastActive': FieldValue.serverTimestamp(),
         }, SetOptions(merge: true))
         .then((value) => Log.d("User updated"))
         .catchError((error) => Log.e("Failed to add user: $error"));
@@ -84,7 +83,6 @@ class FirestoreRepository {
         .doc(getUserId())
         .set({
           'gender': gender.value,
-          'lastActive': FieldValue.serverTimestamp(),
         }, SetOptions(merge: true))
         .then((value) => Log.d("User gender updated"))
         .catchError((error) => Log.e("Failed to update user gender: $error"));
@@ -97,7 +95,6 @@ class FirestoreRepository {
         .set({
           'displayName': fullName,
           'searchArray': searchArray,
-          'lastActive': FieldValue.serverTimestamp(),
         }, SetOptions(merge: true))
         .then((value) => Log.d("User displayName updated"))
         .catchError(
@@ -109,7 +106,6 @@ class FirestoreRepository {
         .doc(getUserId())
         .set({
           'pictureData': profileImageUrl,
-          'lastActive': FieldValue.serverTimestamp(),
         }, SetOptions(merge: true))
         .then((value) => Log.d("User profile image updated"))
         .catchError((error) => Log.e("Failed to update user image: $error"));
@@ -252,7 +248,12 @@ class FirestoreRepository {
   }
 
   Stream<QuerySnapshot> streamPrivateChats(String userId) {
-    return privateChats.where('users', arrayContains: userId).snapshots();
+    return privateChats
+        .where('users', arrayContains: userId)
+        .snapshots()
+        .handleError((error) {
+      Log.e("Failed to get private chats: $error");
+    });
   }
 
   Future<PrivateChat?> createPrivateChat({
