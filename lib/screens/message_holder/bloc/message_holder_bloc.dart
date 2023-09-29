@@ -84,8 +84,8 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
       }
     } else if (event is MessageHolderPrivateChatsUpdatedEvent) {
       if (currentState is MessageHolderBaseState) {
-        //If the number of chats have changed...
         if (currentState.privateChats.length != event.privateChats.length) {
+          //If the number of chats have changed...
           if (currentState.selectedChatIndex == 0 ||
               currentState.selectedChat == null) {
             //If we are in the group chat or in all chats
@@ -108,7 +108,7 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
           } else {
             //We are not in the group chat
             if (event.privateChats.contains(currentState.selectedChat)) {
-              //The private chat was not removed
+              //My selected private chat still exists
               setMessageAsRead(event, currentState);
               if (event.privateChats.length >
                   currentState.privateChats.length) {
@@ -130,29 +130,45 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
                 yield currentState.copyWith(privateChats: event.privateChats);
               }
             } else {
-              //The private chat has been removed, move the user to the group chat
-              if (currentState.roomChat != null) {
-                yield currentState.copyWith(
-                    privateChats: event.privateChats,
-                    selectedChatIndex: 0,
-                    roomChat: currentState.roomChat
-                        ?.copyWith(lastMessageReadByUser: true),
-                    selectedChat: currentState.roomChat
-                        ?.copyWith(lastMessageReadByUser: true));
-              } else {
-                yield MessageHolderBaseState(
-                    roomChat: null,
-                    user: currentState.user,
-                    onlineUsers: currentState.onlineUsers,
-                    privateChats: event.privateChats,
-                    selectedChat: null,
-                    selectedChatIndex: 0);
+              //A private chat is new or have been removed
+              if (event.privateChats.length >
+                  currentState.privateChats.length) {
+                if (event.privateChats.last.initiatedBy == getUserId()) {
+                  //And it was by you, move to that chat
+                  yield currentState.copyWith(
+                      privateChats: event.privateChats,
+                      selectedChat: event.privateChats.last,
+                      selectedChatIndex: event.privateChats.length);
+                } else {
+                  //else just update the chats and play a sound
+                  playSound();
+                  yield currentState.copyWith(privateChats: event.privateChats);
+                }
+              }else {
+                if (currentState.roomChat != null) {
+                  yield currentState.copyWith(
+                      privateChats: event.privateChats,
+                      selectedChatIndex: 0,
+                      roomChat: currentState.roomChat
+                          ?.copyWith(lastMessageReadByUser: true),
+                      selectedChat: currentState.roomChat
+                          ?.copyWith(lastMessageReadByUser: true));
+                } else {
+                  yield MessageHolderBaseState(
+                      roomChat: null,
+                      user: currentState.user,
+                      onlineUsers: currentState.onlineUsers,
+                      privateChats: event.privateChats,
+                      selectedChat: null,
+                      selectedChatIndex: 0);
+                }
               }
             }
           }
         } else {
-          //Number of private chats did not change
+          //Number of private chats did not change...
           if (currentState.selectedChatIndex != 0) {
+            //If we are not in the group chat
             setMessageAsRead(event, currentState);
           }
 

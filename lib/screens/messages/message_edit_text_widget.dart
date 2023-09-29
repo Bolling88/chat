@@ -43,7 +43,7 @@ class _MessageEditTextWidgetState extends State<MessageEditTextWidget> {
                 maxLength: 100,
                 minLines: 1,
                 autofocus: false,
-                autocorrect: false,
+                autocorrect: true,
                 controller: controller,
                 style: Theme.of(context)
                     .textTheme

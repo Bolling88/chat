@@ -1,7 +1,7 @@
-import 'package:chat/model/chat_user.dart';
 import 'package:chat/repository/firestore_repository.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_app_badger/flutter_app_badger.dart';
 
 import '../utils/log.dart';
 
@@ -26,14 +26,14 @@ class FcmRepository {
     if(settings.authorizationStatus == AuthorizationStatus.authorized) {
       Log.d('User granted permission');
       setUpToken();
+      setUpBadge();
     } else if(settings.authorizationStatus == AuthorizationStatus.provisional) {
       Log.d('User granted provisional permission');
       setUpToken();
+      setUpBadge();
     } else {
       Log.d('User declined or has not accepted permission');
     }
-
-    setUpToken();
   }
 
   Future<void> setUpToken() async {
@@ -53,5 +53,18 @@ class FcmRepository {
     }).onError((err) {
       Log.e('FCM token error: $err');
     });
+  }
+
+  void setUpBadge(){
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      Log.d('A new onMessageOpenedApp event was published!');
+      FlutterAppBadger.removeBadge();
+    });
+    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  }
+
+  static Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+    Log.d('Handling a background message ${message.messageId}');
+    FlutterAppBadger.updateBadgeCount(1);
   }
 }
