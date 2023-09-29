@@ -27,7 +27,7 @@ class MessageHolderScreenArguments {
 }
 
 class MessageHolderScreen extends StatelessWidget {
-  static const routeName = "/message_holder_screen";
+  static const routeName = "/chat_home";
 
   const MessageHolderScreen({Key? key}) : super(key: key);
 

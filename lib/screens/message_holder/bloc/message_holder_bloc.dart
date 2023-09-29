@@ -10,6 +10,7 @@ import '../../../repository/firestore_repository.dart';
 import '../../../utils/log.dart';
 import 'message_holder_event.dart';
 import 'message_holder_state.dart';
+import 'dart:core';
 
 class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
   final FirestoreRepository _firestoreRepository;
@@ -174,7 +175,8 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
           final RoomChat chat =
               (event.chat as RoomChat).copyWith(lastMessageReadByUser: true);
           //Set user current chat and mark as present
-          _firestoreRepository.updateCurrentUsersCurrentChatRoom(chatId: chat.id);
+          _firestoreRepository.updateCurrentUsersCurrentChatRoom(
+              chatId: chat.id);
           yield currentState.copyWith(
               selectedChatIndex: 0, selectedChat: chat, roomChat: chat);
         } else if (event.chat is PrivateChat) {
@@ -279,8 +281,11 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
           .map((e) => ChatUser.fromJson(e.id, e.data() as Map<String, dynamic>))
           .toList();
 
-      final filteredUsers =
-          users.where((element) => element.id != getUserId()).toList();
+      final filteredUsers = users
+          .where((element) => element.id != getUserId())
+          .where((element) => element.lastActive.toDate().isAfter(
+              DateTime.now().subtract(_firestoreRepository.onlineDuration)))
+          .toList();
 
       //Sort users with the same country code as my users first
       filteredUsers.sort((a, b) {
