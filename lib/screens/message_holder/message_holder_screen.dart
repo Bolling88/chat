@@ -81,16 +81,18 @@ class MessageHolderScreenContent extends StatelessWidget {
       state.privateChats.isNotEmpty
           ? getSideMenu(state, context)
           : const SizedBox.shrink(),
-      Container(
-        width: double.infinity,
-        constraints: const BoxConstraints(maxWidth: 500),
+      Expanded(
+        flex: 3,
         child: Material(
           elevation: 0,
           child: IndexedStack(
               index: state.selectedChatIndex, children: getChatViews(state)),
         ),
       ),
-      Expanded(child: getBrandNameView(context)),
+      if(MediaQuery.of(context).size.width > 1150)
+        Expanded(
+            flex: 2,
+            child: getBrandNameView(context))
     ]);
   }
 
