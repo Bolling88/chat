@@ -5,6 +5,7 @@ import 'package:chat/model/private_chat.dart';
 import 'package:chat/repository/fcm_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:soundpool/soundpool.dart';
 import '../../../model/room_chat.dart';
 import '../../../repository/firestore_repository.dart';
 import '../../../utils/log.dart';
@@ -144,7 +145,7 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
                   playSound();
                   yield currentState.copyWith(privateChats: event.privateChats);
                 }
-              }else {
+              } else {
                 if (currentState.roomChat != null) {
                   yield currentState.copyWith(
                       privateChats: event.privateChats,
@@ -243,13 +244,23 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
 
   Future<void> playSound() async {
     try {
-      final player = AudioPlayer();
-      await player.play(UrlSource(
-          'https://firebasestorage.googleapis.com/v0/b/chat-60225.appspot.com/o/audio%2Fstop.mp3?alt=media&token=88032575-9833-4bf5-86fb-554b61820c27'));
+      pool.loadAndPlayUri(
+          'https://firebasestorage.googleapis.com/v0/b/chat-60225.appspot.com/o/audio%2Fstop.mp3?alt=media&token=88032575-9833-4bf5-86fb-554b61820c27');
     } catch (e) {
       Log.e(e);
     }
   }
+
+  final pool = Soundpool.fromOptions(
+    options: const SoundpoolOptions(
+      streamType: StreamType.notification,
+      maxStreams: 2,
+      iosOptions: SoundpoolOptionsIos(
+        audioSessionCategory: AudioSessionCategory.ambient,
+          audioSessionMode: AudioSessionMode.normal,
+      ),
+    ),
+  );
 
   void setMessageAsRead(MessageHolderPrivateChatsUpdatedEvent event,
       MessageHolderBaseState currentState) {
