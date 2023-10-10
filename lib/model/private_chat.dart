@@ -1,5 +1,9 @@
+import 'dart:ui';
+
 import 'package:chat/model/chat_user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import '../repository/firestore_repository.dart';
+import '../utils/gender.dart';
 import '../utils/time_util.dart';
 import 'chat.dart';
 
@@ -143,12 +147,19 @@ class PrivateChat extends Chat implements Comparable<PrivateChat> {
         otherUserGender,
         otherUserPictureData,
         otherUserFcmToken,
-    created,
+        created,
         lastMessageReadBy,
       ];
 
   @override
   String getChatName(String userId) {
     return userId == initiatedBy ? otherUserName : initiatedByUserName;
+  }
+
+  @override
+  Color getChatColor(String userId) {
+    return userId == initiatedBy
+        ? getGenderColor(Gender.fromValue(otherUserGender))
+        : getGenderColor(Gender.fromValue(initiatedByUserGender));
   }
 }

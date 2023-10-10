@@ -453,7 +453,7 @@ class FirestoreRepository {
   }
 
 
-  final onlineDuration = const Duration(hours: 2);
+  final onlineDuration = const Duration(hours: 12);
   Stream<QuerySnapshot> streamOnlineUsers() {
     //The correct way to show actually online persons
     // return users
@@ -464,12 +464,12 @@ class FirestoreRepository {
     // });
 
     //Show online persons depending on the timestamp instead
-    //Everyone that has been active in the last 2 hours is considered online
+    //Everyone that has been active in the last $onlineDuration is considered online
     // Calculate the timestamp for 2 hours ago
-    DateTime twoHoursAgo = DateTime.now().subtract(onlineDuration);
+    DateTime onlineDurationDate = DateTime.now().subtract(onlineDuration);
 
     return users
-        .where('lastActive', isGreaterThan: Timestamp.fromDate(twoHoursAgo))
+        .where('lastActive', isGreaterThan: Timestamp.fromDate(onlineDurationDate))
         .snapshots()
         .handleError((error) {
       Log.e("Failed to get online users: $error");

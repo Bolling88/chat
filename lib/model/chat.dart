@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 
@@ -19,6 +21,8 @@ abstract class Chat extends Equatable {
   });
 
   String getChatName(String userId);
+
+  Color getChatColor(String userId);
 
   @override
   List<Object> get props => [];

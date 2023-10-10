@@ -56,8 +56,9 @@ class PeopleScreenBuilder extends StatelessWidget {
             return const ErrorScreen();
           } else if (state is PeopleBaseState) {
             return Container(
-              height:
-                  getSize(context) == ScreenSize.large ? double.infinity : bottomsheetHeight,
+              height: getSize(context) == ScreenSize.large
+                  ? double.infinity
+                  : bottomsheetHeight,
               decoration: const BoxDecoration(
                 color: AppColors.white,
                 borderRadius: BorderRadius.only(
@@ -68,7 +69,7 @@ class PeopleScreenBuilder extends StatelessWidget {
               child: (state.onlineUser.isEmpty)
                   ? Column(
                       children: [
-                         Center(
+                        Center(
                             child: SizedBox(
                                 height: 200,
                                 child: AppLottie(
@@ -108,63 +109,53 @@ class PeopleScreenBuilder extends StatelessWidget {
 
   Expanded getList(List<ChatUser> users) {
     return Expanded(
-                        child: ListView.builder(
-                          key: const PageStorageKey('PeopleList'),
-                          itemCount: users.length,
-                          shrinkWrap: true,
-                          itemBuilder: (BuildContext context, int index) {
-                            return ListTile(
-                              title: Row(
-                                children: [
-                                  Text(users[index].displayName,
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .displaySmall
-                                          ?.merge(TextStyle(
-                                              fontSize: 20,
-                                              color: getGenderColor(
-                                                  Gender.fromValue(users[index]
-                                                      .gender))))),
-                                  const SizedBox(width: 2),
-                                  if (users[index].gender !=
-                                      Gender.secret.value)
-                                    SizedBox(
-                                        width: 18,
-                                        height: 18,
-                                        child: AppLottie(
-                                          url: getGenderUrl(
-                                              users[index].gender),
-                                          animate: false,
-                                        )),
-                                ],
-                              ),
-                              trailing: getFlag(
-                                  countryCode:
-                                  users[index].countryCode,
-                                  fontSize: 30),
-                              subtitle: Text(
-                                  '${users[index].city}, ${users[index].country}',
-                                  style:
-                                      Theme.of(context).textTheme.bodyMedium),
-                              leading: AppUserImage(
-                                url: users[index].pictureData,
-                                gender: users[index].gender,
-                                size: 40,
-                              ),
-                              onTap: () {
-                                if (getSize(context) == ScreenSize.small) {
-                                  //Navigator.pop(context);
-                                }
-                                showVisitScreen(
-                                    parentContext,
-                                    users[index].id,
-                                    chat,
-                                    getSize(context) == ScreenSize.small);
-                              },
-                            );
-                          },
-                        ),
-                      );
+      child: ListView.builder(
+        key: const PageStorageKey('PeopleList'),
+        itemCount: users.length,
+        shrinkWrap: true,
+        itemBuilder: (BuildContext context, int index) {
+          return ListTile(
+            title: Row(
+              children: [
+                Text(users[index].displayName,
+                    style: Theme.of(context).textTheme.displaySmall?.merge(
+                        TextStyle(
+                            fontSize: 20,
+                            color: getGenderColor(
+                                Gender.fromValue(users[index].gender))))),
+                const SizedBox(width: 2),
+                if (users[index].gender != Gender.secret.value)
+                  SizedBox(
+                      width: 18,
+                      height: 18,
+                      child: AppLottie(
+                        url: getGenderUrl(users[index].gender),
+                        animate: false,
+                      )),
+              ],
+            ),
+            trailing:
+                getFlag(countryCode: users[index].countryCode, fontSize: 30),
+            subtitle: (users[index].country.isNotEmpty)
+                ? Text('${users[index].city}, ${users[index].country}',
+                    style: Theme.of(context).textTheme.bodyMedium)
+                : null,
+            leading: AppUserImage(
+              url: users[index].pictureData,
+              gender: users[index].gender,
+              size: 40,
+            ),
+            onTap: () {
+              if (getSize(context) == ScreenSize.small) {
+                //Navigator.pop(context);
+              }
+              showVisitScreen(parentContext, users[index].id, chat,
+                  getSize(context) == ScreenSize.small);
+            },
+          );
+        },
+      ),
+    );
   }
 
   Row getTopBar(BuildContext context, Chat? chat) {

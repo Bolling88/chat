@@ -12,6 +12,7 @@ import '../../repository/presence_database.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_widgets.dart';
 import '../../utils/constants.dart';
+import '../../utils/lottie.dart';
 import '../messages/messages_screen.dart';
 import '../people/people_screen.dart';
 import '../profile/profile_screen.dart';
@@ -35,8 +36,8 @@ class MessageHolderScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     context.read<PresenceDatabase>().updateUserPresence();
     return BlocProvider(
-      create: (BuildContext context) =>
-          MessageHolderBloc(context.read<FirestoreRepository>(), context.read<FcmRepository>()),
+      create: (BuildContext context) => MessageHolderBloc(
+          context.read<FirestoreRepository>(), context.read<FcmRepository>()),
       child: const MessageHolderScreenContent(),
     );
   }
@@ -55,12 +56,11 @@ class MessageHolderScreenContent extends StatelessWidget {
               return Scaffold(
                   appBar: getAppBar(context, state, state.selectedChat),
                   body: LayoutBuilder(
-                      builder: (BuildContext context,
-                              BoxConstraints constraints) =>
-                          constraints.maxWidth >
-                                  (state.privateChats.isEmpty ? 855 : 970)
-                              ? largeScreenContent(state, context)
-                              : smallScreenContent(state, context)));
+                      builder:
+                          (BuildContext context, BoxConstraints constraints) =>
+                              constraints.maxWidth > 855
+                                  ? largeScreenContent(state, context)
+                                  : smallScreenContent(state, context)));
             } else {
               return const Scaffold(body: Center(child: AppSpinner()));
             }
@@ -74,13 +74,8 @@ class MessageHolderScreenContent extends StatelessWidget {
           width: 350,
           child: PeopleScreen(
               chat: state.roomChat, user: state.user, parentContext: context)),
-      if (state.privateChats.isEmpty)
-        const VerticalDivider(
-          width: 5,
-        ),
-      state.privateChats.isNotEmpty
-          ? getSideMenu(state, context)
-          : const SizedBox.shrink(),
+
+      getSideMenu(state, context),
       Expanded(
         flex: 3,
         child: Material(
@@ -89,18 +84,14 @@ class MessageHolderScreenContent extends StatelessWidget {
               index: state.selectedChatIndex, children: getChatViews(state)),
         ),
       ),
-      if(MediaQuery.of(context).size.width > 1150)
-        Expanded(
-            flex: 2,
-            child: getBrandNameView(context))
+      if (MediaQuery.of(context).size.width > 1150)
+        Expanded(flex: 2, child: getBrandNameView(context))
     ]);
   }
 
   Row smallScreenContent(MessageHolderBaseState state, BuildContext context) {
     return Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-      state.privateChats.isNotEmpty
-          ? getSideMenu(state, context)
-          : const SizedBox.shrink(),
+      getSideMenu(state, context),
       Expanded(
           child: Material(
         elevation: 0,
@@ -142,14 +133,18 @@ class MessageHolderScreenContent extends StatelessWidget {
   Widget getSideMenu(MessageHolderBaseState state, BuildContext context) {
     return Container(
       color: AppColors.grey_3,
-      width: getSize(context) == ScreenSize.large ? 120 : 60,
+      width: 60,
       child: ListView.builder(
-          itemCount: state.privateChats.length + 1,
+          itemCount: state.privateChats.length + 2,
           itemBuilder: (context, index) {
             return MouseRegion(
               cursor: SystemMouseCursors.click,
               child: GestureDetector(
                 onTap: () {
+                  if(index == state.privateChats.length + 1) {
+                    showPeopleScreen(context, state.roomChat, state.user);
+                    return;
+                  }
                   BlocProvider.of<MessageHolderBloc>(context).add(
                       MessageHolderChatClickedEvent(
                           index,
@@ -157,29 +152,32 @@ class MessageHolderScreenContent extends StatelessWidget {
                               ? state.roomChat
                               : state.privateChats[index - 1]));
                 },
-                child: getSize(context) == ScreenSize.large
-                    ? Row(
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          if (index != 0)
-                            IconButton(
-                              onPressed: () {
-                                BlocProvider.of<MessageHolderBloc>(context).add(
-                                    MessageHolderClosePrivateChatEvent(
-                                        state.privateChats[index - 1]));
-                              },
-                              icon: const Icon(
-                                Icons.close,
-                                color: AppColors.main,
-                              ),
-                            ),
-                          Expanded(child: getCard(state, index, context))
-                        ],
-                      )
-                    : getCard(state, index, context),
+                child: getCard(state, index, context),
               ),
             );
           }),
+    );
+  }
+
+  Row getLargeScreenCard(
+      int index, BuildContext context, MessageHolderBaseState state) {
+    return Row(
+      mainAxisSize: MainAxisSize.max,
+      children: [
+        if (index != 0 && index != state.privateChats.length + 1)
+          IconButton(
+            onPressed: () {
+              BlocProvider.of<MessageHolderBloc>(context).add(
+                  MessageHolderClosePrivateChatEvent(
+                      state.privateChats[index - 1]));
+            },
+            icon: const Icon(
+              Icons.close,
+              color: AppColors.main,
+            ),
+          ),
+        Expanded(child: getCard(state, index, context))
+      ],
     );
   }
 
@@ -197,10 +195,12 @@ class MessageHolderScreenContent extends StatelessWidget {
                         state.roomChat == null)
                     ? AppColors.grey_5
                     : AppColors.main
-                : (state.privateChats[index - 1].lastMessageReadBy
-                        .contains(getUserId()))
-                    ? AppColors.grey_5
-                    : AppColors.main,
+                : (index == state.privateChats.length + 1)
+                    ? AppColors.main
+                    : (state.privateChats[index - 1].lastMessageReadBy
+                            .contains(getUserId()))
+                        ? AppColors.grey_5
+                        : AppColors.main,
         shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(5.0),
@@ -227,20 +227,24 @@ class MessageHolderScreenContent extends StatelessWidget {
                                   fontWeight: FontWeight.bold),
                             )),
                   )
-                : Center(
-                    child: Text(
-                      state.privateChats[index - 1]
-                          .getChatName(FirebaseAuth.instance.currentUser!.uid),
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.bodySmall?.merge(
-                            TextStyle(
-                                color: state.selectedChatIndex == index
-                                    ? AppColors.main
-                                    : AppColors.white,
-                                fontWeight: FontWeight.bold),
-                          ),
-                    ),
-                  )),
+                : (index == state.privateChats.length + 1)
+                    ? const Center(
+                        child: Icon(Icons.add),
+                      )
+                    : Center(
+                        child: Text(
+                          state.privateChats[index - 1].getChatName(
+                              FirebaseAuth.instance.currentUser!.uid),
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context).textTheme.bodySmall?.merge(
+                                TextStyle(
+                                    color: state.selectedChatIndex == index
+                                        ? AppColors.main
+                                        : AppColors.white,
+                                    fontWeight: FontWeight.bold),
+                              ),
+                        ),
+                      )),
       ),
     );
   }
@@ -281,41 +285,44 @@ class MessageHolderScreenContent extends StatelessWidget {
               : FlutterI18n.translate(context, "chat_rooms"),
         ),
       ),
-      backgroundColor: chat != null && chat is RoomChat
-          ? Color(chat.chatColor)
-          : AppColors.main,
+      backgroundColor:
+          chat?.getChatColor(FirebaseAuth.instance.currentUser!.uid) ??
+              AppColors.main,
       actions: [
-        MediaQuery.of(context).size.width > (state.privateChats.isEmpty ? 855 : 970)
-              ? const SizedBox.shrink()
-              : Material(
-                  color: Colors.transparent,
-                  child: InkWell(
-                    customBorder: const CircleBorder(),
-                    onTap: () {
-                      showPeopleScreen(context, state.roomChat, state.user);
-                    },
-                    child: SizedBox(
-                      height: 60,
-                      width: 60,
-                      child: Row(
-                        children: [
-                          Text(
-                            state.onlineUsers.length.toString(),
-                            style: Theme.of(context).textTheme.bodyLarge?.merge(
-                                const TextStyle(
-                                    color: AppColors.white,
-                                    fontWeight: FontWeight.bold)),
-                          ),
-                          const SizedBox(width: 5),
-                          const Icon(
-                            Icons.people,
-                            color: AppColors.white,
-                          )
-                        ],
-                      ),
+        MediaQuery.of(context).size.width >
+                (state.privateChats.isEmpty ? 855 : 970)
+            ? const SizedBox.shrink()
+            : Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  customBorder: const CircleBorder(),
+                  onTap: () {
+                    showPeopleScreen(context, state.roomChat, state.user);
+                  },
+                  child: SizedBox(
+                    height: 60,
+                    width: 60,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          state.onlineUsers.length.toString(),
+                          style: Theme.of(context).textTheme.bodyLarge?.merge(
+                              const TextStyle(
+                                  color: AppColors.white,
+                                  fontWeight: FontWeight.bold)),
+                        ),
+                        const SizedBox(width: 2),
+                        const Icon(
+                          Icons.person,
+                          color: AppColors.white,
+                        )
+                      ],
                     ),
                   ),
-        ),
+                ),
+              ),
         IconButton(
           icon: const Icon(
             Icons.settings,
