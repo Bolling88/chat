@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:audioplayers/audioplayers.dart';
 import 'package:chat/model/chat_user.dart';
 import 'package:chat/model/private_chat.dart';
 import 'package:chat/repository/fcm_repository.dart';
