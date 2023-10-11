@@ -12,12 +12,10 @@ class PrivateChat extends Chat implements Comparable<PrivateChat> {
   final String initiatedByUserName;
   final int initiatedByUserGender;
   final String initiatedByPictureData;
-  final String initiatedByFcmToken;
   final String otherUserId;
   final String otherUserName;
   final int otherUserGender;
   final String otherUserPictureData;
-  final String otherUserFcmToken;
   final Timestamp created;
   final List<String> lastMessageReadBy;
   final List<String> users;
@@ -29,12 +27,10 @@ class PrivateChat extends Chat implements Comparable<PrivateChat> {
     required this.initiatedByUserName,
     required this.initiatedByUserGender,
     required this.initiatedByPictureData,
-    required this.initiatedByFcmToken,
     required this.otherUserId,
     required this.otherUserName,
     required this.otherUserGender,
     required this.otherUserPictureData,
-    required this.otherUserFcmToken,
     required this.created,
     required this.lastMessageReadBy,
     required this.users,
@@ -57,12 +53,10 @@ class PrivateChat extends Chat implements Comparable<PrivateChat> {
     String? initiatedByUserName,
     int? initiatedByUserGender,
     String? initiatedByPictureData,
-    String? initiatedByFcmToken,
     String? otherUserId,
     String? otherUserName,
     int? otherUserGender,
     String? otherUserPictureData,
-    String? otherUserFcmToken,
     Timestamp? created,
     List<String>? lastMessageReadBy,
     String? id,
@@ -79,12 +73,10 @@ class PrivateChat extends Chat implements Comparable<PrivateChat> {
           initiatedByUserGender ?? this.initiatedByUserGender,
       initiatedByPictureData:
           initiatedByPictureData ?? this.initiatedByPictureData,
-      initiatedByFcmToken: initiatedByFcmToken ?? this.initiatedByFcmToken,
       otherUserId: otherUserId ?? this.otherUserId,
       otherUserName: otherUserName ?? this.otherUserName,
       otherUserGender: otherUserGender ?? this.otherUserGender,
       otherUserPictureData: otherUserPictureData ?? this.otherUserPictureData,
-      otherUserFcmToken: otherUserFcmToken ?? this.otherUserFcmToken,
       created: created ?? this.created,
       lastMessageReadBy: lastMessageReadBy ?? this.lastMessageReadBy,
       id: id ?? this.id,
@@ -101,13 +93,11 @@ class PrivateChat extends Chat implements Comparable<PrivateChat> {
         initiatedByUserName = json['initiatedByUserName'] ?? '',
         initiatedByUserGender = json['initiatedByUserGender'] ?? 0,
         initiatedByPictureData = json['initiatedByPictureData'] ?? '',
-        initiatedByFcmToken = json['initiatedByFcmToken'] ?? '',
         otherUserId = json['otherUserId'] ?? '',
         users = json['users']?.cast<String>() ?? [],
         otherUserName = json['otherUserName'] ?? '',
         otherUserGender = json['otherUserGender'] ?? 0,
         otherUserPictureData = json['otherUserPictureData'] ?? '',
-        otherUserFcmToken = json['otherUserFcmToken'] ?? '',
         created = json['created'] ?? Timestamp.now(),
         lastMessageReadBy = json['lastMessageReadBy']?.cast<String>() ?? [],
         super(
@@ -141,12 +131,10 @@ class PrivateChat extends Chat implements Comparable<PrivateChat> {
         initiatedByUserName,
         initiatedByUserGender,
         initiatedByPictureData,
-        initiatedByFcmToken,
         otherUserId,
         otherUserName,
         otherUserGender,
         otherUserPictureData,
-        otherUserFcmToken,
         created,
         lastMessageReadBy,
       ];

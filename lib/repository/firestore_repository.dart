@@ -137,10 +137,10 @@ class FirestoreRepository {
     required String chatId,
     required ChatUser user,
     required String message,
-    required bool isPrivateChat,
     required ChatType chatType,
+    required bool isPrivateChat,
     bool isGiphy = false,
-    String fcmToken = '',
+    PrivateChat? privateChat,
   }) async {
     if (isPrivateChat) {
       //Do not post joined and left messages in private chats
@@ -180,7 +180,9 @@ class FirestoreRepository {
           'lastMessageReadBy': [getUserId()],
           'lastMessageTimestamp': FieldValue.serverTimestamp(),
           'lastMessageUserId': getUserId(),
-          'lastMessageFcmToken': fcmToken,
+          'sendPushToUserId': privateChat?.users
+              .where((element) => element != getUserId())
+              .firstOrNull,
         }, SetOptions(merge: true));
       } else {
         await chats.doc(chatId).set({
@@ -283,7 +285,6 @@ class FirestoreRepository {
           user: myUser,
           message: initialMessage,
           isPrivateChat: true,
-          fcmToken: otherUser.fcmToken,
           chatType: ChatType.message);
     } catch (e) {
       Log.e(e);

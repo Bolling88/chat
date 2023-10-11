@@ -32,6 +32,40 @@ exports.onUserStatusChange = functions.database.ref("/{uid}/presence").onUpdate(
       const chatQuery = admin.firestore().collection("chats").where('users', 'array-contains', context.params.uid);
       const chatSnapshot = await chatQuery.get();
 
+     const userRef = admin.firestore().collection("users").doc(messageData.sendPushToUserId);
+
+     try {
+       const userSnapshot = await userRef.get();
+       if (userSnapshot.exists) {
+         const userData = userSnapshot.data();
+         // Now userData contains the data of the user document
+         console.log(userData);
+         const token = userData.fcmToken;
+const payload = {
+  notification: {
+    title: messageData.lastMessageByName,
+    body: messageData.lastMessage,
+  }
+};
+
+      // Get the device tokens for the users you want to send the notification to
+      const recipientTokens = [messageData.lastMessageFcmToken]; // Wrap the token in an array
+
+      // Send the FCM notification
+      try {
+        const response = await admin.messaging().sendToDevice(recipientTokens, payload);
+        console.log("Notification sent successfully:", response);
+      } catch (error) {
+        console.error("Error sending notification:", error);
+      }
+
+       } else {
+         console.log("User not found");
+       }
+     } catch (error) {
+       console.error("Error getting user data:", error);
+     }
+
       for (const chatDoc of chatSnapshot.docs) {
         const chatData = chatDoc.data();
         const updatedUsers = chatData.users.filter(uid => uid !== context.params.uid);
