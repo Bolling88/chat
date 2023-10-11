@@ -12,7 +12,6 @@ import '../../utils/app_widgets.dart';
 import '../../utils/constants.dart';
 import '../../utils/flag.dart';
 import '../error/error_screen.dart';
-import '../loading/loading_screen.dart';
 import '../messages/other_message_widget.dart';
 import 'bloc/people_bloc.dart';
 import 'bloc/people_state.dart';
@@ -110,11 +109,13 @@ class PeopleScreenBuilder extends StatelessWidget {
   Expanded getList(List<ChatUser> users) {
     return Expanded(
       child: ListView.builder(
+        //separatorBuilder: (BuildContext context, int index) => const Divider(),
         key: const PageStorageKey('PeopleList'),
         itemCount: users.length,
         shrinkWrap: true,
         itemBuilder: (BuildContext context, int index) {
           return ListTile(
+            visualDensity: const VisualDensity(vertical: -4),
             title: Row(
               children: [
                 Text(users[index].displayName,
@@ -136,10 +137,7 @@ class PeopleScreenBuilder extends StatelessWidget {
             ),
             trailing:
                 getFlag(countryCode: users[index].countryCode, fontSize: 30),
-            subtitle: (users[index].country.isNotEmpty)
-                ? Text('${users[index].city}, ${users[index].country}',
-                    style: Theme.of(context).textTheme.bodyMedium)
-                : null,
+            subtitle: getRegionText(users, index, context),
             leading: AppUserImage(
               url: users[index].pictureData,
               gender: users[index].gender,
@@ -156,6 +154,26 @@ class PeopleScreenBuilder extends StatelessWidget {
         },
       ),
     );
+  }
+
+  Text getRegionText(List<ChatUser> users, int index, BuildContext context) {
+    final regionName = users[index].regionName;
+    final countryName = users[index].regionName;
+    final cityName = users[index].city;
+    final region = (regionName.isNotEmpty) ? regionName : cityName;
+    final country = countryName;
+
+    if (region.isEmpty && country.isEmpty) {
+      return Text(FlutterI18n.translate(context, 'unknown_location'),
+          style: Theme.of(context).textTheme.bodyMedium);
+    }
+
+    if (region.isNotEmpty) {
+      return Text('$region, ${users[index].country}',
+          style: Theme.of(context).textTheme.bodyMedium);
+    } else {
+      return Text(country, style: Theme.of(context).textTheme.bodyMedium);
+    }
   }
 
   Row getTopBar(BuildContext context, Chat? chat) {

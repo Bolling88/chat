@@ -71,5 +71,6 @@
   "message_reported": "Message reported",
   "leave_chat": "Leave chat",
   "change_room": "Change room",
-  "users_in_room": "Users in room"
+  "users_in_room": "Users in room",
+  "unknown_location": "Unknown location"
 }

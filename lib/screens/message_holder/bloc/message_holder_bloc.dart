@@ -6,7 +6,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:soundpool/soundpool.dart';
 import '../../../model/room_chat.dart';
+import '../../../model/user_location.dart';
 import '../../../repository/firestore_repository.dart';
+import '../../../repository/network_repository.dart';
 import '../../../utils/log.dart';
 import 'message_holder_event.dart';
 import 'message_holder_state.dart';
@@ -43,6 +45,7 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
       _firestoreRepository.updateCurrentUsersCurrentChatRoom(chatId: '');
       _fcmRepository.setUpPushNotification();
       setUpUserListener();
+      updateUserLocation();
     } else if (event is MessageHolderUserUpdatedEvent) {
       if (currentState is MessageHolderBaseState) {
         yield currentState.copyWith(user: event.user);
@@ -288,6 +291,11 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
       Log.d("Chats: ${chats.length}");
       add(MessageHolderPrivateChatsUpdatedEvent(chats));
     });
+  }
+
+  void updateUserLocation() async {
+    UserLocation userLocation = await getUserLocation();
+    _firestoreRepository.updateUserLocation(userLocation);
   }
 
   void setUpChatsListener(RoomChat chat) async {

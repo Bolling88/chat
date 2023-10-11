@@ -33,7 +33,6 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     if (event is ChatInitialEvent) {
       setUpChatListener();
       setUpPeopleListener();
-      updateUserLocation();
     } else if (event is ChatUpdatedEvent) {
       if (currentState is ChatBaseState) {
         yield currentState.copyWith(chats: event.chats);
@@ -63,11 +62,6 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
 
       add(ChatUpdatedEvent(reversedChats.toList()));
     });
-  }
-
-  void updateUserLocation() async {
-    UserLocation userLocation = await getUserLocation();
-    _firestoreRepository.updateUserLocation(userLocation);
   }
 
   void setUpPeopleListener() {

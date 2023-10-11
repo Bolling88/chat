@@ -44,7 +44,7 @@ class Network {
 }
 
 Future<UserLocation> getUserLocation() async {
-  Network n = Network("http://ip-api.com/json");
+  Network n = Network("https://geolocation-db.com/json/");
   final locationSTR = (await n.getData());
   final userLocation = UserLocation.fromJson(jsonDecode(locationSTR));
   return userLocation;

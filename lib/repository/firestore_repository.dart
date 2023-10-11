@@ -410,8 +410,8 @@ class FirestoreRepository {
     users.doc(getUserId()).set({
       'city': userLocation.city,
       'countryCode': userLocation.countryCode,
-      'country': userLocation.country,
-      'regionName': userLocation.regionName,
+      'country': userLocation.countryName,
+      'regionName': userLocation.state,
       'lastActive': FieldValue.serverTimestamp(),
     }, SetOptions(merge: true));
   }
