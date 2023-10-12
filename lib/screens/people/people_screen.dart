@@ -19,11 +19,13 @@ import 'bloc/people_state.dart';
 class PeopleScreen extends StatelessWidget {
   final Chat? chat;
   final ChatUser user;
+  final List<ChatUser>? users;
   final BuildContext parentContext;
 
   const PeopleScreen(
       {required this.chat,
       required this.user,
+      required this.users,
       required this.parentContext,
       Key? key})
       : super(key: key);
@@ -32,7 +34,7 @@ class PeopleScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (BuildContext context) =>
-          PeopleBloc(context.read<FirestoreRepository>(), chat, user),
+          PeopleBloc(context.read<FirestoreRepository>(), chat, user, users),
       child: PeopleScreenBuilder(chat: chat, parentContext: parentContext),
     );
   }
@@ -217,13 +219,13 @@ class PeopleScreenBuilder extends StatelessWidget {
 }
 
 Future showPeopleScreen(
-    BuildContext parentContext, Chat? chat, ChatUser user) async {
+    BuildContext parentContext, Chat? chat, ChatUser user, List<ChatUser>? initialUsers) async {
   await showModalBottomSheet(
     useRootNavigator: true,
     context: parentContext,
     backgroundColor: AppColors.transparent,
     builder: (BuildContext context) {
-      return PeopleScreen(chat: chat, user: user, parentContext: parentContext);
+      return PeopleScreen(chat: chat, user: user, parentContext: parentContext, users: initialUsers);
     },
   );
 }

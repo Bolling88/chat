@@ -73,7 +73,7 @@ class MessageHolderScreenContent extends StatelessWidget {
       SizedBox(
           width: 350,
           child: PeopleScreen(
-              chat: state.roomChat, user: state.user, parentContext: context)),
+              chat: state.roomChat, user: state.user, parentContext: context, users: null,)),
 
       getSideMenu(state, context),
       Expanded(
@@ -142,7 +142,7 @@ class MessageHolderScreenContent extends StatelessWidget {
               child: GestureDetector(
                 onTap: () {
                   if(index == state.privateChats.length + 1) {
-                    showPeopleScreen(context, state.roomChat, state.user);
+                    showPeopleScreen(context, state.roomChat, state.user, state.onlineUsers);
                     return;
                   }
                   BlocProvider.of<MessageHolderBloc>(context).add(
@@ -297,7 +297,7 @@ class MessageHolderScreenContent extends StatelessWidget {
                 child: InkWell(
                   customBorder: const CircleBorder(),
                   onTap: () {
-                    showPeopleScreen(context, state.roomChat, state.user);
+                    showPeopleScreen(context, state.roomChat, state.user, state.onlineUsers);
                   },
                   child: SizedBox(
                     height: 60,

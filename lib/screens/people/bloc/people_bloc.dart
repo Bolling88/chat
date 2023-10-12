@@ -12,11 +12,12 @@ class PeopleBloc extends Bloc<PeopleEvent, PeopleState> {
   final FirestoreRepository _firestoreRepository;
   final Chat? _chat;
   final ChatUser _user;
+  final List<ChatUser>? _initialUsers;
 
   StreamSubscription<QuerySnapshot>? chatStream;
   StreamSubscription<QuerySnapshot>? onlineUsersStream;
 
-  PeopleBloc(this._firestoreRepository, this._chat, this._user)
+  PeopleBloc(this._firestoreRepository, this._chat, this._user, this._initialUsers)
       : super(PeopleLoadingState()) {
     add(PeopleInitialEvent());
   }
@@ -32,7 +33,11 @@ class PeopleBloc extends Bloc<PeopleEvent, PeopleState> {
   Stream<PeopleState> mapEventToState(PeopleEvent event) async* {
     try {
       if (event is PeopleInitialEvent) {
-        setUpPeopleListener();
+        if(_initialUsers == null) {
+          setUpPeopleListener();
+        } else {
+          yield PeopleBaseState(_initialUsers!);
+        }
       } else if (event is PeopleLoadedEvent) {
         yield PeopleBaseState(event.onlineUser);
       } else {
