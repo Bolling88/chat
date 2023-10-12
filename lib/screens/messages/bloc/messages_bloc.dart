@@ -69,7 +69,9 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
             chatType: ChatType.message,
             message: currentState.currentMessage,
             isPrivateChat: isPrivateChat,
-            privateChat: (chat is PrivateChat ? chat as PrivateChat : null),
+            sendPushToUserId: (chat is PrivateChat ? (chat as PrivateChat).users
+                .where((element) => element != getUserId())
+                .firstOrNull : null),
           );
           yield currentState.copyWith(currentMessage: "");
         }
@@ -100,7 +102,9 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
             chatType: ChatType.giphy,
             message: giphyUrl,
             isPrivateChat: isPrivateChat,
-            privateChat: (chat is PrivateChat ? chat as PrivateChat : null),
+            sendPushToUserId: (chat is PrivateChat ? (chat as PrivateChat).users
+                .where((element) => element != getUserId())
+                .firstOrNull : null),
             isGiphy: true);
         yield currentState.copyWith(currentMessage: "");
       }

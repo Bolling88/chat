@@ -140,7 +140,7 @@ class FirestoreRepository {
     required ChatType chatType,
     required bool isPrivateChat,
     bool isGiphy = false,
-    PrivateChat? privateChat,
+    String? sendPushToUserId,
   }) async {
     if (isPrivateChat) {
       //Do not post joined and left messages in private chats
@@ -180,9 +180,7 @@ class FirestoreRepository {
           'lastMessageReadBy': [getUserId()],
           'lastMessageTimestamp': FieldValue.serverTimestamp(),
           'lastMessageUserId': getUserId(),
-          'sendPushToUserId': privateChat?.users
-              .where((element) => element != getUserId())
-              .firstOrNull,
+          'sendPushToUserId': sendPushToUserId,
         }, SetOptions(merge: true));
       } else {
         await chats.doc(chatId).set({
@@ -272,20 +270,21 @@ class FirestoreRepository {
         'initiatedByUserName': myUser.displayName,
         'initiatedByUserGender': myUser.gender,
         'initiatedByPictureData': myUser.pictureData,
-        'initiatedByFcmToken': myUser.fcmToken,
         'chatName': '${otherUser.displayName} ${myUser.displayName}',
         'otherUserId': otherUser.id,
         'otherUserName': otherUser.displayName,
         'otherUserGender': otherUser.gender,
         'otherUserPictureData': otherUser.pictureData,
-        'otherUserFcmToken': otherUser.fcmToken,
+        'sendPushToUserId': otherUser.id,
       });
+
       postMessage(
           chatId: reference.id,
           user: myUser,
           message: initialMessage,
           isPrivateChat: true,
-          chatType: ChatType.message);
+          chatType: ChatType.message,
+          sendPushToUserId: otherUser.id);
     } catch (e) {
       Log.e(e);
     }

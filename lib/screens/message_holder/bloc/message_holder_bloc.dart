@@ -3,6 +3,7 @@ import 'package:chat/model/chat_user.dart';
 import 'package:chat/model/private_chat.dart';
 import 'package:chat/repository/fcm_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_app_badger/flutter_app_badger.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:soundpool/soundpool.dart';
 import '../../../model/room_chat.dart';
@@ -46,6 +47,7 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
       _fcmRepository.setUpPushNotification();
       setUpUserListener();
       updateUserLocation();
+      FlutterAppBadger.removeBadge();
     } else if (event is MessageHolderUserUpdatedEvent) {
       if (currentState is MessageHolderBaseState) {
         yield currentState.copyWith(user: event.user);
