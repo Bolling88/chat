@@ -47,7 +47,6 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
       _fcmRepository.setUpPushNotification();
       setUpUserListener();
       updateUserLocation();
-      FlutterAppBadger.removeBadge();
     } else if (event is MessageHolderUserUpdatedEvent) {
       if (currentState is MessageHolderBaseState) {
         yield currentState.copyWith(user: event.user);
@@ -89,6 +88,7 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
       }
     } else if (event is MessageHolderPrivateChatsUpdatedEvent) {
       if (currentState is MessageHolderBaseState) {
+        updateBadgeCount(event.privateChats);
         if (currentState.privateChats.length != event.privateChats.length) {
           //If the number of chats have changed...
           if (currentState.selectedChatIndex == 0 ||
@@ -261,7 +261,7 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
       maxStreams: 2,
       iosOptions: SoundpoolOptionsIos(
         audioSessionCategory: AudioSessionCategory.ambient,
-          audioSessionMode: AudioSessionMode.normal,
+        audioSessionMode: AudioSessionMode.normal,
       ),
     ),
   );
@@ -345,5 +345,15 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
           event.docs.first.id, event.docs.first.data() as Map<String, dynamic>);
       add(MessageHolderUserUpdatedEvent(user));
     });
+  }
+
+  void updateBadgeCount(List<PrivateChat> privateChats) {
+    int count = 0;
+    for (final chat in privateChats) {
+      if (chat.lastMessageReadBy.contains(getUserId()) == false) {
+        count++;
+      }
+    }
+    FlutterAppBadger.updateBadgeCount(count);
   }
 }
