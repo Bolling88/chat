@@ -6,7 +6,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:giphy_get/giphy_get.dart';
 import '../../model/chat.dart';
-import '../../repository/fcm_repository.dart';
 import '../../repository/firestore_repository.dart';
 import '../../utils/app_widgets.dart';
 import '../../utils/constants.dart';

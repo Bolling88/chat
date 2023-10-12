@@ -9,7 +9,7 @@ exports.deletePrivateChatOnLastLeft = functions.firestore
     const users = messageData.users;
     console.log("Array size: " + users.length);
 
-    if (users.length === 1) {
+    if (users.length < 2) {
       console.log("Last person left private chat, deleting");
       return change.after.ref.delete();
     } else {
