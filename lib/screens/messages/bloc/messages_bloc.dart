@@ -117,21 +117,21 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
   }
 
   void postJoinedMessage() {
-    _firestoreRepository.postMessage(
-        chatId: chat.id,
-        user: _chatUser,
-        chatType: ChatType.joined,
-        message: _chatUser.displayName,
-        isPrivateChat: isPrivateChat);
+    // _firestoreRepository.postMessage(
+    //     chatId: chat.id,
+    //     user: _chatUser,
+    //     chatType: ChatType.joined,
+    //     message: _chatUser.displayName,
+    //     isPrivateChat: isPrivateChat);
   }
 
   void postLeftMessage() {
-    _firestoreRepository.postMessage(
-        chatId: chat.id,
-        user: _chatUser,
-        chatType: ChatType.left,
-        message: _chatUser.displayName,
-        isPrivateChat: isPrivateChat);
+    // _firestoreRepository.postMessage(
+    //     chatId: chat.id,
+    //     user: _chatUser,
+    //     chatType: ChatType.left,
+    //     message: _chatUser.displayName,
+    //     isPrivateChat: isPrivateChat);
   }
 
   void setUpMessagesListener(String chatId) async {
@@ -173,8 +173,6 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
           } else {
             datedList.add(MessageItem(current, null));
           }
-        } else {
-          //datedList.add(MessageItem(current, null));
         }
       }
       datedList.add(MessageItem(messages.last, null));

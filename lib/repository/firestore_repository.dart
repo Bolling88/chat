@@ -143,7 +143,6 @@ class FirestoreRepository {
     String? sendPushToUserId,
   }) async {
     if (isPrivateChat) {
-      //Do not post joined and left messages in private chats
       if (chatType == ChatType.message || chatType == ChatType.giphy) {
         await privateChats.doc(chatId).collection('messages').add({
           'text': message,
