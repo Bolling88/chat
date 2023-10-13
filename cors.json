@@ -1,0 +1,26 @@
+[
+  {
+    "origin": [
+      "*"
+    ],
+    "method": [
+      "GET",
+      "HEAD",
+      "POST",
+      "PUT",
+      "DELETE",
+      "OPTIONS"
+    ],
+    "maxAgeSeconds": 3600,
+    "responseHeader": [
+      "Content-Type"
+    ],
+    "allowCredentials": true,
+    "allowedHeader": [
+      "Content-Type",
+      "Access-Control-Allow-Headers",
+      "Authorization",
+      "X-Requested-With"
+    ]
+  }
+]

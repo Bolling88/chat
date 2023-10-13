@@ -3,10 +3,10 @@ class UserLocation {
   final String countryName;
   final String city;
   final String postal;
-  final String latitude;
-  final String longitude;
-  final double iPv4;
-  final double state;
+  final double latitude;
+  final double longitude;
+  final String iPv4;
+  final String state;
 
   UserLocation({
     required this.countryCode,
@@ -25,10 +25,10 @@ class UserLocation {
       countryName: json['country_name'] ?? '',
       city: json['city'] ?? '',
       postal: json['postal'] ?? '',
-      latitude: json['latitude'] ?? '',
-      longitude: json['longitude'] ?? '',
-      iPv4: json['IPv4']?.toDouble() ?? 0.0,
-      state: json['state']?.toDouble() ?? 0.0,
+      latitude: json['latitude']?.toDouble() ?? 0.0,
+      longitude: json['longitude']?.toDouble() ?? 0.0,
+      iPv4: json['IPv4'] ?? '',
+      state: json['state'] ?? '',
     );
   }
 }
