@@ -354,6 +354,10 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
         count++;
       }
     }
-    FlutterAppBadger.updateBadgeCount(count);
+    if (count == 0) {
+      FlutterAppBadger.removeBadge();
+    } else {
+      FlutterAppBadger.updateBadgeCount(count);
+    }
   }
 }

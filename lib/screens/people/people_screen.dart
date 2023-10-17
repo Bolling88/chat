@@ -160,12 +160,11 @@ class PeopleScreenBuilder extends StatelessWidget {
 
   Text getRegionText(List<ChatUser> users, int index, BuildContext context) {
     final regionName = users[index].regionName;
-    final countryName = users[index].regionName;
+    final countryName = users[index].country;
     final cityName = users[index].city;
     final region = (regionName.isNotEmpty) ? regionName : cityName;
-    final country = countryName;
 
-    if (region.isEmpty && country.isEmpty) {
+    if (region.isEmpty && countryName.isEmpty) {
       return Text(FlutterI18n.translate(context, 'unknown_location'),
           style: Theme.of(context).textTheme.bodyMedium);
     }
@@ -174,7 +173,7 @@ class PeopleScreenBuilder extends StatelessWidget {
       return Text('$region, ${users[index].country}',
           style: Theme.of(context).textTheme.bodyMedium);
     } else {
-      return Text(country, style: Theme.of(context).textTheme.bodyMedium);
+      return Text(countryName, style: Theme.of(context).textTheme.bodyMedium);
     }
   }
 

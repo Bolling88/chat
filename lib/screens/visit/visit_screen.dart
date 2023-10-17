@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import '../../model/chat.dart';
+import '../../model/chat_user.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_widgets.dart';
 import '../../utils/flag.dart';
@@ -140,8 +141,7 @@ class VisitScreenContent extends StatelessWidget {
                     ],
                   ),
                 ),
-                Text('${user.city}, ${user.country}',
-                    style: Theme.of(context).textTheme.bodyMedium),
+                getRegionText(user, context),
                 const SizedBox(height: 40),
                 if (!state.userBlocked &&
                     !state.myUser.blockedBy.contains(user.id))
@@ -239,6 +239,25 @@ class VisitScreenContent extends StatelessWidget {
         }
       }),
     );
+  }
+}
+
+Text getRegionText(ChatUser user, BuildContext context) {
+  final regionName = user.regionName;
+  final countryName = user.country;
+  final cityName = user.city;
+  final region = (regionName.isNotEmpty) ? regionName : cityName;
+
+  if (region.isEmpty && countryName.isEmpty) {
+    return Text(FlutterI18n.translate(context, 'unknown_location'),
+        style: Theme.of(context).textTheme.bodyMedium);
+  }
+
+  if (region.isNotEmpty) {
+    return Text('$region, ${user.country}',
+        style: Theme.of(context).textTheme.bodyMedium);
+  } else {
+    return Text(countryName, style: Theme.of(context).textTheme.bodyMedium);
   }
 }
 

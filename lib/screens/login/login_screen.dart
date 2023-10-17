@@ -1,9 +1,11 @@
 import 'package:chat/repository/firestore_repository.dart';
 import 'package:chat/repository/login_repository.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:lottie/lottie.dart';
+import 'package:universal_io/io.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_widgets.dart';
 import '../chat/chat_screen.dart';
@@ -52,7 +54,8 @@ class LoginScreenContent extends StatelessWidget {
         if (state is LoginSuccessState) {
           if (state.navigation == OnboardingNavigation.DONE) {
             Navigator.of(context).popUntil((route) => route.isFirst);
-            Navigator.pushReplacementNamed(context, MessageHolderScreen.routeName);
+            Navigator.pushReplacementNamed(
+                context, MessageHolderScreen.routeName);
           } else if (state.navigation == OnboardingNavigation.PICTURE) {
             Navigator.of(context).popUntil((route) => route.isFirst);
             Navigator.pushReplacementNamed(
@@ -145,7 +148,8 @@ class LoginScreenContent extends StatelessWidget {
                   FlutterI18n.translate(context, 'continue_google'),
                   style: Theme.of(context).textTheme.bodyMedium,
                 )),
-            const SizedBox(height: 20),
+            if (kIsWeb || Platform.isIOS) const SizedBox(height: 20),
+            if (kIsWeb || Platform.isIOS)
               ElevatedButton.icon(
                   onPressed: () {
                     BlocProvider.of<LoginBloc>(context)
@@ -185,8 +189,8 @@ class LoginScreenContent extends StatelessWidget {
               child: Text(FlutterI18n.translate(context, "privacy"),
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodySmall?.merge(
-                    const TextStyle(color: AppColors.main),
-                  )),
+                        const TextStyle(color: AppColors.main),
+                      )),
             ),
             Text(
               FlutterI18n.translate(context, "and"),
