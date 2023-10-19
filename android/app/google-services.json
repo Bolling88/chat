@@ -31,6 +31,14 @@
           }
         },
         {
+          "client_id": "164406258776-po7ongpivfqe7s8l9icfblja0dunf7sq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.xevenition.chat",
+            "certificate_hash": "8d119c700b6c913133a2a61cea930053ce36e7c0"
+          }
+        },
+        {
           "client_id": "164406258776-rqr6n103mlu4nhakdji1q9fd75avqidh.apps.googleusercontent.com",
           "client_type": 3
         }

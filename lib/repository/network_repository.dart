@@ -1,7 +1,9 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import '../model/user_location.dart';
 import '../utils/log.dart';
+import 'package:universal_io/io.dart';
 
 class Network {
   final String url;
@@ -17,6 +19,8 @@ class Network {
     if (response.statusCode == 200) {
       return (response.body);
     } else {
+      String platform = kIsWeb ? 'Web' : (Platform.isAndroid ? 'Android' : 'iOS');
+      Log.e('Error getting location: ${response.statusCode}, Platform: $platform');
       return 'No Data';
     }
   }

@@ -8,7 +8,6 @@ import 'package:lottie/lottie.dart';
 import 'package:universal_io/io.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_widgets.dart';
-import '../chat/chat_screen.dart';
 import '../message_holder/message_holder_screen.dart';
 import '../onboarding_gender/onboarding_gender_screen.dart';
 import '../onboarding_name/onboarding_name_screen.dart';

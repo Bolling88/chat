@@ -40,6 +40,8 @@ class PeopleScreen extends StatelessWidget {
   }
 }
 
+const double _bottomsheetHeight = 600;
+
 class PeopleScreenBuilder extends StatelessWidget {
   final BuildContext parentContext;
   final Chat? chat;
@@ -59,7 +61,7 @@ class PeopleScreenBuilder extends StatelessWidget {
             return Container(
               height: getSize(context) == ScreenSize.large
                   ? double.infinity
-                  : bottomsheetHeight,
+                  : _bottomsheetHeight,
               decoration: const BoxDecoration(
                 color: AppColors.white,
                 borderRadius: BorderRadius.only(
@@ -94,7 +96,7 @@ class PeopleScreenBuilder extends StatelessWidget {
           } else {
             return Container(
               width: double.infinity,
-              height: bottomsheetHeight,
+              height: _bottomsheetHeight,
               decoration: const BoxDecoration(
                   color: AppColors.white,
                   borderRadius: BorderRadius.only(

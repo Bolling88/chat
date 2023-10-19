@@ -59,16 +59,18 @@ class PeopleBloc extends Bloc<PeopleEvent, PeopleState> {
 
       final filteredUsers =
           users.where((element) => element.id != getUserId()).toList();
-      //Sort users with the same country code as my users first
+
       filteredUsers.sort((a, b) {
-        if (a.countryCode == _user.countryCode) {
-          return -1;
-        } else if (b.countryCode == _user.countryCode) {
-          return 1;
+        // First, sort by countryCode
+        int countryCodeComparison = a.countryCode.compareTo(_user.countryCode);
+        if (countryCodeComparison != 0) {
+          return countryCodeComparison;
         } else {
-          return 0;
+          // If countryCode is the same, sort by lastActive
+          return b.lastActive.compareTo(a.lastActive);
         }
       });
+
 
       if (currentChat != null) {
         // add(PeopleLoadedEvent(filteredUsers

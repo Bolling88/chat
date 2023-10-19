@@ -46,7 +46,7 @@ class VisitScreen extends StatelessWidget {
   }
 }
 
-const bottomsheetHeight = 450.0;
+const _bottomsheetHeight = 450.0;
 
 class VisitScreenContent extends StatelessWidget {
   final BuildContext parentContext;
@@ -68,7 +68,7 @@ class VisitScreenContent extends StatelessWidget {
         if (state is VisitBaseState && state.user != null) {
           final user = state.user!;
           return Container(
-            height: bottomsheetHeight,
+            height: _bottomsheetHeight,
             width: double.infinity,
             decoration: const BoxDecoration(
                 color: AppColors.white,
@@ -202,7 +202,7 @@ class VisitScreenContent extends StatelessWidget {
             state.userLoaded) {
           return Container(
             width: double.infinity,
-            height: bottomsheetHeight,
+            height: _bottomsheetHeight,
             decoration: const BoxDecoration(
                 color: AppColors.white,
                 borderRadius: BorderRadius.only(
@@ -226,7 +226,7 @@ class VisitScreenContent extends StatelessWidget {
         } else {
           return Container(
             width: double.infinity,
-            height: bottomsheetHeight,
+            height: _bottomsheetHeight,
             decoration: const BoxDecoration(
                 color: AppColors.white,
                 borderRadius: BorderRadius.only(
