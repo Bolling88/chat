@@ -13,6 +13,7 @@ import '../../../repository/firestore_repository.dart';
 import '../../../repository/network_repository.dart';
 import '../../../utils/audio.dart';
 import '../../../utils/log.dart';
+import '../../people/bloc/people_bloc.dart';
 import 'message_holder_event.dart';
 import 'message_holder_state.dart';
 import 'dart:core';
@@ -306,15 +307,7 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
           .toList();
 
       //Sort users with the same country code as my users first
-      filteredUsers.sort((a, b) {
-        if (a.countryCode == myUser.countryCode) {
-          return -1;
-        } else if (b.countryCode == myUser.countryCode) {
-          return 1;
-        } else {
-          return 0;
-        }
-      });
+      sortOnlineUsers(filteredUsers, myUser.countryCode);
 
       add(MessageHolderUsersUpdatedEvent(filteredUsers));
     });

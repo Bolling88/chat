@@ -59,32 +59,7 @@ class PeopleBloc extends Bloc<PeopleEvent, PeopleState> {
 
       final filteredUsers = users.where((element) => element.id != getUserId()).toList();
 
-      filteredUsers.sort((a, b) {
-        // Check if the user is from the same country as yours
-        bool isSameCountryAsMineA = a.countryCode == _user.countryCode;
-        bool isSameCountryAsMineB = b.countryCode == _user.countryCode;
-
-        // If both users are from the same country as yours, sort by lastActive in descending order
-        if (isSameCountryAsMineA && isSameCountryAsMineB) {
-          return b.lastActive.compareTo(a.lastActive);
-        }
-
-        // Sort users from the same country as yours first
-        if (isSameCountryAsMineA) {
-          return -1;
-        } else if (isSameCountryAsMineB) {
-          return 1;
-        }
-
-        // If the users are not from the same country, sort by countryCode and then lastActive
-        int countryCodeComparison = a.countryCode.compareTo(b.countryCode);
-        if (countryCodeComparison != 0) {
-          return countryCodeComparison;
-        } else {
-          return b.lastActive.compareTo(a.lastActive);
-        }
-      });
-
+      sortOnlineUsers(filteredUsers, _user.countryCode);
 
       if (currentChat != null) {
         // add(PeopleLoadedEvent(filteredUsers
@@ -96,4 +71,32 @@ class PeopleBloc extends Bloc<PeopleEvent, PeopleState> {
       }
     });
   }
+}
+
+void sortOnlineUsers(List<ChatUser> filteredUsers, String countryCode) {
+  filteredUsers.sort((a, b) {
+    // Check if the user is from the same country as yours
+    bool isSameCountryAsMineA = a.countryCode == countryCode;
+    bool isSameCountryAsMineB = b.countryCode == countryCode;
+
+    // If both users are from the same country as yours, sort by lastActive in descending order
+    if (isSameCountryAsMineA && isSameCountryAsMineB) {
+      return b.lastActive.compareTo(a.lastActive);
+    }
+
+    // Sort users from the same country as yours first
+    if (isSameCountryAsMineA) {
+      return -1;
+    } else if (isSameCountryAsMineB) {
+      return 1;
+    }
+
+    // If the users are not from the same country, sort by countryCode and then lastActive
+    int countryCodeComparison = a.countryCode.compareTo(b.countryCode);
+    if (countryCodeComparison != 0) {
+      return countryCodeComparison;
+    } else {
+      return b.lastActive.compareTo(a.lastActive);
+    }
+  });
 }
