@@ -14,6 +14,7 @@ import '../../utils/flag.dart';
 import '../../utils/gender.dart';
 import '../visit/visit_screen.dart';
 import 'bloc/messages_event.dart';
+import 'my_message_widget.dart';
 
 class AppOtherMessageWidget extends StatelessWidget {
   final Message message;
@@ -124,7 +125,17 @@ class AppOtherMessageWidget extends StatelessWidget {
                           Text(
                             message.text,
                             textAlign: TextAlign.left,
-                            style: Theme.of(context).textTheme.bodyMedium,
+                            style: Theme.of(context).textTheme.bodyMedium?.merge(
+                                  TextStyle(
+                                    color: AppColors.grey_1,
+                                    fontSize: isOnlyEmojis(message.text)
+                                        ? 40
+                                        : Theme.of(context)
+                                            .textTheme
+                                            .bodyMedium
+                                            ?.fontSize,
+                                  ),
+                                ),
                           ),
                         ],
                       ),

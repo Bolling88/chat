@@ -71,8 +71,13 @@ class AppMyMessageWidget extends StatelessWidget {
                                     .textTheme
                                     .bodyMedium
                                     ?.merge(
-                                      const TextStyle(
+                                  TextStyle(
                                         color: Colors.white,
+                                        fontSize: isOnlyEmojis(message.text)
+                                            ? 40
+                                            : Theme.of(context)
+                                            .textTheme
+                                            .bodyMedium?.fontSize,
                                       ),
                                     ))),
                       ),
@@ -88,4 +93,24 @@ class AppMyMessageWidget extends StatelessWidget {
           ],
         ));
   }
+}
+
+final RegExp emojisRegExp = RegExp(r'(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])');
+bool isOnlyEmojis(String text) {
+  // find all emojis
+  final emojis = emojisRegExp.allMatches(text);
+
+  // return if none found
+  if (emojis.isEmpty) return false;
+
+  // remove all emojis from the this
+  for (final emoji in emojis) {
+    text = text.replaceAll(emoji.input.substring(emoji.start, emoji.end), "");
+  }
+
+  // remove all whitespace (optional)
+  text = text.replaceAll(" ", "");
+
+  // return true if nothing else left
+  return text.isEmpty;
 }

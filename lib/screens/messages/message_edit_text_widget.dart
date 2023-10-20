@@ -40,7 +40,7 @@ class _MessageEditTextWidgetState extends State<MessageEditTextWidget> {
             child: TextFormField(
                 keyboardType: TextInputType.text,
                 maxLines: 1,
-                maxLength: 100,
+                maxLength: 200,
                 minLines: 1,
                 autofocus: false,
                 autocorrect: true,
