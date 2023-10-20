@@ -9,6 +9,7 @@ import '../../../model/chat.dart';
 import '../../../model/message.dart';
 import '../../../model/message_item.dart';
 import '../../../repository/firestore_repository.dart';
+import '../../../utils/audio.dart';
 import '../../../utils/log.dart';
 import '../../../utils/time_util.dart';
 import 'messages_event.dart';
@@ -91,6 +92,9 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
         updatedList.insertAll(0, getMessagesWithDates(event.messages));
         Log.d("Total messages: ${updatedList.length}");
         yield currentState.copyWith(messages: updatedList);
+        if(event.messages.last.createdById != getUserId()) {
+          playMessageSound();
+        }
       }
     } else if (event is MessagesGiphyPickedEvent) {
       Log.d("Got giphy event");

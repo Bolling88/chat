@@ -23,11 +23,12 @@ class FcmRepository {
       sound: true,
     );
 
-    if(settings.authorizationStatus == AuthorizationStatus.authorized) {
+    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
       Log.d('User granted permission');
       setUpToken();
       setUpBadge();
-    } else if(settings.authorizationStatus == AuthorizationStatus.provisional) {
+    } else if (settings.authorizationStatus ==
+        AuthorizationStatus.provisional) {
       Log.d('User granted provisional permission');
       setUpToken();
       setUpBadge();
@@ -55,16 +56,17 @@ class FcmRepository {
     });
   }
 
-  void setUpBadge(){
+  void setUpBadge() {
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       Log.d('A new onMessageOpenedApp event was published!');
-      FlutterAppBadger.removeBadge();
+      if (!kIsWeb) FlutterAppBadger.removeBadge();
     });
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   }
 
-  static Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  static Future<void> _firebaseMessagingBackgroundHandler(
+      RemoteMessage message) async {
     Log.d('Handling a background message ${message.messageId}');
-    FlutterAppBadger.updateBadgeCount(1);
+    if (!kIsWeb) FlutterAppBadger.updateBadgeCount(1);
   }
 }

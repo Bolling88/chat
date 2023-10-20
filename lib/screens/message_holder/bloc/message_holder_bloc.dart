@@ -3,6 +3,7 @@ import 'package:chat/model/chat_user.dart';
 import 'package:chat/model/private_chat.dart';
 import 'package:chat/repository/fcm_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_app_badger/flutter_app_badger.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:soundpool/soundpool.dart';
@@ -10,6 +11,7 @@ import '../../../model/room_chat.dart';
 import '../../../model/user_location.dart';
 import '../../../repository/firestore_repository.dart';
 import '../../../repository/network_repository.dart';
+import '../../../utils/audio.dart';
 import '../../../utils/log.dart';
 import 'message_holder_event.dart';
 import 'message_holder_state.dart';
@@ -88,7 +90,7 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
       }
     } else if (event is MessageHolderPrivateChatsUpdatedEvent) {
       if (currentState is MessageHolderBaseState) {
-        updateBadgeCount(event.privateChats);
+        if (!kIsWeb) updateBadgeCount(event.privateChats);
         if (currentState.privateChats.length != event.privateChats.length) {
           //If the number of chats have changed...
           if (currentState.selectedChatIndex == 0 ||
@@ -104,7 +106,7 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
                     selectedChatIndex: event.privateChats.length);
               } else {
                 //else just update the chats and play a sound
-                playSound();
+                playNewChatSound();
                 yield currentState.copyWith(privateChats: event.privateChats);
               }
             } else {
@@ -127,7 +129,7 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
                 } else {
                   //Someone sent the user a private chat
                   //else just update the chats and play a sound
-                  playSound();
+                  playNewChatSound();
                   yield currentState.copyWith(privateChats: event.privateChats);
                 }
               } else {
@@ -146,7 +148,7 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
                       selectedChatIndex: event.privateChats.length);
                 } else {
                   //else just update the chats and play a sound
-                  playSound();
+                  playNewChatSound();
                   yield currentState.copyWith(privateChats: event.privateChats);
                 }
               } else {
@@ -245,26 +247,6 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
       throw UnimplementedError();
     }
   }
-
-  Future<void> playSound() async {
-    try {
-      pool.loadAndPlayUri(
-          'https://firebasestorage.googleapis.com/v0/b/chat-60225.appspot.com/o/audio%2Fstop.mp3?alt=media&token=88032575-9833-4bf5-86fb-554b61820c27');
-    } catch (e) {
-      Log.e(e);
-    }
-  }
-
-  final pool = Soundpool.fromOptions(
-    options: const SoundpoolOptions(
-      streamType: StreamType.notification,
-      maxStreams: 2,
-      iosOptions: SoundpoolOptionsIos(
-        audioSessionCategory: AudioSessionCategory.ambient,
-        audioSessionMode: AudioSessionMode.normal,
-      ),
-    ),
-  );
 
   void setMessageAsRead(MessageHolderPrivateChatsUpdatedEvent event,
       MessageHolderBaseState currentState) {
