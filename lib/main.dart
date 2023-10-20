@@ -80,10 +80,10 @@ class KvitterApp extends StatelessWidget {
           final FirestoreRepository firestoreRepository = FirestoreRepository();
           final LoginRepository loginRepository = LoginRepository();
           final StorageRepository storageRepository = StorageRepository();
-          final FcmRepository fcmRepository = FcmRepository(firestoreRepository);
+          final FcmRepository fcmRepository =
+              FcmRepository(firestoreRepository);
           final AppImageCropper appImageCropper = AppImageCropper(context);
-          final PresenceDatabase presenceDatabase =
-              PresenceDatabase();
+          final PresenceDatabase presenceDatabase = PresenceDatabase();
 
           return MultiProvider(
             providers: [
@@ -104,7 +104,14 @@ class KvitterApp extends StatelessWidget {
                 GlobalMaterialLocalizations.delegate,
                 GlobalWidgetsLocalizations.delegate
               ],
-              supportedLocales: const [Locale('en', 'EN')],
+              supportedLocales: const [
+                Locale('en', 'EN'),
+                Locale('sv', 'SV'),
+                Locale('es', 'ES'),
+                Locale('fr', 'FR'),
+                Locale('de', 'DE'),
+                Locale('hi', 'HI'),
+              ],
               builder: FlutterI18n.rootAppBuilder(),
               theme: ThemeData(
                 useMaterial3: true,

@@ -57,16 +57,30 @@ class PeopleBloc extends Bloc<PeopleEvent, PeopleState> {
           .map((e) => ChatUser.fromJson(e.id, e.data() as Map<String, dynamic>))
           .toList();
 
-      final filteredUsers =
-          users.where((element) => element.id != getUserId()).toList();
+      final filteredUsers = users.where((element) => element.id != getUserId()).toList();
 
       filteredUsers.sort((a, b) {
-        // First, sort by countryCode
-        int countryCodeComparison = a.countryCode.compareTo(_user.countryCode);
+        // Check if the user is from the same country as yours
+        bool isSameCountryAsMineA = a.countryCode == _user.countryCode;
+        bool isSameCountryAsMineB = b.countryCode == _user.countryCode;
+
+        // If both users are from the same country as yours, sort by lastActive in descending order
+        if (isSameCountryAsMineA && isSameCountryAsMineB) {
+          return b.lastActive.compareTo(a.lastActive);
+        }
+
+        // Sort users from the same country as yours first
+        if (isSameCountryAsMineA) {
+          return -1;
+        } else if (isSameCountryAsMineB) {
+          return 1;
+        }
+
+        // If the users are not from the same country, sort by countryCode and then lastActive
+        int countryCodeComparison = a.countryCode.compareTo(b.countryCode);
         if (countryCodeComparison != 0) {
           return countryCodeComparison;
         } else {
-          // If countryCode is the same, sort by lastActive
           return b.lastActive.compareTo(a.lastActive);
         }
       });
