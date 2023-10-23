@@ -11,6 +11,7 @@ import '../../utils/flag.dart';
 import '../../utils/gender.dart';
 import '../../utils/lottie.dart';
 import '../../utils/translate.dart';
+import '../full_screen_image/full_screen_image_screen.dart';
 import '../message_holder/bloc/message_holder_bloc.dart';
 import '../message_holder/bloc/message_holder_event.dart';
 import '../messages/message_edit_text_widget.dart';
@@ -109,12 +110,27 @@ class VisitScreenContent extends StatelessWidget {
                         child: const Icon(Icons.close))
                   ],
                 ),
-                Center(
-                    child: AppUserImage(
-                  url: user.pictureData,
-                  gender: user.gender,
-                  size: 110,
-                )),
+                GestureDetector(
+                  onTap: () {
+                    if(user.pictureData.isNotEmpty) {
+                      Navigator.push(context, MaterialPageRoute(
+                          fullscreenDialog: false,
+                          builder: (BuildContext context) {
+                            return FullScreenImage(imageUrl: user.pictureData);
+                          }
+                      ));
+                    }
+                  },
+                  child: Hero(
+                    tag: 'fullscreenImage',
+                    child: Center(
+                        child: AppUserImage(
+                      url: user.pictureData,
+                      gender: user.gender,
+                      size: 110,
+                    )),
+                  ),
+                ),
                 Center(
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
