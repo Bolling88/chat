@@ -6,7 +6,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_app_badger/flutter_app_badger.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:soundpool/soundpool.dart';
 import '../../../model/room_chat.dart';
 import '../../../model/user_location.dart';
 import '../../../repository/firestore_repository.dart';

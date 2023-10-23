@@ -11,13 +11,12 @@ import 'dart:async';
 class PeopleBloc extends Bloc<PeopleEvent, PeopleState> {
   final FirestoreRepository _firestoreRepository;
   final Chat? _chat;
-  final ChatUser _user;
   final List<ChatUser>? _initialUsers;
 
   StreamSubscription<QuerySnapshot>? chatStream;
   StreamSubscription<QuerySnapshot>? onlineUsersStream;
 
-  PeopleBloc(this._firestoreRepository, this._chat, this._user, this._initialUsers)
+  PeopleBloc(this._firestoreRepository, this._chat, this._initialUsers)
       : super(PeopleLoadingState()) {
     add(PeopleInitialEvent());
   }
@@ -58,8 +57,9 @@ class PeopleBloc extends Bloc<PeopleEvent, PeopleState> {
           .toList();
 
       final filteredUsers = users.where((element) => element.id != getUserId()).toList();
+      final myUser = users.where((element) => element.id == getUserId()).firstOrNull;
 
-      sortOnlineUsers(filteredUsers, _user.countryCode);
+      sortOnlineUsers(filteredUsers, myUser?.countryCode ?? '');
 
       if (currentChat != null) {
         // add(PeopleLoadedEvent(filteredUsers

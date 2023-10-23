@@ -11,8 +11,6 @@ import '../../model/room_chat.dart';
 import '../../repository/presence_database.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_widgets.dart';
-import '../../utils/constants.dart';
-import '../../utils/lottie.dart';
 import '../messages/messages_screen.dart';
 import '../people/people_screen.dart';
 import '../profile/profile_screen.dart';
@@ -73,7 +71,7 @@ class MessageHolderScreenContent extends StatelessWidget {
       SizedBox(
           width: 350,
           child: PeopleScreen(
-              chat: state.roomChat, user: state.user, parentContext: context, users: null,)),
+              chat: state.roomChat, parentContext: context, users: null,)),
 
       getSideMenu(state, context),
       Expanded(
@@ -142,7 +140,7 @@ class MessageHolderScreenContent extends StatelessWidget {
               child: GestureDetector(
                 onTap: () {
                   if(index == state.privateChats.length + 1) {
-                    showPeopleScreen(context, state.roomChat, state.user, state.onlineUsers);
+                    showPeopleScreen(context, state.roomChat, state.onlineUsers);
                     return;
                   }
                   BlocProvider.of<MessageHolderBloc>(context).add(
@@ -297,7 +295,7 @@ class MessageHolderScreenContent extends StatelessWidget {
                 child: InkWell(
                   customBorder: const CircleBorder(),
                   onTap: () {
-                    showPeopleScreen(context, state.roomChat, state.user, state.onlineUsers);
+                    showPeopleScreen(context, state.roomChat, state.onlineUsers);
                   },
                   child: SizedBox(
                     height: 60,
