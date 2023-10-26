@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:giphy_get/giphy_get.dart';
 
+import '../../../model/chat_user.dart';
 import '../../../model/room_chat.dart';
 import '../../../model/message.dart';
 
@@ -47,4 +48,14 @@ class MessagesReportMessageEvent extends MessagesEvent {
 
   @override
   List<Object> get props => [message];
+}
+
+
+class MessagesUserUpdatedEvent extends MessagesEvent {
+  final ChatUser user;
+
+  MessagesUserUpdatedEvent(this.user);
+
+  @override
+  List<Object> get props => [user];
 }

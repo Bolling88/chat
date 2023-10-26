@@ -118,6 +118,6 @@ class RoomChat extends Chat implements Comparable<RoomChat> {
 
   @override
   Color getChatColor(String userId) {
-    return AppColors.main;
+    return Color(chatColor);
   }
 }

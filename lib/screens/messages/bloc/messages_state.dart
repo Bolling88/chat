@@ -16,17 +16,20 @@ class MessagesErrorState extends MessagesState {}
 
 class MessagesBaseState extends MessagesState {
   final List<MessageItem> messages;
-  final String userId;
+  final ChatUser myUser;
   final String currentMessage;
 
-  MessagesBaseState(this.messages, this.userId, this.currentMessage);
+  MessagesBaseState(this.messages, this.myUser, this.currentMessage);
 
   MessagesBaseState copyWith(
-      {List<MessageItem>? messages, String? userId, String? currentMessage}) {
-    return MessagesBaseState(messages ?? this.messages, userId ?? this.userId,
+      {List<MessageItem>? messages,
+      String? userId,
+      ChatUser? myUser,
+      String? currentMessage}) {
+    return MessagesBaseState(messages ?? this.messages, myUser ?? this.myUser,
         currentMessage ?? this.currentMessage);
   }
 
   @override
-  List<Object> get props => [messages, userId, currentMessage];
+  List<Object> get props => [messages, myUser, currentMessage];
 }

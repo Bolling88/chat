@@ -94,7 +94,7 @@ class ChatsScreenContent extends StatelessWidget {
                                 context: context);
                           } else if (state
                                   .messages[index].message!.createdById ==
-                              state.userId) {
+                              state.myUser.id) {
                             return AppMyMessageWidget(
                               message: state.messages[index].message!,
                               gender: state
@@ -139,7 +139,7 @@ class ChatsScreenContent extends StatelessWidget {
                               context: context, //Required
                               apiKey: giphyKey, //Required.
                               randomID: state
-                                  .userId, // Optional - An ID/proxy for a specific user.
+                                  .myUser.id, // Optional - An ID/proxy for a specific user.
                             );
                             if (gif != null) {
                               BlocProvider.of<MessagesBloc>(context)
