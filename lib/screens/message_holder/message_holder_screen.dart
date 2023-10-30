@@ -2,7 +2,9 @@ import 'package:chat/repository/fcm_repository.dart';
 import 'package:chat/repository/firestore_repository.dart';
 import 'package:chat/screens/chat/chat_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import '../../model/chat.dart';
@@ -51,14 +53,29 @@ class MessageHolderScreenContent extends StatelessWidget {
         child: BlocBuilder<MessageHolderBloc, MessageHolderState>(
           builder: (context, state) {
             if (state is MessageHolderBaseState) {
-              return Scaffold(
-                  appBar: getAppBar(context, state, state.selectedChat),
-                  body: LayoutBuilder(
-                      builder:
-                          (BuildContext context, BoxConstraints constraints) =>
-                              constraints.maxWidth > 855
-                                  ? largeScreenContent(state, context)
-                                  : smallScreenContent(state, context)));
+              return WillPopScope(
+                onWillPop: () {
+                  if(state.selectedChat != null && state.selectedChatIndex == 0) {
+                    BlocProvider.of<MessageHolderBloc>(context).add(MessageHolderChangeChatRoomEvent());
+                    return Future.value(false);
+                  }else if(state.selectedChat != null && state.selectedChatIndex != 0) {
+                    BlocProvider.of<MessageHolderBloc>(context).add(MessageHolderChatClickedEvent(0, state.roomChat));
+                    return Future.value(false);
+                  }else if(state.selectedChat == null && state.selectedChatIndex == 0 && !kIsWeb) {
+                    showExitAppDialog(context);
+                    return Future.value(false);
+                  }
+                  return Future.value(true);
+                },
+                child: Scaffold(
+                    appBar: getAppBar(context, state, state.selectedChat),
+                    body: LayoutBuilder(
+                        builder:
+                            (BuildContext context, BoxConstraints constraints) =>
+                                constraints.maxWidth > 855
+                                    ? largeScreenContent(state, context)
+                                    : smallScreenContent(state, context))),
+              );
             } else {
               return const Scaffold(body: Center(child: AppSpinner()));
             }
@@ -332,4 +349,26 @@ class MessageHolderScreenContent extends StatelessWidget {
       ],
     );
   }
+}
+
+void showExitAppDialog(BuildContext context) {
+  showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+            title: Text(FlutterI18n.translate(context, "exit_app")),
+            content: Text(FlutterI18n.translate(context, "exit_app_message")),
+            actions: [
+              TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text(FlutterI18n.translate(context, "no"))),
+              TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    SystemNavigator.pop();
+                  },
+                  child: Text(FlutterI18n.translate(context, "yes")))
+            ],
+          ));
 }
