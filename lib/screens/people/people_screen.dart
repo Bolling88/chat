@@ -14,6 +14,7 @@ import '../../utils/flag.dart';
 import '../error/error_screen.dart';
 import '../messages/other_message_widget.dart';
 import 'bloc/people_bloc.dart';
+import 'bloc/people_event.dart';
 import 'bloc/people_state.dart';
 
 class PeopleScreen extends StatelessWidget {
@@ -32,13 +33,11 @@ class PeopleScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (BuildContext context) =>
-          PeopleBloc(context.read<FirestoreRepository>(), chat, users),
+          PeopleBloc(context.read<FirestoreRepository>(), users),
       child: PeopleScreenBuilder(chat: chat, parentContext: parentContext),
     );
   }
 }
-
-const double _bottomsheetHeight = 600;
 
 class PeopleScreenBuilder extends StatelessWidget {
   final BuildContext parentContext;
@@ -59,7 +58,7 @@ class PeopleScreenBuilder extends StatelessWidget {
             return Container(
               height: getSize(context) == ScreenSize.large
                   ? double.infinity
-                  : _bottomsheetHeight,
+                  : MediaQuery.of(context).size.height * 0.8,
               decoration: const BoxDecoration(
                 color: AppColors.white,
                 borderRadius: BorderRadius.only(
@@ -67,7 +66,7 @@ class PeopleScreenBuilder extends StatelessWidget {
                   topRight: Radius.circular(20),
                 ),
               ),
-              child: (state.onlineUser.isEmpty)
+              child: (state.allOnlineUsers.isEmpty)
                   ? Column(
                       children: [
                         Center(
@@ -86,15 +85,15 @@ class PeopleScreenBuilder extends StatelessWidget {
                         const SizedBox(
                           height: 10,
                         ),
-                        getTopBar(context, chat),
-                        getList(state.onlineUser),
+                        getTopBar(context, chat, state),
+                        getList(state.filteredUsers),
                       ],
                     ),
             );
           } else {
             return Container(
               width: double.infinity,
-              height: _bottomsheetHeight,
+              height: MediaQuery.of(context).size.height * 0.8,
               decoration: const BoxDecoration(
                   color: AppColors.white,
                   borderRadius: BorderRadius.only(
@@ -177,54 +176,96 @@ class PeopleScreenBuilder extends StatelessWidget {
     }
   }
 
-  Row getTopBar(BuildContext context, Chat? chat) {
-    return Row(
+  Column getTopBar(BuildContext context, Chat? chat, PeopleBaseState state) {
+    return Column(
       children: [
-        Visibility(
-          visible: false,
-          maintainSize: true,
-          maintainState: true,
-          maintainAnimation: true,
-          child: ElevatedButton(
-              onPressed: () {},
-              style: ElevatedButton.styleFrom(
-                shape: const CircleBorder(),
-                padding: const EdgeInsets.all(10),
-              ),
-              child: const Icon(Icons.arrow_back)),
+        Row(
+          children: [
+            Visibility(
+              visible: false,
+              maintainSize: true,
+              maintainState: true,
+              maintainAnimation: true,
+              child: ElevatedButton(
+                  onPressed: () {},
+                  style: ElevatedButton.styleFrom(
+                    shape: const CircleBorder(),
+                    padding: const EdgeInsets.all(10),
+                  ),
+                  child: const Icon(Icons.arrow_back)),
+            ),
+            Expanded(
+                child: Center(
+                    child: Text(
+              '${state.allOnlineUsers.length} ${FlutterI18n.translate(
+                context,
+                'user_online',
+              )}',
+              style: Theme.of(context).textTheme.displaySmall,
+            ))),
+            if (getSize(context) == ScreenSize.small)
+              ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    shape: const CircleBorder(),
+                    padding: const EdgeInsets.all(10),
+                  ),
+                  child: const Icon(Icons.close))
+          ],
         ),
-        Expanded(
-            child: Center(
-                child: Text(
-          FlutterI18n.translate(
-            context,
-            'user_online',
-          ),
-          style: Theme.of(context).textTheme.displaySmall,
-        ))),
-        if (getSize(context) == ScreenSize.small)
-          ElevatedButton(
-              onPressed: () {
-                Navigator.pop(context);
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 5),
+          child: Wrap(
+            spacing: 5.0,
+            runSpacing: 5.0,
+            children: List<Widget>.generate(
+              Gender.getAsList().length + 1,
+              (int index) {
+                return ChoiceChip(
+                  labelPadding: const EdgeInsets.all(2.0),
+                  label: Text(
+                    (index == 0)
+                        ? FlutterI18n.translate(context, 'all')
+                        : getGenderName(context, Gender.fromValue(index - 1)),
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodyMedium
+                        ?.merge(TextStyle(color: (index == state.genderFilterIndex)?  AppColors.white : AppColors.main)),
+                  ),
+                  selected: index == state.genderFilterIndex,
+                  selectedColor: (index == 0)
+                      ? AppColors.main
+                      : getGenderColor(Gender.fromValue(index - 1)),
+                  onSelected: (value) {
+                    BlocProvider.of<PeopleBloc>(context)
+                        .add(PeopleFilterEvent(index));
+                  },
+                  checkmarkColor: AppColors.white,
+                  // backgroundColor: color,
+                  elevation: 1,
+                  padding: const EdgeInsets.all(6.0),
+                );
               },
-              style: ElevatedButton.styleFrom(
-                shape: const CircleBorder(),
-                padding: const EdgeInsets.all(10),
-              ),
-              child: const Icon(Icons.close))
+            ).toList(),
+          ),
+        )
       ],
     );
   }
 }
 
-Future showPeopleScreen(
-    BuildContext parentContext, Chat? chat, List<ChatUser>? initialUsers) async {
+Future showPeopleScreen(BuildContext parentContext, Chat? chat,
+    List<ChatUser>? initialUsers) async {
   await showModalBottomSheet(
     useRootNavigator: true,
     context: parentContext,
+    isScrollControlled: true,
     backgroundColor: AppColors.transparent,
     builder: (BuildContext context) {
-      return PeopleScreen(chat: chat, parentContext: parentContext, users: initialUsers);
+      return PeopleScreen(
+          chat: chat, parentContext: parentContext, users: initialUsers);
     },
   );
 }

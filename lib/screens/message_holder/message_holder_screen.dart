@@ -68,8 +68,10 @@ class MessageHolderScreenContent extends StatelessWidget {
                   return Future.value(true);
                 },
                 child: Scaffold(
+                  key: const Key("message_holder_screen"),
                     appBar: getAppBar(context, state, state.selectedChat),
                     body: LayoutBuilder(
+                      key: const Key("message_holder_screen_layout_builder"),
                         builder:
                             (BuildContext context, BoxConstraints constraints) =>
                                 constraints.maxWidth > 855
@@ -84,10 +86,14 @@ class MessageHolderScreenContent extends StatelessWidget {
   }
 
   Row largeScreenContent(MessageHolderBaseState state, BuildContext context) {
-    return Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+    return Row(
+        key: const Key("message_holder_screen_row"),
+        crossAxisAlignment: CrossAxisAlignment.center, children: [
       SizedBox(
+        key: const Key("message_holder_screen_sized_box"),
           width: 350,
           child: PeopleScreen(
+            key: const Key("message_holder_screen_people_screen"),
               chat: state.roomChat, parentContext: context, users: null,)),
 
       getSideMenu(state, context),

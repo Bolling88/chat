@@ -74,5 +74,10 @@
   "users_in_room": "ਕਮਰੇ ਵਿੱਚ ਵਰਤਣ ਵਾਲੇ",
   "unknown_location": "ਅਣਜਾਣ ਸਥਾਨ",
   "exit_app": "ਚੈਟ ਛੱਡੋ",
-  "exit_app_message": "ਕੀ ਤੁਸੀਂ ਚੈਟ ਛੱਡਣਾ ਚਾਹੁੰਦੇ ਹੋ?"
+  "exit_app_message": "ਕੀ ਤੁਸੀਂ ਚੈਟ ਛੱਡਣਾ ਚਾਹੁੰਦੇ ਹੋ?",
+  "all": "ਸਭ",
+  "male": "ਮਰਦ",
+  "female": "ਔਰਤਾਂ",
+  "non_binary": "ਨਾਨ-ਬਾਈਨਰੀ",
+  "unknown": "ਅਣਜਾਣ"
 }

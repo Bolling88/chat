@@ -10,12 +10,26 @@ abstract class PeopleState extends Equatable {
 }
 
 class PeopleBaseState extends PeopleState {
-  final List<ChatUser> onlineUser;
+  final List<ChatUser> allOnlineUsers;
+  final List<ChatUser> filteredUsers;
+  final int genderFilterIndex;
 
-  const PeopleBaseState(this.onlineUser);
+  const PeopleBaseState(this.allOnlineUsers, this.filteredUsers, this.genderFilterIndex);
+
+  PeopleBaseState copyWith({
+    List<ChatUser>? allOnlineUsers,
+    List<ChatUser>? filteredUsers,
+    int? genderFilterIndex,
+  }) {
+    return PeopleBaseState(
+      allOnlineUsers ?? this.allOnlineUsers,
+      filteredUsers ?? this.filteredUsers,
+      genderFilterIndex ?? this.genderFilterIndex,
+    );
+  }
 
   @override
-  List<Object> get props => [onlineUser];
+  List<Object> get props => [allOnlineUsers, filteredUsers, genderFilterIndex];
 }
 
 class PeopleErrorState extends PeopleState {}

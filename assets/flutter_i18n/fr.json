@@ -74,5 +74,10 @@
   "users_in_room": "Utilisateurs dans la salle",
   "unknown_location": "Emplacement inconnu",
   "exit_app": "Quitter le chat",
-  "exit_app_message": "Êtes-vous sûr de vouloir quitter le chat ?"
+  "exit_app_message": "Êtes-vous sûr de vouloir quitter le chat ?",
+  "all": "Tous",
+  "male": "Hommes",
+  "female": "Femmes",
+  "non_binary": "Non binaire",
+  "unknown": "Inconnu"
 }

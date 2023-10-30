@@ -23,6 +23,11 @@ enum Gender {
     return Gender.values.firstWhere((x) => x.value == i);
   }
 
+  //Get all genders in list
+  static List<Gender> getAsList(){
+    return Gender.values;
+}
+
   final int value;
 }
 

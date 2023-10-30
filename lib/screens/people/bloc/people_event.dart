@@ -18,3 +18,12 @@ class PeopleLoadedEvent extends PeopleEvent{
   @override
   List<Object> get props => [onlineUser];
 }
+
+class PeopleFilterEvent extends PeopleEvent{
+  final int filter;
+
+  const PeopleFilterEvent(this.filter);
+
+  @override
+  List<Object> get props => [filter];
+}

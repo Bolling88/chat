@@ -3,11 +3,9 @@ import 'package:chat/model/chat_user.dart';
 import 'package:chat/model/private_chat.dart';
 import 'package:chat/repository/fcm_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_app_badger/flutter_app_badger.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:universal_io/io.dart';
 import '../../../model/room_chat.dart';
 import '../../../model/user_location.dart';
 import '../../../repository/firestore_repository.dart';
@@ -65,7 +63,7 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
             selectedChat: null,
             selectedChatIndex: 0);
 
-        setUpOnlineUsersListener(event.user);
+        setUpOnlineUsersListener();
         setUpPrivateChatsListener(event.user);
       }
     } else if (event is MessageHolderStartPrivateChatEvent) {
@@ -298,7 +296,7 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
     });
   }
 
-  void setUpOnlineUsersListener(ChatUser myUser) {
+  void setUpOnlineUsersListener() {
     onlineUsersStream =
         _firestoreRepository.streamOnlineUsers().listen((event) async {
       final users = event.docs
@@ -311,10 +309,14 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
               DateTime.now().subtract(_firestoreRepository.onlineDuration)))
           .toList();
 
-      //Sort users with the same country code as my users first
-      sortOnlineUsers(filteredUsers, myUser.countryCode);
+      final myUser =
+          users.where((element) => element.id == getUserId()).firstOrNull;
 
-      add(MessageHolderUsersUpdatedEvent(filteredUsers));
+      //Sort users with the same country code as my users first
+      if(myUser != null) {
+        sortOnlineUsers(filteredUsers, myUser.countryCode);
+        add(MessageHolderUsersUpdatedEvent(filteredUsers));
+      }
     });
   }
 

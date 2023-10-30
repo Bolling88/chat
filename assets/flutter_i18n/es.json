@@ -74,5 +74,10 @@
   "users_in_room": "Usuarios en la sala",
   "unknown_location": "Ubicación desconocida",
   "exit_app": "Salir del chat",
-  "exit_app_message": "¿Estás seguro de que quieres salir del chat?"
+  "exit_app_message": "¿Estás seguro de que quieres salir del chat?",
+  "all": "Todos",
+  "male": "Hombres",
+  "female": "Mujeres",
+  "non_binary": "No binario",
+  "unknown": "Desconocido"
 }

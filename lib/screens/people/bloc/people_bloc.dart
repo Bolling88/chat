@@ -10,13 +10,12 @@ import 'dart:async';
 
 class PeopleBloc extends Bloc<PeopleEvent, PeopleState> {
   final FirestoreRepository _firestoreRepository;
-  final Chat? _chat;
   final List<ChatUser>? _initialUsers;
 
   StreamSubscription<QuerySnapshot>? chatStream;
   StreamSubscription<QuerySnapshot>? onlineUsersStream;
 
-  PeopleBloc(this._firestoreRepository, this._chat, this._initialUsers)
+  PeopleBloc(this._firestoreRepository, this._initialUsers)
       : super(PeopleLoadingState()) {
     add(PeopleInitialEvent());
   }
@@ -30,15 +29,28 @@ class PeopleBloc extends Bloc<PeopleEvent, PeopleState> {
 
   @override
   Stream<PeopleState> mapEventToState(PeopleEvent event) async* {
+    final currentState = state;
     try {
       if (event is PeopleInitialEvent) {
-        if(_initialUsers == null) {
-          setUpPeopleListener();
-        } else {
-          yield PeopleBaseState(_initialUsers!);
+        if(_initialUsers != null) {
+          yield PeopleBaseState(_initialUsers!, _initialUsers!, 0);
         }
+        setUpPeopleListener();
       } else if (event is PeopleLoadedEvent) {
-        yield PeopleBaseState(event.onlineUser);
+        if (currentState is PeopleBaseState) {
+          yield getFilteredState(
+              PeopleFilterEvent(currentState.genderFilterIndex),
+              currentState,
+              event.onlineUser);
+        } else {
+          yield PeopleBaseState(event.onlineUser, event.onlineUser, 0);
+        }
+      } else if (event is PeopleFilterEvent) {
+        if (currentState is PeopleBaseState) {
+          //Filter users depending on gender
+          yield getFilteredState(
+              event, currentState, currentState.allOnlineUsers);
+        }
       } else {
         Log.e('PeopleBloc: Not implemented');
         throw UnimplementedError();
@@ -49,24 +61,67 @@ class PeopleBloc extends Bloc<PeopleEvent, PeopleState> {
     }
   }
 
+  PeopleBaseState getFilteredState(PeopleFilterEvent event,
+      PeopleBaseState currentState, List<ChatUser> onlinePeople) {
+    if (event.filter == 0) {
+      return currentState.copyWith(
+          allOnlineUsers: onlinePeople,
+          filteredUsers: onlinePeople,
+          genderFilterIndex: event.filter);
+    } else if (Gender.fromValue(event.filter - 1) == Gender.female) {
+      return currentState.copyWith(
+          allOnlineUsers: onlinePeople,
+          filteredUsers: onlinePeople
+              .where((element) =>
+                  Gender.fromValue(element.gender) == Gender.female)
+              .toList(),
+          genderFilterIndex: event.filter);
+    } else if (Gender.fromValue(event.filter - 1) == Gender.male) {
+      return currentState.copyWith(
+          allOnlineUsers: onlinePeople,
+          filteredUsers: onlinePeople
+              .where(
+                  (element) => Gender.fromValue(element.gender) == Gender.male)
+              .toList(),
+          genderFilterIndex: event.filter);
+    } else if (Gender.fromValue(event.filter - 1) == Gender.nonBinary) {
+      return currentState.copyWith(
+          allOnlineUsers: onlinePeople,
+          filteredUsers: onlinePeople
+              .where((element) =>
+                  Gender.fromValue(element.gender) == Gender.nonBinary)
+              .toList(),
+          genderFilterIndex: event.filter);
+    } else if (Gender.fromValue(event.filter - 1) == Gender.secret) {
+      return currentState.copyWith(
+          allOnlineUsers: onlinePeople,
+          filteredUsers: onlinePeople
+              .where((element) =>
+                  Gender.fromValue(element.gender) == Gender.secret)
+              .toList(),
+          genderFilterIndex: event.filter);
+    } else {
+      return currentState.copyWith(
+          allOnlineUsers: onlinePeople,
+          filteredUsers: onlinePeople,
+          genderFilterIndex: event.filter);
+    }
+  }
+
   void setUpPeopleListener() {
-    final currentChat = _chat;
-    onlineUsersStream = _firestoreRepository.streamOnlineUsers().listen((event) async {
+    onlineUsersStream =
+        _firestoreRepository.streamOnlineUsers().listen((event) async {
       final users = event.docs
           .map((e) => ChatUser.fromJson(e.id, e.data() as Map<String, dynamic>))
           .toList();
 
-      final filteredUsers = users.where((element) => element.id != getUserId()).toList();
-      final myUser = users.where((element) => element.id == getUserId()).firstOrNull;
+      final filteredUsers =
+          users.where((element) => element.id != getUserId()).toList();
+      final myUser =
+          users.where((element) => element.id == getUserId()).firstOrNull;
 
-      sortOnlineUsers(filteredUsers, myUser?.countryCode ?? '');
-
-      if (currentChat != null) {
-        // add(PeopleLoadedEvent(filteredUsers
-        //     .where((element) => element.currentRoomChatId == currentChat.id)
-        //     .toList()));
-        add(PeopleLoadedEvent(filteredUsers));
-      } else {
+      if(myUser != null) {
+        sortOnlineUsers(filteredUsers, myUser.countryCode);
         add(PeopleLoadedEvent(filteredUsers));
       }
     });
@@ -78,6 +133,13 @@ void sortOnlineUsers(List<ChatUser> filteredUsers, String countryCode) {
     // Check if the user is from the same country as yours
     bool isSameCountryAsMineA = a.countryCode == countryCode;
     bool isSameCountryAsMineB = b.countryCode == countryCode;
+
+    // Handle empty country codes by moving them to the end
+    if (a.countryCode.isEmpty) {
+      return 1;
+    } else if (b.countryCode.isEmpty) {
+      return -1;
+    }
 
     // If both users are from the same country as yours, sort by lastActive in descending order
     if (isSameCountryAsMineA && isSameCountryAsMineB) {
