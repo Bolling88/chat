@@ -111,6 +111,7 @@ class KvitterApp extends StatelessWidget {
                 Locale('fr', 'FR'),
                 Locale('de', 'DE'),
                 Locale('hi', 'HI'),
+                Locale('pa', 'PA'),
               ],
               builder: FlutterI18n.rootAppBuilder(),
               theme: ThemeData(

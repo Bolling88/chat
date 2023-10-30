@@ -72,5 +72,7 @@
   "leave_chat": "Chat verlassen",
   "change_room": "Raum wechseln",
   "users_in_room": "Benutzer im Raum",
-  "unknown_location": "Unbekannter Standort"
+  "unknown_location": "Unbekannter Standort",
+  "exit_app": "Chat verlassen",
+  "exit_app_message": "Sind Sie sicher, dass Sie den Chat verlassen möchten?"
 }
