@@ -129,12 +129,12 @@ class FirestoreRepository {
     });
   }
 
-  Future<QuerySnapshot> getMessages(String chatId, bool isPrivateChat) async {
+  Future<QuerySnapshot> getInitialMessages(String chatId, bool isPrivateChat) async {
     return await getChatType(isPrivateChat: isPrivateChat)
         .doc(chatId)
         .collection("messages")
         .orderBy("created", descending: true)
-        .limit(40)
+        .limit(20)
         .get();
   }
 
@@ -493,5 +493,12 @@ class FirestoreRepository {
       'fcmToken': fcmToken,
       'lastActive': FieldValue.serverTimestamp(),
     }, SetOptions(merge: true));
+  }
+
+  void postFeedback(String feedback) {
+    FirebaseFirestore.instance.collection('feedback').add({
+      'feedback': feedback,
+      'created': FieldValue.serverTimestamp(),
+    });
   }
 }

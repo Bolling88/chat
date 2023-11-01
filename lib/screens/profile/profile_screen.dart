@@ -10,6 +10,7 @@ import '../../utils/app_widgets.dart';
 import '../../utils/flag.dart';
 import '../../utils/lottie.dart';
 import '../../utils/translate.dart';
+import '../feedback/feedback_screen.dart';
 import '../messages/other_message_widget.dart';
 import '../onboarding_photo/onboarding_photo_screen.dart';
 import 'bloc/profile_bloc.dart';
@@ -124,6 +125,14 @@ class ProfileScreenBuilder extends StatelessWidget {
                             OnboardingNameScreenArguments(isEditMode: true));
                   },
                   label: Text(translate(context, 'change_name')),
+                ),
+                const SizedBox(height: 20),
+                ElevatedButton.icon(
+                  icon: const Icon(Icons.feedback),
+                  onPressed: () {
+                    showFeedbackScreen(blocContext);
+                  },
+                  label: Text(translate(context, 'leave_feedback')),
                 ),
                 Expanded(child: Container()),
                 ElevatedButton.icon(

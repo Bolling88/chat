@@ -52,7 +52,7 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
       final user = await _firestoreRepository.getUser();
       if (user != null) {
         final data =
-            await _firestoreRepository.getMessages(chat.id, isPrivateChat);
+            await _firestoreRepository.getInitialMessages(chat.id, isPrivateChat);
         if (data.docs.isNotEmpty) {
           Log.d("New documents: ${data.docs.length}");
           _lastMessageSnapshot = data.docs.last;

@@ -13,7 +13,7 @@ import '../../../utils/log.dart';
 import 'onboarding_photo_event.dart';
 import 'onboarding_photo_state.dart';
 
-const int photoQuality = 50;
+const int photoQuality = 30;
 
 class OnboardingPhotoBloc
     extends Bloc<OnboardingPhotoEvent, OnboardingPhotoState> {
@@ -40,6 +40,7 @@ class OnboardingPhotoBloc
         yield OnboardingPhotoBaseState(_chatUser.displayName);
       } else if (event is OnboardingPhotoCameraClickedEvent) {
         final pickedFile = await picker.pickImage(
+          maxHeight: 400, maxWidth: 400,
             source: ImageSource.camera, imageQuality: photoQuality);
         if (pickedFile != null) {
           CroppedFile? croppedFile =

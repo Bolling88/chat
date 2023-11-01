@@ -112,13 +112,14 @@ class VisitScreenContent extends StatelessWidget {
                 ),
                 GestureDetector(
                   onTap: () {
-                    if(user.pictureData.isNotEmpty) {
-                      Navigator.push(context, MaterialPageRoute(
-                          fullscreenDialog: false,
-                          builder: (BuildContext context) {
-                            return FullScreenImage(imageUrl: user.pictureData);
-                          }
-                      ));
+                    if (user.pictureData.isNotEmpty) {
+                      Navigator.of(context).push(
+                        MaterialPageRoute<bool>(
+                          builder: (BuildContext context) => FullScreenImage(
+                              imageUrl: user.pictureData,
+                              userName: user.displayName),
+                        ),
+                      );
                     }
                   },
                   child: Hero(
@@ -172,6 +173,9 @@ class VisitScreenContent extends StatelessWidget {
                                 context, "write_private_message_hint"),
                             showGiphy: false,
                             onSendTapped: (String message) {
+                              if(message.isEmpty) {
+                                return;
+                              }
                               BlocProvider.of<MessageHolderBloc>(parentContext)
                                   .add(
                                 MessageHolderStartPrivateChatEvent(
