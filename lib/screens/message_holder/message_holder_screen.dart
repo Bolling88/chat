@@ -1,6 +1,8 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chat/repository/fcm_repository.dart';
 import 'package:chat/repository/firestore_repository.dart';
 import 'package:chat/screens/chat/chat_screen.dart';
+import 'package:chat/screens/visit/visit_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -55,28 +57,34 @@ class MessageHolderScreenContent extends StatelessWidget {
             if (state is MessageHolderBaseState) {
               return WillPopScope(
                 onWillPop: () {
-                  if(state.selectedChat != null && state.selectedChatIndex == 0) {
-                    BlocProvider.of<MessageHolderBloc>(context).add(MessageHolderChangeChatRoomEvent());
+                  if (state.selectedChat != null &&
+                      state.selectedChatIndex == 0) {
+                    BlocProvider.of<MessageHolderBloc>(context)
+                        .add(MessageHolderChangeChatRoomEvent());
                     return Future.value(false);
-                  }else if(state.selectedChat != null && state.selectedChatIndex != 0) {
-                    BlocProvider.of<MessageHolderBloc>(context).add(MessageHolderChatClickedEvent(0, state.roomChat));
+                  } else if (state.selectedChat != null &&
+                      state.selectedChatIndex != 0) {
+                    BlocProvider.of<MessageHolderBloc>(context)
+                        .add(MessageHolderChatClickedEvent(0, state.roomChat));
                     return Future.value(false);
-                  }else if(state.selectedChat == null && state.selectedChatIndex == 0 && !kIsWeb) {
+                  } else if (state.selectedChat == null &&
+                      state.selectedChatIndex == 0 &&
+                      !kIsWeb) {
                     showExitAppDialog(context);
                     return Future.value(false);
                   }
                   return Future.value(true);
                 },
                 child: Scaffold(
-                  key: const Key("message_holder_screen"),
+                    key: const Key("message_holder_screen"),
                     appBar: getAppBar(context, state, state.selectedChat),
                     body: LayoutBuilder(
-                      key: const Key("message_holder_screen_layout_builder"),
-                        builder:
-                            (BuildContext context, BoxConstraints constraints) =>
-                                constraints.maxWidth > 855
-                                    ? largeScreenContent(state, context)
-                                    : smallScreenContent(state, context))),
+                        key: const Key("message_holder_screen_layout_builder"),
+                        builder: (BuildContext context,
+                                BoxConstraints constraints) =>
+                            constraints.maxWidth > 855
+                                ? largeScreenContent(state, context)
+                                : smallScreenContent(state, context))),
               );
             } else {
               return const Scaffold(body: Center(child: AppSpinner()));
@@ -88,26 +96,30 @@ class MessageHolderScreenContent extends StatelessWidget {
   Row largeScreenContent(MessageHolderBaseState state, BuildContext context) {
     return Row(
         key: const Key("message_holder_screen_row"),
-        crossAxisAlignment: CrossAxisAlignment.center, children: [
-      SizedBox(
-        key: const Key("message_holder_screen_sized_box"),
-          width: 350,
-          child: PeopleScreen(
-            key: const Key("message_holder_screen_people_screen"),
-              chat: state.roomChat, parentContext: context, users: null,)),
-
-      getSideMenu(state, context),
-      Expanded(
-        flex: 3,
-        child: Material(
-          elevation: 0,
-          child: IndexedStack(
-              index: state.selectedChatIndex, children: getChatViews(state)),
-        ),
-      ),
-      if (MediaQuery.of(context).size.width > 1150)
-        Expanded(flex: 2, child: getBrandNameView(context))
-    ]);
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          SizedBox(
+              key: const Key("message_holder_screen_sized_box"),
+              width: 350,
+              child: PeopleScreen(
+                key: const Key("message_holder_screen_people_screen"),
+                chat: state.roomChat,
+                parentContext: context,
+                users: null,
+              )),
+          getSideMenu(state, context),
+          Expanded(
+            flex: 3,
+            child: Material(
+              elevation: 0,
+              child: IndexedStack(
+                  index: state.selectedChatIndex,
+                  children: getChatViews(state)),
+            ),
+          ),
+          if (MediaQuery.of(context).size.width > 1150)
+            Expanded(flex: 2, child: getBrandNameView(context))
+        ]);
   }
 
   Row smallScreenContent(MessageHolderBaseState state, BuildContext context) {
@@ -162,8 +174,9 @@ class MessageHolderScreenContent extends StatelessWidget {
               cursor: SystemMouseCursors.click,
               child: GestureDetector(
                 onTap: () {
-                  if(index == state.privateChats.length + 1) {
-                    showPeopleScreen(context, state.roomChat, state.onlineUsers);
+                  if (index == state.privateChats.length + 1) {
+                    showPeopleScreen(
+                        context, state.roomChat, state.onlineUsers);
                     return;
                   }
                   BlocProvider.of<MessageHolderBloc>(context).add(
@@ -291,6 +304,7 @@ class MessageHolderScreenContent extends StatelessWidget {
 
   AppBar getAppBar(
       BuildContext context, MessageHolderBaseState state, Chat? chat) {
+    final userImageUrl = chat?.getChatImage(getUserId());
     return AppBar(
       title: GestureDetector(
         onTap: () {
@@ -299,11 +313,24 @@ class MessageHolderScreenContent extends StatelessWidget {
                 .add(MessageHolderChangeChatRoomEvent());
           }
         },
-        child: Text(
-          (chat?.getChatName(FirebaseAuth.instance.currentUser!.uid) ?? '')
-                  .isNotEmpty
-              ? chat!.getChatName(FirebaseAuth.instance.currentUser!.uid)
-              : FlutterI18n.translate(context, "chat_rooms"),
+        child: Row(
+          children: [
+            Text(
+              (chat?.getChatName(FirebaseAuth.instance.currentUser!.uid) ?? '')
+                      .isNotEmpty
+                  ? chat!.getChatName(FirebaseAuth.instance.currentUser!.uid)
+                  : FlutterI18n.translate(context, "chat_rooms"),
+            ),
+            if (userImageUrl != null && userImageUrl.isNotEmpty)
+              GestureDetector(
+                  onTap: () {
+                    showVisitScreen(context, chat?.getOtherUserId(getUserId()) ?? '', chat, false);
+                  },
+                  child: AppUserImage(
+                    url: userImageUrl,
+                    gender: -1,
+                  ))
+          ],
         ),
       ),
       backgroundColor:
@@ -318,7 +345,8 @@ class MessageHolderScreenContent extends StatelessWidget {
                 child: InkWell(
                   customBorder: const CircleBorder(),
                   onTap: () {
-                    showPeopleScreen(context, state.roomChat, state.onlineUsers);
+                    showPeopleScreen(
+                        context, state.roomChat, state.onlineUsers);
                   },
                   child: SizedBox(
                     height: 60,

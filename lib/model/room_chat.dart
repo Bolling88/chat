@@ -1,7 +1,4 @@
 import 'dart:ui';
-
-import 'package:chat/model/chat_user.dart';
-import 'package:chat/utils/app_colors.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../utils/time_util.dart';
 import 'chat.dart';
@@ -119,5 +116,15 @@ class RoomChat extends Chat implements Comparable<RoomChat> {
   @override
   Color getChatColor(String userId) {
     return Color(chatColor);
+  }
+
+  @override
+  String? getChatImage(String userId) {
+    return null;
+  }
+
+  @override
+  String getOtherUserId(String userId) {
+    return '';
   }
 }

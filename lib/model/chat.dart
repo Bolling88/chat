@@ -24,6 +24,10 @@ abstract class Chat extends Equatable {
 
   Color getChatColor(String userId);
 
+  String? getChatImage(String userId);
+
+  String getOtherUserId(String userId);
+
   @override
   List<Object> get props => [];
 
@@ -34,4 +38,5 @@ abstract class Chat extends Equatable {
     Timestamp? lastMessageTimestamp,
     String? lastMessageUserId,
   });
+
 }

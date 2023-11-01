@@ -150,4 +150,14 @@ class PrivateChat extends Chat implements Comparable<PrivateChat> {
         ? getGenderColor(Gender.fromValue(otherUserGender))
         : getGenderColor(Gender.fromValue(initiatedByUserGender));
   }
+
+  @override
+  String? getChatImage(String userId) {
+    return userId == initiatedBy ? otherUserPictureData : initiatedByPictureData;
+  }
+
+  @override
+  String getOtherUserId(String userId) {
+    return userId == initiatedBy ? otherUserId : initiatedBy;
+  }
 }
