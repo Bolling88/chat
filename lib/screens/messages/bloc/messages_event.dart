@@ -59,3 +59,5 @@ class MessagesUserUpdatedEvent extends MessagesEvent {
   @override
   List<Object> get props => [user];
 }
+
+class MessagesBannerAdLoadedEvent extends MessagesEvent {}

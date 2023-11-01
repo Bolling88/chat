@@ -72,5 +72,12 @@
   "leave_chat": "Lämna chatt",
   "change_room": "Byt rum",
   "users_in_room": "Användare i rummet",
-  "unknown_location": "Okänd plats"
+  "unknown_location": "Okänd plats",
+  "exit_app": "Lämna chatt",
+  "exit_app_message": "Är du säker på att du vill lämna chatten?",
+  "all": "Alla",
+  "male": "Män",
+  "female": "Kvinnor",
+  "non_binary": "Icke-binära",
+  "unknown": "Okänt"
 }

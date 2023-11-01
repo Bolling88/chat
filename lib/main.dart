@@ -16,6 +16,7 @@ import 'package:chat/screens/terms/terms.dart';
 import 'package:chat/utils/app_colors.dart';
 import 'package:chat/utils/image_util.dart';
 import 'package:chat/utils/log.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
@@ -23,6 +24,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'utils/save_file.dart';
@@ -33,6 +35,7 @@ import 'firebase_options.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  if (!kIsWeb) MobileAds.instance.initialize();
   final FlutterI18nDelegate flutterI18nDelegate = FlutterI18nDelegate(
     translationLoader: FileTranslationLoader(
         fallbackFile: 'en', basePath: 'assets/flutter_i18n'),
@@ -112,6 +115,7 @@ class KvitterApp extends StatelessWidget {
                 Locale('de', 'DE'),
                 Locale('hi', 'HI'),
                 Locale('pa', 'PA'),
+                Locale('ar', 'AR'),
               ],
               builder: FlutterI18n.rootAppBuilder(),
               theme: ThemeData(

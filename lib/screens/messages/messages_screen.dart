@@ -1,10 +1,13 @@
 import 'package:chat/model/private_chat.dart';
 import 'package:chat/screens/message_holder/bloc/message_holder_bloc.dart';
 import 'package:chat/screens/message_holder/bloc/message_holder_event.dart';
+import 'package:chat/utils/app_colors.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:giphy_get/giphy_get.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import '../../model/chat.dart';
 import '../../repository/firestore_repository.dart';
 import '../../utils/app_widgets.dart';
@@ -30,8 +33,8 @@ class MessagesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (BuildContext context) => MessagesBloc(chat,
-          context.read<FirestoreRepository>(),
+      create: (BuildContext context) => MessagesBloc(
+          chat, context.read<FirestoreRepository>(),
           isPrivateChat: isPrivateChat),
       child: ChatsScreenContent(
         chat: chat,
@@ -124,34 +127,55 @@ class ChatsScreenContent extends StatelessWidget {
                         },
                       )),
                       const Divider(),
-                      SafeArea(
-                        child: MessageEditTextWidget(
-                          currentMessage: state.currentMessage,
-                          onTextChanged: (text) {
-                            BlocProvider.of<MessagesBloc>(context)
-                                .add(MessagesChangedEvent(text));
-                          },
-                          hintText: FlutterI18n.translate(
-                              context, "write_message_hint"),
-                          showGiphy: isPrivateChat,
-                          onTapGiphy: () async {
-                            final GiphyGif? gif = await GiphyGet.getGif(
-                              context: context, //Required
-                              apiKey: giphyKey, //Required.
-                              randomID: state
-                                  .myUser.id, // Optional - An ID/proxy for a specific user.
-                            );
-                            if (gif != null) {
+                      MessageEditTextWidget(
+                        currentMessage: state.currentMessage,
+                        onTextChanged: (text) {
+                          BlocProvider.of<MessagesBloc>(context)
+                              .add(MessagesChangedEvent(text));
+                        },
+                        hintText: FlutterI18n.translate(
+                            context, "write_message_hint"),
+                        showGiphy: isPrivateChat,
+                        onTapGiphy: () async {
+                          final GiphyGif? gif = await GiphyGet.getGif(
+                            context: context, //Required
+                            apiKey: giphyKey, //Required.
+                            randomID: state.myUser
+                                .id, // Optional - An ID/proxy for a specific user.
+                          );
+                          if (gif != null) {
+                            if (context.mounted) {
                               BlocProvider.of<MessagesBloc>(context)
                                   .add(MessagesGiphyPickedEvent(gif));
                             }
-                          },
-                          onSendTapped: (String message) {
-                            BlocProvider.of<MessagesBloc>(context)
-                                .add(MessagesSendEvent());
-                          },
+                          }
+                        },
+                        onSendTapped: (String message) {
+                          BlocProvider.of<MessagesBloc>(context)
+                              .add(MessagesSendEvent());
+                        },
+                      ),
+                      if (!kIsWeb)
+                        AnimatedSize(
+                          duration: const Duration(milliseconds: 500),
+                          curve: Curves.easeIn,
+                          child: SafeArea(child: LayoutBuilder(
+                            builder: (context, constraints) {
+                              BlocProvider.of<MessagesBloc>(context)
+                                  .loadAd(constraints.maxWidth.round());
+                              final banner = state.bannerAd;
+                              if (banner != null) {
+                                return Container(
+                                    color: AppColors.background,
+                                    width: banner.size.width.toDouble(),
+                                    height: banner.size.height.toDouble(),
+                                    child: AdWidget(ad: banner));
+                              } else {
+                                return const SizedBox.shrink();
+                              }
+                            },
+                          )),
                         ),
-                      )
                     ],
                   ),
                   Align(

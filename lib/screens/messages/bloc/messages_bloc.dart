@@ -3,8 +3,10 @@ import 'dart:async';
 import 'package:chat/model/chat_user.dart';
 import 'package:chat/model/private_chat.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:universal_io/io.dart';
 import '../../../model/chat.dart';
 import '../../../model/message.dart';
 import '../../../model/message_item.dart';
@@ -21,6 +23,8 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
   DocumentSnapshot? _lastMessageSnapshot;
   final FirestoreRepository _firestoreRepository;
   final secondsInFiveMinutes = 300;
+
+  BannerAd? _anchoredAdaptiveAd;
 
   StreamSubscription<QuerySnapshot>? messagesStream;
   StreamSubscription<QuerySnapshot>? userStream;
@@ -58,9 +62,9 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
               .toList();
 
           yield MessagesBaseState(
-              getMessagesWithDates(initialMessages), user, "");
+              getMessagesWithDates(initialMessages), user, "", null);
         } else {
-          yield MessagesBaseState(const [], user, "");
+          yield MessagesBaseState(const [], user, "", null);
         }
         setUpMessagesListener(chat.id);
         setUpUserListener();
@@ -130,6 +134,10 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
       }
     } else if (event is MessagesReportMessageEvent) {
       _firestoreRepository.reportMessage(event.message);
+    } else if (event is MessagesBannerAdLoadedEvent) {
+      if (currentState is MessagesBaseState) {
+        yield currentState.copyWith(bannerAd: _anchoredAdaptiveAd);
+      }
     } else {
       yield MessagesErrorState();
       Log.e("Error in messages");
@@ -180,6 +188,44 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
           event.docs.first.id, event.docs.first.data() as Map<String, dynamic>);
       add(MessagesUserUpdatedEvent(user));
     });
+  }
+
+  Future<void> loadAd(int adWidth) async {
+    if (_anchoredAdaptiveAd != null) {
+      return;
+    }
+    // Get an AnchoredAdaptiveBannerAdSize before loading the ad.
+    final AnchoredAdaptiveBannerAdSize? size =
+        await AdSize.getCurrentOrientationAnchoredAdaptiveBannerAdSize(adWidth);
+
+    if (size == null) {
+      Log.e('Unable to get height of anchored banner.');
+      return;
+    }
+
+    _anchoredAdaptiveAd = BannerAd(
+      // TODO: replace these test ad units with your own ad unit.
+      adUnitId: Platform.isAndroid
+          ? kDebugMode
+              ? 'ca-app-pub-3940256099942544/6300978111'
+              : 'ca-app-pub-5287847424239288/6302220901'
+          : kDebugMode
+              ? 'ca-app-pub-3940256099942544/2934735716'
+              : 'ca-app-pub-5287847424239288/4633916012',
+      size: size,
+      request: const AdRequest(),
+      listener: BannerAdListener(
+        onAdLoaded: (Ad ad) {
+          Log.d('$ad loaded: ${ad.responseInfo}');
+          add(MessagesBannerAdLoadedEvent());
+        },
+        onAdFailedToLoad: (Ad ad, LoadAdError error) {
+          Log.e('Anchored adaptive banner failedToLoad: $error');
+          ad.dispose();
+        },
+      ),
+    );
+    return _anchoredAdaptiveAd?.load();
   }
 
   List<MessageItem> getMessagesWithDates(List<Message> messages) {

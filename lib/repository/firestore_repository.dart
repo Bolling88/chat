@@ -457,7 +457,7 @@ class FirestoreRepository {
   }
 
 
-  final onlineDuration = const Duration(hours: 10);
+  final onlineDuration = const Duration(hours: 6);
   Stream<QuerySnapshot> streamOnlineUsers() {
     //The correct way to show actually online persons
     // return users

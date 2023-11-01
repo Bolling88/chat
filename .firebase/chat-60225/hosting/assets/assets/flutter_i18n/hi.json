@@ -72,5 +72,12 @@
   "leave_chat": "चैट छोड़ें",
   "change_room": "कमरा बदलें",
   "users_in_room": "कमरे में उपयोगकर्ता",
-  "unknown_location": "अज्ञात स्थान"
+  "unknown_location": "अज्ञात स्थान",
+  "exit_app": "चैट छोड़ें",
+  "exit_app_message": "क्या आप वाकई चैट छोड़ना चाहते हैं?",
+  "all": "सभी",
+  "male": "पुरुष",
+  "female": "महिलाएँ",
+  "non_binary": "नॉन-बाइनरी",
+  "unknown": "अज्ञात"
 }

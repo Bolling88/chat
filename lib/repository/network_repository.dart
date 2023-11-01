@@ -37,6 +37,7 @@ Future<UserLocation?> getUserLocation() async {
     Log.d('User location: $userLocation');
     if(userLocation.countryCode.isEmpty){
       logEvent('failed_get_country_code');
+      Log.e('Failed to get country code');
     }
     return userLocation;
   } catch (e) {

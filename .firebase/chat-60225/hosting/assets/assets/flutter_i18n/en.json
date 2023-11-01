@@ -72,5 +72,12 @@
   "leave_chat": "Leave chat",
   "change_room": "Change room",
   "users_in_room": "Users in room",
-  "unknown_location": "Unknown location"
+  "unknown_location": "Unknown location",
+  "exit_app": "Leave chat",
+  "exit_app_message": "Are you sure you want to leave the chat?",
+  "all": "All",
+  "male": "Male",
+  "female": "Female",
+  "non_binary": "Non-binary",
+  "unknown": "Unknown"
 }
