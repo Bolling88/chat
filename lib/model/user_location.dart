@@ -25,8 +25,12 @@ class UserLocation {
       countryName: json['country_name'] ?? '',
       city: json['city'] ?? '',
       postal: json['postal'] ?? '',
-      latitude: json['latitude']?.toDouble() ?? 0.0,
-      longitude: json['longitude']?.toDouble() ?? 0.0,
+      latitude: json['latitude'] != null && json['latitude'] is num
+          ? json['latitude'].toDouble()
+          : 0.0,
+      longitude: json['longitude'] != null && json['longitude'] is num
+          ? json['longitude'].toDouble()
+          : 0.0,
       iPv4: json['IPv4'] ?? '',
       state: json['state'] ?? '',
     );
