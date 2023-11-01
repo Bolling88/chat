@@ -41,20 +41,19 @@ class VisitBloc extends Bloc<VisitEvent, VisitState> {
           myUser: myUser!,
           isChatAvailable: isChatAvailable,
           userLoaded: false,
-          userBlocked: false);
+          userBlocked: false,
+          message: '');
     } else if (event is VisitUserLoadedState) {
       if (currentState is VisitBaseState) {
-        if(event.user != null) {
+        if (event.user != null) {
           yield currentState.copyWith(
               user: event.user,
               userLoaded: true,
               userBlocked: event.user?.isUserBlocked());
-        }else{
+        } else {
           //User most likely deleted his account
           yield currentState.copyWith(
-              user: null,
-              userLoaded: true,
-              userBlocked: false);
+              user: null, userLoaded: true, userBlocked: false);
         }
       }
     } else if (event is VisitBlocUserEvent) {
@@ -74,6 +73,10 @@ class VisitBloc extends Bloc<VisitEvent, VisitState> {
         _firestoreRepository.unblockUser(currentState.user!.id);
         yield currentState.copyWith(userBlocked: false);
       }
+    } else if (event is VisitTextChangedEvent) {
+      if (currentState is VisitBaseState) {
+        yield currentState.copyWith(message: event.message);
+      }
     } else {
       throw UnimplementedError();
     }
@@ -82,14 +85,14 @@ class VisitBloc extends Bloc<VisitEvent, VisitState> {
   void setUpPeopleListener() {
     userStream =
         _firestoreRepository.streamUserById(userId).listen((event) async {
-          if(event.docs.isEmpty){
-            add(VisitUserLoadedState(null));
-            return;
-          }else {
-            final user = ChatUser.fromJson(
-                userId, event.docs.first.data() as Map<String, dynamic>);
-            add(VisitUserLoadedState(user));
-          }
+      if (event.docs.isEmpty) {
+        add(VisitUserLoadedState(null));
+        return;
+      } else {
+        final user = ChatUser.fromJson(
+            userId, event.docs.first.data() as Map<String, dynamic>);
+        add(VisitUserLoadedState(user));
+      }
     });
   }
 }

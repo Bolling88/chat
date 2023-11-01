@@ -20,3 +20,13 @@ class VisitUserLoadedState extends VisitEvent {
   List<Object?> get props => [user];
 
 }
+
+class VisitTextChangedEvent extends VisitEvent {
+  final String message;
+
+  VisitTextChangedEvent(this.message);
+
+  @override
+  List<Object?> get props => [message];
+
+}

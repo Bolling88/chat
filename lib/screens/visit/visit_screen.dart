@@ -167,13 +167,16 @@ class VisitScreenContent extends StatelessWidget {
                           padding: const EdgeInsets.only(left: 20, right: 20),
                           child: MessageEditTextWidget(
                             currentMessage: '',
-                            onTextChanged: (String value) {},
+                            onTextChanged: (String value) {
+                              BlocProvider.of<VisitBloc>(context)
+                                  .add(VisitTextChangedEvent(value));
+                            },
                             onTapGiphy: () {},
                             hintText: FlutterI18n.translate(
                                 context, "write_private_message_hint"),
                             showGiphy: false,
                             onSendTapped: (String message) {
-                              if(message.isEmpty) {
+                              if (message.isEmpty) {
                                 return;
                               }
                               BlocProvider.of<MessageHolderBloc>(parentContext)
@@ -198,22 +201,24 @@ class VisitScreenContent extends StatelessWidget {
                           child: Text(FlutterI18n.translate(
                               context, 'go_to_private_chat')),
                         ),
-                TextButton(
-                  onPressed: () {
-                    if (state.userBlocked) {
-                      BlocProvider.of<VisitBloc>(blocContext)
-                          .add(VisitUnblocUserEvent());
-                    } else {
-                      showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return getBlockAccountDialog(blocContext, context);
-                          });
-                    }
-                  },
-                  child: Text(translate(context,
-                      state.userBlocked ? 'unblock_user' : 'block_user')),
-                ),
+                if (state.message.isEmpty)
+                  TextButton(
+                    onPressed: () {
+                      if (state.userBlocked) {
+                        BlocProvider.of<VisitBloc>(blocContext)
+                            .add(VisitUnblocUserEvent());
+                      } else {
+                        showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return getBlockAccountDialog(
+                                  blocContext, context);
+                            });
+                      }
+                    },
+                    child: Text(translate(context,
+                        state.userBlocked ? 'unblock_user' : 'block_user')),
+                  ),
               ],
             ),
           );

@@ -12,6 +12,7 @@ class VisitBaseState extends VisitState {
   final bool isChatAvailable;
   final bool userLoaded;
   final bool userBlocked;
+  final String message;
 
   VisitBaseState({
     required this.user,
@@ -19,6 +20,7 @@ class VisitBaseState extends VisitState {
     required this.isChatAvailable,
     required this.userLoaded,
     required this.userBlocked,
+    required this.message,
   });
 
   VisitBaseState copyWith({
@@ -27,6 +29,7 @@ class VisitBaseState extends VisitState {
     bool? isChatAvailable,
     bool? userLoaded,
     bool? userBlocked,
+    String? message,
   }) {
     return VisitBaseState(
       user: user ?? this.user,
@@ -34,11 +37,12 @@ class VisitBaseState extends VisitState {
       isChatAvailable: isChatAvailable ?? this.isChatAvailable,
       userLoaded: userLoaded ?? this.userLoaded,
       userBlocked: userBlocked ?? this.userBlocked,
+      message: message ?? this.message,
     );
   }
 
   @override
-  List<Object?> get props => [user, myUser, isChatAvailable, userLoaded];
+  List<Object?> get props => [user, myUser, isChatAvailable, userLoaded, message];
 }
 
 class VisitLoadingState extends VisitState {}
