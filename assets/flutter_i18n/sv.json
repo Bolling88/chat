@@ -79,5 +79,9 @@
   "male": "Män",
   "female": "Kvinnor",
   "non_binary": "Icke-binära",
-  "unknown": "Okänt"
+  "unknown": "Okänt",
+  "leave_feedback": "Lämna feedback",
+  "feedback_sent": "Tack så mycket för din feedback!",
+  "write_feedback_hint": "Skriv din feedback...",
+  "feedback_summary": "Vi uppskattar verkligen all feedback du kan ge oss. Det hjälper oss att förbättra appen och göra den bättre för dig och andra. Tack!"
 }

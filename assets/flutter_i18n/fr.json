@@ -79,5 +79,9 @@
   "male": "Hommes",
   "female": "Femmes",
   "non_binary": "Non binaire",
-  "unknown": "Inconnu"
+  "unknown": "Inconnu",
+  "leave_feedback": "Laisser un commentaire",
+  "feedback_sent": "Merci beaucoup pour vos commentaires !",
+  "write_feedback_hint": "Rédigez votre commentaire...",
+  "feedback_summary": "Nous apprécions vraiment tous les commentaires que vous pouvez nous donner. Cela nous aide à améliorer l'application et à la rendre meilleure pour vous et les autres. Merci !"
 }

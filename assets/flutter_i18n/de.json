@@ -79,5 +79,9 @@
   "male": "Männer",
   "female": "Frauen",
   "non_binary": "Nicht-binär",
-  "unknown": "Unbekannt"
+  "unknown": "Unbekannt",
+  "leave_feedback": "Feedback hinterlassen",
+  "feedback_sent": "Vielen Dank für Ihr Feedback!",
+  "write_feedback_hint": "Geben Sie Ihr Feedback ein...",
+  "feedback_summary": "Wir schätzen jegliches Feedback, das Sie uns geben können. Es hilft uns, die App zu verbessern und sie für Sie und andere besser zu machen. Vielen Dank!"
 }
