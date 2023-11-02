@@ -2,7 +2,6 @@ import "dart:developer";
 
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import "package:flutter/foundation.dart";
-import 'package:rxdart/rxdart.dart';
 
 class Log {
   static void d(String message, {bool display = false}) {

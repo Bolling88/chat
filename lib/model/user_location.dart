@@ -20,6 +20,7 @@ class UserLocation {
   });
 
   factory UserLocation.fromJson(Map<String, dynamic> json) {
+    json.removeWhere((key, value) => value == 'Not found');
     return UserLocation(
       countryCode: json['country_code'] ?? '',
       countryName: json['country_name'] ?? '',
