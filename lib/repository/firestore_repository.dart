@@ -24,9 +24,9 @@ enum Gender {
   }
 
   //Get all genders in list
-  static List<Gender> getAsList(){
+  static List<Gender> getAsList() {
     return Gender.values;
-}
+  }
 
   final int value;
 }
@@ -129,7 +129,8 @@ class FirestoreRepository {
     });
   }
 
-  Future<QuerySnapshot> getInitialMessages(String chatId, bool isPrivateChat) async {
+  Future<QuerySnapshot> getInitialMessages(
+      String chatId, bool isPrivateChat) async {
     return await getChatType(isPrivateChat: isPrivateChat)
         .doc(chatId)
         .collection("messages")
@@ -245,8 +246,11 @@ class FirestoreRepository {
     }
   }
 
-  Stream<QuerySnapshot> streamChats() {
-    return chats.snapshots().handleError((error) {
+  Stream<QuerySnapshot> streamOpenChats() {
+    return chats
+        .where('countryCode', whereIn: ['all'])
+        .snapshots()
+        .handleError((error) {
       Log.e("Failed to get chats: $error");
     });
   }
@@ -456,8 +460,8 @@ class FirestoreRepository {
     });
   }
 
-
   final onlineDuration = const Duration(hours: 6);
+
   Stream<QuerySnapshot> streamOnlineUsers() {
     //The correct way to show actually online persons
     // return users
@@ -473,7 +477,8 @@ class FirestoreRepository {
     DateTime onlineDurationDate = DateTime.now().subtract(onlineDuration);
 
     return users
-        .where('lastActive', isGreaterThan: Timestamp.fromDate(onlineDurationDate))
+        .where('lastActive',
+            isGreaterThan: Timestamp.fromDate(onlineDurationDate))
         .snapshots()
         .handleError((error) {
       Log.e("Failed to get online users: $error");
@@ -495,9 +500,13 @@ class FirestoreRepository {
     }, SetOptions(merge: true));
   }
 
-  void postFeedback(String feedback) {
+  void postFeedback(String feedback, ChatUser user) {
     FirebaseFirestore.instance.collection('feedback').add({
       'feedback': feedback,
+      'createdById': getUserId(),
+      'createdByName': user.displayName,
+      'createdByCountryCode': user.countryCode,
+      'createdByCountryName': user.country,
       'created': FieldValue.serverTimestamp(),
     });
   }

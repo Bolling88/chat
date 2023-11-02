@@ -36,4 +36,18 @@ class UserLocation {
       state: json['state'] ?? '',
     );
   }
+
+  factory UserLocation.fromFallbackJson(Map<String, dynamic> json) {
+    json.removeWhere((key, value) => value == 'Not found');
+    return UserLocation(
+      countryName: json['country'] ?? '',
+      countryCode: json['countryCode'] ?? '',
+      state: json['regionName'] ?? '',
+      city: json['city'] ?? '',
+      latitude: json['lat']?.toDouble() ?? 0.0,
+      longitude: json['lon']?.toDouble() ?? 0.0,
+      postal: '',
+      iPv4: '',
+    );
+  }
 }

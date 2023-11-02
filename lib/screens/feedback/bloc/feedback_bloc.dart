@@ -10,8 +10,9 @@ import 'feedback_state.dart';
 
 class FeedbackBloc extends Bloc<FeedbackEvent, FeedbackState> {
   final FirestoreRepository _firestoreRepository;
+  final ChatUser _chatUser;
 
-  FeedbackBloc(this._firestoreRepository) : super(FeedbackBaseState()) {
+  FeedbackBloc(this._firestoreRepository, this._chatUser) : super(FeedbackBaseState()) {
     add(FeedbackInitialEvent());
   }
 
@@ -22,7 +23,7 @@ class FeedbackBloc extends Bloc<FeedbackEvent, FeedbackState> {
 
     } else if (event is FeedbackSendEvent) {
       if (currentState is FeedbackBaseState) {
-        _firestoreRepository.postFeedback(event.feedback);
+        _firestoreRepository.postFeedback(event.feedback, _chatUser);
       }
     } else {
       throw UnimplementedError();

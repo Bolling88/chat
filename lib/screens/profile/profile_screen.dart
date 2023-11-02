@@ -130,7 +130,7 @@ class ProfileScreenBuilder extends StatelessWidget {
                 ElevatedButton.icon(
                   icon: const Icon(Icons.feedback),
                   onPressed: () {
-                    showFeedbackScreen(blocContext);
+                    showFeedbackScreen(blocContext, state.user);
                   },
                   label: Text(translate(context, 'leave_feedback')),
                 ),

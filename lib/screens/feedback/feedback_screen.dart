@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:chat/model/chat_user.dart';
 import 'package:chat/repository/firestore_repository.dart';
 import 'package:chat/screens/feedback/bloc/feedback_bloc.dart';
 import 'package:chat/screens/feedback/bloc/feedback_event.dart';
@@ -13,9 +14,11 @@ import '../messages/message_edit_text_widget.dart';
 
 class FeedbackScreen extends StatelessWidget {
   final BuildContext parentContext;
+  final ChatUser user;
 
   const FeedbackScreen({
     required this.parentContext,
+    required this.user,
     Key? key,
   }) : super(key: key);
 
@@ -23,7 +26,7 @@ class FeedbackScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (BuildContext context) =>
-          FeedbackBloc(context.read<FirestoreRepository>()),
+          FeedbackBloc(context.read<FirestoreRepository>(), user),
       child: FeedbackScreenContent(parentContext: parentContext),
     );
   }
@@ -145,7 +148,7 @@ class FeedbackScreenContent extends StatelessWidget {
   }
 }
 
-Future showFeedbackScreen(BuildContext parentContext) async {
+Future showFeedbackScreen(BuildContext parentContext, ChatUser user) async {
   await showModalBottomSheet(
     useRootNavigator: true,
     context: parentContext,
@@ -155,7 +158,7 @@ Future showFeedbackScreen(BuildContext parentContext) async {
       return Padding(
         padding:
             EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-        child: FeedbackScreen(parentContext: parentContext),
+        child: FeedbackScreen(parentContext: parentContext, user: user),
       );
     },
   );

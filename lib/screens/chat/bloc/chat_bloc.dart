@@ -50,7 +50,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
 
   void setUpChatListener() async {
     Log.d("Setting up chat listener");
-    chatStream = _firestoreRepository.streamChats().listen((event) {
+    chatStream = _firestoreRepository.streamOpenChats().listen((event) {
       final List<RoomChat> chats = event.docs
           .map((e) => RoomChat.fromJson(e.id, e.data() as Map<String, dynamic>))
           .toList();
