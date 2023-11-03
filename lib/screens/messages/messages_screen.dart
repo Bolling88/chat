@@ -184,13 +184,12 @@ class ChatsScreenContent extends StatelessWidget {
                       padding: const EdgeInsets.only(top: 20),
                       child: ElevatedButton.icon(
                         icon: Icon((chat is PrivateChat)
-                            ? Icons.close
+                            ? Icons.delete
                             : Icons.exit_to_app),
                         onPressed: () {
                           if (chat is PrivateChat) {
-                            BlocProvider.of<MessageHolderBloc>(context).add(
-                                MessageHolderClosePrivateChatEvent(
-                                    chat as PrivateChat));
+                            //show warning dialog
+                            showDeleteChatDialog(context);
                           } else {
                             BlocProvider.of<MessageHolderBloc>(context)
                                 .add(MessageHolderChangeChatRoomEvent());
@@ -199,7 +198,7 @@ class ChatsScreenContent extends StatelessWidget {
                         label: Text(translate(
                             context,
                             (chat is PrivateChat)
-                                ? 'leave_chat'
+                                ? 'delete_chat'
                                 : 'change_room')),
                       ),
                     ),
@@ -220,6 +219,30 @@ class ChatsScreenContent extends StatelessWidget {
               );
             }
           },
+        ));
+  }
+
+  void showDeleteChatDialog(BuildContext parentContext) {
+    showDialog(
+        context: parentContext,
+        builder: (context) => AlertDialog(
+          title: Text(FlutterI18n.translate(context, "delete_chat")),
+          content: Text(FlutterI18n.translate(context, "delete_chat_message")),
+          actions: [
+            TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text(FlutterI18n.translate(context, "no"))),
+            TextButton(
+                onPressed: () {
+                  BlocProvider.of<MessageHolderBloc>(parentContext).add(
+                      MessageHolderClosePrivateChatEvent(
+                          chat as PrivateChat));
+                  Navigator.pop(context);
+                },
+                child: Text(FlutterI18n.translate(context, "yes")))
+          ],
         ));
   }
 

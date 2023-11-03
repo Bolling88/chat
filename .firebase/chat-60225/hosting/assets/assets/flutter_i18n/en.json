@@ -69,7 +69,6 @@
   "report_message": "Report message",
   "report_message_info": "Are you sure you wish to report this message? We will review it and in worst case scenario block the user.",
   "message_reported": "Message reported",
-  "leave_chat": "Leave chat",
   "change_room": "Change room",
   "users_in_room": "Users in room",
   "unknown_location": "Unknown location",

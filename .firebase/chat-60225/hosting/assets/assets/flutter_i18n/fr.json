@@ -69,7 +69,6 @@
   "report_message": "Signaler le message",
   "report_message_info": "Êtes-vous sûr de vouloir signaler ce message ? Nous le vérifierons et dans le pire des cas, nous bloquerons l'utilisateur.",
   "message_reported": "Message signalé",
-  "leave_chat": "Quitter la discussion",
   "change_room": "Changer de salle",
   "users_in_room": "Utilisateurs dans la salle",
   "unknown_location": "Emplacement inconnu",

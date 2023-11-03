@@ -69,7 +69,6 @@
   "report_message": "Nachricht melden",
   "report_message_info": "Sind Sie sicher, dass Sie diese Nachricht melden möchten? Wir werden sie überprüfen und im schlimmsten Fall den Benutzer blockieren.",
   "message_reported": "Nachricht gemeldet",
-  "leave_chat": "Chat verlassen",
   "change_room": "Raum wechseln",
   "users_in_room": "Benutzer im Raum",
   "unknown_location": "Unbekannter Standort",
@@ -83,5 +82,7 @@
   "leave_feedback": "Feedback hinterlassen",
   "feedback_sent": "Vielen Dank für Ihr Feedback!",
   "write_feedback_hint": "Geben Sie Ihr Feedback ein...",
-  "feedback_summary": "Wir schätzen jegliches Feedback, das Sie uns geben können. Es hilft uns, die App zu verbessern und sie für Sie und andere besser zu machen. Vielen Dank!"
+  "feedback_summary": "Wir schätzen jegliches Feedback, das Sie uns geben können. Es hilft uns, die App zu verbessern und sie für Sie und andere besser zu machen. Vielen Dank!",
+  "delete_chat": "Chat löschen",
+  "delete_chat_message": "Sind Sie sicher, dass Sie diesen Chat löschen möchten?"
 }
