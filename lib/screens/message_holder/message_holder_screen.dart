@@ -304,7 +304,6 @@ class MessageHolderScreenContent extends StatelessWidget {
 
   AppBar getAppBar(
       BuildContext context, MessageHolderBaseState state, Chat? chat) {
-    final userImageUrl = chat?.getChatImage(getUserId());
     return AppBar(
       title: GestureDetector(
         onTap: () {
@@ -321,19 +320,8 @@ class MessageHolderScreenContent extends StatelessWidget {
                   ? chat!.getChatName(FirebaseAuth.instance.currentUser!.uid)
                   : FlutterI18n.translate(context, "chat_rooms"),
             ),
-            if (userImageUrl != null && userImageUrl.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.only(left: 8.0),
-                child: GestureDetector(
-                    onTap: () {
-                      showVisitScreen(context,
-                          chat?.getOtherUserId(getUserId()) ?? '', chat, false);
-                    },
-                    child: AppUserImage(
-                      url: userImageUrl,
-                      gender: -1,
-                    )),
-              ),
+            if (chat != null) const SizedBox(width: 8),
+            if (chat != null) getChatImage(chat, state.onlineUsers),
             if (chat != null) const SizedBox(width: 8),
             if (chat != null) getOnlineStatusWidget(chat, state.onlineUsers)
           ],
@@ -388,6 +376,21 @@ class MessageHolderScreenContent extends StatelessWidget {
         )
       ],
     );
+  }
+}
+
+Widget getChatImage(Chat chat, List<ChatUser> onlineUsers) {
+  if (chat.isPrivateChat() == true) {
+    final user = onlineUsers
+        .where((element) => element.id == chat.getOtherUserId(getUserId()))
+        .firstOrNull;
+    if(user != null) {
+      return AppUserImage(url: user.pictureData, gender: user.gender);
+    } else {
+      return const SizedBox.shrink();
+    }
+  } else {
+    return const SizedBox.shrink();
   }
 }
 
