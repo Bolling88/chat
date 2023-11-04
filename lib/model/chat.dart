@@ -28,6 +28,8 @@ abstract class Chat extends Equatable {
 
   String getOtherUserId(String userId);
 
+  bool isPrivateChat();
+
   @override
   List<Object> get props => [];
 

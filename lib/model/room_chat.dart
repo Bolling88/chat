@@ -13,7 +13,7 @@ class RoomChat extends Chat implements Comparable<RoomChat> {
   final bool lastMessageReadByUser;
 
 
-  RoomChat({
+  const RoomChat({
     required this.countryCode,
     required this.chatName,
     required this.chatColor,
@@ -126,5 +126,10 @@ class RoomChat extends Chat implements Comparable<RoomChat> {
   @override
   String getOtherUserId(String userId) {
     return '';
+  }
+
+  @override
+  bool isPrivateChat() {
+    return false;
   }
 }

@@ -160,4 +160,9 @@ class PrivateChat extends Chat implements Comparable<PrivateChat> {
   String getOtherUserId(String userId) {
     return userId == initiatedBy ? otherUserId : initiatedBy;
   }
+
+  @override
+  bool isPrivateChat() {
+    return true;
+  }
 }

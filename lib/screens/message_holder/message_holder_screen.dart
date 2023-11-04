@@ -322,14 +322,20 @@ class MessageHolderScreenContent extends StatelessWidget {
                   : FlutterI18n.translate(context, "chat_rooms"),
             ),
             if (userImageUrl != null && userImageUrl.isNotEmpty)
-              GestureDetector(
-                  onTap: () {
-                    showVisitScreen(context, chat?.getOtherUserId(getUserId()) ?? '', chat, false);
-                  },
-                  child: AppUserImage(
-                    url: userImageUrl,
-                    gender: -1,
-                  ))
+              Padding(
+                padding: const EdgeInsets.only(left: 8.0),
+                child: GestureDetector(
+                    onTap: () {
+                      showVisitScreen(context,
+                          chat?.getOtherUserId(getUserId()) ?? '', chat, false);
+                    },
+                    child: AppUserImage(
+                      url: userImageUrl,
+                      gender: -1,
+                    )),
+              ),
+            if (chat != null) const SizedBox(width: 8),
+            if (chat != null) getOnlineStatusWidget(chat, state.onlineUsers)
           ],
         ),
       ),
@@ -383,6 +389,38 @@ class MessageHolderScreenContent extends StatelessWidget {
       ],
     );
   }
+}
+
+Widget getOnlineStatusWidget(Chat chat, List<ChatUser> onlineUsers) {
+  if (chat.isPrivateChat() == true) {
+    final user = onlineUsers
+        .where((element) => element.id == chat.getOtherUserId(getUserId()))
+        .firstOrNull;
+    return getOnlineDot(user != null);
+  } else {
+    return const SizedBox.shrink();
+  }
+}
+
+Container getOnlineDot(bool isOnline) {
+   return Container(
+    width: 14,
+    height: 14,
+    decoration: const BoxDecoration(
+      shape: BoxShape.circle,
+      color: AppColors.white,
+    ),
+    child: Center(
+      child: Container(
+        width: 10,
+        height: 10,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: isOnline? AppColors.green : AppColors.grey_1,
+        ),
+      ),
+    ),
+  );
 }
 
 void showExitAppDialog(BuildContext context) {

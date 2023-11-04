@@ -82,5 +82,7 @@
   "leave_feedback": "Dejar comentarios",
   "feedback_sent": "¡Muchas gracias por tus comentarios!",
   "write_feedback_hint": "Escribe tus comentarios...",
-  "feedback_summary": "Agradecemos cualquier comentario que nos puedas dar. Nos ayuda a mejorar la aplicación y hacerla mejor para ti y para los demás. ¡Gracias!"
+  "feedback_summary": "Agradecemos cualquier comentario que nos puedas dar. Nos ayuda a mejorar la aplicación y hacerla mejor para ti y para los demás. ¡Gracias!",
+  "delete_chat": "Eliminar chat",
+  "delete_chat_message": "¿Estás seguro de que quieres eliminar este chat?"
 }
