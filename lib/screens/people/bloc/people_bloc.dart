@@ -110,13 +110,17 @@ class PeopleBloc extends Bloc<PeopleEvent, PeopleState> {
 
   void setUpPeopleListener() {
     onlineUsersStream =
-        _firestoreRepository.streamOnlineUsers().listen((event) async {
+        _firestoreRepository.onlineUsersStream.listen((event) async {
       final users = event.docs
           .map((e) => ChatUser.fromJson(e.id, e.data() as Map<String, dynamic>))
           .toList();
 
-      final filteredUsers =
-          users.where((element) => element.id != getUserId()).toList();
+      final filteredUsers = users
+          .where((element) => element.id != getUserId())
+          .where((element) => element.lastActive.toDate().isAfter(
+          DateTime.now().subtract(_firestoreRepository.onlineDuration)))
+          .toList();
+
       final myUser =
           users.where((element) => element.id == getUserId()).firstOrNull;
 

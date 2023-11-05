@@ -321,7 +321,7 @@ class MessageHolderScreenContent extends StatelessWidget {
                   : FlutterI18n.translate(context, "chat_rooms"),
             ),
             if (chat != null) const SizedBox(width: 8),
-            if (chat != null) getChatImage(chat, state.onlineUsers),
+            if (chat != null) getChatImage(chat, state.onlineUsers, context),
             if (chat != null) const SizedBox(width: 8),
             if (chat != null) getOnlineStatusWidget(chat, state.onlineUsers)
           ],
@@ -379,13 +379,17 @@ class MessageHolderScreenContent extends StatelessWidget {
   }
 }
 
-Widget getChatImage(Chat chat, List<ChatUser> onlineUsers) {
+Widget getChatImage(Chat chat, List<ChatUser> onlineUsers, BuildContext context) {
   if (chat.isPrivateChat() == true) {
     final user = onlineUsers
         .where((element) => element.id == chat.getOtherUserId(getUserId()))
         .firstOrNull;
     if(user != null) {
-      return AppUserImage(url: user.pictureData, gender: user.gender);
+      return GestureDetector(
+          onTap: () {
+            showVisitScreen(context, chat.getOtherUserId(getUserId()), chat, false);
+          },
+          child: AppUserImage(url: user.pictureData, gender: user.gender));
     } else {
       return const SizedBox.shrink();
     }

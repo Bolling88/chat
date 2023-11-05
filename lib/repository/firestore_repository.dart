@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:chat/model/message.dart';
 import 'package:chat/model/private_chat.dart';
 import 'package:chat/model/user_location.dart';
@@ -460,21 +462,33 @@ class FirestoreRepository {
     });
   }
 
-  final onlineDuration = const Duration(hours: 5);
+  final onlineDuration = const Duration(hours: 3);
 
-  Stream<QuerySnapshot> streamOnlineUsers() {
-    //Show online persons depending on the timestamp instead
-    //Everyone that has been active in the last $onlineDuration is considered online
-    // Calculate the timestamp for 2 hours ago
+  final StreamController<QuerySnapshot> _streamController = StreamController<QuerySnapshot>.broadcast();
+  StreamSubscription<QuerySnapshot>? _onlineUsersStream;
+
+  Stream<QuerySnapshot> get onlineUsersStream => _streamController.stream;
+
+  void startOnlineUsersStream() {
+    if(_onlineUsersStream != null) {
+      _onlineUsersStream?.cancel();
+    }
+
     DateTime onlineDurationDate = DateTime.now().subtract(onlineDuration);
 
-    return users
-        .where('lastActive',
-            isGreaterThan: Timestamp.fromDate(onlineDurationDate))
+    _onlineUsersStream = users
+        .where('lastActive', isGreaterThan: Timestamp.fromDate(onlineDurationDate))
         .snapshots()
         .handleError((error) {
       Log.e("Failed to get online users: $error");
+    }).listen((event) {
+      _streamController.sink.add(event);
     });
+  }
+
+  void closeOnlineUsersStream() {
+    _onlineUsersStream?.cancel();
+    _streamController.close();
   }
 
   void updateCurrentUsersCurrentChatRoom({required String chatId}) {

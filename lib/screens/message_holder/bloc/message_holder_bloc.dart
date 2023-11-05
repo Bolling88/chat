@@ -14,6 +14,7 @@ import '../../../utils/analytics.dart';
 import '../../../utils/audio.dart';
 import '../../../utils/log.dart';
 import '../../people/bloc/people_bloc.dart';
+import '../../people/bloc/people_event.dart';
 import 'message_holder_event.dart';
 import 'message_holder_state.dart';
 import 'dart:core';
@@ -35,6 +36,7 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
   @override
   Future<void> close() {
     //This will probably not never be called since the app will be fried before the widget tree is unmounted.
+    _firestoreRepository.closeOnlineUsersStream();
     privateChatStream?.cancel();
     roomChatStream?.cancel();
     onlineUsersStream?.cancel();
@@ -297,8 +299,9 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
   }
 
   void setUpOnlineUsersListener() {
+    _firestoreRepository.startOnlineUsersStream();
     onlineUsersStream =
-        _firestoreRepository.streamOnlineUsers().listen((event) async {
+        _firestoreRepository.onlineUsersStream.listen((event) async {
       final users = event.docs
           .map((e) => ChatUser.fromJson(e.id, e.data() as Map<String, dynamic>))
           .toList();

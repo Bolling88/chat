@@ -64,7 +64,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
 
   void setUpPeopleListener() {
     onlineUsersStream =
-        _firestoreRepository.streamOnlineUsers().listen((event) async {
+        _firestoreRepository.onlineUsersStream.listen((event) async {
       final users = event.docs
           .map((e) => ChatUser.fromJson(e.id, e.data() as Map<String, dynamic>))
           .toList();
