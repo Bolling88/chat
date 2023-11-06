@@ -29,8 +29,13 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   Stream<ChatState> mapEventToState(ChatEvent event) async* {
     final currentState = state;
     if (event is ChatInitialEvent) {
-      setUpChatListener();
-      setUpPeopleListener();
+      final user = await _firestoreRepository.getUser();
+      if(user != null) {
+        setUpChatListener(user);
+        setUpPeopleListener();
+      }else{
+        Log.e('ChatInitialEvent: User is null');
+      }
     } else if (event is ChatUpdatedEvent) {
       if (currentState is ChatBaseState) {
         yield currentState.copyWith(chats: event.chats);
@@ -48,9 +53,9 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     }
   }
 
-  void setUpChatListener() async {
+  void setUpChatListener(ChatUser user) async {
     Log.d("Setting up chat listener");
-    chatStream = _firestoreRepository.streamOpenChats().listen((event) {
+    chatStream = _firestoreRepository.streamOpenChats(user).listen((event) {
       final List<RoomChat> chats = event.docs
           .map((e) => RoomChat.fromJson(e.id, e.data() as Map<String, dynamic>))
           .toList();

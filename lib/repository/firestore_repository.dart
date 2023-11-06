@@ -6,6 +6,7 @@ import 'package:chat/model/user_location.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/foundation.dart';
 import '../model/room_chat.dart';
 import '../model/chat_user.dart';
 import '../utils/log.dart';
@@ -248,13 +249,21 @@ class FirestoreRepository {
     }
   }
 
-  Stream<QuerySnapshot> streamOpenChats() {
-    return chats
-        .where('countryCode', whereIn: ['all'])
-        .snapshots()
-        .handleError((error) {
-      Log.e("Failed to get chats: $error");
-    });
+  Stream<QuerySnapshot> streamOpenChats(ChatUser user) {
+    if(kDebugMode){
+      return chats
+          .snapshots()
+          .handleError((error) {
+        Log.e("Failed to get chats: $error");
+      });
+    }else{
+      return chats
+          .where('countryCode', whereIn: ['all', user.countryCode])
+          .snapshots()
+          .handleError((error) {
+        Log.e("Failed to get chats: $error");
+      });
+    }
   }
 
   Stream<QuerySnapshot> streamPrivateChats(String userId) {

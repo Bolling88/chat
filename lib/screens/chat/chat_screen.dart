@@ -8,6 +8,7 @@ import '../../repository/firestore_repository.dart';
 import '../../repository/presence_database.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_widgets.dart';
+import '../../utils/flag.dart';
 import 'bloc/chat_bloc.dart';
 import 'bloc/chat_state.dart';
 
@@ -77,19 +78,33 @@ class ChatsScreenContent extends StatelessWidget {
       },
       child: Row(
         children: [
-          Transform.translate(
-            offset:
-                Offset(state.chats[index].imageTranslationX.toDouble(), 0.0),
-            child: SizedBox(
-                width: 70,
-                height: 70,
-                child: OverflowBox(
-                    minHeight: state.chats[index].imageOverflow.toDouble(),
-                    maxHeight: state.chats[index].imageOverflow.toDouble(),
-                    child: AppLottie(
-                        url: state.chats[index].imageUrl))),
-          ),
-          const SizedBox(width: 40),
+          (state.chats[index].countryCode == 'all')
+              ? Transform.translate(
+                  offset: Offset(
+                      state.chats[index].imageTranslationX.toDouble(), 0.0),
+                  child: SizedBox(
+                      width: 70,
+                      height: 70,
+                      child: OverflowBox(
+                          minHeight:
+                              state.chats[index].imageOverflow.toDouble(),
+                          maxHeight:
+                              state.chats[index].imageOverflow.toDouble(),
+                          child: AppLottie(url: state.chats[index].imageUrl))),
+                )
+              : SizedBox(
+                  width: 70,
+                  height: 70,
+                  child: Center(
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 25.0),
+                      child: getFlag(
+                          countryCode: state.chats[index].countryCode,
+                          fontSize: 55),
+                    ),
+                  ),
+                ),
+          const SizedBox(width: 25),
           Expanded(
               child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
@@ -97,7 +112,7 @@ class ChatsScreenContent extends StatelessWidget {
             children: [
               Text(state.chats[index].chatName,
                   style: Theme.of(context).textTheme.displaySmall?.merge(
-                        TextStyle(color: Color(state.chats[index].chatColor)),
+                        TextStyle(color: Color(state.chats[index].chatColor), fontSize: 30),
                       )),
               const SizedBox(height: 5),
               Text(
