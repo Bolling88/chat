@@ -227,12 +227,6 @@ class FirestoreRepository {
         .snapshots(includeMetadataChanges: true);
   }
 
-  Stream<QuerySnapshot> streamChat(String chatId, bool isPrivateChat) {
-    return getChatType(isPrivateChat: isPrivateChat)
-        .where(FieldPath.documentId, isEqualTo: chatId)
-        .snapshots();
-  }
-
   Stream<QuerySnapshot> streamUser() {
     return users
         .where(FieldPath.documentId, isEqualTo: getUserId())
@@ -247,32 +241,6 @@ class FirestoreRepository {
     } catch (e) {
       Log.e(e);
     }
-  }
-
-  Stream<QuerySnapshot> streamOpenChats(ChatUser user) {
-    if(kDebugMode){
-      return chats
-          .snapshots()
-          .handleError((error) {
-        Log.e("Failed to get chats: $error");
-      });
-    }else{
-      return chats
-          .where('countryCode', whereIn: ['all', user.countryCode])
-          .snapshots()
-          .handleError((error) {
-        Log.e("Failed to get chats: $error");
-      });
-    }
-  }
-
-  Stream<QuerySnapshot> streamPrivateChats(String userId) {
-    return privateChats
-        .where('users', arrayContains: userId)
-        .snapshots()
-        .handleError((error) {
-      Log.e("Failed to get private chats: $error");
-    });
   }
 
   Future<PrivateChat?> createPrivateChat({
@@ -462,6 +430,50 @@ class FirestoreRepository {
     });
   }
 
+  Stream<QuerySnapshot> streamOpenChats(ChatUser user) {
+    if (kDebugMode) {
+      return chats.snapshots().handleError((error) {
+        Log.e("Failed to get chats: $error");
+      });
+    } else {
+      return chats
+          .where('countryCode', whereIn: ['all', user.countryCode])
+          .snapshots()
+          .handleError((error) {
+            Log.e("Failed to get chats: $error");
+          });
+    }
+  }
+
+  final StreamController<QuerySnapshot> _privateChatsStreamController =
+      StreamController<QuerySnapshot>.broadcast();
+  StreamSubscription<QuerySnapshot>? _privateChatsStream;
+
+  Stream<QuerySnapshot> get privateChatsStream =>
+      _privateChatsStreamController.stream;
+
+  void startPrivateChatsStream(String userId) {
+    if (_privateChatsStream != null) {
+      _privateChatsStream?.cancel();
+    }
+
+    _privateChatsStream = privateChats
+        .where('users', arrayContains: userId)
+        .snapshots()
+        .handleError((error) {
+      Log.e("Failed to get private chats: $error");
+    }).listen((event) {
+      if (!_privateChatsStreamController.isClosed) {
+        _privateChatsStreamController.sink.add(event);
+      }
+    });
+  }
+
+  void closePrivateChatStream() {
+    _privateChatsStream?.cancel();
+    _privateChatsStreamController.close();
+  }
+
   Stream<QuerySnapshot> streamUserById(String userId) {
     return users
         .where(FieldPath.documentId, isEqualTo: userId)
@@ -473,33 +485,36 @@ class FirestoreRepository {
 
   final onlineDuration = const Duration(hours: 6);
 
-  final StreamController<QuerySnapshot> _streamController = StreamController<QuerySnapshot>.broadcast();
+  final StreamController<QuerySnapshot> _onlineUsersStreamController =
+      StreamController<QuerySnapshot>.broadcast();
   StreamSubscription<QuerySnapshot>? _onlineUsersStream;
 
-  Stream<QuerySnapshot> get onlineUsersStream => _streamController.stream;
+  Stream<QuerySnapshot> get onlineUsersStream =>
+      _onlineUsersStreamController.stream;
 
   void startOnlineUsersStream() {
-    if(_onlineUsersStream != null) {
+    if (_onlineUsersStream != null) {
       _onlineUsersStream?.cancel();
     }
 
     DateTime onlineDurationDate = DateTime.now().subtract(onlineDuration);
 
     _onlineUsersStream = users
-        .where('lastActive', isGreaterThan: Timestamp.fromDate(onlineDurationDate))
+        .where('lastActive',
+            isGreaterThan: Timestamp.fromDate(onlineDurationDate))
         .snapshots()
         .handleError((error) {
       Log.e("Failed to get online users: $error");
     }).listen((event) {
-      if(!_streamController.isClosed) {
-        _streamController.sink.add(event);
+      if (!_onlineUsersStreamController.isClosed) {
+        _onlineUsersStreamController.sink.add(event);
       }
     });
   }
 
   void closeOnlineUsersStream() {
     _onlineUsersStream?.cancel();
-    _streamController.close();
+    _onlineUsersStreamController.close();
   }
 
   void updateCurrentUsersCurrentChatRoom({required String chatId}) {

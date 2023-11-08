@@ -37,6 +37,7 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
   Future<void> close() {
     //This will probably not never be called since the app will be fried before the widget tree is unmounted.
     _firestoreRepository.closeOnlineUsersStream();
+    _firestoreRepository.closePrivateChatStream();
     privateChatStream?.cancel();
     roomChatStream?.cancel();
     onlineUsersStream?.cancel();
@@ -268,8 +269,9 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
 
   void setUpPrivateChatsListener(ChatUser user) async {
     Log.d('Setting up private chats stream');
+    _firestoreRepository.startPrivateChatsStream(user.id);
     privateChatStream =
-        _firestoreRepository.streamPrivateChats(user.id).listen((data) {
+        _firestoreRepository.privateChatsStream.listen((data) {
       Log.d("Got private chats");
       final chats = data.docs
           .map((e) =>
@@ -286,16 +288,6 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
     if (userLocation != null) {
       _firestoreRepository.updateUserLocation(userLocation);
     }
-  }
-
-  void setUpChatsListener(RoomChat chat) async {
-    Log.d('Setting up private chats stream');
-    roomChatStream =
-        _firestoreRepository.streamChat(chat.id, false).listen((event) async {
-      final chat = RoomChat.fromJson(
-          event.docs.first.id, event.docs.first.data() as Map<String, dynamic>);
-      add(MessageHolderRoomChatUpdatedEvent(chat));
-    });
   }
 
   void setUpOnlineUsersListener() {

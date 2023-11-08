@@ -314,16 +314,18 @@ class MessageHolderScreenContent extends StatelessWidget {
         },
         child: Row(
           children: [
-            Text(
-              (chat?.getChatName(FirebaseAuth.instance.currentUser!.uid) ?? '')
-                      .isNotEmpty
-                  ? chat!.getChatName(FirebaseAuth.instance.currentUser!.uid)
-                  : FlutterI18n.translate(context, "chat_rooms"),
-            ),
-            if (chat != null) const SizedBox(width: 8),
             if (chat != null) getChatImage(chat, state.onlineUsers, context),
             if (chat != null) const SizedBox(width: 8),
-            if (chat != null) getOnlineStatusWidget(chat, state.onlineUsers)
+            if (chat != null) getOnlineStatusWidget(chat, state.onlineUsers),
+            if (chat != null) const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                (chat?.getChatName(FirebaseAuth.instance.currentUser!.uid) ?? '')
+                        .isNotEmpty
+                    ? chat!.getChatName(FirebaseAuth.instance.currentUser!.uid)
+                    : FlutterI18n.translate(context, "chat_rooms"),
+              ),
+            ),
           ],
         ),
       ),
