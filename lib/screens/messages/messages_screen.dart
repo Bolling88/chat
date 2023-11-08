@@ -64,69 +64,99 @@ class ChatsScreenContent extends StatelessWidget {
                   Column(
                     children: [
                       Expanded(
-                          child: ListView.builder(
-                        shrinkWrap: false,
-                        reverse: true,
-                        keyboardDismissBehavior:
-                            ScrollViewKeyboardDismissBehavior.onDrag,
-                        itemCount: state.messages.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          if (state.messages[index].messageDate != null &&
-                              state.messages[index].messageDate?.isNotEmpty ==
-                                  true) {
-                            return getChatInfoMessage(
-                                text: state.messages[index].messageDate ?? '',
-                                state: state,
-                                index: index,
-                                context: context);
-                          } else if (state.messages[index].message?.chatType ==
-                              ChatType.joined) {
-                            return getChatInfoMessage(
-                                text:
-                                    '${state.messages[index].message!.text} ${FlutterI18n.translate(context, 'joined_chat')}',
-                                state: state,
-                                index: index,
-                                context: context);
-                          } else if (state.messages[index].message?.chatType ==
-                              ChatType.left) {
-                            return getChatInfoMessage(
-                                text:
-                                    '${state.messages[index].message!.text} ${FlutterI18n.translate(context, 'left_chat')}',
-                                state: state,
-                                index: index,
-                                context: context);
-                          } else if (state
-                                  .messages[index].message!.createdById ==
-                              state.myUser.id) {
-                            return AppMyMessageWidget(
-                              message: state.messages[index].message!,
-                              gender: state
-                                  .messages[index].message!.createdByGender,
-                              pictureData: state
-                                  .messages[index].message!.createdByImageUrl,
-                            );
-                          } else {
-                            return AppOtherMessageWidget(
-                              message: state.messages[index].message!,
-                              pictureData: state.messages[index].message
-                                      ?.createdByImageUrl ??
-                                  '',
-                              userId:
-                                  state.messages[index].message!.createdById,
-                              displayName:
-                                  state.messages[index].message!.createdByName,
-                              gender: state
-                                  .messages[index].message!.createdByGender,
-                              chat: chat,
-                              countryCode: state.messages[index].message
-                                      ?.createdByCountryCode
-                                      .toLowerCase() ??
-                                  '',
-                            );
-                          }
-                        },
-                      )),
-                      const Divider(),
+                        child: Stack(
+                          children: [
+                            ListView.builder(
+                              shrinkWrap: false,
+                              padding: const EdgeInsets.only(bottom: 20),
+                              reverse: true,
+                              keyboardDismissBehavior:
+                                  ScrollViewKeyboardDismissBehavior.onDrag,
+                              itemCount: state.messages.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                if (state.messages[index].messageDate != null &&
+                                    state.messages[index].messageDate
+                                            ?.isNotEmpty ==
+                                        true) {
+                                  return getChatInfoMessage(
+                                      text: state.messages[index].messageDate ??
+                                          '',
+                                      state: state,
+                                      index: index,
+                                      context: context);
+                                } else if (state
+                                        .messages[index].message?.chatType ==
+                                    ChatType.joined) {
+                                  return getChatInfoMessage(
+                                      text:
+                                          '${state.messages[index].message!.text} ${FlutterI18n.translate(context, 'joined_chat')}',
+                                      state: state,
+                                      index: index,
+                                      context: context);
+                                } else if (state
+                                        .messages[index].message?.chatType ==
+                                    ChatType.left) {
+                                  return getChatInfoMessage(
+                                      text:
+                                          '${state.messages[index].message!.text} ${FlutterI18n.translate(context, 'left_chat')}',
+                                      state: state,
+                                      index: index,
+                                      context: context);
+                                } else if (state
+                                        .messages[index].message!.createdById ==
+                                    state.myUser.id) {
+                                  return AppMyMessageWidget(
+                                    message: state.messages[index].message!,
+                                    gender: state.messages[index].message!
+                                        .createdByGender,
+                                    pictureData: state.messages[index].message!
+                                        .createdByImageUrl,
+                                  );
+                                } else {
+                                  return AppOtherMessageWidget(
+                                    message: state.messages[index].message!,
+                                    pictureData: state.messages[index].message
+                                            ?.createdByImageUrl ??
+                                        '',
+                                    userId: state
+                                        .messages[index].message!.createdById,
+                                    displayName: state
+                                        .messages[index].message!.createdByName,
+                                    gender: state.messages[index].message!
+                                        .createdByGender,
+                                    chat: chat,
+                                    countryCode: state.messages[index].message
+                                            ?.createdByCountryCode
+                                            .toLowerCase() ??
+                                        '',
+                                  );
+                                }
+                              },
+                            ),
+                            if (isPrivateChat)
+                              (state.privateChat?.lastMessageReadBy.length == 2)
+                                  ? const Padding(
+                                      padding: EdgeInsets.only(right: 5, bottom: 5),
+                                      child: Align(
+                                          alignment: Alignment.bottomRight,
+                                          child: Icon(
+                                            Icons.check_circle,
+                                            color: AppColors.main,
+                                          )),
+                                    )
+                                  : const Padding(
+                                      padding: EdgeInsets.only(right: 5, bottom: 5),
+                                      child: Align(
+                                          alignment: Alignment.bottomRight,
+                                          child: Icon(
+                                            Icons.check_circle_outline,
+                                            color: AppColors.grey_1,
+                                          )),
+                                    ),
+                          ],
+                        ),
+                      ),
+                      const Divider(height: 1),
                       MessageEditTextWidget(
                         currentMessage: state.currentMessage,
                         onTextChanged: (text) {
@@ -226,24 +256,25 @@ class ChatsScreenContent extends StatelessWidget {
     showDialog(
         context: parentContext,
         builder: (context) => AlertDialog(
-          title: Text(FlutterI18n.translate(context, "delete_chat")),
-          content: Text(FlutterI18n.translate(context, "delete_chat_message")),
-          actions: [
-            TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: Text(FlutterI18n.translate(context, "no"))),
-            TextButton(
-                onPressed: () {
-                  BlocProvider.of<MessageHolderBloc>(parentContext).add(
-                      MessageHolderClosePrivateChatEvent(
-                          chat as PrivateChat));
-                  Navigator.pop(context);
-                },
-                child: Text(FlutterI18n.translate(context, "yes")))
-          ],
-        ));
+              title: Text(FlutterI18n.translate(context, "delete_chat")),
+              content:
+                  Text(FlutterI18n.translate(context, "delete_chat_message")),
+              actions: [
+                TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: Text(FlutterI18n.translate(context, "no"))),
+                TextButton(
+                    onPressed: () {
+                      BlocProvider.of<MessageHolderBloc>(parentContext).add(
+                          MessageHolderClosePrivateChatEvent(
+                              chat as PrivateChat));
+                      Navigator.pop(context);
+                    },
+                    child: Text(FlutterI18n.translate(context, "yes")))
+              ],
+            ));
   }
 
   Center getChatInfoMessage(

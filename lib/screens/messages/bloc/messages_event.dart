@@ -2,6 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:giphy_get/giphy_get.dart';
 
 import '../../../model/chat_user.dart';
+import '../../../model/private_chat.dart';
 import '../../../model/room_chat.dart';
 import '../../../model/message.dart';
 
@@ -58,6 +59,15 @@ class MessagesUserUpdatedEvent extends MessagesEvent {
 
   @override
   List<Object> get props => [user];
+}
+
+class MessagesPrivateChatsUpdatedEvent extends MessagesEvent {
+  final List<PrivateChat> privateChats;
+
+  MessagesPrivateChatsUpdatedEvent(this.privateChats);
+
+  @override
+  List<Object> get props => [privateChats];
 }
 
 class MessagesBannerAdLoadedEvent extends MessagesEvent {}

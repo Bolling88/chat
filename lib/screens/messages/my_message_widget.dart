@@ -13,9 +13,9 @@ class AppMyMessageWidget extends StatelessWidget {
 
   const AppMyMessageWidget({
     required this.message,
+    required this.pictureData,
     required this.gender,
     Key? key,
-    required this.pictureData,
   }) : super(key: key);
 
   @override

@@ -16,6 +16,7 @@ import '../../../utils/log.dart';
 import '../../../utils/time_util.dart';
 import 'messages_event.dart';
 import 'messages_state.dart';
+import 'package:collection/collection.dart';
 
 class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
   final Chat chat;
@@ -28,6 +29,7 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
 
   StreamSubscription<QuerySnapshot>? messagesStream;
   StreamSubscription<QuerySnapshot>? userStream;
+  StreamSubscription<QuerySnapshot>? privateChatsStream;
 
   MessagesBloc(this.chat, this._firestoreRepository,
       {required this.isPrivateChat})
@@ -40,6 +42,7 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
     postLeftMessage();
     messagesStream?.cancel();
     userStream?.cancel();
+    privateChatsStream?.cancel();
     return super.close();
   }
 
@@ -51,8 +54,8 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
       postJoinedMessage();
       final user = await _firestoreRepository.getUser();
       if (user != null) {
-        final data =
-            await _firestoreRepository.getInitialMessages(chat.id, isPrivateChat);
+        final data = await _firestoreRepository.getInitialMessages(
+            chat.id, isPrivateChat);
         if (data.docs.isNotEmpty) {
           Log.d("New documents: ${data.docs.length}");
           _lastMessageSnapshot = data.docs.last;
@@ -62,12 +65,15 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
               .toList();
 
           yield MessagesBaseState(
-              getMessagesWithDates(initialMessages), user, "", null);
+              getMessagesWithDates(initialMessages), user, "", null, null);
         } else {
-          yield MessagesBaseState(const [], user, "", null);
+          yield MessagesBaseState(const [], user, "", null, null);
         }
         setUpMessagesListener(chat.id);
         setUpUserListener();
+        if (isPrivateChat) {
+          setUpPrivateChatStream();
+        }
       } else {
         Log.e("User is null in messages bloc");
       }
@@ -138,6 +144,12 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
       if (currentState is MessagesBaseState) {
         yield currentState.copyWith(bannerAd: _anchoredAdaptiveAd);
       }
+    } else if (event is MessagesPrivateChatsUpdatedEvent) {
+      if (currentState is MessagesBaseState) {
+        final PrivateChat? privateChat = event.privateChats
+            .firstWhereOrNull((element) => element.id == chat.id);
+        yield currentState.copyWith(privateChat: privateChat);
+      }
     } else {
       yield MessagesErrorState();
       Log.e("Error in messages");
@@ -187,6 +199,21 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
       final user = ChatUser.fromJson(
           event.docs.first.id, event.docs.first.data() as Map<String, dynamic>);
       add(MessagesUserUpdatedEvent(user));
+    });
+  }
+
+  void setUpPrivateChatStream() async {
+    Log.d('Setting up private chats stream');
+    privateChatsStream =
+        _firestoreRepository.privateChatsStream.listen((event) async {
+      Log.d("Got private chats");
+      final chats = event.docs
+          .map((e) =>
+              PrivateChat.fromJson(e.id, e.data() as Map<String, dynamic>))
+          .toList();
+      chats.sort((a, b) => a.created.compareTo(b.created));
+      Log.d("Chats: ${chats.length}");
+      add(MessagesPrivateChatsUpdatedEvent(chats));
     });
   }
 

@@ -3,6 +3,7 @@ import 'package:equatable/equatable.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 import '../../../model/message_item.dart';
+import '../../../model/private_chat.dart';
 
 abstract class MessagesState extends Equatable {
   @override
@@ -20,20 +21,27 @@ class MessagesBaseState extends MessagesState {
   final ChatUser myUser;
   final String currentMessage;
   final BannerAd? bannerAd;
+  final PrivateChat? privateChat;
 
-  MessagesBaseState(
-      this.messages, this.myUser, this.currentMessage, this.bannerAd);
+  MessagesBaseState(this.messages, this.myUser, this.currentMessage,
+      this.bannerAd, this.privateChat);
 
   MessagesBaseState copyWith(
       {List<MessageItem>? messages,
       String? userId,
       ChatUser? myUser,
       String? currentMessage,
-      BannerAd? bannerAd}) {
-    return MessagesBaseState(messages ?? this.messages, myUser ?? this.myUser,
-        currentMessage ?? this.currentMessage, bannerAd ?? this.bannerAd);
+      BannerAd? bannerAd,
+      PrivateChat? privateChat}) {
+    return MessagesBaseState(
+        messages ?? this.messages,
+        myUser ?? this.myUser,
+        currentMessage ?? this.currentMessage,
+        bannerAd ?? this.bannerAd,
+        privateChat ?? this.privateChat);
   }
 
   @override
-  List<Object?> get props => [messages, myUser, currentMessage, bannerAd];
+  List<Object?> get props =>
+      [messages, myUser, currentMessage, bannerAd, privateChat];
 }
