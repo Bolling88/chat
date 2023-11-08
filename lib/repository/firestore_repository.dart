@@ -491,7 +491,9 @@ class FirestoreRepository {
         .handleError((error) {
       Log.e("Failed to get online users: $error");
     }).listen((event) {
-      _streamController.sink.add(event);
+      if(!_streamController.isClosed) {
+        _streamController.sink.add(event);
+      }
     });
   }
 

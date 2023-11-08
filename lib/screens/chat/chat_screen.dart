@@ -100,7 +100,7 @@ class ChatsScreenContent extends StatelessWidget {
                       padding: const EdgeInsets.only(left: 25.0),
                       child: getFlag(
                           countryCode: state.chats[index].countryCode,
-                          fontSize: 55),
+                          fontSize: 40),
                     ),
                   ),
                 ),
