@@ -471,7 +471,7 @@ class FirestoreRepository {
     });
   }
 
-  final onlineDuration = const Duration(hours: 3);
+  final onlineDuration = const Duration(hours: 6);
 
   final StreamController<QuerySnapshot> _streamController = StreamController<QuerySnapshot>.broadcast();
   StreamSubscription<QuerySnapshot>? _onlineUsersStream;
