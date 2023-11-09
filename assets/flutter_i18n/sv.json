@@ -84,5 +84,7 @@
   "write_feedback_hint": "Skriv din feedback...",
   "feedback_summary": "Vi uppskattar verkligen all feedback du kan ge oss. Det hjälper oss att förbättra appen och göra den bättre för dig och andra. Tack!",
   "delete_chat": "Radera chatt",
-  "delete_chat_message": "Är du säker på att du vill radera den här chatten?"
+  "delete_chat_message": "Är du säker på att du vill radera den här chatten?",
+  "delivered": "Levererad",
+  "seen": "Läst"
 }

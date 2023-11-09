@@ -68,64 +68,98 @@ class ChatsScreenContent extends StatelessWidget {
                           children: [
                             ListView.builder(
                               shrinkWrap: false,
-                              padding: const EdgeInsets.only(bottom: 20),
+                              padding: const EdgeInsets.only(bottom: 10),
                               reverse: true,
                               keyboardDismissBehavior:
                                   ScrollViewKeyboardDismissBehavior.onDrag,
-                              itemCount: state.messages.length,
+                              itemCount: state.messages.length + 1,
                               itemBuilder: (BuildContext context, int index) {
-                                if (state.messages[index].messageDate != null &&
-                                    state.messages[index].messageDate
-                                            ?.isNotEmpty ==
+                                if (index == 0) {
+                                  if (isPrivateChat &&
+                                      state.privateChat?.lastMessageUserId ==
+                                          getUserId()) {
+                                    return (state.privateChat?.lastMessageReadBy
+                                                .length ==
+                                            2)
+                                        ? getSeenWidget(context, true)
+                                        : getSeenWidget(context, false);
+                                  } else {
+                                    return const SizedBox.shrink();
+                                  }
+                                } else if (state.messages[getActualIndex(index)]
+                                            .messageDate !=
+                                        null &&
+                                    state.messages[getActualIndex(index)]
+                                            .messageDate?.isNotEmpty ==
                                         true) {
                                   return getChatInfoMessage(
-                                      text: state.messages[index].messageDate ??
+                                      text: state
+                                              .messages[getActualIndex(index)]
+                                              .messageDate ??
                                           '',
                                       state: state,
-                                      index: index,
+                                      index: getActualIndex(index),
                                       context: context);
-                                } else if (state
-                                        .messages[index].message?.chatType ==
+                                } else if (state.messages[getActualIndex(index)]
+                                        .message?.chatType ==
                                     ChatType.joined) {
                                   return getChatInfoMessage(
                                       text:
-                                          '${state.messages[index].message!.text} ${FlutterI18n.translate(context, 'joined_chat')}',
+                                          '${state.messages[getActualIndex(index)].message!.text} ${FlutterI18n.translate(context, 'joined_chat')}',
                                       state: state,
-                                      index: index,
+                                      index: getActualIndex(index),
                                       context: context);
-                                } else if (state
-                                        .messages[index].message?.chatType ==
+                                } else if (state.messages[getActualIndex(index)]
+                                        .message?.chatType ==
                                     ChatType.left) {
                                   return getChatInfoMessage(
                                       text:
-                                          '${state.messages[index].message!.text} ${FlutterI18n.translate(context, 'left_chat')}',
+                                          '${state.messages[getActualIndex(index)].message!.text} ${FlutterI18n.translate(context, 'left_chat')}',
                                       state: state,
-                                      index: index,
+                                      index: getActualIndex(index),
                                       context: context);
-                                } else if (state
-                                        .messages[index].message!.createdById ==
+                                } else if (state.messages[getActualIndex(index)]
+                                        .message!.createdById ==
                                     state.myUser.id) {
                                   return AppMyMessageWidget(
-                                    message: state.messages[index].message!,
-                                    gender: state.messages[index].message!
+                                    message: state
+                                        .messages[getActualIndex(index)]
+                                        .message!,
+                                    gender: state
+                                        .messages[getActualIndex(index)]
+                                        .message!
                                         .createdByGender,
-                                    pictureData: state.messages[index].message!
+                                    pictureData: state
+                                        .messages[getActualIndex(index)]
+                                        .message!
                                         .createdByImageUrl,
                                   );
                                 } else {
                                   return AppOtherMessageWidget(
-                                    message: state.messages[index].message!,
-                                    pictureData: state.messages[index].message
+                                    message: state
+                                        .messages[getActualIndex(index)]
+                                        .message!,
+                                    pictureData: state
+                                            .messages[getActualIndex(index)]
+                                            .message
                                             ?.createdByImageUrl ??
                                         '',
                                     userId: state
-                                        .messages[index].message!.createdById,
+                                        .messages[getActualIndex(index)]
+                                        .message!
+                                        .createdById,
                                     displayName: state
-                                        .messages[index].message!.createdByName,
-                                    gender: state.messages[index].message!
+                                        .messages[getActualIndex(index)]
+                                        .message!
+                                        .createdByName,
+                                    gender: state
+                                        .messages[getActualIndex(index)]
+                                        .message!
                                         .createdByGender,
                                     chat: chat,
-                                    countryCode: state.messages[index].message
+                                    countryCode: state
+                                            .messages[getActualIndex(index)]
+                                            .message
                                             ?.createdByCountryCode
                                             .toLowerCase() ??
                                         '',
@@ -133,26 +167,6 @@ class ChatsScreenContent extends StatelessWidget {
                                 }
                               },
                             ),
-                            if (isPrivateChat)
-                              (state.privateChat?.lastMessageReadBy.length == 2)
-                                  ? const Padding(
-                                      padding: EdgeInsets.only(right: 5, bottom: 5),
-                                      child: Align(
-                                          alignment: Alignment.bottomRight,
-                                          child: Icon(
-                                            Icons.check_circle,
-                                            color: AppColors.main,
-                                          )),
-                                    )
-                                  : const Padding(
-                                      padding: EdgeInsets.only(right: 5, bottom: 5),
-                                      child: Align(
-                                          alignment: Alignment.bottomRight,
-                                          child: Icon(
-                                            Icons.check_circle_outline,
-                                            color: AppColors.grey_1,
-                                          )),
-                                    ),
                           ],
                         ),
                       ),
@@ -251,6 +265,32 @@ class ChatsScreenContent extends StatelessWidget {
           },
         ));
   }
+
+  Align getSeenWidget(BuildContext context, bool isSeen) {
+    return Align(
+      alignment: Alignment.bottomRight,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            isSeen
+                ? FlutterI18n.translate(context, 'seen')
+                : FlutterI18n.translate(context, 'delivered'),
+            style: Theme.of(context).textTheme.bodySmall,
+          ),
+          Icon(
+            isSeen ? Icons.check_circle : Icons.check_circle_outline,
+            color: isSeen ? AppColors.main : AppColors.grey_1,
+          ),
+          const SizedBox(
+            width: 5,
+          )
+        ],
+      ),
+    );
+  }
+
+  int getActualIndex(int index) => index - 1;
 
   void showDeleteChatDialog(BuildContext parentContext) {
     showDialog(

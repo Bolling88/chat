@@ -84,5 +84,7 @@
   "write_feedback_hint": "Escreva seu feedback...",
   "feedback_summary": "Agradecemos muito por qualquer feedback que você possa nos dar. Isso nos ajuda a melhorar o aplicativo e torná-lo melhor para você e para os outros. Obrigado!",
   "delete_chat": "Excluir chat",
-  "delete_chat_message": "Tem certeza de que deseja excluir este chat?"
+  "delete_chat_message": "Tem certeza de que deseja excluir este chat?",
+  "delivered": "Entregue",
+  "seen": "Visto"
 }
