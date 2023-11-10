@@ -86,6 +86,11 @@
   "delete_chat": "Supprimer la discussion",
   "delete_chat_message": "Êtes-vous sûr de vouloir supprimer cette discussion?",
   "delivered": "Livré",
-  "seen": "Lu"
+  "seen": "Lu",
+  "like_app_title": "Aimez-vous l'application ?",
+  "like_app_title_message": "Ravi de vous voir ici ! Vous utilisez cette application depuis un moment maintenant. Est-ce qu'elle vous plaît ? :)",
+  "later": "Plus tard",
+  "rate_app_title": "Notez l'application",
+  "rate_app_title_message": "Nous sommes tellement heureux que vous l'aimiez ! Pourriez-vous nous soutenir en notant l'application ?"
 }
 

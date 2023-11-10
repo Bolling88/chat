@@ -86,5 +86,10 @@
   "delete_chat": "Eliminar chat",
   "delete_chat_message": "¿Estás seguro de que quieres eliminar este chat?",
   "delivered": "Entregado",
-  "seen": "Visto"
+  "seen": "Visto",
+  "like_app_title": "¿Te gusta la aplicación?",
+  "like_app_title_message": "¡Encantados de verte aquí! Has estado usando esta aplicación durante un tiempo. ¿Te gusta? :)",
+  "later": "Más tarde",
+  "rate_app_title": "Califica la aplicación",
+  "rate_app_title_message": "¡Estamos muy contentos de que te guste! ¿Podrías apoyarnos calificando la aplicación?"
 }

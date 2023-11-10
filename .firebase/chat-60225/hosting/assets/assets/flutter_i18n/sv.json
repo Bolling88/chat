@@ -86,5 +86,10 @@
   "delete_chat": "Radera chatt",
   "delete_chat_message": "Är du säker på att du vill radera den här chatten?",
   "delivered": "Levererad",
-  "seen": "Läst"
+  "seen": "Läst",
+  "like_app_title": "Gillar du appen?",
+  "like_app_title_message": "Roligt att se dig här! Du har använt den här appen ett tag nu. Gillar du den? :)",
+  "later": "Senare",
+  "rate_app_title": "Betygsätt appen",
+  "rate_app_title_message": "Vi är så glada att du gillar den! Skulle du kunna stödja oss genom att betygsätta appen?"
 }
