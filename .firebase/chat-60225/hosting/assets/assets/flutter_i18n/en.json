@@ -86,5 +86,10 @@
   "delete_chat": "Delete chat",
   "delete_chat_message": "Are you sure you want to delete this chat?",
   "delivered": "Delivered",
-  "seen": "Seen"
+  "seen": "Seen",
+  "like_app_title": "Do you like the app?",
+  "like_app_title_message": "Nice to see you there! You have used this app for a while now. Do you like it? :)",
+  "later": "Later",
+  "rate_app_title": "Rate the app",
+  "rate_app_title_message": "We are so happy you like it! Could you please support us by rating the app?"
 }
