@@ -84,5 +84,7 @@
   "write_feedback_hint": "Write your feedback...",
   "feedback_summary": "We really appreciate any and all feedback you can give us. It helps us improve the app and make it better for you and others. Thank you!",
   "delete_chat": "Delete chat",
-  "delete_chat_message": "Are you sure you want to delete this chat?"
+  "delete_chat_message": "Are you sure you want to delete this chat?",
+  "delivered": "Delivered",
+  "seen": "Seen"
 }

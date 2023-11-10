@@ -142,6 +142,13 @@ class KvitterApp extends StatelessWidget {
                       GoogleFonts.lobster(fontSize: 30, color: AppColors.white),
                   iconTheme: const IconThemeData(color: Colors.white),
                 ),
+                dialogTheme: DialogTheme(
+                  backgroundColor: AppColors.white,
+                  titleTextStyle: GoogleFonts.lobster(
+                      fontSize: 30, color: AppColors.main),
+                  contentTextStyle: const TextStyle(
+                      fontWeight: FontWeight.w600, color: AppColors.grey_1, fontSize: 16),
+                ),
                 textTheme: TextTheme(
                   displayLarge: GoogleFonts.lobster(color: AppColors.main),
                   displayMedium: const TextStyle(

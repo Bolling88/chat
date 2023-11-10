@@ -6,6 +6,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_app_badger/flutter_app_badger.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:in_app_review/in_app_review.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../model/room_chat.dart';
 import '../../../model/user_location.dart';
 import '../../../repository/firestore_repository.dart';
@@ -14,7 +16,6 @@ import '../../../utils/analytics.dart';
 import '../../../utils/audio.dart';
 import '../../../utils/log.dart';
 import '../../people/bloc/people_bloc.dart';
-import '../../people/bloc/people_event.dart';
 import 'message_holder_event.dart';
 import 'message_holder_state.dart';
 import 'dart:core';
@@ -51,8 +52,8 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
     if (event is MessageHolderInitialEvent) {
       _firestoreRepository.updateCurrentUsersCurrentChatRoom(chatId: '');
       _fcmRepository.setUpPushNotification();
-      setUpUserListener();
-      updateUserLocation();
+      _setUpUserListener();
+      _updateUserLocation();
       logEvent('started_chatting');
     } else if (event is MessageHolderUserUpdatedEvent) {
       if (currentState is MessageHolderBaseState) {
@@ -66,8 +67,9 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
             selectedChat: null,
             selectedChatIndex: 0);
 
-        setUpOnlineUsersListener();
-        setUpPrivateChatsListener(event.user);
+        _setUpOnlineUsersListener();
+        _setUpPrivateChatsListener(event.user);
+        _setUpRateMyApp();
       }
     } else if (event is MessageHolderStartPrivateChatEvent) {
       if (currentState is MessageHolderBaseState) {
@@ -248,6 +250,16 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
       if (currentState is MessageHolderBaseState) {
         yield currentState.copyWith(onlineUsers: event.users);
       }
+    }else if(event is MessageHolderShowRateDialogEvent){
+      if(currentState is MessageHolderBaseState){
+        yield MessageHolderLikeDialogState(currentState);
+      }
+    }else if(event is MessageHolderRateLaterAppEvent){
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setInt('app_opens', 0);
+    }else if(event is MessageHolderRateNeverAppEvent){
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setBool('rated', true);
     } else {
       throw UnimplementedError();
     }
@@ -267,7 +279,7 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
     }
   }
 
-  void setUpPrivateChatsListener(ChatUser user) async {
+  void _setUpPrivateChatsListener(ChatUser user) async {
     Log.d('Setting up private chats stream');
     _firestoreRepository.startPrivateChatsStream(user.id);
     privateChatStream =
@@ -283,14 +295,14 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
     });
   }
 
-  void updateUserLocation() async {
+  void _updateUserLocation() async {
     UserLocation? userLocation = await getUserLocation();
     if (userLocation != null) {
       _firestoreRepository.updateUserLocation(userLocation);
     }
   }
 
-  void setUpOnlineUsersListener() {
+  void _setUpOnlineUsersListener() {
     _firestoreRepository.startOnlineUsersStream();
     onlineUsersStream =
         _firestoreRepository.onlineUsersStream.listen((event) async {
@@ -315,7 +327,7 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
     });
   }
 
-  void setUpUserListener() async {
+  void _setUpUserListener() async {
     Log.d('Setting up private chats stream');
     userStream = _firestoreRepository.streamUser().listen((event) async {
       final user = ChatUser.fromJson(
@@ -335,6 +347,24 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
       FlutterAppBadger.removeBadge();
     } else {
       FlutterAppBadger.updateBadgeCount(count);
+    }
+  }
+
+  void _setUpRateMyApp() async{
+    if(!kIsWeb) {
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      final int appOpens = prefs.getInt('app_opens') ?? 0;
+      final bool hasRatedOrDenied = prefs.getBool('rated') ?? false;
+      final opens = appOpens + 1;
+      if(appOpens > 5 && hasRatedOrDenied == false){
+        final InAppReview inAppReview = InAppReview.instance;
+        final isInAppReviewAvailable = await inAppReview.isAvailable();
+        if(isInAppReviewAvailable) {
+          add(MessageHolderShowRateDialogEvent());
+        }
+      }else{
+        prefs.setInt('app_opens', opens);
+      }
     }
   }
 }

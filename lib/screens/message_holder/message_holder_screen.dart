@@ -1,7 +1,7 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chat/repository/fcm_repository.dart';
 import 'package:chat/repository/firestore_repository.dart';
 import 'package:chat/screens/chat/chat_screen.dart';
+import 'package:chat/screens/feedback/feedback_screen.dart';
 import 'package:chat/screens/visit/visit_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
+import 'package:in_app_review/in_app_review.dart';
 import '../../model/chat.dart';
 import '../../model/chat_user.dart';
 import '../../model/room_chat.dart';
@@ -51,46 +52,48 @@ class MessageHolderScreenContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocListener<MessageHolderBloc, MessageHolderState>(
-        listener: (context, state) {},
-        child: BlocBuilder<MessageHolderBloc, MessageHolderState>(
-          builder: (context, state) {
-            if (state is MessageHolderBaseState) {
-              return WillPopScope(
-                onWillPop: () {
-                  if (state.selectedChat != null &&
-                      state.selectedChatIndex == 0) {
-                    BlocProvider.of<MessageHolderBloc>(context)
-                        .add(MessageHolderChangeChatRoomEvent());
-                    return Future.value(false);
-                  } else if (state.selectedChat != null &&
-                      state.selectedChatIndex != 0) {
-                    BlocProvider.of<MessageHolderBloc>(context)
-                        .add(MessageHolderChatClickedEvent(0, state.roomChat));
-                    return Future.value(false);
-                  } else if (state.selectedChat == null &&
-                      state.selectedChatIndex == 0 &&
-                      !kIsWeb) {
-                    showExitAppDialog(context);
-                    return Future.value(false);
-                  }
-                  return Future.value(true);
-                },
-                child: Scaffold(
-                    key: const Key("message_holder_screen"),
-                    appBar: getAppBar(context, state, state.selectedChat),
-                    body: LayoutBuilder(
-                        key: const Key("message_holder_screen_layout_builder"),
-                        builder: (BuildContext context,
-                                BoxConstraints constraints) =>
+        listener: (context, state) {
+      if (state is MessageHolderLikeDialogState) {
+        showLikeDialog(context, state);
+      }
+    }, child: BlocBuilder<MessageHolderBloc, MessageHolderState>(
+      builder: (context, state) {
+        if (state is MessageHolderBaseState) {
+          return WillPopScope(
+            onWillPop: () {
+              if (state.selectedChat != null && state.selectedChatIndex == 0) {
+                BlocProvider.of<MessageHolderBloc>(context)
+                    .add(MessageHolderChangeChatRoomEvent());
+                return Future.value(false);
+              } else if (state.selectedChat != null &&
+                  state.selectedChatIndex != 0) {
+                BlocProvider.of<MessageHolderBloc>(context)
+                    .add(MessageHolderChatClickedEvent(0, state.roomChat));
+                return Future.value(false);
+              } else if (state.selectedChat == null &&
+                  state.selectedChatIndex == 0 &&
+                  !kIsWeb) {
+                showExitAppDialog(context);
+                return Future.value(false);
+              }
+              return Future.value(true);
+            },
+            child: Scaffold(
+                key: const Key("message_holder_screen"),
+                appBar: getAppBar(context, state, state.selectedChat),
+                body: LayoutBuilder(
+                    key: const Key("message_holder_screen_layout_builder"),
+                    builder:
+                        (BuildContext context, BoxConstraints constraints) =>
                             constraints.maxWidth > 855
                                 ? largeScreenContent(state, context)
                                 : smallScreenContent(state, context))),
-              );
-            } else {
-              return const Scaffold(body: Center(child: AppSpinner()));
-            }
-          },
-        ));
+          );
+        } else {
+          return const Scaffold(body: Center(child: AppSpinner()));
+        }
+      },
+    ));
   }
 
   Row largeScreenContent(MessageHolderBaseState state, BuildContext context) {
@@ -320,7 +323,8 @@ class MessageHolderScreenContent extends StatelessWidget {
             if (chat != null) const SizedBox(width: 8),
             Expanded(
               child: Text(
-                (chat?.getChatName(FirebaseAuth.instance.currentUser!.uid) ?? '')
+                (chat?.getChatName(FirebaseAuth.instance.currentUser!.uid) ??
+                            '')
                         .isNotEmpty
                     ? chat!.getChatName(FirebaseAuth.instance.currentUser!.uid)
                     : FlutterI18n.translate(context, "chat_rooms"),
@@ -379,17 +383,86 @@ class MessageHolderScreenContent extends StatelessWidget {
       ],
     );
   }
+
+  void showLikeDialog(
+      BuildContext parentContext, MessageHolderBaseState state) {
+    showDialog(
+        context: parentContext,
+        builder: (context) => AlertDialog(
+              title: Text(FlutterI18n.translate(context, "like_app_title")),
+              content: Text(
+                  FlutterI18n.translate(context, "like_app_title_message")),
+              actions: [
+                TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      BlocProvider.of<MessageHolderBloc>(parentContext)
+                          .add(MessageHolderRateNeverAppEvent());
+                      showFeedbackScreen(parentContext, state.user);
+                    },
+                    child: Text(
+                        FlutterI18n.translate(context, "no").toUpperCase())),
+                TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      showRateDialog(parentContext, state);
+                    },
+                    child: Text(
+                        FlutterI18n.translate(context, "yes").toUpperCase()))
+              ],
+            ));
+  }
+
+  void showRateDialog(
+      BuildContext parentContext, MessageHolderBaseState state) {
+    showDialog(
+        context: parentContext,
+        builder: (context) => AlertDialog(
+              title: Text(FlutterI18n.translate(context, "rate_app_title")),
+              content: Text(
+                  FlutterI18n.translate(context, "rate_app_title_message")),
+              actions: [
+                TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      BlocProvider.of<MessageHolderBloc>(parentContext)
+                          .add(MessageHolderRateNeverAppEvent());
+                    },
+                    child: Text(
+                        FlutterI18n.translate(context, "no").toUpperCase())),
+                TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      InAppReview.instance.requestReview();
+                      BlocProvider.of<MessageHolderBloc>(parentContext)
+                          .add(MessageHolderRateNeverAppEvent());
+                    },
+                    child: Text(
+                        FlutterI18n.translate(context, "yes").toUpperCase())),
+                TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      BlocProvider.of<MessageHolderBloc>(parentContext)
+                          .add(MessageHolderRateLaterAppEvent());
+                    },
+                    child: Text(
+                        FlutterI18n.translate(context, "later").toUpperCase()))
+              ],
+            ));
+  }
 }
 
-Widget getChatImage(Chat chat, List<ChatUser> onlineUsers, BuildContext context) {
+Widget getChatImage(
+    Chat chat, List<ChatUser> onlineUsers, BuildContext context) {
   if (chat.isPrivateChat() == true) {
     final user = onlineUsers
         .where((element) => element.id == chat.getOtherUserId(getUserId()))
         .firstOrNull;
-    if(user != null) {
+    if (user != null) {
       return GestureDetector(
           onTap: () {
-            showVisitScreen(context, chat.getOtherUserId(getUserId()), chat, false);
+            showVisitScreen(
+                context, chat.getOtherUserId(getUserId()), chat, false);
           },
           child: AppUserImage(url: user.pictureData, gender: user.gender));
     } else {
@@ -412,7 +485,7 @@ Widget getOnlineStatusWidget(Chat chat, List<ChatUser> onlineUsers) {
 }
 
 Container getOnlineDot(bool isOnline) {
-   return Container(
+  return Container(
     width: 14,
     height: 14,
     decoration: const BoxDecoration(
@@ -425,7 +498,7 @@ Container getOnlineDot(bool isOnline) {
         height: 10,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          color: isOnline? AppColors.green : AppColors.grey_1,
+          color: isOnline ? AppColors.green : AppColors.grey_1,
         ),
       ),
     ),

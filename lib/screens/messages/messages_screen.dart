@@ -283,7 +283,7 @@ class ChatsScreenContent extends StatelessWidget {
             color: isSeen ? AppColors.main : AppColors.grey_1,
           ),
           const SizedBox(
-            width: 5,
+            width: 10,
           )
         ],
       ),

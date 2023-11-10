@@ -12,6 +12,7 @@ class MessageHolderEvent extends Equatable {
 
 class MessageHolderInitialEvent extends MessageHolderEvent {}
 class MessageHolderChangeChatRoomEvent extends MessageHolderEvent {}
+class MessageHolderShowRateDialogEvent extends MessageHolderEvent {}
 class MessageHolderClosePrivateChatEvent extends MessageHolderEvent {
   final PrivateChat? privateChat;
 
@@ -75,4 +76,16 @@ class MessageHolderUsersUpdatedEvent extends MessageHolderEvent {
 
   @override
   List<Object?> get props => [users];
+}
+
+class MessageHolderLikeAppEvent extends MessageHolderEvent {
+  MessageHolderLikeAppEvent();
+}
+
+class MessageHolderRateLaterAppEvent extends MessageHolderEvent {
+  MessageHolderRateLaterAppEvent();
+}
+
+class MessageHolderRateNeverAppEvent extends MessageHolderEvent {
+  MessageHolderRateNeverAppEvent();
 }

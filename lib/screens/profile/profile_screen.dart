@@ -178,13 +178,13 @@ class ProfileScreenBuilder extends StatelessWidget {
             Navigator.of(context).pop();
             BlocProvider.of<ProfileBloc>(context).add(ProfileLogoutEvent());
           },
-          child: Text(translate(context, 'yes')),
+          child: Text(translate(context, 'yes').toUpperCase()),
         ),
         TextButton(
           onPressed: () {
             Navigator.of(context).pop();
           },
-          child: Text(translate(context, 'no')),
+          child: Text(translate(context, 'no').toUpperCase()),
         ),
       ],
     );
@@ -193,7 +193,8 @@ class ProfileScreenBuilder extends StatelessWidget {
   AlertDialog getDeleteAccountDialog(
       BuildContext blocContext, BuildContext context) {
     return AlertDialog(
-      title: Text(translate(context, 'delete_account')),
+      title: Text(translate(context, 'delete_account'),
+          style: const TextStyle(color: AppColors.red)),
       content: Text(translate(context, 'delete_account_info')),
       actions: [
         TextButton(
@@ -202,13 +203,13 @@ class ProfileScreenBuilder extends StatelessWidget {
             BlocProvider.of<ProfileBloc>(blocContext)
                 .add(ProfileDeleteAccountEvent());
           },
-          child: Text(translate(context, 'yes')),
+          child: Text(translate(context, 'yes').toUpperCase()),
         ),
         TextButton(
           onPressed: () {
             Navigator.of(context).pop();
           },
-          child: Text(translate(context, 'no')),
+          child: Text(translate(context, 'no').toUpperCase()),
         ),
       ],
     );
