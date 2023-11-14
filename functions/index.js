@@ -74,26 +74,3 @@ exports.deletePrivateChatOnLastLeft = functions.firestore
 
     return null;
   });
-
-exports.geolocationProxy = functions.https.onRequest((request, response) => {
-  cors(request, response, async () => {
-    try {
-      console.log('Request received:', request.method, request.url);
-
-      const geolocationResponse = await axios.get('https://geolocation-db.com/json/');
-
-      console.log('Geolocation data:', geolocationResponse.data);
-
-      // Set CORS headers before sending the response
-      response.set('Access-Control-Allow-Origin', '*');
-      response.set('Access-Control-Allow-Methods', 'GET, POST');
-      response.set('Access-Control-Allow-Headers', 'Content-Type');
-      response.json(geolocationResponse.data);
-
-      console.log('Response sent successfully.');
-    } catch (error) {
-      console.error('Error:', error);
-      response.status(500).send(error);
-    }
-  });
-});

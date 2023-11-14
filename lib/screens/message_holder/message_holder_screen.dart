@@ -182,6 +182,7 @@ class MessageHolderScreenContent extends StatelessWidget {
                         context, state.roomChat, state.onlineUsers);
                     return;
                   }
+                  HapticFeedback.heavyImpact();
                   BlocProvider.of<MessageHolderBloc>(context).add(
                       MessageHolderChatClickedEvent(
                           index,
