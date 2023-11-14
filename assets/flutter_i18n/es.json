@@ -91,5 +91,8 @@
   "like_app_title_message": "¡Encantados de verte aquí! Has estado usando esta aplicación durante un tiempo. ¿Te gusta? :)",
   "later": "Más tarde",
   "rate_app_title": "Califica la aplicación",
-  "rate_app_title_message": "¡Estamos muy contentos de que te guste! ¿Podrías apoyarnos calificando la aplicación?"
+  "rate_app_title_message": "¡Estamos muy contentos de que te guste! ¿Podrías apoyarnos calificando la aplicación?",
+  "change_gender": "Cambiar género",
+  "change_gender_question_mark": "¿Género incorrecto?",
+  "it_happens_exclamation": "¡Sucede!"
 }

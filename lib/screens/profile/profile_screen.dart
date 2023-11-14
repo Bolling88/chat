@@ -12,6 +12,7 @@ import '../../utils/lottie.dart';
 import '../../utils/translate.dart';
 import '../feedback/feedback_screen.dart';
 import '../messages/other_message_widget.dart';
+import '../onboarding_gender/onboarding_gender_screen.dart';
 import '../onboarding_photo/onboarding_photo_screen.dart';
 import 'bloc/profile_bloc.dart';
 import 'bloc/profile_event.dart';
@@ -125,6 +126,17 @@ class ProfileScreenBuilder extends StatelessWidget {
                             OnboardingNameScreenArguments(isEditMode: true));
                   },
                   label: Text(translate(context, 'change_name')),
+                ),
+                const SizedBox(height: 20),
+                ElevatedButton.icon(
+                  icon: const Icon(Icons.psychology_rounded),
+                  onPressed: () {
+                    Navigator.pushNamed(
+                        blocContext, OnboardingGenderScreen.routeName,
+                        arguments:
+                        OnboardingGenderScreenArguments(isEditMode: true));
+                  },
+                  label: Text(translate(context, 'change_gender')),
                 ),
                 const SizedBox(height: 20),
                 ElevatedButton.icon(

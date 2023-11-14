@@ -91,5 +91,8 @@
   "like_app_title_message": "مرحبًا برؤيتك هنا! لقد استخدمت هذا التطبيق لفترة طويلة الآن. هل يعجبك؟ :)",
   "later": "في وقت لاحق",
   "rate_app_title": "قيم التطبيق",
-  "rate_app_title_message": "نحن سعداء جدًا بأنك تحبه! هل يمكنك دعمنا من خلال تقييم التطبيق؟"
+  "rate_app_title_message": "نحن سعداء جدًا بأنك تحبه! هل يمكنك دعمنا من خلال تقييم التطبيق؟",
+  "change_gender": "تغيير الجنس",
+  "change_gender_question_mark": "جنس خاطئ؟",
+  "it_happens_exclamation": "هذا يحدث!"
 }
