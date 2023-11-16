@@ -179,7 +179,7 @@ class ChatsScreenContent extends StatelessWidget {
                         },
                         hintText: FlutterI18n.translate(
                             context, "write_message_hint"),
-                        showGiphy: isPrivateChat,
+                        showGiphy: true,
                         onTapGiphy: () async {
                           final GiphyGif? gif = await GiphyGet.getGif(
                             context: context, //Required

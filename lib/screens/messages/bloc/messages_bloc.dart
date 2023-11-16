@@ -231,14 +231,13 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
     }
 
     _anchoredAdaptiveAd = BannerAd(
-      // TODO: replace these test ad units with your own ad unit.
       adUnitId: Platform.isAndroid
           ? kDebugMode
               ? 'ca-app-pub-3940256099942544/6300978111'
-              : 'ca-app-pub-5287847424239288/6302220901'
+              : 'ca-app-pub-9607319032304025/7622492693'
           : kDebugMode
               ? 'ca-app-pub-3940256099942544/2934735716'
-              : 'ca-app-pub-5287847424239288/4633916012',
+              : 'ca-app-pub-9607319032304025/5187901046',
       size: size,
       request: const AdRequest(),
       listener: BannerAdListener(
