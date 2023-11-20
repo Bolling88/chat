@@ -353,7 +353,7 @@ class MessageHolderScreenContent extends StatelessWidget {
                   },
                   child: SizedBox(
                     height: 60,
-                    width: 60,
+                    width: 70,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       mainAxisSize: MainAxisSize.min,
