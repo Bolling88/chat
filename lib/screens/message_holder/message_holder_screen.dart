@@ -177,6 +177,8 @@ class MessageHolderScreenContent extends StatelessWidget {
               cursor: SystemMouseCursors.click,
               child: GestureDetector(
                 onTap: () {
+                  //Close keyboard
+                  FocusManager.instance.primaryFocus?.unfocus();
                   if (index == state.privateChats.length + 1) {
                     showPeopleScreen(
                         context, state.roomChat, state.onlineUsers);

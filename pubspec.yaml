@@ -62,6 +62,8 @@ dependencies:
   soundpool: ^2.4.1
   google_mobile_ads: ^3.1.0
   in_app_review: ^2.0.8
+  # Only added because web fails else for unknown reasons
+  extended_image_library: ^4.0.1
 
 dev_dependencies:
   flutter_test:

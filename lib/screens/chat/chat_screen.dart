@@ -57,6 +57,8 @@ class ChatsScreenContent extends StatelessWidget {
   ListView getRegularChats(ChatBaseState state) {
     return ListView.separated(
       shrinkWrap: true,
+      keyboardDismissBehavior:
+      ScrollViewKeyboardDismissBehavior.onDrag,
       key: const PageStorageKey('ChatList'),
       itemCount: state.chats.length,
       physics: const NeverScrollableScrollPhysics(),
