@@ -183,6 +183,7 @@ class FirestoreRepository {
       if (isPrivateChat) {
         await privateChats.doc(chatId).set({
           'lastMessage': message,
+          'lastMessageIsGiphy': chatType == ChatType.giphy,
           'lastMessageByName': user.displayName,
           'lastMessageByGender': user.gender,
           'lastMessageReadBy': [getUserId()],
@@ -193,6 +194,7 @@ class FirestoreRepository {
       } else {
         await chats.doc(chatId).set({
           'lastMessage': message,
+          'lastMessageIsGiphy': chatType == ChatType.giphy,
           'lastMessageByName': user.displayName,
           'lastMessageByGender': user.gender,
           'lastMessageTimestamp': FieldValue.serverTimestamp(),

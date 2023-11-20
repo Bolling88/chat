@@ -118,7 +118,7 @@ class ChatsScreenContent extends StatelessWidget {
                       )),
               const SizedBox(height: 5),
               Text(
-                  '${state.chats[index].lastMessageByName}: ${state.chats[index].lastMessage}',
+                  '${state.chats[index].lastMessageByName}: ${state.chats[index].lastMessageIsGiphy?  'Giphy' :state.chats[index].lastMessage}',
                   maxLines: 2,
                   style: Theme.of(context).textTheme.bodySmall?.merge(
                         const TextStyle(

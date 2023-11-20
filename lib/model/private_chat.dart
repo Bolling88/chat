@@ -36,12 +36,14 @@ class PrivateChat extends Chat implements Comparable<PrivateChat> {
     required this.users,
     required String id,
     required String lastMessage,
+    required bool lastMessageIsGiphy,
     required String lastMessageByName,
     required Timestamp lastMessageTimestamp,
     required String lastMessageUserId,
   }) : super(
           id: id,
           lastMessage: lastMessage,
+          lastMessageIsGiphy: lastMessageIsGiphy,
           lastMessageByName: lastMessageByName,
           lastMessageTimestamp: lastMessageTimestamp,
           lastMessageUserId: lastMessageUserId,
@@ -62,6 +64,7 @@ class PrivateChat extends Chat implements Comparable<PrivateChat> {
     String? id,
     List<String>? users,
     String? lastMessage,
+    bool? lastMessageIsGiphy,
     String? lastMessageByName,
     Timestamp? lastMessageTimestamp,
     String? lastMessageUserId,
@@ -82,6 +85,7 @@ class PrivateChat extends Chat implements Comparable<PrivateChat> {
       id: id ?? this.id,
       users: users ?? this.users,
       lastMessage: lastMessage ?? this.lastMessage,
+      lastMessageIsGiphy: lastMessageIsGiphy ?? this.lastMessageIsGiphy,
       lastMessageByName: lastMessageByName ?? this.lastMessageByName,
       lastMessageTimestamp: lastMessageTimestamp ?? this.lastMessageTimestamp,
       lastMessageUserId: lastMessageUserId ?? this.lastMessageUserId,
@@ -103,6 +107,7 @@ class PrivateChat extends Chat implements Comparable<PrivateChat> {
         super(
           id: id,
           lastMessage: json['lastMessage'] ?? "",
+          lastMessageIsGiphy: json['lastMessageIsGiphy'] ?? false,
           lastMessageByName: json['lastMessageByName'] ?? "",
           lastMessageTimestamp: json['lastMessageTimestamp'] ?? Timestamp.now(),
           lastMessageUserId: json['lastMessageUserId'] ?? "",
@@ -121,6 +126,7 @@ class PrivateChat extends Chat implements Comparable<PrivateChat> {
   List<Object> get props => [
         id,
         lastMessage,
+        lastMessageIsGiphy,
         lastMessageByName,
         lastMessageTimestamp,
         lastMessageUserId,
@@ -153,7 +159,9 @@ class PrivateChat extends Chat implements Comparable<PrivateChat> {
 
   @override
   String? getChatImage(String userId) {
-    return userId == initiatedBy ? otherUserPictureData : initiatedByPictureData;
+    return userId == initiatedBy
+        ? otherUserPictureData
+        : initiatedByPictureData;
   }
 
   @override

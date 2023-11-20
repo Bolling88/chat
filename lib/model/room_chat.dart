@@ -12,7 +12,6 @@ class RoomChat extends Chat implements Comparable<RoomChat> {
   final int imageTranslationX;
   final bool lastMessageReadByUser;
 
-
   const RoomChat({
     required this.countryCode,
     required this.chatName,
@@ -23,12 +22,14 @@ class RoomChat extends Chat implements Comparable<RoomChat> {
     required this.lastMessageReadByUser,
     required String id,
     required String lastMessage,
+    required bool lastMessageIsGiphy,
     required String lastMessageByName,
     required Timestamp lastMessageTimestamp,
     required String lastMessageUserId,
   }) : super(
           id: id,
           lastMessage: lastMessage,
+          lastMessageIsGiphy: lastMessageIsGiphy,
           lastMessageByName: lastMessageByName,
           lastMessageTimestamp: lastMessageTimestamp,
           lastMessageUserId: lastMessageUserId,
@@ -45,6 +46,7 @@ class RoomChat extends Chat implements Comparable<RoomChat> {
         super(
           id: id,
           lastMessage: json['lastMessage'] ?? "",
+          lastMessageIsGiphy: json['lastMessageIsGiphy'] ?? false,
           lastMessageByName: json['lastMessageByName'] ?? "",
           lastMessageTimestamp: json['lastMessageTimestamp'] ?? Timestamp.now(),
           lastMessageUserId: json['lastMessageUserId'] ?? "",
@@ -70,6 +72,7 @@ class RoomChat extends Chat implements Comparable<RoomChat> {
     String? id,
     List<String>? users,
     String? lastMessage,
+    bool? lastMessageIsGiphy,
     String? lastMessageByName,
     Timestamp? lastMessageTimestamp,
     String? lastMessageUserId,
@@ -84,6 +87,7 @@ class RoomChat extends Chat implements Comparable<RoomChat> {
       imageTranslationX: imageTranslationX ?? this.imageTranslationX,
       id: id ?? this.id,
       lastMessage: lastMessage ?? this.lastMessage,
+      lastMessageIsGiphy: lastMessageIsGiphy ?? this.lastMessageIsGiphy,
       lastMessageByName: lastMessageByName ?? this.lastMessageByName,
       lastMessageTimestamp: lastMessageTimestamp ?? this.lastMessageTimestamp,
       lastMessageUserId: lastMessageUserId ?? this.lastMessageUserId,
@@ -97,6 +101,7 @@ class RoomChat extends Chat implements Comparable<RoomChat> {
         id,
         countryCode,
         lastMessage,
+        lastMessageIsGiphy,
         lastMessageByName,
         lastMessageTimestamp,
         lastMessageUserId,
