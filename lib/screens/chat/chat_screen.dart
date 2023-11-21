@@ -4,8 +4,8 @@ import 'package:chat/utils/lottie.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
+import '../../model/chat_user.dart';
 import '../../repository/firestore_repository.dart';
-import '../../repository/presence_database.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_widgets.dart';
 import '../../utils/flag.dart';
@@ -13,13 +13,14 @@ import 'bloc/chat_bloc.dart';
 import 'bloc/chat_state.dart';
 
 class ChatScreen extends StatelessWidget {
-  const ChatScreen({Key? key}) : super(key: key);
+  final List<ChatUser> _initialUsers;
+  const ChatScreen(this._initialUsers, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (BuildContext context) =>
-          ChatBloc(context.read<FirestoreRepository>()),
+          ChatBloc(context.read<FirestoreRepository>(), _initialUsers),
       child: const ChatsScreenContent(),
     );
   }

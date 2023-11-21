@@ -13,8 +13,9 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
 
   late StreamSubscription<QuerySnapshot> chatStream;
   late StreamSubscription<QuerySnapshot> onlineUsersStream;
+  final List<ChatUser> _initialUsers;
 
-  ChatBloc(this._firestoreRepository) : super(ChatLoadingState()) {
+  ChatBloc(this._firestoreRepository, this._initialUsers) : super(ChatLoadingState()) {
     add(ChatInitialEvent());
   }
 
@@ -40,7 +41,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       if (currentState is ChatBaseState) {
         yield currentState.copyWith(chats: event.chats);
       } else {
-        yield ChatBaseState(event.chats, const {});
+        yield ChatBaseState(event.chats, groupUsersByCountry(_initialUsers));
       }
     } else if (event is ChatOnlineUsersUpdatedEvent) {
       if (currentState is ChatBaseState) {
@@ -74,17 +75,22 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
           .map((e) => ChatUser.fromJson(e.id, e.data() as Map<String, dynamic>))
           .toList();
 
-      final usersPerChat = <String, List<ChatUser>>{};
-      for (var user in users) {
-        if (user.currentRoomChatId.isNotEmpty) {
-          if (usersPerChat.containsKey(user.currentRoomChatId)) {
-            usersPerChat[user.currentRoomChatId]!.add(user);
-          } else {
-            usersPerChat[user.currentRoomChatId] = [user];
-          }
-        }
-      }
+      Map<String, List<ChatUser>> usersPerChat = groupUsersByCountry(users);
       add(ChatOnlineUsersUpdatedEvent(usersPerChat));
     });
+  }
+
+  Map<String, List<ChatUser>> groupUsersByCountry(List<ChatUser> users) {
+    final usersPerChat = <String, List<ChatUser>>{};
+    for (var user in users) {
+      if (user.currentRoomChatId.isNotEmpty) {
+        if (usersPerChat.containsKey(user.currentRoomChatId)) {
+          usersPerChat[user.currentRoomChatId]!.add(user);
+        } else {
+          usersPerChat[user.currentRoomChatId] = [user];
+        }
+      }
+    }
+    return usersPerChat;
   }
 }

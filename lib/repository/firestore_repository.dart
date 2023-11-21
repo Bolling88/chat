@@ -417,19 +417,29 @@ class FirestoreRepository {
     }, SetOptions(merge: true));
   }
 
-  void reportMessage(Message message) {
-    reports.add({
-      'messageId': message.id,
-      'messageText': message.text,
-      'messageCreated': message.created,
-      'messageCreatedBy': message.createdById,
-      'messageCreatedByGender': message.createdByGender,
-      'messageCreatedByCountryCode': message.createdByCountryCode,
-      'messageCreatedByImageUrl': message.createdByImageUrl,
-      'messageCreatedByDisplayName': message.createdByName,
-      'reportedBy': getUserId(),
-      'reportedAt': FieldValue.serverTimestamp(),
-    });
+  void reportMessage(Message message) async  {
+    if (kDebugMode) {
+      //Delete the message
+      try {
+        await messages.doc(message.id).delete();
+        print("Document successfully deleted");
+      } catch (e) {
+        print("Error while deleting document: $e");
+      }
+    } else {
+      reports.add({
+        'messageId': message.id,
+        'messageText': message.text,
+        'messageCreated': message.created,
+        'messageCreatedBy': message.createdById,
+        'messageCreatedByGender': message.createdByGender,
+        'messageCreatedByCountryCode': message.createdByCountryCode,
+        'messageCreatedByImageUrl': message.createdByImageUrl,
+        'messageCreatedByDisplayName': message.createdByName,
+        'reportedBy': getUserId(),
+        'reportedAt': FieldValue.serverTimestamp(),
+      });
+    }
   }
 
   Stream<QuerySnapshot> streamOpenChats(ChatUser user) {

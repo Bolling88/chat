@@ -292,7 +292,7 @@ class MessageHolderScreenContent extends StatelessWidget {
   List<Widget> getChatViews(MessageHolderBaseState state) {
     return {
           state.roomChat == null
-              ? const ChatScreen()
+              ? ChatScreen(state.onlineUsers)
               : MessagesScreen(
                   state.roomChat as RoomChat,
                   false,
