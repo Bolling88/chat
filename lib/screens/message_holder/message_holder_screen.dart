@@ -467,7 +467,11 @@ Widget getChatImage(
             showVisitScreen(
                 context, chat.getOtherUserId(getUserId()), chat, false);
           },
-          child: AppUserImage(url: user.pictureData, gender: user.gender));
+          child: AppUserImage(
+            url: user.pictureData,
+            gender: user.gender,
+            isApproved: ImageApproval.fromValue(user.approvedImage),
+          ));
     } else {
       return const SizedBox.shrink();
     }

@@ -162,7 +162,10 @@ class ChatsScreenContent extends StatelessWidget {
                                             .message
                                             ?.createdByCountryCode
                                             .toLowerCase() ??
-                                        '',
+                                        '', approvedImage: state
+                                      .messages[getActualIndex(index)]
+                                      .message
+                                      ?.approvedImage ?? 0,
                                   );
                                 }
                               },

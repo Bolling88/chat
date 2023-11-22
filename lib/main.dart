@@ -8,6 +8,7 @@ import 'package:chat/screens/onboarding_gender/onboarding_gender_screen.dart';
 import 'package:chat/screens/onboarding_name/onboarding_name_screen.dart';
 import 'package:chat/screens/onboarding_photo/onboarding_photo_screen.dart';
 import 'package:chat/screens/profile/profile_screen.dart';
+import 'package:chat/screens/review/review_screen.dart';
 import 'package:chat/screens/splash/splash_screen.dart';
 import 'package:chat/screens/terms/copyright.dart';
 import 'package:chat/screens/terms/eula.dart';
@@ -192,6 +193,7 @@ class KvitterApp extends StatelessWidget {
                 PrivacyScreen.routeName: (context) => const PrivacyScreen(),
                 CopyrightScreen.routeName: (context) => const CopyrightScreen(),
                 EulaScreen.routeName: (context) => const EulaScreen(),
+                ReviewScreen.routeName: (context) => const ReviewScreen(),
               },
             ),
           );

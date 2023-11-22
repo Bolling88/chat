@@ -21,6 +21,7 @@ class AppOtherMessageWidget extends StatelessWidget {
   final String pictureData;
   final String displayName;
   final String userId;
+  final int approvedImage;
   final int gender;
   final String countryCode;
   final Chat chat;
@@ -32,6 +33,7 @@ class AppOtherMessageWidget extends StatelessWidget {
     required this.userId,
     required this.displayName,
     required this.gender,
+    required this.approvedImage,
     required this.countryCode,
     required this.chat,
   }) : super(key: key);
@@ -55,6 +57,7 @@ class AppOtherMessageWidget extends StatelessWidget {
               padding: const EdgeInsets.only(left: 0, right: 10),
               child: AppUserImage(
                 url: pictureData,
+                isApproved: ImageApproval.fromValue(approvedImage),
                 gender: gender,
               ),
             ),

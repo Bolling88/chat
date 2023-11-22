@@ -85,7 +85,7 @@ class OnboardingGenderScreenContent extends StatelessWidget {
                   child: AppUserImage(
                 url: state.filePath,
                 gender: 0,
-                size: 110,
+                size: 110, isApproved: ImageApproval.approved,
               )),
             const SizedBox(height: 20),
             Center(

@@ -8,7 +8,9 @@ class ChatUser extends Equatable {
   final String displayName;
   final int gender;
   final String pictureData;
+  final int approvedImage;
   final bool onboardingCompleted;
+  final bool isAdmin;
   final Timestamp created;
   final Timestamp lastActive;
   final String city;
@@ -25,7 +27,9 @@ class ChatUser extends Equatable {
     required this.displayName,
     required this.gender,
     required this.pictureData,
+    required this.approvedImage,
     required this.onboardingCompleted,
+    required this.isAdmin,
     required this.created,
     required this.lastActive,
     required this.city,
@@ -43,8 +47,10 @@ class ChatUser extends Equatable {
         lastActive = json['lastActive'] ?? Timestamp.now(),
         displayName = json['displayName'] ?? "",
         onboardingCompleted = json['onboardingCompleted'] ?? false,
+        isAdmin = json['isAdmin'] ?? false,
         gender = json['gender'] ?? -1,
         pictureData = json['pictureData'] ?? "",
+        approvedImage = json['approvedImage'] ?? 0,
         city = json['city'] ?? "",
         countryCode = json['countryCode'] ?? "",
         country = json['country'] ?? "",
@@ -59,8 +65,10 @@ class ChatUser extends Equatable {
         lastActive = Timestamp.now(),
         displayName = "",
         onboardingCompleted = false,
+        isAdmin = false,
         gender = -1,
         pictureData = "",
+        approvedImage = 0,
         city = "",
         countryCode = "",
         country = "",
@@ -75,7 +83,9 @@ class ChatUser extends Equatable {
       String? displayName,
       int? gender,
       String? pictureData,
+      int? approvedImage,
       bool? onboardingCompleted,
+      bool? isAdmin,
       Timestamp? created,
       Timestamp? lastActive,
       String? city,
@@ -91,7 +101,9 @@ class ChatUser extends Equatable {
         displayName: displayName ?? this.displayName,
         gender: gender ?? this.gender,
         pictureData: pictureData ?? this.pictureData,
+        approvedImage: approvedImage ?? this.approvedImage,
         onboardingCompleted: onboardingCompleted ?? this.onboardingCompleted,
+        isAdmin: isAdmin ?? this.isAdmin,
         created: created ?? this.created,
         lastActive: lastActive ?? this.lastActive,
         city: city ?? this.city,
@@ -110,7 +122,9 @@ class ChatUser extends Equatable {
         displayName,
         gender,
         pictureData,
+        approvedImage,
         onboardingCompleted,
+        isAdmin,
         created,
         lastActive,
         city,

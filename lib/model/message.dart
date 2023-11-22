@@ -11,6 +11,7 @@ class Message extends Equatable implements Comparable<Message> {
   final String createdByCountryCode;
   final String createdByImageUrl;
   final ChatType chatType;
+  final int approvedImage;
   final Timestamp created;
 
   Message.fromJson(this.id, Map<String, dynamic> json)
@@ -21,6 +22,8 @@ class Message extends Equatable implements Comparable<Message> {
         createdByCountryCode = json['createdByCountryCode'] ?? '',
         chatType = ChatType.values[json['chatType'] ?? 0],
         createdByImageUrl = json['createdByImageUrl'] ?? "",
+        //For all users who have not updated, show it as true
+        approvedImage = json['approvedImage'] ?? 0,
         text = json['text'] ?? "";
 
   @override
@@ -33,6 +36,7 @@ class Message extends Equatable implements Comparable<Message> {
         createdByGender,
         createdByCountryCode,
         createdByImageUrl,
+        approvedImage,
         created
       ];
 

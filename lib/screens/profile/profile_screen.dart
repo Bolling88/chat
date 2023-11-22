@@ -1,6 +1,7 @@
 //a bloc builder widget class for creating a chat
 import 'package:chat/screens/login/login_screen.dart';
 import 'package:chat/screens/onboarding_name/onboarding_name_screen.dart';
+import 'package:chat/screens/review/review_screen.dart';
 import 'package:chat/utils/gender.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -64,6 +65,7 @@ class ProfileScreenBuilder extends StatelessWidget {
                   child: AppUserImage(
                     url: state.user.pictureData,
                     gender: state.user.gender,
+                    isApproved: ImageApproval.approved,
                     size: 120,
                   ),
                   onTap: () {
@@ -134,7 +136,7 @@ class ProfileScreenBuilder extends StatelessWidget {
                     Navigator.pushNamed(
                         blocContext, OnboardingGenderScreen.routeName,
                         arguments:
-                        OnboardingGenderScreenArguments(isEditMode: true));
+                            OnboardingGenderScreenArguments(isEditMode: true));
                   },
                   label: Text(translate(context, 'change_gender')),
                 ),
@@ -146,6 +148,15 @@ class ProfileScreenBuilder extends StatelessWidget {
                   },
                   label: Text(translate(context, 'leave_feedback')),
                 ),
+                const SizedBox(height: 20),
+                if (state.user.isAdmin)
+                  ElevatedButton.icon(
+                    icon: const Icon(Icons.admin_panel_settings),
+                    onPressed: () {
+                      Navigator.pushNamed(blocContext, ReviewScreen.routeName);
+                    },
+                    label: const Text('Review profile pictures'),
+                  ),
                 Expanded(child: Container()),
                 ElevatedButton.icon(
                   icon: const Icon(Icons.exit_to_app),

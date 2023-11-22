@@ -34,6 +34,28 @@ enum Gender {
   final int value;
 }
 
+enum ImageApproval {
+  notReviewed(0),
+  notApproved(1),
+  approved(2);
+
+  const ImageApproval(this.value);
+
+  static ImageApproval fromValue(num i) {
+    if (i < 0 || i > 2) {
+      i = 0;
+    }
+    return ImageApproval.values.firstWhere((x) => x.value == i);
+  }
+
+  //Get all genders in list
+  static List<ImageApproval> getAsList() {
+    return ImageApproval.values;
+  }
+
+  final int value;
+}
+
 enum ChatType {
   message(0),
   joined(1),
@@ -161,6 +183,7 @@ class FirestoreRepository {
           'createdByGender': user.gender,
           'createdByCountryCode': user.countryCode,
           'createdByImageUrl': user.pictureData,
+          'approvedImage': user.approvedImage,
           'created': FieldValue.serverTimestamp()
         });
       }
@@ -174,6 +197,7 @@ class FirestoreRepository {
         'createdByGender': user.gender,
         'createdByCountryCode': user.countryCode,
         'createdByImageUrl': user.pictureData,
+        'approvedImage': user.approvedImage,
         'created': FieldValue.serverTimestamp()
       });
     }
@@ -232,6 +256,14 @@ class FirestoreRepository {
   Stream<QuerySnapshot> streamUser() {
     return users
         .where(FieldPath.documentId, isEqualTo: getUserId())
+        .limit(1)
+        .snapshots();
+  }
+
+  Stream<QuerySnapshot> streamUnapprovedImages() {
+    return users
+        .where('approvedImage', isEqualTo: 0)
+        .where('pictureData', isNotEqualTo: '')
         .snapshots();
   }
 
@@ -417,7 +449,7 @@ class FirestoreRepository {
     }, SetOptions(merge: true));
   }
 
-  void reportMessage(Message message) async  {
+  void reportMessage(Message message) async {
     if (kDebugMode) {
       //Delete the message
       try {
@@ -489,6 +521,7 @@ class FirestoreRepository {
   Stream<QuerySnapshot> streamUserById(String userId) {
     return users
         .where(FieldPath.documentId, isEqualTo: userId)
+        .limit(1)
         .snapshots()
         .handleError((error) {
       Log.e("Failed to get user: $error");
@@ -553,5 +586,25 @@ class FirestoreRepository {
       'createdByCountryName': user.country,
       'created': FieldValue.serverTimestamp(),
     });
+  }
+
+  approveImage(String id) async {
+    await users.doc(id).set({
+      'approvedImage': ImageApproval.approved.value,
+    }, SetOptions(merge: true));
+  }
+
+  rejectImage(String id) async {
+    await users.doc(id).set({
+      'approvedImage': ImageApproval.notApproved.value,
+      'pictureData': '',
+    }, SetOptions(merge: true));
+
+    try {
+      await _deleteAllUserFiles(id);
+      Log.d("Files deleted successfully");
+    } catch (e) {
+      Log.d("Error deleting files: $e");
+    }
   }
 }
