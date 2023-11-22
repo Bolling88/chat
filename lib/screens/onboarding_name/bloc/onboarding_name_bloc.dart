@@ -28,14 +28,15 @@ class OnboardingNameBloc
       });
     } else if (event is OnboardingNameContinueClickedEvent) {
       if (currentState is OnboardingNameBaseState) {
-        yield currentState.copyWith(isValidatingName: true);
+        final name = currentState.displayName.trim();
+        yield currentState.copyWith(isValidatingName: true, displayName: name);
         final nameAvailable = await _firestoreRepository
-            .getIsNameAvailable(currentState.displayName);
+            .getIsNameAvailable(name);
         if (!nameAvailable) {
           yield currentState.copyWith(
               isValidatingName: false, isNameTaken: true);
         } else {
-          final fullName = currentState.displayName;
+          final fullName = name;
           final searchArray = _getSearchArray(fullName);
           await _firestoreRepository.updateUserDisplayName(
               fullName, searchArray);
