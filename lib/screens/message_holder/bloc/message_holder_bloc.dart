@@ -332,6 +332,10 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
     userStream = _firestoreRepository.streamUser().listen((event) async {
       final user = ChatUser.fromJson(
           event.docs.first.id, event.docs.first.data() as Map<String, dynamic>);
+      if (ApprovedImage.fromValue(user.approvedImage) == ApprovedImage.notSet &&
+          user.pictureData.isNotEmpty) {
+        _firestoreRepository.updateImageNotReviewedStatus();
+      }
       add(MessageHolderUserUpdatedEvent(user));
     });
   }

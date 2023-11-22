@@ -470,7 +470,7 @@ Widget getChatImage(
           child: AppUserImage(
             url: user.pictureData,
             gender: user.gender,
-            isApproved: ImageApproval.fromValue(user.approvedImage),
+            isApproved: ApprovedImage.fromValue(user.approvedImage),
           ));
     } else {
       return const SizedBox.shrink();

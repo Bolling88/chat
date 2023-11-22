@@ -34,23 +34,24 @@ enum Gender {
   final int value;
 }
 
-enum ImageApproval {
+enum ApprovedImage {
   notReviewed(0),
   notApproved(1),
-  approved(2);
+  approved(2),
+  notSet(3);
 
-  const ImageApproval(this.value);
+  const ApprovedImage(this.value);
 
-  static ImageApproval fromValue(num i) {
-    if (i < 0 || i > 2) {
+  static ApprovedImage fromValue(num i) {
+    if (i < 0 || i > 3) {
       i = 0;
     }
-    return ImageApproval.values.firstWhere((x) => x.value == i);
+    return ApprovedImage.values.firstWhere((x) => x.value == i);
   }
 
   //Get all genders in list
-  static List<ImageApproval> getAsList() {
-    return ImageApproval.values;
+  static List<ApprovedImage> getAsList() {
+    return ApprovedImage.values;
   }
 
   final int value;
@@ -103,6 +104,7 @@ class FirestoreRepository {
         .set({
           'email': email,
           'created': FieldValue.serverTimestamp(),
+          'approvedImage': ApprovedImage.notReviewed.value,
         }, SetOptions(merge: true))
         .then((value) => Log.d("User updated"))
         .catchError((error) => Log.e("Failed to add user: $error"));
@@ -136,6 +138,7 @@ class FirestoreRepository {
         .doc(getUserId())
         .set({
           'pictureData': profileImageUrl,
+          'approvedImage': ApprovedImage.notReviewed.value,
         }, SetOptions(merge: true))
         .then((value) => Log.d("User profile image updated"))
         .catchError((error) => Log.e("Failed to update user image: $error"));
@@ -570,6 +573,12 @@ class FirestoreRepository {
     }, SetOptions(merge: true));
   }
 
+  void updateImageNotReviewedStatus() {
+    users.doc(getUserId()).set({
+      'approvedImage': ApprovedImage.notReviewed.value,
+    }, SetOptions(merge: true));
+  }
+
   void saveFcmTokenOnUser(fcmToken) {
     users.doc(getUserId()).set({
       'fcmToken': fcmToken,
@@ -590,13 +599,13 @@ class FirestoreRepository {
 
   approveImage(String id) async {
     await users.doc(id).set({
-      'approvedImage': ImageApproval.approved.value,
+      'approvedImage': ApprovedImage.approved.value,
     }, SetOptions(merge: true));
   }
 
   rejectImage(String id) async {
     await users.doc(id).set({
-      'approvedImage': ImageApproval.notApproved.value,
+      'approvedImage': ApprovedImage.notApproved.value,
       'pictureData': '',
     }, SetOptions(merge: true));
 

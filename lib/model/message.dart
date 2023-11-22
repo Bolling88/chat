@@ -23,7 +23,7 @@ class Message extends Equatable implements Comparable<Message> {
         chatType = ChatType.values[json['chatType'] ?? 0],
         createdByImageUrl = json['createdByImageUrl'] ?? "",
         //For all users who have not updated, show it as true
-        approvedImage = json['approvedImage'] ?? 0,
+        approvedImage = json['approvedImage'] ?? ApprovedImage.notSet.value,
         text = json['text'] ?? "";
 
   @override

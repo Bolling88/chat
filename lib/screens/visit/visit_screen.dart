@@ -128,7 +128,7 @@ class VisitScreenContent extends StatelessWidget {
                         child: AppUserImage(
                       url: user.pictureData,
                       gender: user.gender,
-                      isApproved: ImageApproval.fromValue(user.approvedImage),
+                      isApproved: ApprovedImage.fromValue(user.approvedImage),
                       size: 110,
                     )),
                   ),

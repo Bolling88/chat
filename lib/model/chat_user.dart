@@ -50,7 +50,7 @@ class ChatUser extends Equatable {
         isAdmin = json['isAdmin'] ?? false,
         gender = json['gender'] ?? -1,
         pictureData = json['pictureData'] ?? "",
-        approvedImage = json['approvedImage'] ?? 0,
+        approvedImage = json['approvedImage'] ?? ApprovedImage.notSet.value,
         city = json['city'] ?? "",
         countryCode = json['countryCode'] ?? "",
         country = json['country'] ?? "",

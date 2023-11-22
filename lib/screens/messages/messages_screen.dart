@@ -165,7 +165,7 @@ class ChatsScreenContent extends StatelessWidget {
                                         '', approvedImage: state
                                       .messages[getActualIndex(index)]
                                       .message
-                                      ?.approvedImage ?? 0,
+                                      ?.approvedImage ?? ApprovedImage.notReviewed.value,
                                   );
                                 }
                               },

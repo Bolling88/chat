@@ -18,7 +18,7 @@ class AppUserImage extends StatelessWidget {
   final String url;
   final int gender;
   final double? size;
-  final ImageApproval isApproved;
+  final ApprovedImage isApproved;
 
   const AppUserImage({
     required this.url,
@@ -32,7 +32,7 @@ class AppUserImage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ClipOval(
       child: CachedNetworkImage(
-        imageUrl: url.isEmpty || isApproved == ImageApproval.notApproved
+        imageUrl: url.isEmpty || isApproved == ApprovedImage.notApproved
             ? getGenderImageUrl(Gender.fromValue(
                 (gender < 0 || gender > 3) ? 3 : gender,
               ))

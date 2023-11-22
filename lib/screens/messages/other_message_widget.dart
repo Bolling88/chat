@@ -57,7 +57,7 @@ class AppOtherMessageWidget extends StatelessWidget {
               padding: const EdgeInsets.only(left: 0, right: 10),
               child: AppUserImage(
                 url: pictureData,
-                isApproved: ImageApproval.fromValue(approvedImage),
+                isApproved: ApprovedImage.fromValue(approvedImage),
                 gender: gender,
               ),
             ),
