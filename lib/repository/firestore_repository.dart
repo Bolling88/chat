@@ -609,6 +609,16 @@ class FirestoreRepository {
       'pictureData': '',
     }, SetOptions(merge: true));
 
+    //Also delete the image from all messages
+    await messages
+        .where('createdById', isEqualTo: id)
+        .get()
+        .then((value) => value.docs.forEach((element) {
+              messages.doc(element.id).set({
+                'createdByImageUrl': '',
+              }, SetOptions(merge: true));
+            }));
+
     try {
       await _deleteAllUserFiles(id);
       Log.d("Files deleted successfully");
