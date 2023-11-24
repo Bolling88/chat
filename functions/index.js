@@ -7,48 +7,55 @@ const cors = require('cors')({origin: true});
 exports.deletePrivateChatOnLastLeft = functions.firestore
   .document('/privateChats/{documentId}')
   .onUpdate(async (change, context) => {
-    const messageData = change.after.data();
-    const users = messageData.users;
+    const beforeData = change.before.data();
+    const afterData = change.after.data();
+    const users = afterData.users;
     console.log("Array size: " + users.length);
 
     if (users.length < 2) {
       console.log("Last person left private chat, deleting");
       return change.after.ref.delete();
     } else {
-      console.log("People are still chatting, send a push");
-      const userRef = admin.firestore().collection("users").doc(messageData.sendPushToUserId);
+      // Check if the last message has changed
+      if (beforeData.lastMessage !== afterData.lastMessage) {
+        console.log("New message detected, sending a push notification");
 
-      try {
-        const userSnapshot = await userRef.get();
+        const userRef = admin.firestore().collection("users").doc(afterData.sendPushToUserId);
 
-        if (userSnapshot.exists) {
-          const userData = userSnapshot.data();
-          console.log("User data:", userData);
+        try {
+          const userSnapshot = await userRef.get();
 
-          const token = userData.fcmToken;
-          const payload = {
-            notification: {
-              title: messageData.lastMessageByName,
-              body: messageData.lastMessage,
-              badge: "1",
+          if (userSnapshot.exists) {
+            const userData = userSnapshot.data();
+            console.log("User data:", userData);
+
+            const token = userData.fcmToken;
+            const payload = {
+              notification: {
+                title: afterData.lastMessageByName,
+                body: afterData.lastMessage,
+                badge: "1",
+              }
+            };
+
+            const recipientTokens = [token];
+
+            try {
+              const response = await admin.messaging().sendToDevice(recipientTokens, payload);
+              console.log("Notification sent successfully:", response);
+            } catch (error) {
+              console.error("Error sending notification:", error);
             }
-          };
-
-          const recipientTokens = [token];
-
-          try {
-            const response = await admin.messaging().sendToDevice(recipientTokens, payload);
-            console.log("Notification sent successfully:", response);
-          } catch (error) {
-            console.error("Error sending notification:", error);
+          } else {
+            console.log("User not found");
           }
-        } else {
-          console.log("User not found");
+        } catch (error) {
+          console.error("Error getting user data:", error);
         }
-      } catch (error) {
-        console.error("Error getting user data:", error);
+      } else {
+        console.log("No new message, skipping push notification");
       }
-      
+
       return null;
     }
   });
