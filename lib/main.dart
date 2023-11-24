@@ -36,7 +36,13 @@ import 'firebase_options.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  if (!kIsWeb) MobileAds.instance.initialize();
+  if (!kIsWeb) {
+    MobileAds.instance.initialize().then((initializationStatus) {
+      initializationStatus.adapterStatuses.forEach((key, value) {
+        debugPrint('Adapter status for $key: ${value.description}');
+      });
+    });
+  }
   final FlutterI18nDelegate flutterI18nDelegate = FlutterI18nDelegate(
     translationLoader: FileTranslationLoader(
         fallbackFile: 'en', basePath: 'assets/flutter_i18n'),
@@ -145,10 +151,12 @@ class KvitterApp extends StatelessWidget {
                 ),
                 dialogTheme: DialogTheme(
                   backgroundColor: AppColors.white,
-                  titleTextStyle: GoogleFonts.lobster(
-                      fontSize: 30, color: AppColors.main),
+                  titleTextStyle:
+                      GoogleFonts.lobster(fontSize: 30, color: AppColors.main),
                   contentTextStyle: const TextStyle(
-                      fontWeight: FontWeight.w600, color: AppColors.grey_1, fontSize: 16),
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.grey_1,
+                      fontSize: 16),
                 ),
                 textTheme: TextTheme(
                   displayLarge: GoogleFonts.lobster(color: AppColors.main),
