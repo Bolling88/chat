@@ -6,8 +6,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_app_badger/flutter_app_badger.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:universal_io/io.dart';
 import '../../../model/room_chat.dart';
 import '../../../model/user_location.dart';
 import '../../../repository/firestore_repository.dart';
@@ -28,6 +30,8 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
   StreamSubscription<QuerySnapshot>? roomChatStream;
   StreamSubscription<QuerySnapshot>? onlineUsersStream;
   StreamSubscription<QuerySnapshot>? userStream;
+
+  InterstitialAd? _interstitialAd;
 
   MessageHolderBloc(this._firestoreRepository, this._fcmRepository)
       : super(MessageHolderLoadingState()) {
@@ -54,6 +58,9 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
       _fcmRepository.setUpPushNotification();
       _setUpUserListener();
       _updateUserLocation();
+      if(!kIsWeb) {
+        loadInterstitialAd();
+      }
       logEvent('started_chatting');
     } else if (event is MessageHolderUserUpdatedEvent) {
       if (currentState is MessageHolderBaseState) {
@@ -81,6 +88,10 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
             myUser: currentState.user,
             initialMessage: event.message,
           );
+          _interstitialAd?.show();
+          if(!kIsWeb) {
+            loadInterstitialAd();
+          }
         } else {
           final privateChat = currentState.privateChats
               .where((element) => element.users.contains(event.user.id))
@@ -250,14 +261,14 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
       if (currentState is MessageHolderBaseState) {
         yield currentState.copyWith(onlineUsers: event.users);
       }
-    }else if(event is MessageHolderShowRateDialogEvent){
-      if(currentState is MessageHolderBaseState){
+    } else if (event is MessageHolderShowRateDialogEvent) {
+      if (currentState is MessageHolderBaseState) {
         yield MessageHolderLikeDialogState(currentState);
       }
-    }else if(event is MessageHolderRateLaterAppEvent){
+    } else if (event is MessageHolderRateLaterAppEvent) {
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.setInt('app_opens', 0);
-    }else if(event is MessageHolderRateNeverAppEvent){
+    } else if (event is MessageHolderRateNeverAppEvent) {
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.setBool('rated', true);
     } else {
@@ -282,8 +293,7 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
   void _setUpPrivateChatsListener(ChatUser user) async {
     Log.d('Setting up private chats stream');
     _firestoreRepository.startPrivateChatsStream(user.id);
-    privateChatStream =
-        _firestoreRepository.privateChatsStream.listen((data) {
+    privateChatStream = _firestoreRepository.privateChatsStream.listen((data) {
       Log.d("Got private chats");
       final chats = data.docs
           .map((e) =>
@@ -320,7 +330,7 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
           users.where((element) => element.id == getUserId()).firstOrNull;
 
       //Sort users with the same country code as my users first
-      if(myUser != null) {
+      if (myUser != null) {
         sortOnlineUsers(filteredUsers, myUser.countryCode);
         add(MessageHolderUsersUpdatedEvent(filteredUsers));
       }
@@ -354,21 +364,63 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
     }
   }
 
-  void _setUpRateMyApp() async{
-    if(!kIsWeb) {
+  void _setUpRateMyApp() async {
+    if (!kIsWeb) {
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       final int appOpens = prefs.getInt('app_opens') ?? 0;
       final bool hasRatedOrDenied = prefs.getBool('rated') ?? false;
       final opens = appOpens + 1;
-      if(appOpens > 5 && hasRatedOrDenied == false){
+      if (appOpens > 5 && hasRatedOrDenied == false) {
         final InAppReview inAppReview = InAppReview.instance;
         final isInAppReviewAvailable = await inAppReview.isAvailable();
-        if(isInAppReviewAvailable) {
+        if (isInAppReviewAvailable) {
           add(MessageHolderShowRateDialogEvent());
         }
-      }else{
+      } else {
         prefs.setInt('app_opens', opens);
       }
     }
+  }
+
+  void loadInterstitialAd() {
+    InterstitialAd.load(
+        adUnitId: Platform.isAndroid
+            ? kDebugMode
+                ? 'ca-app-pub-3940256099942544/1033173712'
+                : 'ca-app-pub-5287847424239288/8506220561'
+            : kDebugMode
+                ? 'ca-app-pub-3940256099942544/4411468910'
+                : 'ca-app-pub-5287847424239288/9174975419',
+        request: const AdRequest(),
+        adLoadCallback: InterstitialAdLoadCallback(
+          // Called when an ad is successfully received.
+          onAdLoaded: (ad) {
+            ad.fullScreenContentCallback = FullScreenContentCallback(
+                // Called when the ad showed the full screen content.
+                onAdShowedFullScreenContent: (ad) {},
+                // Called when an impression occurs on the ad.
+                onAdImpression: (ad) {},
+                // Called when the ad failed to show full screen content.
+                onAdFailedToShowFullScreenContent: (ad, err) {
+                  // Dispose the ad here to free resources.
+                  ad.dispose();
+                },
+                // Called when the ad dismissed full screen content.
+                onAdDismissedFullScreenContent: (ad) {
+                  // Dispose the ad here to free resources.
+                  ad.dispose();
+                },
+                // Called when a click is recorded for an ad.
+                onAdClicked: (ad) {});
+
+            debugPrint('$ad loaded.');
+            // Keep a reference to the ad so you can show it later.
+            _interstitialAd = ad;
+          },
+          // Called when an ad request failed.
+          onAdFailedToLoad: (LoadAdError error) {
+            debugPrint('InterstitialAd failed to load: $error');
+          },
+        ));
   }
 }
