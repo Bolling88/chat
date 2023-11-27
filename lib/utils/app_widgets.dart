@@ -32,7 +32,7 @@ class AppUserImage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ClipOval(
       child: CachedNetworkImage(
-        imageUrl: url.isEmpty || isApproved == ApprovedImage.notApproved
+        imageUrl: url.isEmpty || isApproved != ApprovedImage.approved
             ? getGenderImageUrl(Gender.fromValue(
                 (gender < 0 || gender > 3) ? 3 : gender,
               ))
