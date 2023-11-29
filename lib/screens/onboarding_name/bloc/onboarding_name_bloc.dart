@@ -1,5 +1,6 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:universal_io/io.dart';
 import '../../../repository/firestore_repository.dart';
 import '../../../utils/log.dart';
 import '../../login/bloc/login_state.dart';
@@ -30,8 +31,8 @@ class OnboardingNameBloc
       if (currentState is OnboardingNameBaseState) {
         final name = currentState.displayName.trim();
         yield currentState.copyWith(isValidatingName: true, displayName: name);
-        final nameAvailable = await _firestoreRepository
-            .getIsNameAvailable(name);
+        final nameAvailable =
+            await _firestoreRepository.getIsNameAvailable(name);
         if (!nameAvailable) {
           yield currentState.copyWith(
               isValidatingName: false, isNameTaken: true);
@@ -41,7 +42,9 @@ class OnboardingNameBloc
           await _firestoreRepository.updateUserDisplayName(
               fullName, searchArray);
           final chatUser = await _firestoreRepository.getUser();
-          if (chatUser?.pictureData.isEmpty == true) {
+          if (chatUser?.birthDate == null && Platform.isAndroid) {
+            yield const OnboardingNameSuccessState(OnboardingNavigation.AGE);
+          } else if (chatUser?.pictureData.isEmpty == true) {
             yield const OnboardingNameSuccessState(
                 OnboardingNavigation.PICTURE);
           } else if (chatUser?.gender == -1) {

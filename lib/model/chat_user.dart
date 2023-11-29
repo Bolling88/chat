@@ -20,6 +20,7 @@ class ChatUser extends Equatable {
   final bool presence;
   final String currentRoomChatId;
   final String fcmToken;
+  final Timestamp? birthDate;
   final List<String> blockedBy;
 
   const ChatUser({
@@ -39,6 +40,7 @@ class ChatUser extends Equatable {
     required this.blockedBy,
     required this.presence,
     required this.fcmToken,
+    required this.birthDate,
     required this.currentRoomChatId,
   });
 
@@ -58,6 +60,7 @@ class ChatUser extends Equatable {
         presence = json['presence'] ?? false,
         currentRoomChatId = json['currentRoomChatId'] ?? '',
         fcmToken = json['fcmToken'] ?? '',
+        birthDate = json['birthDate'],
         blockedBy = json['blockedBy']?.cast<String>() ?? [];
 
   ChatUser.asUnknown(this.id)
@@ -76,6 +79,7 @@ class ChatUser extends Equatable {
         currentRoomChatId = '',
         regionName = "",
         fcmToken = "",
+        birthDate = null,
         blockedBy = [];
 
   ChatUser copyWith(
@@ -95,6 +99,7 @@ class ChatUser extends Equatable {
       bool? presence,
       String? currentRoomChatId,
       String? fcmToken,
+      Timestamp? birthDate,
       List<String>? blockedBy}) {
     return ChatUser(
         id: id,
@@ -113,6 +118,7 @@ class ChatUser extends Equatable {
         currentRoomChatId: currentRoomChatId ?? this.currentRoomChatId,
         regionName: regionName ?? this.regionName,
         fcmToken: fcmToken ?? this.fcmToken,
+        birthDate: birthDate ?? this.birthDate,
         blockedBy: blockedBy ?? this.blockedBy);
   }
 
@@ -134,6 +140,7 @@ class ChatUser extends Equatable {
         currentRoomChatId,
         regionName,
         fcmToken,
+        birthDate,
         blockedBy,
       ];
 

@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
+import 'package:universal_io/io.dart';
 import '../../repository/firestore_repository.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_widgets.dart';
 import '../chat/chat_screen.dart';
 import '../login/bloc/login_state.dart';
 import '../message_holder/message_holder_screen.dart';
+import '../onboarding_age/onboarding_age_screen.dart';
 import '../onboarding_gender/onboarding_gender_screen.dart';
 import '../onboarding_photo/onboarding_photo_screen.dart';
 import 'bloc/onboarding_name_bloc.dart';
@@ -55,6 +57,10 @@ class OnboardingNameScreenContent extends StatelessWidget {
             if (state is OnboardingNameSuccessState) {
               if (isEditMode) {
                 Navigator.of(context).pop();
+              } else if (state.navigation == OnboardingNavigation.AGE) {
+                Navigator.of(context).popUntil((route) => route.isFirst);
+                Navigator.pushReplacementNamed(
+                    context, OnboardingAgeScreen.routeName);
               } else if (state.navigation == OnboardingNavigation.PICTURE) {
                 Navigator.of(context).popUntil((route) => route.isFirst);
                 Navigator.pushReplacementNamed(
@@ -155,7 +161,6 @@ class OnboardingNameScreenContent extends StatelessWidget {
                           FlutterI18n.translate(context, "write_firstname"))),
             ),
           ),
-          const SizedBox(height: 10),
           (state.displayName.isNotEmpty &&
                   !state.isNameTaken &&
                   !state.isValidatingName)

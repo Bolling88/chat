@@ -94,5 +94,13 @@
   "rate_app_title_message": "We are so happy you like it! Could you please support us by rating the app?",
   "change_gender": "Change gender",
   "change_gender_question_mark": "Wrong gender?",
-  "it_happens_exclamation": "It happens!"
+  "it_happens_exclamation": "It happens!",
+  "select_age": "Select birthday",
+  "change_age": "Change birthday",
+  "change_age_question_mark": "Change birthday?",
+  "age_title": "Next thing",
+  "how_old_are_you": "when are you born?",
+  "age_change_message": "Yeah why not!",
+  "age_button_description": "Select your birthdate below",
+  "age_error": "Sorry you have to be 18 years or older to use this app :("
 }

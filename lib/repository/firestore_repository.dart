@@ -120,6 +120,16 @@ class FirestoreRepository {
         .catchError((error) => Log.e("Failed to update user gender: $error"));
   }
 
+  Future<void> updateUserBirthday(DateTime birthDate) async {
+    return users
+        .doc(getUserId())
+        .set({
+      'birthDate': Timestamp.fromDate(birthDate),
+    }, SetOptions(merge: true))
+        .then((value) => Log.d("User birthday updated"))
+        .catchError((error) => Log.e("Failed to update user birthdate: $error"));
+  }
+
   Future<void> updateUserDisplayName(
       String fullName, List<String> searchArray) async {
     return users

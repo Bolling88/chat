@@ -2,6 +2,7 @@ import 'package:chat/repository/firestore_repository.dart';
 import 'package:chat/screens/splash/bloc/splash_state.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:universal_io/io.dart';
 import '../../../utils/log.dart';
 import '../../login/bloc/login_state.dart';
 import 'splash_event.dart';
@@ -24,6 +25,8 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
             yield SplashLoginState();
           } else if (chatUser.displayName.isEmpty) {
             yield const SplashSuccessState(OnboardingNavigation.NAME);
+          }else if(chatUser.birthDate == null && Platform.isAndroid){
+            yield const SplashSuccessState(OnboardingNavigation.AGE);
           } else if (chatUser.gender == -1) {
             yield const SplashSuccessState(OnboardingNavigation.GENDER);
           } else {

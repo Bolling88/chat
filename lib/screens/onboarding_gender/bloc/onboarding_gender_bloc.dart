@@ -20,16 +20,16 @@ class OnboardingGenderBloc
       final user = await _firestoreRepository.getUser();
       yield OnboardingGenderBaseState(user!.pictureData);
     } else if (event is OnboardingGenderMaleClickedEvent) {
-      await _firestoreRepository.updateUserGender(Gender.male);
+      _firestoreRepository.updateUserGender(Gender.male);
       yield const OnboardingGenderSuccessState(OnboardingNavigation.DONE);
     } else if (event is OnboardingGenderFemaleClickedEvent) {
-      await _firestoreRepository.updateUserGender(Gender.female);
+      _firestoreRepository.updateUserGender(Gender.female);
       yield const OnboardingGenderSuccessState(OnboardingNavigation.DONE);
     } else if (event is OnboardingGenderNonBinaryClickedEvent) {
-      await _firestoreRepository.updateUserGender(Gender.nonBinary);
+      _firestoreRepository.updateUserGender(Gender.nonBinary);
       yield const OnboardingGenderSuccessState(OnboardingNavigation.DONE);
-    }else if (event is OnboardingGenderSecretClickedEvent) {
-      await _firestoreRepository.updateUserGender(Gender.secret);
+    } else if (event is OnboardingGenderSecretClickedEvent) {
+      _firestoreRepository.updateUserGender(Gender.secret);
       yield const OnboardingGenderSuccessState(OnboardingNavigation.DONE);
     }
   }
