@@ -96,7 +96,7 @@ class OnboardingAgeScreenContent extends StatelessWidget {
               child: Text(
                 isEditMode
                     ? FlutterI18n.translate(context, "change_age_question_mark")
-                    : FlutterI18n.translate(context, "age_title"),
+                    : state.displayName,
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.displayLarge,
               ),

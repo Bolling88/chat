@@ -24,6 +24,4 @@ class ProfileBaseState extends ProfileState {
 
 class ProfileLoadingState extends ProfileState {}
 
-class ProfileLogoutState extends ProfileState {}
-
 class ProfileErrorState extends ProfileState {}

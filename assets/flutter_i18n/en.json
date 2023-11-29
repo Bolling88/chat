@@ -98,9 +98,9 @@
   "select_age": "Select birthday",
   "change_age": "Change birthday",
   "change_age_question_mark": "Change birthday?",
-  "age_title": "Next thing",
   "how_old_are_you": "when are you born?",
   "age_change_message": "Yeah why not!",
   "age_button_description": "Select your birthdate below",
-  "age_error": "Sorry you have to be 18 years or older to use this app :("
+  "age_error": "Sorry you have to be 18 years or older to use this app :(",
+  "edit_profile": "Edit profile"
 }

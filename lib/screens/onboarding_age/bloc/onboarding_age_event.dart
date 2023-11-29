@@ -19,3 +19,4 @@ class OnboardingAgeChangedEvent extends OnboardingAgeEvent{
 }
 
 class OnboardingAgeContinueClickedEvent extends OnboardingAgeEvent{}
+class OnboardingAgeInitialEvent extends OnboardingAgeEvent{}

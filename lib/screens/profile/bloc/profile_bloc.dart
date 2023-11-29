@@ -4,7 +4,6 @@ import 'package:chat/repository/firestore_repository.dart';
 import 'package:chat/screens/profile/bloc/profile_event.dart';
 import 'package:chat/screens/profile/bloc/profile_state.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../model/chat_user.dart';
 import '../../../utils/log.dart';
@@ -30,30 +29,8 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     try {
       if (event is ProfileInitialEvent) {
         setUpUserListener();
-      } else if (event is ProfileDeleteAccountEvent) {
-        if (currentState is ProfileBaseState) {
-          yield ProfileLoadingState();
-          Log.d('Deleting user');
-          _firestoreRepository.updateUserPresence(present: false);
-          _firestoreRepository.leaveAllPrivateChats();
-          await _firestoreRepository.deleteUserAndFiles();
-          yield ProfileLogoutState();
-        }
       } else if (event is ProfileUserChangedEvent) {
         yield ProfileBaseState(user: event.user);
-      } else if (event is ProfileLogoutEvent) {
-        yield ProfileLoadingState();
-        //Check if user is anonymous
-        _firestoreRepository.updateUserPresence(present: false);
-        _firestoreRepository.leaveAllPrivateChats();
-        if (FirebaseAuth.instance.currentUser?.isAnonymous == true) {
-          //Delete user
-          await _firestoreRepository.deleteUserAndFiles();
-        } else {
-          //else just sign out the user
-          await FirebaseAuth.instance.signOut();
-        }
-        yield ProfileLogoutState();
       } else {
         Log.e('ProfileBloc: Not implemented');
         throw UnimplementedError();

@@ -16,6 +16,7 @@ import '../../model/room_chat.dart';
 import '../../repository/presence_database.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_widgets.dart';
+import '../account/account_screen.dart';
 import '../messages/messages_screen.dart';
 import '../people/people_screen.dart';
 import '../profile/profile_screen.dart';
@@ -380,7 +381,7 @@ class MessageHolderScreenContent extends StatelessWidget {
             Icons.settings,
           ),
           onPressed: () {
-            Navigator.pushNamed(context, ProfileScreen.routeName);
+            Navigator.pushNamed(context, AccountScreen.routeName);
           },
         )
       ],

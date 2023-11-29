@@ -3,6 +3,7 @@ import 'package:chat/repository/firestore_repository.dart';
 import 'package:chat/repository/login_repository.dart';
 import 'package:chat/repository/presence_database.dart';
 import 'package:chat/repository/storage_repository.dart';
+import 'package:chat/screens/account/account_screen.dart';
 import 'package:chat/screens/message_holder/message_holder_screen.dart';
 import 'package:chat/screens/onboarding_age/onboarding_age_screen.dart';
 import 'package:chat/screens/onboarding_gender/onboarding_gender_screen.dart';
@@ -200,6 +201,7 @@ class KvitterApp extends StatelessWidget {
                 MessageHolderScreen.routeName: (context) =>
                     const MessageHolderScreen(),
                 ProfileScreen.routeName: (context) => const ProfileScreen(),
+                AccountScreen.routeName: (context) => const AccountScreen(),
                 TermsScreen.routeName: (context) => const TermsScreen(),
                 PrivacyScreen.routeName: (context) => const PrivacyScreen(),
                 CopyrightScreen.routeName: (context) => const CopyrightScreen(),

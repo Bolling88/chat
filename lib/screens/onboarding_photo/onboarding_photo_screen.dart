@@ -9,7 +9,6 @@ import 'package:universal_io/io.dart';
 import '../../repository/firestore_repository.dart';
 import '../../repository/storage_repository.dart';
 import '../../utils/app_widgets.dart';
-import '../chat/chat_screen.dart';
 import '../login/bloc/login_state.dart';
 import '../onboarding_gender/onboarding_gender_screen.dart';
 import 'bloc/onboarding_photo_bloc.dart';

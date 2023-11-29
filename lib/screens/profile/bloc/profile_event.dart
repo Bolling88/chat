@@ -10,9 +10,6 @@ abstract class ProfileEvent extends Equatable {
 }
 
 class ProfileInitialEvent extends ProfileEvent {}
-class ProfileDeleteAccountEvent extends ProfileEvent {}
-class ProfileLogoutEvent extends ProfileEvent {}
-class ProfileContinueClickedEvent extends ProfileEvent {}
 class ProfileUserChangedEvent extends ProfileEvent {
   final ChatUser user;
 

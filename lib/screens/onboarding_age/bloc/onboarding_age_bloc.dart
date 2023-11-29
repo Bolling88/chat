@@ -8,12 +8,21 @@ class OnboardingAgeBloc extends Bloc<OnboardingAgeEvent, OnboardingAgeState> {
   final FirestoreRepository _firestoreRepository;
 
   OnboardingAgeBloc(this._firestoreRepository)
-      : super(OnboardingAgeBaseState(DateTime(2000, 1, 1), false));
+      : super(OnboardingAgeLoadingState()) {
+    add(OnboardingAgeInitialEvent());
+  }
 
   @override
   Stream<OnboardingAgeState> mapEventToState(OnboardingAgeEvent event) async* {
     final currentState = state;
-    if (event is OnboardingAgeChangedEvent) {
+    if (event is OnboardingAgeInitialEvent) {
+      final user = await _firestoreRepository.getUser();
+      yield OnboardingAgeBaseState(
+        user?.birthDate?.toDate() ?? DateTime(2000, 1, 1),
+        false,
+        user?.displayName ?? '',
+      );
+    } else if (event is OnboardingAgeChangedEvent) {
       if (currentState is OnboardingAgeBaseState) {
         yield currentState.copyWith(
           birthDate: event.date,

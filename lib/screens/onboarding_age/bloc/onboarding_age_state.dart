@@ -12,16 +12,20 @@ abstract class OnboardingAgeState extends Equatable {
 class OnboardingAgeBaseState extends OnboardingAgeState {
   final DateTime birthDate;
   final bool showInvalidAgeError;
+  final String displayName;
 
-  const OnboardingAgeBaseState(this.birthDate, this.showInvalidAgeError);
+  const OnboardingAgeBaseState(
+      this.birthDate, this.showInvalidAgeError, this.displayName);
 
   @override
-  List<Object> get props => [birthDate, showInvalidAgeError];
+  List<Object> get props => [birthDate, showInvalidAgeError, displayName];
 
   OnboardingAgeBaseState copyWith(
-      {DateTime? birthDate, bool? showInvalidAgeError}) {
-    return OnboardingAgeBaseState(birthDate ?? this.birthDate,
-        showInvalidAgeError ?? this.showInvalidAgeError);
+      {DateTime? birthDate, bool? showInvalidAgeError, String? displayName}) {
+    return OnboardingAgeBaseState(
+        birthDate ?? this.birthDate,
+        showInvalidAgeError ?? this.showInvalidAgeError,
+        displayName ?? this.displayName);
   }
 }
 
