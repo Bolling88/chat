@@ -31,6 +31,10 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         setUpUserListener();
       } else if (event is ProfileUserChangedEvent) {
         yield ProfileBaseState(user: event.user);
+      }else if(event is ProfileShowAgeChangedEvent){
+        if(currentState is ProfileBaseState){
+          _firestoreRepository.updateUserShowAge(event.showAge);
+        }
       } else {
         Log.e('ProfileBloc: Not implemented');
         throw UnimplementedError();

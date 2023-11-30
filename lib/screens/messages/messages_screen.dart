@@ -157,6 +157,14 @@ class ChatsScreenContent extends StatelessWidget {
                                         .message!
                                         .createdByGender,
                                     chat: chat,
+                                    birthDate: state
+                                        .messages[getActualIndex(index)]
+                                        .message
+                                        ?.birthDate,
+                                    showAge: state
+                                        .messages[getActualIndex(index)]
+                                        .message
+                                        ?.showAge ?? true,
                                     countryCode: state
                                             .messages[getActualIndex(index)]
                                             .message

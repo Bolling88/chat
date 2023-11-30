@@ -102,5 +102,6 @@
   "age_change_message": "Yeah why not!",
   "age_button_description": "Select your birthdate below",
   "age_error": "Sorry you have to be 18 years or older to use this app :(",
-  "edit_profile": "Edit profile"
+  "edit_profile": "Edit profile",
+  "show_age": "Show my age"
 }

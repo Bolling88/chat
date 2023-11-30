@@ -18,3 +18,12 @@ class ProfileUserChangedEvent extends ProfileEvent {
   @override
   List<Object> get props => [user];
 }
+
+class ProfileShowAgeChangedEvent extends ProfileEvent {
+  final bool showAge;
+
+  const ProfileShowAgeChangedEvent(this.showAge);
+
+  @override
+  List<Object> get props => [showAge];
+}

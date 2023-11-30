@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chat/screens/messages/bloc/messages_bloc.dart';
 import 'package:chat/utils/lottie.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
@@ -12,6 +13,7 @@ import '../../utils/app_colors.dart';
 import '../../utils/app_widgets.dart';
 import '../../utils/flag.dart';
 import '../../utils/gender.dart';
+import '../account/account_screen.dart';
 import '../visit/visit_screen.dart';
 import 'bloc/messages_event.dart';
 import 'my_message_widget.dart';
@@ -24,6 +26,8 @@ class AppOtherMessageWidget extends StatelessWidget {
   final int approvedImage;
   final int gender;
   final String countryCode;
+  final Timestamp? birthDate;
+  final bool showAge;
   final Chat chat;
 
   const AppOtherMessageWidget({
@@ -35,6 +39,8 @@ class AppOtherMessageWidget extends StatelessWidget {
     required this.gender,
     required this.approvedImage,
     required this.countryCode,
+    required this.birthDate,
+    required this.showAge,
     required this.chat,
   }) : super(key: key);
 
@@ -122,6 +128,13 @@ class AppOtherMessageWidget extends StatelessWidget {
                                       animate: false,
                                     )),
                               const SizedBox(width: 2),
+                              if (birthDate != null && showAge)
+                                Text(
+                                  getAge(birthDate),
+                                  style: Theme.of(context).textTheme.displaySmall?.merge(TextStyle(
+                                      color: getGenderColor(Gender.fromValue(gender)), fontSize: 16)),
+                                ),
+                              if (birthDate != null) const SizedBox(width: 8),
                               getFlag(countryCode: countryCode, fontSize: 16),
                             ],
                           ),

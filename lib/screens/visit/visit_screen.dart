@@ -11,6 +11,7 @@ import '../../utils/flag.dart';
 import '../../utils/gender.dart';
 import '../../utils/lottie.dart';
 import '../../utils/translate.dart';
+import '../account/account_screen.dart';
 import '../full_screen_image/full_screen_image_screen.dart';
 import '../message_holder/bloc/message_holder_bloc.dart';
 import '../message_holder/bloc/message_holder_event.dart';
@@ -134,30 +135,13 @@ class VisitScreenContent extends StatelessWidget {
                   ),
                 ),
                 Center(
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        state.user?.displayName ?? '',
-                        style: Theme.of(context).textTheme.displaySmall?.merge(
-                            TextStyle(
-                                color: getGenderColor(
-                                    Gender.fromValue(user.gender)))),
-                      ),
-                      const SizedBox(width: 2),
-                      if (user.gender != Gender.secret.value)
-                        SizedBox(
-                            width: 30,
-                            height: 30,
-                            child: AppLottie(
-                              url: getGenderUrl(user.gender),
-                              animate: false,
-                            )),
-                      getFlag(
-                          countryCode: state.user?.countryCode ?? '',
-                          fontSize: 30)
-                    ],
-                  ),
+                  child: getProfileRow(
+                      displayName: user.displayName,
+                      gender: user.gender,
+                      countryCode: user.countryCode,
+                      birthDate: user.birthDate,
+                      showAge: user.showAge,
+                      context: context),
                 ),
                 getRegionText(user, context),
                 const SizedBox(height: 40),

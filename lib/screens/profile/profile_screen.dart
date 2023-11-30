@@ -5,6 +5,7 @@ import 'package:chat/screens/review/review_screen.dart';
 import 'package:chat/utils/gender.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_i18n/flutter_i18n.dart';
 import '../../repository/firestore_repository.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_widgets.dart';
@@ -87,6 +88,8 @@ class ProfileScreenBuilder extends StatelessWidget {
                         displayName: state.user.displayName,
                         gender: state.user.gender,
                         countryCode: state.user.countryCode,
+                        birthDate: state.user.birthDate,
+                        showAge: state.user.showAge,
                         context: context,
                       ),
                     ),
@@ -129,10 +132,31 @@ class ProfileScreenBuilder extends StatelessWidget {
                       onPressed: () {
                         Navigator.pushNamed(
                             blocContext, OnboardingAgeScreen.routeName,
-                            arguments: OnboardingAgeScreenArguments(
-                                isEditMode: true));
+                            arguments:
+                                OnboardingAgeScreenArguments(isEditMode: true));
                       },
                       label: Text(translate(context, 'change_age')),
+                    ),
+                    const SizedBox(height: 20),
+                    if(state.user.birthDate != null)
+                    GestureDetector(
+                      onTap: () {
+                        BlocProvider.of<ProfileBloc>(context).add(
+                            ProfileShowAgeChangedEvent(
+                                !(state.user.showAge)));
+                      },
+                      child: Row(mainAxisSize: MainAxisSize.min, children: [
+                        Checkbox(
+                          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          visualDensity: VisualDensity.compact,
+                          value: state.user.showAge,
+                          onChanged: (newValue) {
+                            BlocProvider.of<ProfileBloc>(context).add(
+                                ProfileShowAgeChangedEvent(newValue ?? true));
+                          },
+                        ),
+                        Text(FlutterI18n.translate(context, 'show_age')),
+                      ]),
                     ),
                     Expanded(
                         child: AppLottie(

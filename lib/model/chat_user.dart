@@ -18,6 +18,7 @@ class ChatUser extends Equatable {
   final String country;
   final String regionName;
   final bool presence;
+  final bool showAge;
   final String currentRoomChatId;
   final String fcmToken;
   final Timestamp? birthDate;
@@ -39,6 +40,7 @@ class ChatUser extends Equatable {
     required this.regionName,
     required this.blockedBy,
     required this.presence,
+    required this.showAge,
     required this.fcmToken,
     required this.birthDate,
     required this.currentRoomChatId,
@@ -58,6 +60,7 @@ class ChatUser extends Equatable {
         country = json['country'] ?? "",
         regionName = json['regionName'] ?? "",
         presence = json['presence'] ?? false,
+        showAge = json['showAge'] ?? true,
         currentRoomChatId = json['currentRoomChatId'] ?? '',
         fcmToken = json['fcmToken'] ?? '',
         birthDate = json['birthDate'],
@@ -76,6 +79,7 @@ class ChatUser extends Equatable {
         countryCode = "",
         country = "",
         presence = false,
+        showAge = true,
         currentRoomChatId = '',
         regionName = "",
         fcmToken = "",
@@ -97,6 +101,7 @@ class ChatUser extends Equatable {
       String? country,
       String? regionName,
       bool? presence,
+      bool? showAge,
       String? currentRoomChatId,
       String? fcmToken,
       Timestamp? birthDate,
@@ -115,6 +120,7 @@ class ChatUser extends Equatable {
         countryCode: countryCode ?? this.countryCode,
         country: country ?? this.country,
         presence: presence ?? this.presence,
+        showAge: showAge ?? this.showAge,
         currentRoomChatId: currentRoomChatId ?? this.currentRoomChatId,
         regionName: regionName ?? this.regionName,
         fcmToken: fcmToken ?? this.fcmToken,
@@ -137,6 +143,7 @@ class ChatUser extends Equatable {
         countryCode,
         country,
         presence,
+        showAge,
         currentRoomChatId,
         regionName,
         fcmToken,

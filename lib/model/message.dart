@@ -13,6 +13,8 @@ class Message extends Equatable implements Comparable<Message> {
   final ChatType chatType;
   final int approvedImage;
   final Timestamp created;
+  final Timestamp? birthDate;
+  final bool showAge;
 
   Message.fromJson(this.id, Map<String, dynamic> json)
       : created = json['created'] ?? Timestamp.now(),
@@ -24,10 +26,12 @@ class Message extends Equatable implements Comparable<Message> {
         createdByImageUrl = json['createdByImageUrl'] ?? "",
         //For all users who have not updated, show it as true
         approvedImage = json['approvedImage'] ?? ApprovedImage.notSet.value,
-        text = json['text'] ?? "";
+        text = json['text'] ?? "",
+        birthDate = json['birthDate'],
+        showAge = json['showAge'] ?? true;
 
   @override
-  List<Object> get props => [
+  List<Object?> get props => [
         id,
         text,
         chatType,
@@ -37,7 +41,9 @@ class Message extends Equatable implements Comparable<Message> {
         createdByCountryCode,
         createdByImageUrl,
         approvedImage,
-        created
+        created,
+        birthDate,
+        showAge
       ];
 
   @override

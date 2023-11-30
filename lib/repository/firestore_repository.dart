@@ -130,6 +130,16 @@ class FirestoreRepository {
         .catchError((error) => Log.e("Failed to update user birthdate: $error"));
   }
 
+  Future<void> updateUserShowAge(bool showAge) async {
+    return users
+        .doc(getUserId())
+        .set({
+      'showAge': showAge,
+    }, SetOptions(merge: true))
+        .then((value) => Log.d("User show age updated"))
+        .catchError((error) => Log.e("Failed to update user show age: $error"));
+  }
+
   Future<void> updateUserDisplayName(
       String fullName, List<String> searchArray) async {
     return users
@@ -197,7 +207,9 @@ class FirestoreRepository {
           'createdByCountryCode': user.countryCode,
           'createdByImageUrl': user.pictureData,
           'approvedImage': user.approvedImage,
-          'created': FieldValue.serverTimestamp()
+          'created': FieldValue.serverTimestamp(),
+          'birthDate': user.birthDate,
+          'showAge': user.showAge,
         });
       }
     } else {
@@ -211,7 +223,9 @@ class FirestoreRepository {
         'createdByCountryCode': user.countryCode,
         'createdByImageUrl': user.pictureData,
         'approvedImage': user.approvedImage,
-        'created': FieldValue.serverTimestamp()
+        'created': FieldValue.serverTimestamp(),
+        'birthDate': user.birthDate,
+        'showAge': user.showAge,
       });
     }
 

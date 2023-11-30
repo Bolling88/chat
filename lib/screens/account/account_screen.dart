@@ -5,6 +5,7 @@ import 'package:chat/screens/account/bloc/account_state.dart';
 import 'package:chat/screens/login/login_screen.dart';
 import 'package:chat/screens/profile/profile_screen.dart';
 import 'package:chat/screens/review/review_screen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../repository/firestore_repository.dart';
@@ -78,6 +79,8 @@ class AccountScreenBuilder extends StatelessWidget {
                       displayName: state.user.displayName,
                       gender: state.user.gender,
                       countryCode: state.user.countryCode,
+                      birthDate: state.user.birthDate,
+                      showAge: state.user.showAge,
                       context: context,
                     )),
                 const SizedBox(height: 20),
@@ -105,9 +108,10 @@ class AccountScreenBuilder extends StatelessWidget {
                     },
                     label: const Text('Review Account pictures'),
                   ),
-                Expanded(child: AppLottie(
-                    url:
-                    'https://firebasestorage.googleapis.com/v0/b/chat-60225.appspot.com/o/lottie%2Fprofile.json?alt=media&token=98471dde-f589-46ea-b2d8-7821a7dc31b9')),
+                Expanded(
+                    child: AppLottie(
+                        url:
+                            'https://firebasestorage.googleapis.com/v0/b/chat-60225.appspot.com/o/lottie%2Fprofile.json?alt=media&token=98471dde-f589-46ea-b2d8-7821a7dc31b9')),
                 ElevatedButton.icon(
                   icon: const Icon(Icons.exit_to_app),
                   onPressed: () {
@@ -199,6 +203,8 @@ Row getProfileRow({
   required String displayName,
   required int gender,
   required String countryCode,
+  required Timestamp? birthDate,
+  required bool showAge,
   required BuildContext context,
 }) {
   return Row(
@@ -217,7 +223,36 @@ Row getProfileRow({
               animate: false,
             )),
       const SizedBox(width: 2),
+      //Show age
+      if (birthDate != null && showAge)
+        Text(
+          getAge(birthDate),
+          style: Theme.of(context).textTheme.displaySmall?.merge(TextStyle(
+              color: getGenderColor(Gender.fromValue(gender)), fontSize: 26)),
+        ),
+      if (birthDate != null) const SizedBox(width: 8),
       getFlag(countryCode: countryCode, fontSize: 30),
     ],
   );
+}
+
+String getAge(Timestamp? birthDate) {
+  if(birthDate == null) {
+    return '';
+  }
+  DateTime date = birthDate.toDate();
+  DateTime now = DateTime.now();
+  int age = now.year - date.year;
+  int month1 = now.month;
+  int month2 = date.month;
+  if (month2 > month1) {
+    age--;
+  } else if (month1 == month2) {
+    int day1 = now.day;
+    int day2 = date.day;
+    if (day2 > day1) {
+      age--;
+    }
+  }
+  return age.toString();
 }
