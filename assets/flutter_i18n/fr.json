@@ -94,6 +94,15 @@
   "rate_app_title_message": "Nous sommes tellement heureux que vous l'aimiez ! Pourriez-vous nous soutenir en notant l'application ?",
   "change_gender": "Changer de genre",
   "change_gender_question_mark": "Mauvais genre?",
-  "it_happens_exclamation": "Ça arrive!"
+  "it_happens_exclamation": "Ça arrive!",
+  "select_age": "Sélectionner date de naissance",
+  "change_age": "Changer date de naissance",
+  "change_age_question_mark": "Changer date de naissance?",
+  "how_old_are_you": "Quand es-tu né?",
+  "age_change_message": "Oui, pourquoi pas!",
+  "age_button_description": "Sélectionnez votre date de naissance ci-dessous",
+  "age_error": "Désolé, tu dois avoir 18 ans ou plus pour utiliser cette application :(",
+  "edit_profile": "Modifier le profil",
+  "show_age": "Montrer mon âge"
 }
 

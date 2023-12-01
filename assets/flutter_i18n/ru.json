@@ -94,5 +94,14 @@
   "rate_app_title_message": "Мы так рады, что вам нравится! Не могли бы вы поддержать нас, оценив приложение?",
   "change_gender": "Изменить пол",
   "change_gender_question_mark": "Неправильный пол?",
-  "it_happens_exclamation": "Это случается!"
+  "it_happens_exclamation": "Это случается!",
+  "select_age": "Выбрать день рождения",
+  "change_age": "Изменить день рождения",
+  "change_age_question_mark": "Изменить день рождения?",
+  "how_old_are_you": "Когда ты родился?",
+  "age_change_message": "Да, почему бы и нет!",
+  "age_button_description": "Выберите вашу дату рождения ниже",
+  "age_error": "Извините, вам должно быть 18 лет или старше, чтобы использовать это приложение :(",
+  "edit_profile": "Редактировать профиль",
+  "show_age": "Показать мой возраст"
 }

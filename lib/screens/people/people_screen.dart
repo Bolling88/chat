@@ -11,6 +11,7 @@ import '../../utils/app_colors.dart';
 import '../../utils/app_widgets.dart';
 import '../../utils/constants.dart';
 import '../../utils/flag.dart';
+import '../account/account_screen.dart';
 import '../error/error_screen.dart';
 import '../messages/other_message_widget.dart';
 import 'bloc/people_bloc.dart';
@@ -118,6 +119,7 @@ class PeopleScreenBuilder extends StatelessWidget {
           return ListTile(
             visualDensity: const VisualDensity(vertical: -4),
             title: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Text(users[index].displayName,
                     style: Theme.of(context).textTheme.displaySmall?.merge(
@@ -125,7 +127,14 @@ class PeopleScreenBuilder extends StatelessWidget {
                             fontSize: 20,
                             color: getGenderColor(
                                 Gender.fromValue(users[index].gender))))),
-                const SizedBox(width: 2),
+                const SizedBox(width: 4),
+                if (users[index].birthDate != null && users[index].showAge)
+                  Text(
+                    getAge(users[index].birthDate),
+                    style: Theme.of(context).textTheme.displaySmall?.merge(TextStyle(
+                        color: getGenderColor(Gender.fromValue(users[index].gender)), fontSize: 16)),
+                  ),
+                if (users[index].birthDate != null) const SizedBox(width: 4),
                 if (users[index].gender != Gender.secret.value)
                   SizedBox(
                       width: 18,

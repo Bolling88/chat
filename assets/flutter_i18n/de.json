@@ -94,5 +94,14 @@
   "rate_app_title_message": "Wir freuen uns sehr, dass sie dir gefällt! Könntest du uns bitte unterstützen, indem du die App bewertest?",
   "change_gender": "Geschlecht ändern",
   "change_gender_question_mark": "Falsches Geschlecht?",
-  "it_happens_exclamation": "Es passiert!"
+  "it_happens_exclamation": "Es passiert!",
+  "select_age": "Geburtstag auswählen",
+  "change_age": "Geburtstag ändern",
+  "change_age_question_mark": "Geburtstag ändern?",
+  "how_old_are_you": "Wann bist du geboren?",
+  "age_change_message": "Ja, warum nicht!",
+  "age_button_description": "Wähle unten dein Geburtsdatum",
+  "age_error": "Entschuldigung, du musst 18 Jahre oder älter sein, um diese App zu nutzen :(",
+  "edit_profile": "Profil bearbeiten",
+  "show_age": "Mein Alter anzeigen"
 }
