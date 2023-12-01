@@ -94,5 +94,14 @@
   "rate_app_title_message": "हम बहुत खुश हैं कि आपको यह पसंद है! क्या आप कृपया हमें ऐप को मूल्यांकित करके समर्थन दे सकते हैं?",
   "change_gender": "लिंग बदलें",
   "change_gender_question_mark": "गलत लिंग?",
-  "it_happens_exclamation": "ऐसा होता है!"
+  "it_happens_exclamation": "ऐसा होता है!",
+  "select_age": "जन्मदिन चुनें",
+  "change_age": "जन्मदिन बदलें",
+  "change_age_question_mark": "जन्मदिन बदलें?",
+  "how_old_are_you": "आपका जन्म कब हुआ था?",
+  "age_change_message": "हां क्यों नहीं!",
+  "age_button_description": "नीचे अपनी जन्मतिथि चुनें",
+  "age_error": "क्षमा करें, आपको इस ऐप का उपयोग करने के लिए 18 वर्ष या उससे अधिक होना चाहिए :(",
+  "edit_profile": "प्रोफाइल संपादित करें",
+  "show_age": "मेरी उम्र दिखाएं"
 }

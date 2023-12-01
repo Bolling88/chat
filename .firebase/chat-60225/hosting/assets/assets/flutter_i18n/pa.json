@@ -94,5 +94,14 @@
   "rate_app_title_message": "ਅਸੀਂ ਬੜੀ ਖੁਸੀ ਹੈਂ ਕਿ ਤੁਸੀਂ ਇਹ ਪਸੰਦ ਕਰਦੇ ਹੋ! ਕੀ ਤੁਸੀਂ ਆਪ ਦੀ ਰੇਟਿੰਗ ਦੇ ਕੇ ਸਾਡੀ ਸਹਾਇਤਾ ਕਰ ਸਕਦੇ ਹੋ?",
   "change_gender": "ਲਿੰਗ ਬਦਲੋ",
   "change_gender_question_mark": "ਗਲਤ ਲਿੰਗ?",
-  "it_happens_exclamation": "ਇਹ ਹੁੰਦਾ ਹੈ!"
+  "it_happens_exclamation": "ਇਹ ਹੁੰਦਾ ਹੈ!",
+  "select_age": "ਜਨਮਦਿਨ ਚੁਣੋ",
+  "change_age": "ਜਨਮਦਿਨ ਬਦਲੋ",
+  "change_age_question_mark": "ਜਨਮਦਿਨ ਬਦਲੋ?",
+  "how_old_are_you": "ਤੁਸੀਂ ਕਦੋਂ ਜਨਮੇ ਹੋ?",
+  "age_change_message": "ਹਾਂ, ਕਿਉਂ ਨਹੀਂ!",
+  "age_button_description": "ਹੇਠਾਂ ਆਪਣੀ ਜਨਮ ਮਿਤੀ ਚੁਣੋ",
+  "age_error": "ਮਾਫ਼ ਕਰੋ, ਤੁਹਾਨੂੰ ਇਸ ਐਪ ਨੂੰ ਵਰਤਣ ਲਈ 18 ਸਾਲ ਜਾਂ ਉਸ ਤੋਂ ਵੱਡੇ ਹੋਣਾ ਪਵੇਗਾ :(",
+  "edit_profile": "ਪ੍ਰੋਫਾਈਲ ਸੋਧੋ",
+  "show_age": "ਮੇਰੀ ਉਮਰ ਦਿਖਾਓ"
 }

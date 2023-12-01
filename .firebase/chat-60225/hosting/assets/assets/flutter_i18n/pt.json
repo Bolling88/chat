@@ -89,5 +89,14 @@
   "seen": "Visto",
   "change_gender": "Mudar gênero",
   "change_gender_question_mark": "Gênero errado?",
-  "it_happens_exclamation": "Acontece!"
+  "it_happens_exclamation": "Acontece!",
+  "select_age": "Selecionar aniversário",
+  "change_age": "Alterar aniversário",
+  "change_age_question_mark": "Alterar aniversário?",
+  "how_old_are_you": "Quando você nasceu?",
+  "age_change_message": "Sim, por que não!",
+  "age_button_description": "Selecione sua data de nascimento abaixo",
+  "age_error": "Desculpe, você deve ter 18 anos ou mais para usar este aplicativo :(",
+  "edit_profile": "Editar perfil",
+  "show_age": "Mostrar minha idade"
 }
