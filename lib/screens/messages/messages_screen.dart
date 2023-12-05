@@ -87,93 +87,66 @@ class ChatsScreenContent extends StatelessWidget {
                                     return const SizedBox.shrink();
                                   }
                                 } else if (state.messages[getActualIndex(index)]
-                                            .messageDate !=
-                                        null &&
-                                    state.messages[getActualIndex(index)]
-                                            .messageDate?.isNotEmpty ==
-                                        true) {
-                                  return getChatInfoMessage(
-                                      text: state
-                                              .messages[getActualIndex(index)]
-                                              .messageDate ??
-                                          '',
-                                      state: state,
-                                      index: getActualIndex(index),
-                                      context: context);
-                                } else if (state.messages[getActualIndex(index)]
-                                        .message?.chatType ==
+                                        .chatType ==
                                     ChatType.joined) {
                                   return getChatInfoMessage(
                                       text:
-                                          '${state.messages[getActualIndex(index)].message!.text} ${FlutterI18n.translate(context, 'joined_chat')}',
+                                          '${state.messages[getActualIndex(index)].text} ${FlutterI18n.translate(context, 'joined_chat')}',
                                       state: state,
                                       index: getActualIndex(index),
                                       context: context);
                                 } else if (state.messages[getActualIndex(index)]
-                                        .message?.chatType ==
+                                        .chatType ==
                                     ChatType.left) {
                                   return getChatInfoMessage(
                                       text:
-                                          '${state.messages[getActualIndex(index)].message!.text} ${FlutterI18n.translate(context, 'left_chat')}',
+                                          '${state.messages[getActualIndex(index)].text} ${FlutterI18n.translate(context, 'left_chat')}',
                                       state: state,
                                       index: getActualIndex(index),
                                       context: context);
                                 } else if (state.messages[getActualIndex(index)]
-                                        .message!.createdById ==
+                                        .createdById ==
                                     state.myUser.id) {
                                   return AppMyMessageWidget(
-                                    message: state
-                                        .messages[getActualIndex(index)]
-                                        .message!,
+                                    message:
+                                        state.messages[getActualIndex(index)],
                                     gender: state
                                         .messages[getActualIndex(index)]
-                                        .message!
                                         .createdByGender,
                                     pictureData: state
                                         .messages[getActualIndex(index)]
-                                        .message!
                                         .createdByImageUrl,
                                   );
                                 } else {
                                   return AppOtherMessageWidget(
-                                    message: state
-                                        .messages[getActualIndex(index)]
-                                        .message!,
+                                    message:
+                                        state.messages[getActualIndex(index)],
                                     pictureData: state
-                                            .messages[getActualIndex(index)]
-                                            .message
-                                            ?.createdByImageUrl ??
-                                        '',
+                                        .messages[getActualIndex(index)]
+                                        .createdByImageUrl,
                                     userId: state
                                         .messages[getActualIndex(index)]
-                                        .message!
                                         .createdById,
                                     displayName: state
                                         .messages[getActualIndex(index)]
-                                        .message!
                                         .createdByName,
                                     gender: state
                                         .messages[getActualIndex(index)]
-                                        .message!
                                         .createdByGender,
                                     chat: chat,
                                     birthDate: state
                                         .messages[getActualIndex(index)]
-                                        .message
-                                        ?.birthDate,
+                                        .birthDate,
                                     showAge: state
                                         .messages[getActualIndex(index)]
-                                        .message
-                                        ?.showAge ?? true,
+                                        .showAge,
                                     countryCode: state
-                                            .messages[getActualIndex(index)]
-                                            .message
-                                            ?.createdByCountryCode
-                                            .toLowerCase() ??
-                                        '', approvedImage: state
-                                      .messages[getActualIndex(index)]
-                                      .message
-                                      ?.approvedImage ?? ApprovedImage.notReviewed.value,
+                                        .messages[getActualIndex(index)]
+                                        .createdByCountryCode
+                                        .toLowerCase(),
+                                    approvedImage: state
+                                        .messages[getActualIndex(index)]
+                                        .approvedImage,
                                   );
                                 }
                               },

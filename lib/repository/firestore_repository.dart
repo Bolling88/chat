@@ -520,7 +520,7 @@ class FirestoreRepository {
       StreamController<QuerySnapshot>.broadcast();
   StreamSubscription<QuerySnapshot>? _privateChatsStream;
 
-  Stream<QuerySnapshot> get privateChatsStream =>
+  Stream<QuerySnapshot> getPrivateChatsStream() =>
       _privateChatsStreamController.stream;
 
   void startPrivateChatsStream(String userId) {

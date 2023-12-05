@@ -62,7 +62,7 @@ class MessagesUserUpdatedEvent extends MessagesEvent {
 }
 
 class MessagesPrivateChatsUpdatedEvent extends MessagesEvent {
-  final List<PrivateChat> privateChats;
+  final PrivateChat privateChats;
 
   MessagesPrivateChatsUpdatedEvent(this.privateChats);
 

@@ -293,7 +293,7 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
   void _setUpPrivateChatsListener(ChatUser user) async {
     Log.d('Setting up private chats stream');
     _firestoreRepository.startPrivateChatsStream(user.id);
-    privateChatStream = _firestoreRepository.privateChatsStream.listen((data) {
+    privateChatStream = _firestoreRepository.getPrivateChatsStream().listen((data) {
       Log.d("Got private chats");
       final chats = data.docs
           .map((e) =>

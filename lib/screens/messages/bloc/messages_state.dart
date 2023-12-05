@@ -2,6 +2,7 @@ import 'package:chat/model/chat_user.dart';
 import 'package:equatable/equatable.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
+import '../../../model/message.dart';
 import '../../../model/message_item.dart';
 import '../../../model/private_chat.dart';
 
@@ -17,7 +18,7 @@ class MessagesEmptyState extends MessagesState {}
 class MessagesErrorState extends MessagesState {}
 
 class MessagesBaseState extends MessagesState {
-  final List<MessageItem> messages;
+  final List<Message> messages;
   final ChatUser myUser;
   final String currentMessage;
   final BannerAd? bannerAd;
@@ -27,7 +28,7 @@ class MessagesBaseState extends MessagesState {
       this.bannerAd, this.privateChat);
 
   MessagesBaseState copyWith(
-      {List<MessageItem>? messages,
+      {List<Message>? messages,
       String? userId,
       ChatUser? myUser,
       String? currentMessage,

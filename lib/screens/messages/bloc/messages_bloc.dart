@@ -9,11 +9,9 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:universal_io/io.dart';
 import '../../../model/chat.dart';
 import '../../../model/message.dart';
-import '../../../model/message_item.dart';
 import '../../../repository/firestore_repository.dart';
 import '../../../utils/audio.dart';
 import '../../../utils/log.dart';
-import '../../../utils/time_util.dart';
 import 'messages_event.dart';
 import 'messages_state.dart';
 import 'package:collection/collection.dart';
@@ -21,7 +19,6 @@ import 'package:collection/collection.dart';
 class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
   final Chat chat;
   final bool isPrivateChat;
-  DocumentSnapshot? _lastMessageSnapshot;
   final FirestoreRepository _firestoreRepository;
   final secondsInFiveMinutes = 300;
 
@@ -31,6 +28,8 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
   StreamSubscription<QuerySnapshot>? userStream;
   StreamSubscription<QuerySnapshot>? privateChatsStream;
 
+  late ChatUser _user;
+
   MessagesBloc(this.chat, this._firestoreRepository,
       {required this.isPrivateChat})
       : super(MessagesLoadingState()) {
@@ -39,7 +38,6 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
 
   @override
   Future<void> close() {
-    postLeftMessage();
     messagesStream?.cancel();
     userStream?.cancel();
     privateChatsStream?.cancel();
@@ -51,31 +49,11 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
     Log.d(event.toString());
     final currentState = state;
     if (event is MessagesInitialEvent) {
-      postJoinedMessage();
-      final user = await _firestoreRepository.getUser();
-      if (user != null) {
-        final data = await _firestoreRepository.getInitialMessages(
-            chat.id, isPrivateChat);
-        if (data.docs.isNotEmpty) {
-          Log.d("New documents: ${data.docs.length}");
-          _lastMessageSnapshot = data.docs.last;
-          final initialMessages = data.docs
-              .map((e) =>
-                  Message.fromJson(e.id, e.data() as Map<String, dynamic>))
-              .toList();
-
-          yield MessagesBaseState(
-              getMessagesWithDates(initialMessages), user, "", null, null);
-        } else {
-          yield MessagesBaseState(const [], user, "", null, null);
-        }
-        setUpMessagesListener(chat.id);
-        setUpUserListener();
-        if (isPrivateChat) {
-          setUpPrivateChatStream();
-        }
-      } else {
-        Log.e("User is null in messages bloc");
+      _user = (await _firestoreRepository.getUser())!;
+      setUpMessagesListener(chat.id);
+      setUpUserListener();
+      if (isPrivateChat) {
+        setUpPrivateChatStream();
       }
     } else if (event is MessagesSendEvent) {
       if (currentState is MessagesBaseState) {
@@ -102,18 +80,17 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
       }
     } else if (event is MessagesUpdatedEvent) {
       Log.d("Got more messages event");
-      if (currentState is MessagesBaseState &&
-          (currentState.messages.isEmpty ||
-              event.messages.last.id !=
-                  currentState.messages.first.message!.id)) {
-        Log.d("New message id: ${event.messages.last.id}");
-        final List<MessageItem> updatedList = [...currentState.messages];
-        updatedList.insertAll(0, getMessagesWithDates(event.messages));
-        Log.d("Total messages: ${updatedList.length}");
-        yield currentState.copyWith(messages: updatedList);
-        if (event.messages.last.createdById != getUserId()) {
+      if (currentState is MessagesBaseState) {
+        Log.d("New message id: ${event.messages.first.id}");
+        yield currentState.copyWith(messages: event.messages);
+        if (currentState.messages.first.id != event.messages.first.id &&
+            event.messages.first.createdById != getUserId()) {
           playMessageSound();
         }
+      } else {
+        final currentChat = chat;
+        yield MessagesBaseState(event.messages, _user, '', _anchoredAdaptiveAd,
+            (currentChat is PrivateChat) ? currentChat : null);
       }
     } else if (event is MessagesUserUpdatedEvent) {
       if (currentState is MessagesBaseState) {
@@ -146,9 +123,7 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
       }
     } else if (event is MessagesPrivateChatsUpdatedEvent) {
       if (currentState is MessagesBaseState) {
-        final PrivateChat? privateChat = event.privateChats
-            .firstWhereOrNull((element) => element.id == chat.id);
-        yield currentState.copyWith(privateChat: privateChat);
+        yield currentState.copyWith(privateChat: event.privateChats);
       }
     } else {
       yield MessagesErrorState();
@@ -156,38 +131,14 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
     }
   }
 
-  void postJoinedMessage() {
-    // _firestoreRepository.postMessage(
-    //     chatId: chat.id,
-    //     user: _chatUser,
-    //     chatType: ChatType.joined,
-    //     message: _chatUser.displayName,
-    //     isPrivateChat: isPrivateChat);
-  }
-
-  void postLeftMessage() {
-    // _firestoreRepository.postMessage(
-    //     chatId: chat.id,
-    //     user: _chatUser,
-    //     chatType: ChatType.left,
-    //     message: _chatUser.displayName,
-    //     isPrivateChat: isPrivateChat);
-  }
-
   void setUpMessagesListener(String chatId) async {
     Log.d('Setting up message stream');
     messagesStream = _firestoreRepository
-        .streamMessages(chatId, isPrivateChat, 1)
+        .streamMessages(chatId, isPrivateChat, 20)
         .listen((data) {
       Log.d("Got messages");
-      //Only add last document as snapshot if this is initial fetch.
-      if (_lastMessageSnapshot == null && data.docs.isNotEmpty) {
-        _lastMessageSnapshot = data.docs.last;
-      }
       final messages = data.docs
           .map((e) => Message.fromJson(e.id, e.data() as Map<String, dynamic>))
-          .toList()
-          .reversed
           .toList();
       if (messages.isNotEmpty) add(MessagesUpdatedEvent(messages));
     });
@@ -205,15 +156,15 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
   void setUpPrivateChatStream() async {
     Log.d('Setting up private chats stream');
     privateChatsStream =
-        _firestoreRepository.privateChatsStream.listen((event) async {
+        _firestoreRepository.getPrivateChatsStream().listen((event) async {
       Log.d("Got private chats");
-      final chats = event.docs
+      final PrivateChat? updatedChat = event.docs
           .map((e) =>
               PrivateChat.fromJson(e.id, e.data() as Map<String, dynamic>))
-          .toList();
-      chats.sort((a, b) => a.created.compareTo(b.created));
-      Log.d("Chats: ${chats.length}");
-      add(MessagesPrivateChatsUpdatedEvent(chats));
+          .firstWhereOrNull((element) => element.id == chat.id);
+      if (updatedChat != null) {
+        add(MessagesPrivateChatsUpdatedEvent(updatedChat));
+      }
     });
   }
 
@@ -252,42 +203,5 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
       ),
     );
     return _anchoredAdaptiveAd?.load();
-  }
-
-  List<MessageItem> getMessagesWithDates(List<Message> messages) {
-    final List<MessageItem> datedList = [];
-    if (messages.length == 1) {
-      //If this is a new message after entering the chat, don't bother with dates
-      datedList.add(MessageItem(messages.last, null));
-      return datedList;
-    }
-
-    if (messages.isNotEmpty) {
-      for (int i = 1; i <= messages.length - 1; i++) {
-        final current = messages[i];
-        if (i < messages.length - 1) {
-          final next = messages[i + 1];
-          if (current.created.seconds - next.created.seconds >=
-              secondsInFiveMinutes) {
-            datedList.add(MessageItem(current, null));
-            datedList.add(MessageItem(null, getMessageDate(current.created)));
-          } else {
-            datedList.add(MessageItem(current, null));
-          }
-        }
-      }
-      datedList.add(MessageItem(messages.last, null));
-      datedList.add(MessageItem(null, getMessageDate(messages.last.created)));
-    }
-    return datedList;
-  }
-
-  @override
-  Stream<Transition<MessagesEvent, MessagesState>> transformEvents(
-      Stream<MessagesEvent> events, transitionFn) {
-    return super.transformEvents(
-      events.distinct(),
-      transitionFn,
-    );
   }
 }
