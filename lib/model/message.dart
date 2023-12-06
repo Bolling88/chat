@@ -15,6 +15,25 @@ class Message extends Equatable implements Comparable<Message> {
   final Timestamp created;
   final Timestamp? birthDate;
   final bool showAge;
+  final String? translation;
+  final bool marked;
+
+  const Message({
+    required this.id,
+    required this.text,
+    required this.createdById,
+    required this.createdByName,
+    required this.createdByGender,
+    required this.createdByCountryCode,
+    required this.createdByImageUrl,
+    required this.chatType,
+    required this.approvedImage,
+    required this.created,
+    this.birthDate,
+    required this.showAge,
+    this.translation,
+    required this.marked,
+  });
 
   Message.fromJson(this.id, Map<String, dynamic> json)
       : created = json['created'] ?? Timestamp.now(),
@@ -28,7 +47,44 @@ class Message extends Equatable implements Comparable<Message> {
         approvedImage = json['approvedImage'] ?? ApprovedImage.notSet.value,
         text = json['text'] ?? "",
         birthDate = json['birthDate'],
-        showAge = json['showAge'] ?? true;
+        showAge = json['showAge'] ?? true,
+        translation = null,
+        marked = false;
+
+  //Copy with method
+  Message copyWith({
+    String? id,
+    String? text,
+    String? createdById,
+    String? createdByName,
+    int? createdByGender,
+    String? createdByCountryCode,
+    String? createdByImageUrl,
+    ChatType? chatType,
+    int? approvedImage,
+    Timestamp? created,
+    Timestamp? birthDate,
+    bool? showAge,
+    String? translation,
+    bool? marked,
+  }) {
+    return Message(
+      id: id ?? this.id,
+      text: text ?? this.text,
+      createdById: createdById ?? this.createdById,
+      createdByName: createdByName ?? this.createdByName,
+      createdByGender: createdByGender ?? this.createdByGender,
+      createdByCountryCode: createdByCountryCode ?? this.createdByCountryCode,
+      createdByImageUrl: createdByImageUrl ?? this.createdByImageUrl,
+      chatType: chatType ?? this.chatType,
+      approvedImage: approvedImage ?? this.approvedImage,
+      created: created ?? this.created,
+      birthDate: birthDate ?? this.birthDate,
+      showAge: showAge ?? this.showAge,
+      translation: translation ?? this.translation,
+      marked: marked ?? this.marked,
+    );
+  }
 
   @override
   List<Object?> get props => [
@@ -43,7 +99,9 @@ class Message extends Equatable implements Comparable<Message> {
         approvedImage,
         created,
         birthDate,
-        showAge
+        showAge,
+        translation,
+        marked,
       ];
 
   @override

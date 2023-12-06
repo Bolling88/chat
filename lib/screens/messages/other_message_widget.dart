@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chat/screens/messages/bloc/messages_bloc.dart';
+import 'package:chat/screens/options/options_screen.dart';
 import 'package:chat/utils/lottie.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -51,7 +52,9 @@ class AppOtherMessageWidget extends StatelessWidget {
         showVisitScreen(context, userId, chat, false);
       },
       onLongPress: () {
-        showReportDialog(context, message);
+        BlocProvider.of<MessagesBloc>(context)
+            .add(MessagesMarkedEvent(message: message, marked: true));
+        showOptionsScreen(context, message);
       },
       child: Padding(
         padding: const EdgeInsets.only(left: 20, bottom: 5, top: 5, right: 40),
@@ -90,8 +93,8 @@ class AppOtherMessageWidget extends StatelessWidget {
                 child: Align(
                   alignment: Alignment.bottomLeft,
                   child: DecoratedBox(
-                    decoration: const BoxDecoration(
-                        borderRadius: BorderRadius.only(
+                    decoration: BoxDecoration(
+                        borderRadius: const BorderRadius.only(
                           bottomLeft: Radius.circular(10.0),
                           bottomRight: Radius.circular(10.0),
                           topRight: Radius.circular(10.0),
@@ -99,7 +102,14 @@ class AppOtherMessageWidget extends StatelessWidget {
                         gradient: LinearGradient(
                             begin: Alignment.topCenter,
                             end: Alignment.bottomCenter,
-                            colors: [AppColors.grey_4, AppColors.grey_4])),
+                            colors: [
+                              message.marked
+                                  ? AppColors.main_3
+                                  : AppColors.grey_4,
+                              message.marked
+                                  ? AppColors.main_3
+                                  : AppColors.grey_4
+                            ])),
                     child: Padding(
                       padding: const EdgeInsets.only(
                           left: 10, right: 10, top: 5, bottom: 5),
@@ -131,27 +141,59 @@ class AppOtherMessageWidget extends StatelessWidget {
                               if (birthDate != null && showAge)
                                 Text(
                                   getAge(birthDate),
-                                  style: Theme.of(context).textTheme.displaySmall?.merge(TextStyle(
-                                      color: getGenderColor(Gender.fromValue(gender)), fontSize: 16)),
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .displaySmall
+                                      ?.merge(TextStyle(
+                                          color: getGenderColor(
+                                              Gender.fromValue(gender)),
+                                          fontSize: 16)),
                                 ),
                               if (birthDate != null) const SizedBox(width: 8),
                               getFlag(countryCode: countryCode, fontSize: 16),
                             ],
                           ),
-                          Text(
-                            message.text,
-                            textAlign: TextAlign.left,
-                            style: Theme.of(context).textTheme.bodyMedium?.merge(
-                                  TextStyle(
-                                    color: AppColors.grey_1,
-                                    fontSize: isOnlyEmojis(message.text)
-                                        ? 40
-                                        : Theme.of(context)
-                                            .textTheme
-                                            .bodyMedium
-                                            ?.fontSize,
-                                  ),
+                          Column(
+                            children: [
+                              Text(
+                                message.text,
+                                textAlign: TextAlign.left,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium
+                                    ?.merge(
+                                      TextStyle(
+                                        color: message.marked? AppColors.white: AppColors.grey_1,
+                                        fontSize: isOnlyEmojis(message.text)
+                                            ? 40
+                                            : Theme.of(context)
+                                                .textTheme
+                                                .bodyMedium
+                                                ?.fontSize,
+                                      ),
+                                    ),
+                              ),
+                              if (message.translation != null &&
+                                  message.translation?.isNotEmpty == true)
+                                Text(
+                                  message.translation ?? '',
+                                  textAlign: TextAlign.left,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium
+                                      ?.merge(
+                                        TextStyle(
+                                          color: AppColors.main,
+                                          fontSize: isOnlyEmojis(message.text)
+                                              ? 40
+                                              : Theme.of(context)
+                                                  .textTheme
+                                                  .bodyMedium
+                                                  ?.fontSize,
+                                        ),
+                                      ),
                                 ),
+                            ],
                           ),
                         ],
                       ),

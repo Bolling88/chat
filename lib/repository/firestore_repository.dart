@@ -477,15 +477,6 @@ class FirestoreRepository {
   }
 
   void reportMessage(Message message) async {
-    if (kDebugMode) {
-      //Delete the message
-      try {
-        await messages.doc(message.id).delete();
-        print("Document successfully deleted");
-      } catch (e) {
-        print("Error while deleting document: $e");
-      }
-    } else {
       reports.add({
         'messageId': message.id,
         'messageText': message.text,
@@ -498,7 +489,6 @@ class FirestoreRepository {
         'reportedBy': getUserId(),
         'reportedAt': FieldValue.serverTimestamp(),
       });
-    }
   }
 
   Stream<QuerySnapshot> streamOpenChats(ChatUser user) {

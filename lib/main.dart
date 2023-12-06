@@ -9,6 +9,7 @@ import 'package:chat/screens/onboarding_age/onboarding_age_screen.dart';
 import 'package:chat/screens/onboarding_gender/onboarding_gender_screen.dart';
 import 'package:chat/screens/onboarding_name/onboarding_name_screen.dart';
 import 'package:chat/screens/onboarding_photo/onboarding_photo_screen.dart';
+import 'package:chat/screens/options/options_screen.dart';
 import 'package:chat/screens/profile/profile_screen.dart';
 import 'package:chat/screens/review/review_screen.dart';
 import 'package:chat/screens/splash/splash_screen.dart';

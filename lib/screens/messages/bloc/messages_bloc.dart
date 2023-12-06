@@ -82,9 +82,21 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
       Log.d("Got more messages event");
       if (currentState is MessagesBaseState) {
         Log.d("New message id: ${event.messages.first.id}");
-        yield currentState.copyWith(messages: event.messages);
-        if (currentState.messages.first.id != event.messages.first.id &&
-            event.messages.first.createdById != getUserId()) {
+
+        //Before we can update with the new messages, we need to check which old messages were marked or translated, and make sure if an updated message has the same id, it should also be marked or translated
+        final updatedMessages = event.messages.map((e) {
+          final oldMessage = currentState.messages
+              .firstWhereOrNull((element) => element.id == e.id);
+          if (oldMessage != null) {
+            return e.copyWith(
+                marked: oldMessage.marked, translation: oldMessage.translation);
+          } else {
+            return e;
+          }
+        }).toList();
+
+        yield currentState.copyWith(messages: updatedMessages);
+        if (currentState.messages.first.id != event.messages.first.id) {
           playMessageSound();
         }
       } else {
@@ -124,6 +136,23 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
     } else if (event is MessagesPrivateChatsUpdatedEvent) {
       if (currentState is MessagesBaseState) {
         yield currentState.copyWith(privateChat: event.privateChats);
+      }
+    } else if (event is MessagesTranslateEvent) {
+      if (currentState is MessagesBaseState) {
+        //Replace the message model in the state with the message model in the event and update the state
+        final updatedMessages = currentState.messages
+            .map((e) => e.id == event.message.id ? event.message : e)
+            .toList();
+        yield currentState.copyWith(messages: updatedMessages);
+      }
+    } else if (event is MessagesMarkedEvent) {
+      if (currentState is MessagesBaseState) {
+        //Find the message in the current state messages and update the marked value
+        final updatedMessages = currentState.messages
+            .map((e) =>
+                e.id == event.message.id ? e.copyWith(marked: event.marked) : e)
+            .toList();
+        yield currentState.copyWith(messages: updatedMessages);
       }
     } else {
       yield MessagesErrorState();
