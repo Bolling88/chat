@@ -78,8 +78,7 @@ class OptionsScreenBuilder extends StatelessWidget {
                           Text(FlutterI18n.translate(context, 'reply'),
                               style: Theme.of(context)
                                   .textTheme
-                                  .bodyMedium
-                                  ?.copyWith(color: AppColors.main)),
+                                  .bodyMedium),
                         ],
                       ),
                     ),
@@ -98,8 +97,7 @@ class OptionsScreenBuilder extends StatelessWidget {
                           Text(FlutterI18n.translate(context, 'translate'),
                               style: Theme.of(context)
                                   .textTheme
-                                  .bodyMedium
-                                  ?.copyWith(color: AppColors.main)),
+                                  .bodyMedium),
                         ],
                       ),
                     ),
@@ -126,8 +124,7 @@ class OptionsScreenBuilder extends StatelessWidget {
                           Text(FlutterI18n.translate(context, 'copy_text'),
                               style: Theme.of(context)
                                   .textTheme
-                                  .bodyMedium
-                                  ?.copyWith(color: AppColors.main)),
+                                  .bodyMedium),
                         ],
                       ),
                     ),
@@ -146,8 +143,7 @@ class OptionsScreenBuilder extends StatelessWidget {
                           Text(FlutterI18n.translate(context, 'report'),
                               style: Theme.of(context)
                                   .textTheme
-                                  .bodyMedium
-                                  ?.copyWith(color: AppColors.main)),
+                                  .bodyMedium),
                         ],
                       ),
                     )
