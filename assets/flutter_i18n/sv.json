@@ -103,5 +103,10 @@
   "age_button_description": "Välj ditt födelsedatum nedan",
   "age_error": "Tyvärr måste du vara 18 år eller äldre för att använda denna app :(",
   "edit_profile": "Redigera profil",
-  "show_age": "Visa min ålder"
+  "show_age": "Visa min ålder",
+  "report": "Rapportera",
+  "copy_text": "Kopiera text",
+  "copied_to_clipboard": "Kopierat till urklipp",
+  "reply": "Svara",
+  "translate": "Översätt"
 }

@@ -67,22 +67,22 @@ class OptionsScreenBuilder extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    GestureDetector(
-                      onTap: () {},
-                      child: Column(
-                        children: [
-                          const Icon(
-                            Icons.reply,
-                            color: AppColors.main,
-                          ),
-                          Text(FlutterI18n.translate(context, 'reply'),
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyMedium),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 20),
+                    // GestureDetector(
+                    //   onTap: () {},
+                    //   child: Column(
+                    //     children: [
+                    //       const Icon(
+                    //         Icons.reply,
+                    //         color: AppColors.main,
+                    //       ),
+                    //       Text(FlutterI18n.translate(context, 'reply'),
+                    //           style: Theme.of(context)
+                    //               .textTheme
+                    //               .bodyMedium),
+                    //     ],
+                    //   ),
+                    // ),
+                    // const SizedBox(width: 20),
                     GestureDetector(
                       onTap: () {
                         BlocProvider.of<OptionsBloc>(blocContext).add(
