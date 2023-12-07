@@ -104,25 +104,6 @@ class OptionsScreenBuilder extends StatelessWidget {
                     const SizedBox(width: 20),
                     GestureDetector(
                       onTap: () {
-                        BlocProvider.of<OptionsBloc>(blocContext).add(
-                            OptionsTranslateEvent( message.text));
-                      },
-                      child: Column(
-                        children: [
-                          const Icon(
-                            Icons.translate,
-                            color: AppColors.main,
-                          ),
-                          Text(FlutterI18n.translate(context, 'translate'),
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyMedium),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 20),
-                    GestureDetector(
-                      onTap: () {
                         Clipboard.setData(ClipboardData(text: message.text));
                         Navigator.of(context).pop();
                         //Show a snackbar
