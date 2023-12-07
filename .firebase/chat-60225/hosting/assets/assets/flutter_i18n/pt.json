@@ -98,5 +98,10 @@
   "age_button_description": "Selecione sua data de nascimento abaixo",
   "age_error": "Desculpe, você deve ter 18 anos ou mais para usar este aplicativo :(",
   "edit_profile": "Editar perfil",
-  "show_age": "Mostrar minha idade"
+  "show_age": "Mostrar minha idade",
+  "report": "Relatório",
+  "copy_text": "Copiar texto",
+  "copied_to_clipboard": "Copiado para a área de transferência",
+  "reply": "Responder",
+  "translate": "Traduzir"
 }

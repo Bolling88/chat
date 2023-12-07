@@ -103,5 +103,10 @@
   "age_button_description": "Select your birthdate below",
   "age_error": "Sorry you have to be 18 years or older to use this app :(",
   "edit_profile": "Edit profile",
-  "show_age": "Show my age"
+  "show_age": "Show my age",
+  "report": "Report",
+  "copy_text": "Copy text",
+  "copied_to_clipboard": "Copied to clipboard",
+  "reply": "Reply",
+  "translate": "Translate"
 }

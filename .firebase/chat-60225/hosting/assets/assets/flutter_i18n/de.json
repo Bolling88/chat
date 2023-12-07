@@ -103,5 +103,10 @@
   "age_button_description": "Wähle unten dein Geburtsdatum",
   "age_error": "Entschuldigung, du musst 18 Jahre oder älter sein, um diese App zu nutzen :(",
   "edit_profile": "Profil bearbeiten",
-  "show_age": "Mein Alter anzeigen"
+  "show_age": "Mein Alter anzeigen",
+  "report": "Bericht",
+  "copy_text": "Text kopieren",
+  "copied_to_clipboard": "In die Zwischenablage kopiert",
+  "reply": "Antworten",
+  "translate": "Übersetzen"
 }

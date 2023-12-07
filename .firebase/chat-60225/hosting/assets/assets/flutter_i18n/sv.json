@@ -94,5 +94,19 @@
   "rate_app_title_message": "Vi är så glada att du gillar den! Skulle du kunna stödja oss genom att betygsätta appen?",
   "change_gender": "Ändra kön",
   "change_gender_question_mark": "Fel kön?",
-  "it_happens_exclamation": "Det händer!"
+  "it_happens_exclamation": "Det händer!",
+  "select_age": "Välj födelsedag",
+  "change_age": "Ändra födelsedag",
+  "change_age_question_mark": "Ändra födelsedag?",
+  "how_old_are_you": "när är du född?",
+  "age_change_message": "Ja varför inte!",
+  "age_button_description": "Välj ditt födelsedatum nedan",
+  "age_error": "Tyvärr måste du vara 18 år eller äldre för att använda denna app :(",
+  "edit_profile": "Redigera profil",
+  "show_age": "Visa min ålder",
+  "report": "Rapportera",
+  "copy_text": "Kopiera text",
+  "copied_to_clipboard": "Kopierat till urklipp",
+  "reply": "Svara",
+  "translate": "Översätt"
 }

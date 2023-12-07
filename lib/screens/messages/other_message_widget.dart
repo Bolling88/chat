@@ -47,22 +47,17 @@ class AppOtherMessageWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        showVisitScreen(context, userId, chat, false);
-      },
-      onLongPress: () {
-        BlocProvider.of<MessagesBloc>(context)
-            .add(MessagesMarkedEvent(message: message, marked: true));
-        showOptionsScreen(context, message);
-      },
-      child: Padding(
-        padding: const EdgeInsets.only(left: 20, bottom: 5, top: 5, right: 40),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Padding(
+    return Padding(
+      padding: const EdgeInsets.only(left: 20, bottom: 5, top: 5, right: 40),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          GestureDetector(
+            onTap: () {
+              showVisitScreen(context, userId, chat, false);
+            },
+            child: Padding(
               padding: const EdgeInsets.only(left: 0, right: 10),
               child: AppUserImage(
                 url: pictureData,
@@ -70,26 +65,33 @@ class AppOtherMessageWidget extends StatelessWidget {
                 gender: gender,
               ),
             ),
-            if (message.chatType == ChatType.giphy)
-              Align(
-                alignment: Alignment.bottomLeft,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(20.0),
-                  child: SizedBox(
-                    width: 200,
-                    height: 200,
-                    child: CachedNetworkImage(
-                      imageUrl: message.text,
-                      placeholder: (context, url) =>
-                          const Center(child: AppSpinner()),
-                      errorWidget: (context, url, error) =>
-                          const Icon(Icons.error),
-                    ),
+          ),
+          if (message.chatType == ChatType.giphy)
+            Align(
+              alignment: Alignment.bottomLeft,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(20.0),
+                child: SizedBox(
+                  width: 200,
+                  height: 200,
+                  child: CachedNetworkImage(
+                    imageUrl: message.text,
+                    placeholder: (context, url) =>
+                        const Center(child: AppSpinner()),
+                    errorWidget: (context, url, error) =>
+                        const Icon(Icons.error),
                   ),
                 ),
-              )
-            else
-              Expanded(
+              ),
+            )
+          else
+            Expanded(
+              child: GestureDetector(
+                onTap: (){
+                  BlocProvider.of<MessagesBloc>(context)
+                      .add(MessagesMarkedEvent(message: message, marked: true));
+                  showOptionsScreen(context, message);
+                },
                 child: Align(
                   alignment: Alignment.bottomLeft,
                   child: DecoratedBox(
@@ -201,8 +203,8 @@ class AppOtherMessageWidget extends StatelessWidget {
                   ),
                 ),
               ),
-          ],
-        ),
+            ),
+        ],
       ),
     );
   }
