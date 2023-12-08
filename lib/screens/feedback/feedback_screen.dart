@@ -43,7 +43,15 @@ class FeedbackScreenContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocListener<FeedbackBloc, FeedbackState>(
-      listener: (context, state) {},
+      listener: (context, state) {
+        if (state is FeedbackDoneState) {
+          SnackBar snackBar = SnackBar(
+            content: Text(translate(context, 'feedback_sent')),
+          );
+          ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          Navigator.pop(context);
+        }
+      },
       child: BlocBuilder<FeedbackBloc, FeedbackState>(
           builder: (blocContext, state) {
         if (state is FeedbackBaseState) {
@@ -118,11 +126,6 @@ class FeedbackScreenContent extends StatelessWidget {
                       }
                       BlocProvider.of<FeedbackBloc>(context)
                           .add(FeedbackSendEvent(message));
-                      SnackBar snackBar = SnackBar(
-                        content: Text(translate(context, 'feedback_sent')),
-                      );
-                      ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                      Navigator.of(context).pop();
                     },
                   ),
                 ),

@@ -7,3 +7,5 @@ abstract class FeedbackState extends Equatable {
 }
 
 class FeedbackBaseState extends FeedbackState {}
+class FeedbackLoadingState extends FeedbackState {}
+class FeedbackDoneState extends FeedbackLoadingState {}
