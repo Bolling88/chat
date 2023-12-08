@@ -213,7 +213,7 @@ Row getProfileRow({
       Text(displayName,
           textAlign: TextAlign.left,
           style: Theme.of(context).textTheme.displaySmall?.merge(
-              TextStyle(color: getGenderColor(Gender.fromValue(gender))))),
+              TextStyle(color: getGenderColor(Gender.fromValue(gender)), fontSize: 26))),
       if (gender != Gender.secret.value)
         SizedBox(
             width: 30,

@@ -144,7 +144,7 @@ class VisitScreenContent extends StatelessWidget {
                       context: context),
                 ),
                 getRegionText(user, context),
-                const SizedBox(height: 40),
+                const SizedBox(height: 20),
                 if (!state.userBlocked &&
                     !state.myUser.blockedBy.contains(user.id))
                   state.isChatAvailable
@@ -186,6 +186,7 @@ class VisitScreenContent extends StatelessWidget {
                           child: Text(FlutterI18n.translate(
                               context, 'go_to_private_chat')),
                         ),
+                if (state.message.isEmpty) const SizedBox(height: 20),
                 if (state.message.isEmpty)
                   TextButton(
                     onPressed: () {
@@ -201,8 +202,14 @@ class VisitScreenContent extends StatelessWidget {
                             });
                       }
                     },
-                    child: Text(translate(context,
-                        state.userBlocked ? 'unblock_user' : 'block_user')),
+                    child: Text(
+                      translate(context,
+                          state.userBlocked ? 'unblock_user' : 'block_user'),
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyMedium
+                          ?.copyWith(color: AppColors.main),
+                    ),
                   ),
               ],
             ),
