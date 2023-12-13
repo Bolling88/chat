@@ -222,7 +222,7 @@ void showReportDialog(BuildContext parentContext, Message message) {
             onPressed: () {
               Navigator.of(context).pop();
             },
-            child: Text(FlutterI18n.translate(context, 'no')),
+            child: Text(FlutterI18n.translate(context, 'no').toUpperCase()),
           ),
           TextButton(
             onPressed: () {
@@ -234,7 +234,7 @@ void showReportDialog(BuildContext parentContext, Message message) {
               BlocProvider.of<MessagesBloc>(parentContext)
                   .add(MessagesReportMessageEvent(message));
             },
-            child: Text(FlutterI18n.translate(context, 'yes')),
+            child: Text(FlutterI18n.translate(context, 'yes').toUpperCase()),
           ),
         ],
       );

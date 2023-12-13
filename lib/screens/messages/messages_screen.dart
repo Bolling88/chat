@@ -288,7 +288,7 @@ class ChatsScreenContent extends StatelessWidget {
                     onPressed: () {
                       Navigator.pop(context);
                     },
-                    child: Text(FlutterI18n.translate(context, "no"))),
+                    child: Text(FlutterI18n.translate(context, "no").toUpperCase())),
                 TextButton(
                     onPressed: () {
                       BlocProvider.of<MessageHolderBloc>(parentContext).add(
@@ -296,7 +296,7 @@ class ChatsScreenContent extends StatelessWidget {
                               chat as PrivateChat));
                       Navigator.pop(context);
                     },
-                    child: Text(FlutterI18n.translate(context, "yes")))
+                    child: Text(FlutterI18n.translate(context, "yes").toUpperCase()))
               ],
             ));
   }
