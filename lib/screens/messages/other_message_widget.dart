@@ -67,105 +67,116 @@ class AppOtherMessageWidget extends StatelessWidget {
             ),
           ),
           if (message.chatType == ChatType.giphy)
-            Align(
-              alignment: Alignment.bottomLeft,
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(20.0),
-                child: SizedBox(
-                  width: 200,
-                  height: 200,
-                  child: CachedNetworkImage(
-                    imageUrl: message.text,
-                    placeholder: (context, url) =>
-                        const Center(child: AppSpinner()),
-                    errorWidget: (context, url, error) =>
-                        const Icon(Icons.error),
-                  ),
-                ),
-              ),
-            )
+            giphyMessage(context)
           else
-            Expanded(
-              child: GestureDetector(
-                onTap: (){
-                  BlocProvider.of<MessagesBloc>(context)
-                      .add(MessagesMarkedEvent(message: message, marked: true));
-                  showOptionsScreen(context, message);
-                },
-                child: Align(
-                  alignment: Alignment.bottomLeft,
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                        borderRadius: const BorderRadius.only(
-                          bottomLeft: Radius.circular(10.0),
-                          bottomRight: Radius.circular(10.0),
-                          topRight: Radius.circular(10.0),
-                        ),
-                        gradient: LinearGradient(
-                            begin: Alignment.topCenter,
-                            end: Alignment.bottomCenter,
-                            colors: [
-                              message.marked
-                                  ? AppColors.main_3
-                                  : AppColors.grey_4,
-                              message.marked
-                                  ? AppColors.main_3
-                                  : AppColors.grey_4
-                            ])),
-                    child: Padding(
-                      padding: const EdgeInsets.only(
-                          left: 10, right: 10, top: 5, bottom: 5),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(displayName,
-                                  textAlign: TextAlign.left,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodySmall
-                                      ?.merge(TextStyle(
-                                          color: getGenderColor(
-                                              Gender.fromValue(gender)),
-                                          fontWeight: FontWeight.bold))),
-                              if (gender != Gender.secret.value)
-                                SizedBox(
-                                    width: 18,
-                                    height: 18,
-                                    child: AppLottie(
-                                      url: getGenderUrl(gender),
-                                      animate: false,
-                                    )),
-                              const SizedBox(width: 2),
-                              if (birthDate != null && showAge)
-                                Text(
-                                  getAge(birthDate),
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .displaySmall
-                                      ?.merge(TextStyle(
-                                          color: getGenderColor(
-                                              Gender.fromValue(gender)),
-                                          fontSize: 16)),
-                                ),
-                              if (birthDate != null) const SizedBox(width: 8),
-                              getFlag(countryCode: countryCode, fontSize: 16),
-                            ],
-                          ),
-                          Column(
-                            children: [
+            regularMessage(context),
+        ],
+      ),
+    );
+  }
+
+  Expanded regularMessage(BuildContext context) {
+    return Expanded(
+            child: GestureDetector(
+              onTap: (){
+                BlocProvider.of<MessagesBloc>(context)
+                    .add(MessagesMarkedEvent(message: message, marked: true));
+                showOptionsScreen(context, message);
+              },
+              child: Align(
+                alignment: Alignment.bottomLeft,
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                      borderRadius: const BorderRadius.only(
+                        bottomLeft: Radius.circular(10.0),
+                        bottomRight: Radius.circular(10.0),
+                        topRight: Radius.circular(10.0),
+                      ),
+                      gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            message.marked
+                                ? AppColors.main_3
+                                : AppColors.grey_4,
+                            message.marked
+                                ? AppColors.main_3
+                                : AppColors.grey_4
+                          ])),
+                  child: Padding(
+                    padding: const EdgeInsets.only(
+                        left: 10, right: 10, top: 5, bottom: 5),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(displayName,
+                                textAlign: TextAlign.left,
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodySmall
+                                    ?.merge(TextStyle(
+                                        color: getGenderColor(
+                                            Gender.fromValue(gender)),
+                                        fontWeight: FontWeight.bold))),
+                            if (gender != Gender.secret.value)
+                              SizedBox(
+                                  width: 18,
+                                  height: 18,
+                                  child: AppLottie(
+                                    url: getGenderUrl(gender),
+                                    animate: false,
+                                  )),
+                            const SizedBox(width: 2),
+                            if (birthDate != null && showAge)
                               Text(
-                                message.text,
+                                getAge(birthDate),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .displaySmall
+                                    ?.merge(TextStyle(
+                                        color: getGenderColor(
+                                            Gender.fromValue(gender)),
+                                        fontSize: 16)),
+                              ),
+                            if (birthDate != null) const SizedBox(width: 8),
+                            getFlag(countryCode: countryCode, fontSize: 16),
+                          ],
+                        ),
+                        Column(
+                          children: [
+                            Text(
+                              message.text,
+                              textAlign: TextAlign.left,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium
+                                  ?.merge(
+                                    TextStyle(
+                                      color: message.marked? AppColors.white: AppColors.grey_1,
+                                      fontSize: isOnlyEmojis(message.text)
+                                          ? 40
+                                          : Theme.of(context)
+                                              .textTheme
+                                              .bodyMedium
+                                              ?.fontSize,
+                                    ),
+                                  ),
+                            ),
+                            if (message.translation != null &&
+                                message.translation?.isNotEmpty == true)
+                              Text(
+                                message.translation ?? '',
                                 textAlign: TextAlign.left,
                                 style: Theme.of(context)
                                     .textTheme
                                     .bodyMedium
                                     ?.merge(
                                       TextStyle(
-                                        color: message.marked? AppColors.white: AppColors.grey_1,
+                                        color: AppColors.main,
                                         fontSize: isOnlyEmojis(message.text)
                                             ? 40
                                             : Theme.of(context)
@@ -175,35 +186,81 @@ class AppOtherMessageWidget extends StatelessWidget {
                                       ),
                                     ),
                               ),
-                              if (message.translation != null &&
-                                  message.translation?.isNotEmpty == true)
-                                Text(
-                                  message.translation ?? '',
-                                  textAlign: TextAlign.left,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyMedium
-                                      ?.merge(
-                                        TextStyle(
-                                          color: AppColors.main,
-                                          fontSize: isOnlyEmojis(message.text)
-                                              ? 40
-                                              : Theme.of(context)
-                                                  .textTheme
-                                                  .bodyMedium
-                                                  ?.fontSize,
-                                        ),
-                                      ),
-                                ),
-                            ],
-                          ),
-                        ],
-                      ),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
                 ),
               ),
             ),
+          );
+  }
+
+  Widget giphyMessage(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        showVisitScreen(context, userId, chat, false);
+      },
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Text(displayName,
+                  textAlign: TextAlign.left,
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodySmall
+                      ?.merge(TextStyle(
+                      color: getGenderColor(
+                          Gender.fromValue(gender)),
+                      fontWeight: FontWeight.bold))),
+              if (gender != Gender.secret.value)
+                SizedBox(
+                    width: 18,
+                    height: 18,
+                    child: AppLottie(
+                      url: getGenderUrl(gender),
+                      animate: false,
+                    )),
+              const SizedBox(width: 2),
+              if (birthDate != null && showAge)
+                Text(
+                  getAge(birthDate),
+                  style: Theme.of(context)
+                      .textTheme
+                      .displaySmall
+                      ?.merge(TextStyle(
+                      color: getGenderColor(
+                          Gender.fromValue(gender)),
+                      fontSize: 16)),
+                ),
+              if (birthDate != null) const SizedBox(width: 8),
+              getFlag(countryCode: countryCode, fontSize: 16),
+            ],
+          ),
+          Align(
+                  alignment: Alignment.bottomLeft,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(20.0),
+                    child: SizedBox(
+                      width: 200,
+                      height: 200,
+                      child: CachedNetworkImage(
+                        imageUrl: message.text,
+                        placeholder: (context, url) =>
+                            const Center(child: AppSpinner()),
+                        errorWidget: (context, url, error) =>
+                            const Icon(Icons.error),
+                      ),
+                    ),
+                  ),
+                ),
         ],
       ),
     );
