@@ -108,5 +108,8 @@
   "copy_text": "पाठ कॉपी करें",
   "copied_to_clipboard": "क्लिपबोर्ड में कॉपी किया गया",
   "reply": "जवाब दें",
-  "translate": "अनुवाद करें"
+  "translate": "अनुवाद करें",
+  "change_name_title": "नाम बदलें?",
+  "change_name_info": "आगे बढ़ो!",
+  "change_name_small_text": "बस नीचे टाइप करें"
 }

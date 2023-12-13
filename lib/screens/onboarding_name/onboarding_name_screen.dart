@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
-import 'package:universal_io/io.dart';
 import '../../repository/firestore_repository.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_widgets.dart';
-import '../chat/chat_screen.dart';
 import '../login/bloc/login_state.dart';
 import '../message_holder/message_holder_screen.dart';
 import '../onboarding_age/onboarding_age_screen.dart';
@@ -96,7 +94,7 @@ class OnboardingNameScreenContent extends StatelessWidget {
         children: [
           Center(
             child: Text(
-              FlutterI18n.translate(context, "hey_you"),
+              FlutterI18n.translate(context, isEditMode?  "change_name_title" :"hey_you"),
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.displayLarge,
             ),
@@ -105,7 +103,7 @@ class OnboardingNameScreenContent extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.only(left: 20, right: 20),
               child: Text(
-                FlutterI18n.translate(context, "nice_see_you_here"),
+                FlutterI18n.translate(context, isEditMode?  "change_name_info" :"nice_see_you_here"),
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.displayMedium,
               ),
@@ -116,7 +114,7 @@ class OnboardingNameScreenContent extends StatelessWidget {
                 const EdgeInsets.only(left: 70, right: 70, top: 30, bottom: 20),
             child: Center(
               child: Text(
-                FlutterI18n.translate(context, "nice_see_you_here_info"),
+                FlutterI18n.translate(context, isEditMode?  "change_name_small_text" : "nice_see_you_here_info"),
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.bodyMedium,
               ),

@@ -108,5 +108,8 @@
   "copy_text": "نسخ النص",
   "copied_to_clipboard": "تم النسخ إلى الحافظة",
   "reply": "رد",
-  "translate": "ترجمة"
+  "translate": "ترجمة",
+  "change_name_title": "تغيير الاسم؟",
+  "change_name_info": "تفضل!",
+  "change_name_small_text": "فقط اكتبه أدناه"
 }
