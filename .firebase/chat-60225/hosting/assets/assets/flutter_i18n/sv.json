@@ -108,5 +108,8 @@
   "copy_text": "Kopiera text",
   "copied_to_clipboard": "Kopierat till urklipp",
   "reply": "Svara",
-  "translate": "Översätt"
+  "translate": "Översätt",
+  "change_name_title": "Ändra namn?",
+  "change_name_info": "Kör på!",
+  "change_name_small_text": "Skriv bara in det nedan"
 }

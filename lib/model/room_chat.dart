@@ -1,5 +1,7 @@
 import 'dart:ui';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter_i18n/flutter_i18n.dart';
 import '../utils/time_util.dart';
 import 'chat.dart';
 
@@ -11,6 +13,7 @@ class RoomChat extends Chat implements Comparable<RoomChat> {
   final int imageOverflow;
   final int imageTranslationX;
   final bool lastMessageReadByUser;
+  final String infoKey;
 
   const RoomChat({
     required this.countryCode,
@@ -20,6 +23,7 @@ class RoomChat extends Chat implements Comparable<RoomChat> {
     required this.imageOverflow,
     required this.imageTranslationX,
     required this.lastMessageReadByUser,
+    required this.infoKey,
     required String id,
     required String lastMessage,
     required bool lastMessageIsGiphy,
@@ -42,6 +46,7 @@ class RoomChat extends Chat implements Comparable<RoomChat> {
         imageUrl = json['imageUrl'] ?? "",
         imageOverflow = json['imageOverflow'] ?? 80,
         imageTranslationX = json['imageTranslationX'] ?? 0,
+        infoKey = json['infoKey'] ?? '',
         lastMessageReadByUser = false,
         super(
           id: id,
@@ -77,6 +82,7 @@ class RoomChat extends Chat implements Comparable<RoomChat> {
     Timestamp? lastMessageTimestamp,
     String? lastMessageUserId,
     bool? lastMessageReadByUser,
+    String? infoKey,
   }) {
     return RoomChat(
       countryCode: countryCode ?? this.countryCode,
@@ -91,6 +97,7 @@ class RoomChat extends Chat implements Comparable<RoomChat> {
       lastMessageByName: lastMessageByName ?? this.lastMessageByName,
       lastMessageTimestamp: lastMessageTimestamp ?? this.lastMessageTimestamp,
       lastMessageUserId: lastMessageUserId ?? this.lastMessageUserId,
+      infoKey: infoKey ?? this.infoKey,
       lastMessageReadByUser:
           lastMessageReadByUser ?? this.lastMessageReadByUser,
     );
@@ -110,7 +117,8 @@ class RoomChat extends Chat implements Comparable<RoomChat> {
         chatColor,
         imageUrl,
         imageOverflow,
-        imageTranslationX
+        imageTranslationX,
+        infoKey
       ];
 
   @override
@@ -136,5 +144,12 @@ class RoomChat extends Chat implements Comparable<RoomChat> {
   @override
   bool isPrivateChat() {
     return false;
+  }
+
+  String getInfoText(BuildContext context){
+    if(infoKey.isEmpty){
+      return FlutterI18n.translate(context, 'info_country');
+    }
+    return FlutterI18n.translate(context, infoKey);
   }
 }

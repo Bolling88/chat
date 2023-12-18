@@ -106,5 +106,11 @@
   "translate": "Traduzir",
   "change_name_title": "Mudar o nome?",
   "change_name_info": "Vá em frente!",
-  "change_name_small_text": "Basta digitar abaixo"
+  "change_name_small_text": "Basta digitar abaixo",
+  "info_general": "Não tem certeza de qual sala se juntar? Comece aqui!",
+  "info_love": "Encontre amor e romance nesta sala de chat!",
+  "info_random": "Converse sobre qualquer coisa mesmo!",
+  "info_singles": "Junte-se apenas se você estiver solteiro e pronto para se misturar!",
+  "info_queer": "Junte-se se você for queer!",
+  "info_country": "Que país tão bonito!"
 }

@@ -103,5 +103,8 @@
   "copy_text": "Copiar texto",
   "copied_to_clipboard": "Copiado para a área de transferência",
   "reply": "Responder",
-  "translate": "Traduzir"
+  "translate": "Traduzir",
+  "change_name_title": "Mudar o nome?",
+  "change_name_info": "Vá em frente!",
+  "change_name_small_text": "Basta digitar abaixo"
 }

@@ -111,5 +111,11 @@
   "translate": "Translate",
   "change_name_title": "Change name?",
   "change_name_info": "Go for it!",
-  "change_name_small_text": "Just type it in below"
+  "change_name_small_text": "Just type it in below",
+  "info_general": "Not sure what room to join? Start here!",
+  "info_love": "Find love and romance in this chat room!",
+  "info_random": "Chat about anything really!",
+  "info_singles": "Only join if you are single and ready to mingle!",
+  "info_queer": "Join if you are queer!",
+  "info_country": "Such a beautiful country!"
 }

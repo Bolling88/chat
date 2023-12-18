@@ -108,5 +108,8 @@
   "copy_text": "Копировать текст",
   "copied_to_clipboard": "Скопировано в буфер обмена",
   "reply": "Ответить",
-  "translate": "Перевести"
+  "translate": "Перевести",
+  "change_name_title": "Изменить имя?",
+  "change_name_info": "Давай!",
+  "change_name_small_text": "Просто введите его ниже"
 }

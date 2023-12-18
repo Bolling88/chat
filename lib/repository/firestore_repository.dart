@@ -242,15 +242,6 @@ class FirestoreRepository {
           'lastMessageUserId': getUserId(),
           'sendPushToUserId': sendPushToUserId,
         }, SetOptions(merge: true));
-      } else {
-        await chats.doc(chatId).set({
-          'lastMessage': message,
-          'lastMessageIsGiphy': chatType == ChatType.giphy,
-          'lastMessageByName': user.displayName,
-          'lastMessageByGender': user.gender,
-          'lastMessageTimestamp': FieldValue.serverTimestamp(),
-          'lastMessageUserId': getUserId()
-        }, SetOptions(merge: true));
       }
     }
   }
