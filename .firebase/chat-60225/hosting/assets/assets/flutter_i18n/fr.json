@@ -111,6 +111,12 @@
   "translate": "Traduire",
   "change_name_title": "Changer de nom ?",
   "change_name_info": "Vas-y !",
-  "change_name_small_text": "Tapez-le simplement ci-dessous"
+  "change_name_small_text": "Tapez-le simplement ci-dessous",
+  "info_general": "Pas sûr de quelle salle rejoindre? Commencez ici!",
+  "info_love": "Trouvez l'amour et le romantisme dans ce salon de chat!",
+  "info_random": "Discutez de n'importe quoi vraiment!",
+  "info_singles": "Rejoignez uniquement si vous êtes célibataire et prêt à vous mélanger!",
+  "info_queer": "Rejoignez si vous êtes queer!",
+  "info_country": "Quel beau pays!"
 }
 

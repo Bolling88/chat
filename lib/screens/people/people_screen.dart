@@ -34,7 +34,7 @@ class PeopleScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (BuildContext context) =>
-          PeopleBloc(context.read<FirestoreRepository>(), users),
+          PeopleBloc(context.read<FirestoreRepository>(), users, chat),
       child: PeopleScreenBuilder(chat: chat, parentContext: parentContext),
     );
   }
@@ -209,7 +209,7 @@ class PeopleScreenBuilder extends StatelessWidget {
                     child: Text(
               '${state.allOnlineUsers.length} ${FlutterI18n.translate(
                 context,
-                'user_online',
+                chat != null? 'in_this_room' : 'user_online',
               )}',
               style: Theme.of(context).textTheme.displaySmall,
             ))),

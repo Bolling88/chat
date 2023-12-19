@@ -111,5 +111,11 @@
   "translate": "Übersetzen",
   "change_name_title": "Name ändern?",
   "change_name_info": "Mach es!",
-  "change_name_small_text": "Gib ihn einfach unten ein"
+  "change_name_small_text": "Gib ihn einfach unten ein",
+  "info_general": "Nicht sicher, welchem Raum beizutreten? Starte hier!",
+  "info_love": "Finde Liebe und Romantik in diesem Chatraum!",
+  "info_random": "Unterhalte dich über alles Mögliche!",
+  "info_singles": "Treten Sie nur bei, wenn Sie Single sind und bereit zu flirten!",
+  "info_queer": "Treten Sie bei, wenn Sie queer sind!",
+  "info_country": "So ein schönes Land!"
 }

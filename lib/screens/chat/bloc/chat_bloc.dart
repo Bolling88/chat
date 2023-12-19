@@ -41,7 +41,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       if (currentState is ChatBaseState) {
         yield currentState.copyWith(chats: event.chats);
       } else {
-        yield ChatBaseState(event.chats, groupUsersByCountry(_initialUsers));
+        yield ChatBaseState(event.chats, groupUsersByChat(_initialUsers));
       }
     } else if (event is ChatOnlineUsersUpdatedEvent) {
       if (currentState is ChatBaseState) {
@@ -75,12 +75,12 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
           .map((e) => ChatUser.fromJson(e.id, e.data() as Map<String, dynamic>))
           .toList();
 
-      Map<String, List<ChatUser>> usersPerChat = groupUsersByCountry(users);
+      Map<String, List<ChatUser>> usersPerChat = groupUsersByChat(users);
       add(ChatOnlineUsersUpdatedEvent(usersPerChat));
     });
   }
 
-  Map<String, List<ChatUser>> groupUsersByCountry(List<ChatUser> users) {
+  Map<String, List<ChatUser>> groupUsersByChat(List<ChatUser> users) {
     final usersPerChat = <String, List<ChatUser>>{};
     for (var user in users) {
       if (user.currentRoomChatId.isNotEmpty) {

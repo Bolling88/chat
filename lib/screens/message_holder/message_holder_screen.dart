@@ -56,6 +56,8 @@ class MessageHolderScreenContent extends StatelessWidget {
         listener: (context, state) {
       if (state is MessageHolderLikeDialogState) {
         showLikeDialog(context, state);
+      }else if(state is MessageHolderShowOnlineUsersInChatState){
+        showPeopleScreen(context, state.chat, state.onlineUsers);
       }
     }, child: BlocBuilder<MessageHolderBloc, MessageHolderState>(
       builder: (context, state) {
@@ -182,7 +184,7 @@ class MessageHolderScreenContent extends StatelessWidget {
                   FocusManager.instance.primaryFocus?.unfocus();
                   if (index == state.privateChats.length + 1) {
                     showPeopleScreen(
-                        context, state.roomChat, state.onlineUsers);
+                        context, null, state.onlineUsers);
                     return;
                   }
                   HapticFeedback.heavyImpact();
@@ -350,7 +352,7 @@ class MessageHolderScreenContent extends StatelessWidget {
                   customBorder: const CircleBorder(),
                   onTap: () {
                     showPeopleScreen(
-                        context, state.roomChat, state.onlineUsers);
+                        context, null, state.onlineUsers);
                   },
                   child: SizedBox(
                     height: 60,

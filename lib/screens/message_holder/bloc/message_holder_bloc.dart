@@ -58,7 +58,7 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
       _fcmRepository.setUpPushNotification();
       _setUpUserListener();
       _updateUserLocation();
-      if(!kIsWeb) {
+      if (!kIsWeb) {
         loadInterstitialAd();
       }
       logEvent('started_chatting');
@@ -89,7 +89,7 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
             initialMessage: event.message,
           );
           _interstitialAd?.show();
-          if(!kIsWeb) {
+          if (!kIsWeb) {
             loadInterstitialAd();
           }
         } else {
@@ -271,6 +271,11 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
     } else if (event is MessageHolderRateNeverAppEvent) {
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.setBool('rated', true);
+    } else if (event is MessageHolderShowOnlineUsersInChatEvent) {
+      if (currentState is MessageHolderBaseState) {
+        yield MessageHolderShowOnlineUsersInChatState(currentState, event.chat);
+        yield currentState; //This is to make sure the state is not changed
+      }
     } else {
       throw UnimplementedError();
     }
@@ -293,7 +298,8 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
   void _setUpPrivateChatsListener(ChatUser user) async {
     Log.d('Setting up private chats stream');
     _firestoreRepository.startPrivateChatsStream(user.id);
-    privateChatStream = _firestoreRepository.getPrivateChatsStream().listen((data) {
+    privateChatStream =
+        _firestoreRepository.getPrivateChatsStream().listen((data) {
       Log.d("Got private chats");
       final chats = data.docs
           .map((e) =>

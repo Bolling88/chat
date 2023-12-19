@@ -3,7 +3,6 @@ import 'package:equatable/equatable.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 
 import '../../../model/message.dart';
-import '../../../model/message_item.dart';
 import '../../../model/private_chat.dart';
 
 abstract class MessagesState extends Equatable {

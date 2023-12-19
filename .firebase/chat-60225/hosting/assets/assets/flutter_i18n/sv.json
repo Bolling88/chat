@@ -111,5 +111,11 @@
   "translate": "Översätt",
   "change_name_title": "Ändra namn?",
   "change_name_info": "Kör på!",
-  "change_name_small_text": "Skriv bara in det nedan"
+  "change_name_small_text": "Skriv bara in det nedan",
+  "info_general": "Inte säker på vilket rum att gå med i? Börja här!",
+  "info_love": "Hitta kärlek och romantik i detta chattrum!",
+  "info_random": "Chatta om vad som helst verkligen!",
+  "info_singles": "Gå med endast om du är singel och redo att mingla!",
+  "info_queer": "Gå med om du är queer!",
+  "info_country": "Vilket vackert land!"
 }

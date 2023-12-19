@@ -11,11 +11,12 @@ import 'dart:async';
 class PeopleBloc extends Bloc<PeopleEvent, PeopleState> {
   final FirestoreRepository _firestoreRepository;
   final List<ChatUser>? _initialUsers;
+  final Chat? _chat;
 
   StreamSubscription<QuerySnapshot>? chatStream;
   StreamSubscription<QuerySnapshot>? onlineUsersStream;
 
-  PeopleBloc(this._firestoreRepository, this._initialUsers)
+  PeopleBloc(this._firestoreRepository, this._initialUsers, this._chat)
       : super(PeopleLoadingState()) {
     add(PeopleInitialEvent());
   }
@@ -32,8 +33,16 @@ class PeopleBloc extends Bloc<PeopleEvent, PeopleState> {
     final currentState = state;
     try {
       if (event is PeopleInitialEvent) {
-        if(_initialUsers != null) {
-          yield PeopleBaseState(_initialUsers!, _initialUsers!, 0);
+        if (_initialUsers != null) {
+          if(_chat != null){
+            //Filter to only show people in the chat
+            final filteredUsers = _initialUsers!
+                .where((element) => element.currentRoomChatId == _chat?.id)
+                .toList();
+            yield PeopleBaseState(filteredUsers, filteredUsers, 0);
+          }else {
+            yield PeopleBaseState(_initialUsers!, _initialUsers!, 0);
+          }
         }
         setUpPeopleListener();
       } else if (event is PeopleLoadedEvent) {
@@ -118,13 +127,19 @@ class PeopleBloc extends Bloc<PeopleEvent, PeopleState> {
       final filteredUsers = users
           .where((element) => element.id != getUserId())
           .where((element) => element.lastActive.toDate().isAfter(
-          DateTime.now().subtract(_firestoreRepository.onlineDuration)))
-          .toList();
+              DateTime.now().subtract(_firestoreRepository.onlineDuration)))
+          .where((element) {
+        if (_chat == null) {
+          return true;
+        } else {
+          return element.currentRoomChatId == _chat?.id;
+        }
+      }).toList();
 
       final myUser =
           users.where((element) => element.id == getUserId()).firstOrNull;
 
-      if(myUser != null) {
+      if (myUser != null) {
         sortOnlineUsers(filteredUsers, myUser.countryCode);
         add(PeopleLoadedEvent(filteredUsers));
       }

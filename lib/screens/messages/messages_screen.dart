@@ -1,6 +1,7 @@
 import 'package:chat/model/private_chat.dart';
 import 'package:chat/screens/message_holder/bloc/message_holder_bloc.dart';
 import 'package:chat/screens/message_holder/bloc/message_holder_event.dart';
+import 'package:chat/screens/people/people_screen.dart';
 import 'package:chat/utils/app_colors.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -210,24 +211,40 @@ class ChatsScreenContent extends StatelessWidget {
                     alignment: Alignment.topCenter,
                     child: Padding(
                       padding: const EdgeInsets.only(top: 20),
-                      child: ElevatedButton.icon(
-                        icon: Icon((chat is PrivateChat)
-                            ? Icons.delete
-                            : Icons.exit_to_app),
-                        onPressed: () {
-                          if (chat is PrivateChat) {
-                            //show warning dialog
-                            showDeleteChatDialog(context);
-                          } else {
-                            BlocProvider.of<MessageHolderBloc>(context)
-                                .add(MessageHolderChangeChatRoomEvent());
-                          }
-                        },
-                        label: Text(translate(
-                            context,
-                            (chat is PrivateChat)
-                                ? 'delete_chat'
-                                : 'change_room')),
+                      child: Wrap(
+                        children: [
+                          ElevatedButton.icon(
+                            icon: Icon((chat is PrivateChat)
+                                ? Icons.delete
+                                : Icons.exit_to_app),
+                            onPressed: () {
+                              if (chat is PrivateChat) {
+                                //show warning dialog
+                                showDeleteChatDialog(context);
+                              } else {
+                                BlocProvider.of<MessageHolderBloc>(context)
+                                    .add(MessageHolderChangeChatRoomEvent());
+                              }
+                            },
+                            label: Text(translate(
+                                context,
+                                (chat is PrivateChat)
+                                    ? 'delete_chat'
+                                    : 'change_room')),
+                          ),
+                          if(!isPrivateChat)
+                            const SizedBox(width: 10),
+                          if(!isPrivateChat)
+                            ElevatedButton(
+                              onPressed: () {
+                                BlocProvider.of<MessageHolderBloc>(context)
+                                    .add(MessageHolderShowOnlineUsersInChatEvent(chat));
+                              },
+                              child: const FittedBox(
+                                  fit: BoxFit.fitWidth,
+                                  child: Icon(Icons.people)),
+                            )
+                        ],
                       ),
                     ),
                   ),

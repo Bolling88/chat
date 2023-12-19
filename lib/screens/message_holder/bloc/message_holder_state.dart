@@ -67,3 +67,15 @@ class MessageHolderLikeDialogState extends MessageHolderBaseState {
             selectedChat: state.selectedChat,
             selectedChatIndex: state.selectedChatIndex);
 }
+
+class MessageHolderShowOnlineUsersInChatState extends MessageHolderBaseState {
+  final Chat chat;
+  MessageHolderShowOnlineUsersInChatState(MessageHolderBaseState state, this.chat)
+      : super(
+      roomChat: state.roomChat,
+      user: state.user,
+      privateChats: state.privateChats,
+      onlineUsers: state.onlineUsers,
+      selectedChat: state.selectedChat,
+      selectedChatIndex: state.selectedChatIndex);
+}
