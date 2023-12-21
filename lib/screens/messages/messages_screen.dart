@@ -1,7 +1,6 @@
 import 'package:chat/model/private_chat.dart';
 import 'package:chat/screens/message_holder/bloc/message_holder_bloc.dart';
 import 'package:chat/screens/message_holder/bloc/message_holder_event.dart';
-import 'package:chat/screens/people/people_screen.dart';
 import 'package:chat/utils/app_colors.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -148,6 +147,9 @@ class ChatsScreenContent extends StatelessWidget {
                                     approvedImage: state
                                         .messages[getActualIndex(index)]
                                         .approvedImage,
+                                    imageReports: state
+                                        .messages[getActualIndex(index)]
+                                        .imageReports,
                                   );
                                 }
                               },

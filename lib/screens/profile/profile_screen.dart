@@ -66,7 +66,8 @@ class ProfileScreenBuilder extends StatelessWidget {
                       child: AppUserImage(
                         url: state.user.pictureData,
                         gender: state.user.gender,
-                        isApproved: ApprovedImage.approved,
+                        approvalState: ApprovedImage.approved,
+                        imageReports: const [],
                         size: 120,
                       ),
                       onTap: () {

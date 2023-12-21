@@ -112,5 +112,12 @@
   "info_random": "Converse sobre qualquer coisa mesmo!",
   "info_singles": "Junte-se apenas se você estiver solteiro e pronto para se misturar!",
   "info_queer": "Junte-se se você for queer!",
-  "info_country": "Que país tão bonito!"
+  "info_country": "Que país tão bonito!",
+  "in_this_room": "Nesta sala",
+  "report_user": "Denunciar usuário",
+  "inappropriate_image": "Imagem inapropriada",
+  "hateful_language": "Linguagem de ódio",
+  "likely_bot": "Provavelmente um bot",
+  "sensitive_content": "Conteúdo sensível",
+  "show_image": "Mostrar imagem"
 }

@@ -109,7 +109,7 @@ class MessageHolderScreenContent extends StatelessWidget {
               width: 350,
               child: PeopleScreen(
                 key: const Key("message_holder_screen_people_screen"),
-                chat: state.roomChat,
+                chat: null,
                 parentContext: context,
                 users: null,
               )),
@@ -473,7 +473,8 @@ Widget getChatImage(
           child: AppUserImage(
             url: user.pictureData,
             gender: user.gender,
-            isApproved: ApprovedImage.fromValue(user.approvedImage),
+            imageReports: user.imageReports,
+            approvalState: ApprovedImage.fromValue(user.approvedImage),
           ));
     } else {
       return const SizedBox.shrink();

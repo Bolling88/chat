@@ -24,6 +24,7 @@ class AppOtherMessageWidget extends StatelessWidget {
   final String pictureData;
   final String displayName;
   final String userId;
+  final List<String> imageReports;
   final int approvedImage;
   final int gender;
   final String countryCode;
@@ -36,6 +37,7 @@ class AppOtherMessageWidget extends StatelessWidget {
     required this.message,
     required this.pictureData,
     required this.userId,
+    required this.imageReports,
     required this.displayName,
     required this.gender,
     required this.approvedImage,
@@ -61,7 +63,8 @@ class AppOtherMessageWidget extends StatelessWidget {
               padding: const EdgeInsets.only(left: 0, right: 10),
               child: AppUserImage(
                 url: pictureData,
-                isApproved: ApprovedImage.fromValue(approvedImage),
+                approvalState: ApprovedImage.fromValue(approvedImage),
+                imageReports: imageReports,
                 gender: gender,
               ),
             ),
@@ -265,38 +268,6 @@ class AppOtherMessageWidget extends StatelessWidget {
       ),
     );
   }
-}
-
-void showReportDialog(BuildContext parentContext, Message message) {
-  showDialog(
-    context: parentContext,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: Text(FlutterI18n.translate(context, 'report_message')),
-        content: Text(FlutterI18n.translate(context, 'report_message_info')),
-        actions: <Widget>[
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            child: Text(FlutterI18n.translate(context, 'no').toUpperCase()),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                content:
-                    Text(FlutterI18n.translate(context, 'message_reported')),
-              ));
-              BlocProvider.of<MessagesBloc>(parentContext)
-                  .add(MessagesReportMessageEvent(message));
-            },
-            child: Text(FlutterI18n.translate(context, 'yes').toUpperCase()),
-          ),
-        ],
-      );
-    },
-  );
 }
 
 String getGenderUrl(int gender) {

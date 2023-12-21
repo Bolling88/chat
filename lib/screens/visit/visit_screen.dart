@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:chat/repository/firestore_repository.dart';
+import 'package:chat/screens/report/report_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
@@ -7,8 +8,6 @@ import '../../model/chat.dart';
 import '../../model/chat_user.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_widgets.dart';
-import '../../utils/flag.dart';
-import '../../utils/gender.dart';
 import '../../utils/lottie.dart';
 import '../../utils/translate.dart';
 import '../account/account_screen.dart';
@@ -16,7 +15,6 @@ import '../full_screen_image/full_screen_image_screen.dart';
 import '../message_holder/bloc/message_holder_bloc.dart';
 import '../message_holder/bloc/message_holder_event.dart';
 import '../messages/message_edit_text_widget.dart';
-import '../messages/other_message_widget.dart';
 import 'bloc/visit_bloc.dart';
 import 'bloc/visit_event.dart';
 import 'bloc/visit_state.dart';
@@ -48,7 +46,7 @@ class VisitScreen extends StatelessWidget {
   }
 }
 
-const _bottomsheetHeight = 450.0;
+const _bottomsheetHeight = 480.0;
 
 class VisitScreenContent extends StatelessWidget {
   final BuildContext parentContext;
@@ -116,9 +114,12 @@ class VisitScreenContent extends StatelessWidget {
                     if (user.pictureData.isNotEmpty) {
                       Navigator.of(context).push(
                         MaterialPageRoute<bool>(
-                          builder: (BuildContext context) => FullScreenImage(
+                          builder: (BuildContext context) => FullScreenImageScreen(
                               imageUrl: user.pictureData,
-                              userName: user.displayName),
+                              userName: user.displayName,
+                              imageReports: user.imageReports,
+                              approvalState:
+                                  ApprovedImage.fromValue(user.approvedImage)),
                         ),
                       );
                     }
@@ -129,7 +130,9 @@ class VisitScreenContent extends StatelessWidget {
                         child: AppUserImage(
                       url: user.pictureData,
                       gender: user.gender,
-                      isApproved: ApprovedImage.fromValue(user.approvedImage),
+                      approvalState:
+                          ApprovedImage.fromValue(user.approvedImage),
+                      imageReports: user.imageReports,
                       size: 110,
                     )),
                   ),
@@ -188,28 +191,69 @@ class VisitScreenContent extends StatelessWidget {
                         ),
                 if (state.message.isEmpty) const SizedBox(height: 20),
                 if (state.message.isEmpty)
-                  TextButton(
-                    onPressed: () {
-                      if (state.userBlocked) {
-                        BlocProvider.of<VisitBloc>(blocContext)
-                            .add(VisitUnblocUserEvent());
-                      } else {
-                        showDialog(
-                            context: context,
-                            builder: (BuildContext context) {
-                              return getBlockAccountDialog(
-                                  blocContext, context);
-                            });
-                      }
-                    },
-                    child: Text(
-                      translate(context,
-                          state.userBlocked ? 'unblock_user' : 'block_user'),
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyMedium
-                          ?.copyWith(color: AppColors.main),
-                    ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                       Icon(
+                        state.userBlocked? Icons.check_circle_outline: Icons.block,
+                        color: state.userBlocked? AppColors.main: AppColors.red,
+                        size: 14,
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          if (state.userBlocked) {
+                            BlocProvider.of<VisitBloc>(blocContext)
+                                .add(VisitUnblocUserEvent());
+                          } else {
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return getBlockAccountDialog(
+                                      blocContext, context);
+                                });
+                          }
+                        },
+                        child: Text(
+                          translate(
+                              context,
+                              state.userBlocked
+                                  ? 'unblock_user'
+                                  : 'block_user'),
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyMedium
+                              ?.copyWith(color: state.userBlocked? AppColors.main: AppColors.red),
+                        ),
+                      ),
+                    ],
+                  ),
+                if (state.message.isEmpty)
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(
+                        Icons.flag,
+                        color: AppColors.red,
+                        size: 14,
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          final visitedUserId = state.user?.id;
+                          if (visitedUserId != null) {
+                            showReportScreen(context, visitedUserId);
+                          }
+                        },
+                        child: Text(
+                          translate(context, 'report_user'),
+                          style: Theme.of(context)
+                              .textTheme
+                              .bodyMedium
+                              ?.copyWith(color: AppColors.red),
+                        ),
+                      ),
+                    ],
                   ),
               ],
             ),
@@ -289,13 +333,13 @@ AlertDialog getBlockAccountDialog(
           BlocProvider.of<VisitBloc>(blocContext).add(VisitBlocUserEvent());
           Navigator.of(context).pop();
         },
-        child: Text(translate(context, 'yes')),
+        child: Text(translate(context, 'yes').toUpperCase()),
       ),
       TextButton(
         onPressed: () {
           Navigator.of(context).pop();
         },
-        child: Text(translate(context, 'no')),
+        child: Text(translate(context, 'no').toUpperCase()),
       ),
     ],
   );

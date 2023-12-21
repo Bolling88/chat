@@ -17,6 +17,7 @@ class Message extends Equatable implements Comparable<Message> {
   final bool showAge;
   final String? translation;
   final bool marked;
+  final List<String> imageReports;
 
   const Message({
     required this.id,
@@ -33,6 +34,7 @@ class Message extends Equatable implements Comparable<Message> {
     required this.showAge,
     this.translation,
     required this.marked,
+    required this.imageReports,
   });
 
   Message.fromJson(this.id, Map<String, dynamic> json)
@@ -49,7 +51,8 @@ class Message extends Equatable implements Comparable<Message> {
         birthDate = json['birthDate'],
         showAge = json['showAge'] ?? true,
         translation = null,
-        marked = false;
+        marked = false,
+        imageReports = json['imageReports']?.cast<String>() ?? [];
 
   //Copy with method
   Message copyWith({
@@ -67,6 +70,7 @@ class Message extends Equatable implements Comparable<Message> {
     bool? showAge,
     String? translation,
     bool? marked,
+    List<String>? imageReports,
   }) {
     return Message(
       id: id ?? this.id,
@@ -83,6 +87,7 @@ class Message extends Equatable implements Comparable<Message> {
       showAge: showAge ?? this.showAge,
       translation: translation ?? this.translation,
       marked: marked ?? this.marked,
+      imageReports: imageReports ?? this.imageReports,
     );
   }
 
@@ -102,6 +107,7 @@ class Message extends Equatable implements Comparable<Message> {
         showAge,
         translation,
         marked,
+        imageReports,
       ];
 
   @override

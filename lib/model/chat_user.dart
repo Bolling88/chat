@@ -23,28 +23,33 @@ class ChatUser extends Equatable {
   final String fcmToken;
   final Timestamp? birthDate;
   final List<String> blockedBy;
+  final List<String> imageReports;
+  final List<String> botReports;
+  final List<String> languageReports;
 
-  const ChatUser({
-    required this.id,
-    required this.displayName,
-    required this.gender,
-    required this.pictureData,
-    required this.approvedImage,
-    required this.onboardingCompleted,
-    required this.isAdmin,
-    required this.created,
-    required this.lastActive,
-    required this.city,
-    required this.countryCode,
-    required this.country,
-    required this.regionName,
-    required this.blockedBy,
-    required this.presence,
-    required this.showAge,
-    required this.fcmToken,
-    required this.birthDate,
-    required this.currentRoomChatId,
-  });
+  const ChatUser(
+      {required this.id,
+      required this.displayName,
+      required this.gender,
+      required this.pictureData,
+      required this.approvedImage,
+      required this.onboardingCompleted,
+      required this.isAdmin,
+      required this.created,
+      required this.lastActive,
+      required this.city,
+      required this.countryCode,
+      required this.country,
+      required this.regionName,
+      required this.blockedBy,
+      required this.presence,
+      required this.showAge,
+      required this.fcmToken,
+      required this.birthDate,
+      required this.currentRoomChatId,
+      required this.imageReports,
+      required this.botReports,
+      required this.languageReports});
 
   ChatUser.fromJson(this.id, Map<String, dynamic> json)
       : created = json['created'] ?? Timestamp.now(),
@@ -64,7 +69,10 @@ class ChatUser extends Equatable {
         currentRoomChatId = json['currentRoomChatId'] ?? '',
         fcmToken = json['fcmToken'] ?? '',
         birthDate = json['birthDate'],
-        blockedBy = json['blockedBy']?.cast<String>() ?? [];
+        blockedBy = json['blockedBy']?.cast<String>() ?? [],
+        imageReports = json['imageReports']?.cast<String>() ?? [],
+        botReports = json['botReports']?.cast<String>() ?? [],
+        languageReports = json['languageReports']?.cast<String>() ?? [];
 
   ChatUser.asUnknown(this.id)
       : created = Timestamp.now(),
@@ -84,7 +92,10 @@ class ChatUser extends Equatable {
         regionName = "",
         fcmToken = "",
         birthDate = null,
-        blockedBy = [];
+        blockedBy = [],
+        imageReports = [],
+        botReports = [],
+        languageReports = [];
 
   ChatUser copyWith(
       {String? name,
@@ -105,7 +116,10 @@ class ChatUser extends Equatable {
       String? currentRoomChatId,
       String? fcmToken,
       Timestamp? birthDate,
-      List<String>? blockedBy}) {
+      List<String>? blockedBy,
+      List<String>? imageReports,
+      List<String>? botReports,
+      List<String>? languageReports}) {
     return ChatUser(
         id: id,
         displayName: displayName ?? this.displayName,
@@ -125,7 +139,10 @@ class ChatUser extends Equatable {
         regionName: regionName ?? this.regionName,
         fcmToken: fcmToken ?? this.fcmToken,
         birthDate: birthDate ?? this.birthDate,
-        blockedBy: blockedBy ?? this.blockedBy);
+        blockedBy: blockedBy ?? this.blockedBy,
+        imageReports: imageReports ?? this.imageReports,
+        botReports: botReports ?? this.botReports,
+        languageReports: languageReports ?? this.languageReports);
   }
 
   @override
@@ -149,6 +166,9 @@ class ChatUser extends Equatable {
         fcmToken,
         birthDate,
         blockedBy,
+        imageReports,
+        botReports,
+        languageReports
       ];
 
   bool isUserBlocked() {

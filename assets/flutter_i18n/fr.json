@@ -117,6 +117,13 @@
   "info_random": "Discutez de n'importe quoi vraiment!",
   "info_singles": "Rejoignez uniquement si vous êtes célibataire et prêt à vous mélanger!",
   "info_queer": "Rejoignez si vous êtes queer!",
-  "info_country": "Quel beau pays!"
+  "info_country": "Quel beau pays!",
+  "in_this_room": "Dans cette pièce",
+  "report_user": "Signaler l'utilisateur",
+  "inappropriate_image": "Image inappropriée",
+  "hateful_language": "Langage haineux",
+  "likely_bot": "Probablement un bot",
+  "sensitive_content": "Contenu sensible",
+  "show_image": "Afficher l'image"
 }
 

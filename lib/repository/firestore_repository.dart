@@ -159,6 +159,7 @@ class FirestoreRepository {
         .set({
           'pictureData': profileImageUrl,
           'approvedImage': ApprovedImage.notReviewed.value,
+          'imageReports': [],
         }, SetOptions(merge: true))
         .then((value) => Log.d("User profile image updated"))
         .catchError((error) => Log.e("Failed to update user image: $error"));
@@ -210,6 +211,7 @@ class FirestoreRepository {
           'created': FieldValue.serverTimestamp(),
           'birthDate': user.birthDate,
           'showAge': user.showAge,
+          'imageReports': user.imageReports,
         });
       }
     } else {
@@ -226,6 +228,7 @@ class FirestoreRepository {
         'created': FieldValue.serverTimestamp(),
         'birthDate': user.birthDate,
         'showAge': user.showAge,
+        'imageReports': user.imageReports,
       });
     }
 
@@ -611,24 +614,29 @@ class FirestoreRepository {
   rejectImage(String id) async {
     await users.doc(id).set({
       'approvedImage': ApprovedImage.notApproved.value,
-      'pictureData': '',
     }, SetOptions(merge: true));
+  }
 
-    //Also delete the image from all messages
-    await messages
-        .where('createdById', isEqualTo: id)
-        .get()
-        .then((value) => value.docs.forEach((element) {
-              messages.doc(element.id).set({
-                'createdByImageUrl': '',
-              }, SetOptions(merge: true));
-            }));
-
-    try {
-      await _deleteAllUserFiles(id);
-      Log.d("Files deleted successfully");
-    } catch (e) {
-      Log.d("Error deleting files: $e");
+  Future<void> postInappropriateImageReport(String userId) async {
+    if(kDebugMode){
+      await users.doc(userId).set({
+        'approvedImage': ApprovedImage.notApproved.value,
+      }, SetOptions(merge: true));
     }
+    await users.doc(userId).set({
+      'imageReports': FieldValue.arrayUnion([userId]),
+    }, SetOptions(merge: true));
+  }
+
+  Future<void> postBotReport(String userId) async {
+    await users.doc(userId).set({
+      'botReports': FieldValue.arrayUnion([userId]),
+    }, SetOptions(merge: true));
+  }
+
+  Future<void> postHatefulLanguageReport(String userId) async {
+    await users.doc(userId).set({
+      'languageReports': FieldValue.arrayUnion([userId]),
+    }, SetOptions(merge: true));
   }
 }

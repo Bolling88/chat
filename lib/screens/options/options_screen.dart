@@ -1,5 +1,6 @@
 import 'package:chat/screens/options/bloc/options_state.dart';
 import 'package:chat/screens/options/bloc/options_bloc.dart';
+import 'package:chat/screens/report/report_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -132,8 +133,8 @@ class OptionsScreenBuilder extends StatelessWidget {
                     GestureDetector(
                       onTap: () {
                         Navigator.of(context).pop();
-                        showReportDialog(parentContext, message);
-                      },
+                        showReportScreen(context, message.createdById);
+                                            },
                       child: Column(
                         children: [
                           const Icon(

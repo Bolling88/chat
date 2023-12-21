@@ -151,7 +151,8 @@ class PeopleScreenBuilder extends StatelessWidget {
             leading: AppUserImage(
               url: users[index].pictureData,
               gender: users[index].gender,
-              isApproved: ApprovedImage.fromValue(users[index].approvedImage),
+              imageReports: users[index].imageReports,
+              approvalState: ApprovedImage.fromValue(users[index].approvedImage),
               size: 40,
             ),
             onTap: () {
