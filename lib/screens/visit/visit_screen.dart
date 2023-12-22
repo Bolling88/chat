@@ -234,7 +234,7 @@ class VisitScreenContent extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       const Icon(
-                        Icons.flag,
+                        Icons.report,
                         color: AppColors.red,
                         size: 14,
                       ),

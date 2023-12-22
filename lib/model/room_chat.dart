@@ -13,6 +13,7 @@ class RoomChat extends Chat implements Comparable<RoomChat> {
   final int imageOverflow;
   final int imageTranslationX;
   final bool lastMessageReadByUser;
+  final bool enabled;
   final String infoKey;
 
   const RoomChat({
@@ -23,6 +24,7 @@ class RoomChat extends Chat implements Comparable<RoomChat> {
     required this.imageOverflow,
     required this.imageTranslationX,
     required this.lastMessageReadByUser,
+    required this.enabled,
     required this.infoKey,
     required String id,
     required String lastMessage,
@@ -48,6 +50,7 @@ class RoomChat extends Chat implements Comparable<RoomChat> {
         imageTranslationX = json['imageTranslationX'] ?? 0,
         infoKey = json['infoKey'] ?? '',
         lastMessageReadByUser = false,
+        enabled = json['enabled'] ?? true,
         super(
           id: id,
           lastMessage: json['lastMessage'] ?? "",
@@ -82,6 +85,7 @@ class RoomChat extends Chat implements Comparable<RoomChat> {
     Timestamp? lastMessageTimestamp,
     String? lastMessageUserId,
     bool? lastMessageReadByUser,
+    bool? enabled,
     String? infoKey,
   }) {
     return RoomChat(
@@ -100,6 +104,7 @@ class RoomChat extends Chat implements Comparable<RoomChat> {
       infoKey: infoKey ?? this.infoKey,
       lastMessageReadByUser:
           lastMessageReadByUser ?? this.lastMessageReadByUser,
+      enabled: enabled ?? this.enabled,
     );
   }
 
@@ -113,6 +118,7 @@ class RoomChat extends Chat implements Comparable<RoomChat> {
         lastMessageTimestamp,
         lastMessageUserId,
         lastMessageReadByUser,
+        enabled,
         chatName,
         chatColor,
         imageUrl,
@@ -146,8 +152,8 @@ class RoomChat extends Chat implements Comparable<RoomChat> {
     return false;
   }
 
-  String getInfoText(BuildContext context){
-    if(infoKey.isEmpty){
+  String getInfoText(BuildContext context) {
+    if (infoKey.isEmpty) {
       return FlutterI18n.translate(context, 'info_country');
     }
     return FlutterI18n.translate(context, infoKey);

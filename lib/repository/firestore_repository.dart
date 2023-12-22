@@ -493,6 +493,7 @@ class FirestoreRepository {
     } else {
       return chats
           .where('countryCode', whereIn: ['all', user.countryCode])
+          .where('enabled', isEqualTo: true)
           .snapshots()
           .handleError((error) {
             Log.e("Failed to get chats: $error");
@@ -615,6 +616,20 @@ class FirestoreRepository {
     await users.doc(id).set({
       'approvedImage': ApprovedImage.notApproved.value,
     }, SetOptions(merge: true));
+
+    final currentDay = DateTime.now();
+    final yesterday = currentDay.subtract(const Duration(hours: 24));
+
+    //Make sure to unapprove all messages by the user in the last 24 hours
+    await messages
+        .where('createdById', isEqualTo: id)
+        .where('created', isGreaterThan: yesterday)
+        .get()
+        .then((value) => value.docs.forEach((element) {
+              messages.doc(element.id).set({
+                'approvedImage': ApprovedImage.notApproved.value,
+              }, SetOptions(merge: true));
+            }));
   }
 
   Future<void> postInappropriateImageReport(String userId) async {

@@ -35,6 +35,7 @@ class Message extends Equatable implements Comparable<Message> {
     this.translation,
     required this.marked,
     required this.imageReports,
+
   });
 
   Message.fromJson(this.id, Map<String, dynamic> json)

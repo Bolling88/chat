@@ -117,5 +117,12 @@
   "info_random": "Unterhalte dich über alles Mögliche!",
   "info_singles": "Treten Sie nur bei, wenn Sie Single sind und bereit zu flirten!",
   "info_queer": "Treten Sie bei, wenn Sie queer sind!",
-  "info_country": "So ein schönes Land!"
+  "info_country": "So ein schönes Land!",
+  "in_this_room": "in diesem Raum",
+  "report_user": "Benutzer melden",
+  "inappropriate_image": "Unangemessenes Bild",
+  "hateful_language": "Hasserfüllte Sprache",
+  "likely_bot": "Wahrscheinlich ein Bot",
+  "sensitive_content": "Sensibler Inhalt",
+  "show_image": "Bild anzeigen"
 }

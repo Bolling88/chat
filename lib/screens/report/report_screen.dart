@@ -84,6 +84,7 @@ class ReportScreenContent extends StatelessWidget {
                         child: Center(
                             child: Text(
                       FlutterI18n.translate(context, 'report_user'),
+                      textAlign: TextAlign.center,
                       style: Theme.of(context).textTheme.displaySmall,
                     ))),
                     ElevatedButton(

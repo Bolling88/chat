@@ -117,5 +117,12 @@
   "info_random": "ਸੱਚਮੁੱਚ ਕੁਝ ਵੀ ਗੱਲ ਕਰੋ!",
   "info_singles": "ਕੇਵਲ ਤਦ ਹੀ ਸ਼ਾਮਲ ਹੋਵੋ ਜੇ ਤੁਸੀਂ ਸਿੰਗਲ ਹੋ ਅਤੇ ਮਿਲਣ ਲਈ ਤਿਆਰ ਹੋ!",
   "info_queer": "ਜੇਕਰ ਤੁਸੀਂ ਕੁਇਰ ਹੋ ਤਾਂ ਸ਼ਾਮਲ ਹੋਵੋ!",
-  "info_country": "ਕਿੰਨਾ ਸੋਹਣਾ ਦੇਸ਼ ਹੈ!"
+  "info_country": "ਕਿੰਨਾ ਸੋਹਣਾ ਦੇਸ਼ ਹੈ!",
+  "in_this_room": "ਇਸ ਕਮਰੇ ਵਿੱਚ",
+  "report_user": "ਯੂਜ਼ਰ ਦੀ ਰਿਪੋਰਟ ਕਰੋ",
+  "inappropriate_image": "ਅਨੁਚਿਤ ਚਿੱਤਰ",
+  "hateful_language": "ਨਫ਼ਰਤ ਭਰੀ ਭਾਸ਼ਾ",
+  "likely_bot": "ਸੰਭਵਤ: ਇੱਕ ਬੌਟ",
+  "sensitive_content": "ਸੰਵੇਦਨਸ਼ੀਲ ਸਮਗਰੀ",
+  "show_image": "ਚਿੱਤਰ ਦਿਖਾਓ"
 }

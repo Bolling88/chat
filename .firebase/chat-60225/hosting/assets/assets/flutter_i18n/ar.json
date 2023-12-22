@@ -117,5 +117,12 @@
   "info_random": "دردش عن أي شيء حقًا!",
   "info_singles": "انضم فقط إذا كنت أعزب وجاهز للتواصل!",
   "info_queer": "انضم إذا كنت مثليًا!",
-  "info_country": "ما أجمل هذا البلد!"
+  "info_country": "ما أجمل هذا البلد!",
+  "in_this_room": "في هذه الغرفة",
+  "report_user": "الإبلاغ عن المستخدم",
+  "inappropriate_image": "صورة غير لائقة",
+  "hateful_language": "لغة كراهية",
+  "likely_bot": "على الأرجح روبوت",
+  "sensitive_content": "محتوى حساس",
+  "show_image": "عرض الصورة"
 }

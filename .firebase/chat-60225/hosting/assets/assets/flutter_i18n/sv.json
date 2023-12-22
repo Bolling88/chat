@@ -117,5 +117,12 @@
   "info_random": "Chatta om vad som helst verkligen!",
   "info_singles": "Gå med endast om du är singel och redo att mingla!",
   "info_queer": "Gå med om du är queer!",
-  "info_country": "Vilket vackert land!"
+  "info_country": "Vilket vackert land!",
+  "in_this_room": "i detta rum",
+  "report_user": "Rapportera användare",
+  "inappropriate_image": "Olämplig bild",
+  "hateful_language": "Hatfullt språk",
+  "likely_bot": "Troligen en bot",
+  "sensitive_content": "Känsligt innehåll",
+  "show_image": "Visa bild"
 }

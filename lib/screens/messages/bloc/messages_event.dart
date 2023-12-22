@@ -89,3 +89,12 @@ class MessagesMarkedEvent extends MessagesEvent {
   @override
   List<Object> get props => [message, marked];
 }
+
+class MessagesChatUsersInRoomUpdatedEvent extends MessagesEvent {
+  final List<ChatUser> chatUsers;
+
+  MessagesChatUsersInRoomUpdatedEvent(this.chatUsers);
+
+  @override
+  List<Object> get props => [chatUsers];
+}

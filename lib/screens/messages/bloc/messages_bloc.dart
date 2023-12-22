@@ -12,6 +12,7 @@ import '../../../model/message.dart';
 import '../../../repository/firestore_repository.dart';
 import '../../../utils/audio.dart';
 import '../../../utils/log.dart';
+import '../../people/bloc/people_bloc.dart';
 import 'messages_event.dart';
 import 'messages_state.dart';
 import 'package:collection/collection.dart';
@@ -27,6 +28,7 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
   StreamSubscription<QuerySnapshot>? messagesStream;
   StreamSubscription<QuerySnapshot>? userStream;
   StreamSubscription<QuerySnapshot>? privateChatsStream;
+  StreamSubscription<QuerySnapshot>? onlineUsersStream;
 
   late ChatUser _user;
 
@@ -41,6 +43,7 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
     messagesStream?.cancel();
     userStream?.cancel();
     privateChatsStream?.cancel();
+    onlineUsersStream?.cancel();
     return super.close();
   }
 
@@ -50,10 +53,11 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
     final currentState = state;
     if (event is MessagesInitialEvent) {
       _user = (await _firestoreRepository.getUser())!;
-      setUpMessagesListener(chat.id);
-      setUpUserListener();
+      _setUpMessagesListener(chat.id);
+      _setUpUserListener();
+      _setUpOnlineUsersListener();
       if (isPrivateChat) {
-        setUpPrivateChatStream();
+        _setUpPrivateChatStream();
       }
     } else if (event is MessagesSendEvent) {
       if (currentState is MessagesBaseState) {
@@ -102,7 +106,7 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
       } else {
         final currentChat = chat;
         yield MessagesBaseState(event.messages, _user, '', _anchoredAdaptiveAd,
-            (currentChat is PrivateChat) ? currentChat : null);
+            (currentChat is PrivateChat) ? currentChat : null, const []);
       }
     } else if (event is MessagesUserUpdatedEvent) {
       if (currentState is MessagesBaseState) {
@@ -154,13 +158,21 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
             .toList();
         yield currentState.copyWith(messages: updatedMessages);
       }
+    }else if(event is MessagesChatUsersInRoomUpdatedEvent){
+      if (currentState is MessagesBaseState) {
+        yield currentState.copyWith(usersInRoom: event.chatUsers);
+      }else{
+        final currentChat = chat;
+        yield MessagesBaseState(const [], _user, '', _anchoredAdaptiveAd,
+            (currentChat is PrivateChat) ? currentChat : null, event.chatUsers);
+      }
     } else {
       yield MessagesErrorState();
       Log.e("Error in messages");
     }
   }
 
-  void setUpMessagesListener(String chatId) async {
+  void _setUpMessagesListener(String chatId) async {
     Log.d('Setting up message stream');
     messagesStream = _firestoreRepository
         .streamMessages(chatId, isPrivateChat, 20)
@@ -173,7 +185,7 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
     });
   }
 
-  void setUpUserListener() async {
+  void _setUpUserListener() async {
     Log.d('Setting up private chats stream');
     userStream = _firestoreRepository.streamUser().listen((event) async {
       final user = ChatUser.fromJson(
@@ -182,7 +194,7 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
     });
   }
 
-  void setUpPrivateChatStream() async {
+  void _setUpPrivateChatStream() async {
     Log.d('Setting up private chats stream');
     privateChatsStream =
         _firestoreRepository.getPrivateChatsStream().listen((event) async {
@@ -195,6 +207,31 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
         add(MessagesPrivateChatsUpdatedEvent(updatedChat));
       }
     });
+  }
+
+  void _setUpOnlineUsersListener() {
+    onlineUsersStream =
+        _firestoreRepository.onlineUsersStream.listen((event) async {
+          final users = event.docs
+              .map((e) => ChatUser.fromJson(e.id, e.data() as Map<String, dynamic>))
+              .toList();
+
+          final filteredUsers = users
+              .where((element) => element.currentRoomChatId == chat.id)
+              .where((element) => element.id != getUserId())
+              .where((element) => element.lastActive.toDate().isAfter(
+              DateTime.now().subtract(_firestoreRepository.onlineDuration)))
+              .toList();
+
+          final myUser =
+              users.where((element) => element.id == getUserId()).firstOrNull;
+
+          //Sort users with the same country code as my users first
+          if (myUser != null) {
+            sortOnlineUsers(filteredUsers, myUser.countryCode);
+            add(MessagesChatUsersInRoomUpdatedEvent(filteredUsers));
+          }
+        });
   }
 
   Future<void> loadAd(int adWidth) async {

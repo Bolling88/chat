@@ -237,12 +237,13 @@ class ChatsScreenContent extends StatelessWidget {
                           if(!isPrivateChat)
                             const SizedBox(width: 10),
                           if(!isPrivateChat)
-                            ElevatedButton(
+                            ElevatedButton.icon(
                               onPressed: () {
                                 BlocProvider.of<MessageHolderBloc>(context)
                                     .add(MessageHolderShowOnlineUsersInChatEvent(chat));
                               },
-                              child: const FittedBox(
+                              label: Text(state.usersInRoom.length.toString()),
+                              icon: const FittedBox(
                                   fit: BoxFit.fitWidth,
                                   child: Icon(Icons.people)),
                             )
