@@ -57,10 +57,15 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
         }
       } else if (event is LoginGuestClickedEvent) {
         yield LoginLoadingState();
-        final credentials = await FirebaseAuth.instance.signInAnonymously();
-        await _firestoreRepository.setInitialUserData(
-            "", credentials.user?.uid ?? "");
-        yield await checkIfOnboardingIsDone(null);
+        if (FirebaseAuth.instance.currentUser != null) {
+          final chatUser = await _firestoreRepository.getUser();
+          yield await checkIfOnboardingIsDone(chatUser);
+        }else {
+          final credentials = await FirebaseAuth.instance.signInAnonymously();
+          await _firestoreRepository.setInitialUserData(
+              "", credentials.user?.uid ?? "");
+          yield await checkIfOnboardingIsDone(null);
+        }
       } else {
         yield LoginErrorState();
       }

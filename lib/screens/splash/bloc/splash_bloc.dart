@@ -24,11 +24,11 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
           if (chatUser == null) {
             yield SplashLoginState();
           } else if (chatUser.displayName.isEmpty) {
-            yield const SplashSuccessState(OnboardingNavigation.NAME);
+            yield SplashLoginState();
           }else if(chatUser.birthDate == null && Platform.isAndroid){
-            yield const SplashSuccessState(OnboardingNavigation.AGE);
+            yield SplashLoginState();
           } else if (chatUser.gender == -1) {
-            yield const SplashSuccessState(OnboardingNavigation.GENDER);
+            yield SplashLoginState();
           } else {
             yield const SplashSuccessState(OnboardingNavigation.DONE);
           }
