@@ -119,5 +119,5 @@ class FullScreenImageScreenContent extends StatelessWidget {
 }
 
 bool shouldBlur(String? url, List<String> imageReport, ApprovedImage approvalState) {
-  return approvalState == ApprovedImage.notApproved || imageReport.length > 1 && url != null && url.isNotEmpty;
+  return approvalState == ApprovedImage.notApproved || imageReport.isNotEmpty && url != null && url.isNotEmpty;
 }

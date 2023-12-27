@@ -438,8 +438,16 @@ class FirestoreRepository {
     }, SetOptions(merge: true));
   }
 
-  void leaveAllPrivateChats() {
-    privateChats
+  Future<void> updateUserOnLogout() async {
+    await users.doc(getUserId()).set({
+      'presence': false,
+      'fcmToken': '',
+      'lastActive': FieldValue.serverTimestamp(),
+    }, SetOptions(merge: true));
+  }
+
+  Future<void> leaveAllPrivateChats() async {
+    await privateChats
         .where('users', arrayContains: getUserId())
         .get()
         .then((value) => value.docs.forEach((element) {

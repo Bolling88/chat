@@ -180,7 +180,16 @@ class OnboardingNameScreenContent extends StatelessWidget {
                   : ElevatedButton(
                       onPressed: null,
                       child: Text(FlutterI18n.translate(context, isEditMode? 'save' :"continue")),
-                    )
+                    ),
+          Expanded(child: Container()),
+          SafeArea(
+            child: TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: Text(FlutterI18n.translate(context, "skip")),
+            ),
+          )
         ],
       ),
     );
