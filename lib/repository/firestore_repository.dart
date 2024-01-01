@@ -626,6 +626,7 @@ class FirestoreRepository {
   approveImage(String id) async {
     await users.doc(id).set({
       'approvedImage': ApprovedImage.approved.value,
+      'imageReports': [],
     }, SetOptions(merge: true));
   }
 
@@ -657,6 +658,7 @@ class FirestoreRepository {
     }
     await users.doc(userId).set({
       'imageReports': FieldValue.arrayUnion([userId]),
+      'approvedImage': ApprovedImage.notApproved.value,
     }, SetOptions(merge: true));
   }
 
