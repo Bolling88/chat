@@ -346,6 +346,7 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
   void _setUpUserListener() async {
     Log.d('Setting up private chats stream');
     userStream = _firestoreRepository.streamUser().listen((event) async {
+      if(event.docs.isEmpty) return;
       final user = ChatUser.fromJson(
           event.docs.first.id, event.docs.first.data() as Map<String, dynamic>);
       if (ApprovedImage.fromValue(user.approvedImage) == ApprovedImage.notSet &&

@@ -36,6 +36,7 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
           Log.d('Deleting user');
           await _firestoreRepository.updateUserOnLogout();
           await _firestoreRepository.leaveAllPrivateChats();
+          await _firestoreRepository.closeAllStreams();
           await _firestoreRepository.deleteUserAndFiles();
           yield AccountLogoutState();
         }
@@ -44,6 +45,7 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
       } else if (event is AccountLogoutEvent) {
         yield AccountLoadingState();
         await _firestoreRepository.updateUserOnLogout();
+        await _firestoreRepository.closeAllStreams();
         if (FirebaseAuth.instance.currentUser?.isAnonymous == true) {
           //Delete user
           await _firestoreRepository.deleteUserAndFiles();
@@ -65,6 +67,10 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
   void setUpUserListener() async {
     Log.d('Setting up private chats stream');
     userStream = _firestoreRepository.streamUser().listen((event) async {
+      if (event.docs.isEmpty) {
+        Log.d('No user found');
+        return;
+      }
       final user = ChatUser.fromJson(
           event.docs.first.id, event.docs.first.data() as Map<String, dynamic>);
       add(AccountUserChangedEvent(user));

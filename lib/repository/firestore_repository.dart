@@ -124,18 +124,19 @@ class FirestoreRepository {
     return users
         .doc(getUserId())
         .set({
-      'birthDate': Timestamp.fromDate(birthDate),
-    }, SetOptions(merge: true))
+          'birthDate': Timestamp.fromDate(birthDate),
+        }, SetOptions(merge: true))
         .then((value) => Log.d("User birthday updated"))
-        .catchError((error) => Log.e("Failed to update user birthdate: $error"));
+        .catchError(
+            (error) => Log.e("Failed to update user birthdate: $error"));
   }
 
   Future<void> updateUserShowAge(bool showAge) async {
     return users
         .doc(getUserId())
         .set({
-      'showAge': showAge,
-    }, SetOptions(merge: true))
+          'showAge': showAge,
+        }, SetOptions(merge: true))
         .then((value) => Log.d("User show age updated"))
         .catchError((error) => Log.e("Failed to update user show age: $error"));
   }
@@ -479,18 +480,18 @@ class FirestoreRepository {
   }
 
   void reportMessage(Message message) async {
-      reports.add({
-        'messageId': message.id,
-        'messageText': message.text,
-        'messageCreated': message.created,
-        'messageCreatedBy': message.createdById,
-        'messageCreatedByGender': message.createdByGender,
-        'messageCreatedByCountryCode': message.createdByCountryCode,
-        'messageCreatedByImageUrl': message.createdByImageUrl,
-        'messageCreatedByDisplayName': message.createdByName,
-        'reportedBy': getUserId(),
-        'reportedAt': FieldValue.serverTimestamp(),
-      });
+    reports.add({
+      'messageId': message.id,
+      'messageText': message.text,
+      'messageCreated': message.created,
+      'messageCreatedBy': message.createdById,
+      'messageCreatedByGender': message.createdByGender,
+      'messageCreatedByCountryCode': message.createdByCountryCode,
+      'messageCreatedByImageUrl': message.createdByImageUrl,
+      'messageCreatedByDisplayName': message.createdByName,
+      'reportedBy': getUserId(),
+      'reportedAt': FieldValue.serverTimestamp(),
+    });
   }
 
   Stream<QuerySnapshot> streamOpenChats(ChatUser user) {
@@ -509,7 +510,7 @@ class FirestoreRepository {
     }
   }
 
-  final StreamController<QuerySnapshot> _privateChatsStreamController =
+  StreamController<QuerySnapshot> _privateChatsStreamController =
       StreamController<QuerySnapshot>.broadcast();
   StreamSubscription<QuerySnapshot>? _privateChatsStream;
 
@@ -519,7 +520,10 @@ class FirestoreRepository {
   void startPrivateChatsStream(String userId) {
     if (_privateChatsStream != null) {
       _privateChatsStream?.cancel();
+      _privateChatsStreamController.close();
     }
+
+    _privateChatsStreamController = StreamController<QuerySnapshot>.broadcast();
 
     _privateChatsStream = privateChats
         .where('users', arrayContains: userId)
@@ -550,7 +554,7 @@ class FirestoreRepository {
 
   final onlineDuration = const Duration(hours: 6);
 
-  final StreamController<QuerySnapshot> _onlineUsersStreamController =
+  StreamController<QuerySnapshot> _onlineUsersStreamController =
       StreamController<QuerySnapshot>.broadcast();
   StreamSubscription<QuerySnapshot>? _onlineUsersStream;
 
@@ -560,9 +564,14 @@ class FirestoreRepository {
   void startOnlineUsersStream() {
     if (_onlineUsersStream != null) {
       _onlineUsersStream?.cancel();
+      _onlineUsersStreamController.close();
     }
 
     DateTime onlineDurationDate = DateTime.now().subtract(onlineDuration);
+
+    _onlineUsersStreamController = StreamController<QuerySnapshot>.broadcast();
+
+    _onlineUsersStreamController = StreamController<QuerySnapshot>.broadcast();
 
     _onlineUsersStream = users
         .where('lastActive',
@@ -641,7 +650,7 @@ class FirestoreRepository {
   }
 
   Future<void> postInappropriateImageReport(String userId) async {
-    if(kDebugMode){
+    if (kDebugMode) {
       await users.doc(userId).set({
         'approvedImage': ApprovedImage.notApproved.value,
       }, SetOptions(merge: true));
@@ -661,5 +670,12 @@ class FirestoreRepository {
     await users.doc(userId).set({
       'languageReports': FieldValue.arrayUnion([userId]),
     }, SetOptions(merge: true));
+  }
+
+  closeAllStreams() {
+    _privateChatsStream?.cancel();
+    _onlineUsersStream?.cancel();
+    _privateChatsStreamController.close();
+    _onlineUsersStreamController.close();
   }
 }
