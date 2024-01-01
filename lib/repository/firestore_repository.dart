@@ -653,12 +653,12 @@ class FirestoreRepository {
   Future<void> postInappropriateImageReport(String userId) async {
     if (kDebugMode) {
       await users.doc(userId).set({
-        'approvedImage': ApprovedImage.notApproved.value,
+        'approvedImage': ApprovedImage.notReviewed.value,
       }, SetOptions(merge: true));
     }
     await users.doc(userId).set({
       'imageReports': FieldValue.arrayUnion([userId]),
-      'approvedImage': ApprovedImage.notApproved.value,
+      'approvedImage': ApprovedImage.notReviewed.value,
     }, SetOptions(merge: true));
   }
 
