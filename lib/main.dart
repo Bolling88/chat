@@ -133,6 +133,7 @@ class KvitterApp extends StatelessWidget {
               theme: ThemeData(
                 useMaterial3: true,
                 primaryColor: AppColors.main,
+                backgroundColor: AppColors.background,
                 colorScheme: ColorScheme.fromSeed(
                   brightness: Brightness.light,
                   seedColor: AppColors.main,
