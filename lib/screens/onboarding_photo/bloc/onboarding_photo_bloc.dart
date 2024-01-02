@@ -82,7 +82,7 @@ class OnboardingPhotoBloc
           final imageUrl = await _storageRepository.uploadProfileImage(
               currentState.filePath, currentState.base64Image);
           final finalUrl = await imageUrl?.getDownloadURL() ?? "";
-          await _firestoreRepository.updateUserProfileImage(finalUrl);
+          await _firestoreRepository.updateUserProfileImage(finalUrl, _chatUser);
 
           if (_chatUser.gender == -1) {
             yield const OnboardingPhotoSuccessState(
@@ -103,7 +103,7 @@ class OnboardingPhotoBloc
               currentState.filePath, currentState.base64Image);
         }
       } else if (event is OnboardingPhotoSkipEvent) {
-        await _firestoreRepository.updateUserProfileImage('');
+        await _firestoreRepository.updateUserProfileImage('', _chatUser);
         if (_chatUser.gender == -1) {
           yield const OnboardingPhotoSuccessState(OnboardingNavigation.GENDER);
         } else {

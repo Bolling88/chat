@@ -154,13 +154,15 @@ class FirestoreRepository {
             (error) => Log.e("Failed to update user displayName: $error"));
   }
 
-  Future<void> updateUserProfileImage(String profileImageUrl) async {
+  Future<void> updateUserProfileImage(String profileImageUrl, ChatUser user) async {
+    //Images that have a report and is not reviewed will always be blurred.
+    //If a user have an existing report, and changes image, it should be blurred until reviewed.
     return users
         .doc(getUserId())
         .set({
           'pictureData': profileImageUrl,
           'approvedImage': ApprovedImage.notReviewed.value,
-          'imageReports': [],
+          'imageReports': user.approvedImage == ApprovedImage.notApproved.value ? ['needs_review'] : [],
         }, SetOptions(merge: true))
         .then((value) => Log.d("User profile image updated"))
         .catchError((error) => Log.e("Failed to update user image: $error"));
