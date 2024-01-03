@@ -119,12 +119,23 @@ class OnboardingPhotoScreenContent extends StatelessWidget {
           ),
           Padding(
             padding:
-                const EdgeInsets.only(left: 70, right: 70, top: 20, bottom: 20),
+                const EdgeInsets.only(left: 70, right: 70, top: 20, bottom: 10),
             child: Center(
               child: Text(
                 FlutterI18n.translate(context, "lets_take_picture"),
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.bodyMedium,
+              ),
+            ),
+          ),
+          Padding(
+            padding:
+            const EdgeInsets.only(left: 70, right: 70, top: 0, bottom: 20),
+            child: Center(
+              child: Text(
+                FlutterI18n.translate(context, "review_info"),
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodySmall,
               ),
             ),
           ),
