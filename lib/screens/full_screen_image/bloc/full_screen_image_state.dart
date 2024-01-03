@@ -8,8 +8,9 @@ abstract class FullScreenImageState extends Equatable {
 
 class FullScreenImageBaseState extends FullScreenImageState {
   final bool shouldBlur;
+  final bool showHideButton;
 
-  FullScreenImageBaseState(this.shouldBlur);
+  FullScreenImageBaseState(this.shouldBlur, this.showHideButton);
 
   @override
   List<Object> get props => [shouldBlur];

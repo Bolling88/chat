@@ -65,48 +65,74 @@ class FullScreenImageScreenContent extends StatelessWidget {
                   children: [
                     Center(
                         child: InteractiveViewer(
-                                panEnabled: true,
-                                // Set it to false
-                                minScale: 1,
-                                clipBehavior: Clip.none,
-                                maxScale: 3,
-                                child: Image.network(imageUrl).blurred(
-                                  blur: state.shouldBlur ? 10 : 0,
-                                  colorOpacity: state.shouldBlur ? 0.5 : 0,
-                                  blurColor: AppColors.white,
-                                ))),
-                    if(state.shouldBlur)
-                    SafeArea(
-                      child: Center(
-                        child: Column(
-                          children: [
-                            const SizedBox(height: 20),
-                            Expanded(
-                              child: Container(),
-                            ),
-                            const Icon(Icons.visibility_off),
-                            Text(
-                              FlutterI18n.translate(
-                                  blocContext, 'sensitive_content'),
-                              style: const TextStyle(color: AppColors.white),
-                            ),
-                            Expanded(
-                              child: Container(),
-                            ),
-                            ElevatedButton.icon(
-                                onPressed: () {
-                                  BlocProvider.of<FullScreenImageBloc>(
-                                          blocContext)
-                                      .add(FullScreenImageUnblurEvent());
-                                },
-                                icon: const Icon(Icons.remove_red_eye),
-                                label: Text(FlutterI18n.translate(
-                                    blocContext, 'show_image'))),
-                            const SizedBox(height: 20),
-                          ],
+                            panEnabled: true,
+                            // Set it to false
+                            minScale: 1,
+                            clipBehavior: Clip.none,
+                            maxScale: 3,
+                            child: Image.network(imageUrl).blurred(
+                              blur: state.shouldBlur ? 10 : 0,
+                              colorOpacity: state.shouldBlur ? 0.5 : 0,
+                              blurColor: AppColors.white,
+                            ))),
+                    if (state.shouldBlur)
+                      SafeArea(
+                        child: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const SizedBox(height: 20),
+                              Expanded(
+                                child: Container(),
+                              ),
+                              const Icon(Icons.visibility_off),
+                              Text(
+                                FlutterI18n.translate(
+                                    blocContext, 'sensitive_content'),
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(color: AppColors.white),
+                              ),
+                              Expanded(
+                                child: Container(),
+                              ),
+                              ElevatedButton.icon(
+                                  onPressed: () {
+                                    BlocProvider.of<FullScreenImageBloc>(
+                                            blocContext)
+                                        .add(FullScreenImageUnblurEvent());
+                                  },
+                                  icon: const Icon(Icons.remove_red_eye),
+                                  label: Text(FlutterI18n.translate(
+                                      blocContext, 'show_image'))),
+                              const SizedBox(height: 20),
+                            ],
+                          ),
                         ),
                       ),
-                    )
+                    if(state.showHideButton)
+                      SafeArea(
+                        child: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const SizedBox(height: 20),
+                              Expanded(
+                                child: Container(),
+                              ),
+                              ElevatedButton.icon(
+                                  onPressed: () {
+                                    BlocProvider.of<FullScreenImageBloc>(
+                                            blocContext)
+                                        .add(FullScreenImageBlurEvent());
+                                  },
+                                  icon: const Icon(Icons.visibility_off),
+                                  label: Text(FlutterI18n.translate(
+                                      blocContext, 'hide_image'))),
+                              const SizedBox(height: 20),
+                            ],
+                          ),
+                        ),
+                      )
                   ],
                 ),
               ),
@@ -118,6 +144,9 @@ class FullScreenImageScreenContent extends StatelessWidget {
   }
 }
 
-bool shouldBlur(String? url, List<String> imageReport, ApprovedImage approvalState) {
-  return approvalState == ApprovedImage.notApproved || imageReport.isNotEmpty && url != null && url.isNotEmpty;
+bool shouldBlur(
+    String? url, List<String> imageReport, ApprovedImage approvalState) {
+  return (approvalState == ApprovedImage.notApproved ||
+      approvalState == ApprovedImage.notReviewed) &&
+      imageReport.isNotEmpty && url != null && url.isNotEmpty;
 }

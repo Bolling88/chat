@@ -123,6 +123,6 @@
   "inappropriate_image": "Imagen inapropiada",
   "hateful_language": "Lenguaje de odio",
   "likely_bot": "Probablemente un bot",
-  "sensitive_content": "Contenido sensible",
+  "sensitive_content": "Imagen aún no revisada o contiene contenido sensible. Se aconseja discreción a los espectadores.",
   "show_image": "Mostrar imagen"
 }

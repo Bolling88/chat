@@ -123,6 +123,6 @@
   "inappropriate_image": "صورة غير لائقة",
   "hateful_language": "لغة كراهية",
   "likely_bot": "على الأرجح روبوت",
-  "sensitive_content": "محتوى حساس",
+  "sensitive_content": "لم يتم مراجعة الصورة بعد أو قد تحتوي على محتوى حساس. يُنصح بتحري الحذر عند المشاهدة.",
   "show_image": "عرض الصورة"
 }

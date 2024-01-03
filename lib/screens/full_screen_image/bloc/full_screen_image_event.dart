@@ -8,3 +8,4 @@ abstract class FullScreenImageEvent extends Equatable {
 
 class FullScreenImageInitialEvent extends FullScreenImageEvent {}
 class FullScreenImageUnblurEvent extends FullScreenImageEvent {}
+class FullScreenImageBlurEvent extends FullScreenImageEvent {}
