@@ -124,5 +124,7 @@
   "hateful_language": "Hatfullt språk",
   "likely_bot": "Troligen en bot",
   "sensitive_content": "Känsligt innehåll",
-  "show_image": "Visa bild"
+  "show_image": "Bilden har ännu inte granskats eller innehåller känsligt innehåll. Tittarens försiktighet rekommenderas.",
+  "hide_image": "Dölj bild",
+  "review_info": "(Din profilbild kommer att granskas och kommer att visas suddig för andra tills den godkänns.)"
 }

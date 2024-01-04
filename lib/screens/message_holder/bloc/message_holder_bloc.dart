@@ -329,7 +329,7 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
       final filteredUsers = users
           .where((element) => element.id != getUserId())
           .where((element) => element.lastActive.toDate().isAfter(
-              DateTime.now().subtract(_firestoreRepository.onlineDuration)))
+              DateTime.now().subtract(onlineDuration)))
           .toList();
 
       final myUser =

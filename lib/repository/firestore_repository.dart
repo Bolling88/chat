@@ -34,6 +34,8 @@ enum Gender {
   final int value;
 }
 
+const onlineDuration = Duration(hours: 5);
+
 enum ApprovedImage {
   notReviewed(0),
   notApproved(1),
@@ -553,8 +555,6 @@ class FirestoreRepository {
       Log.e("Failed to get user: $error");
     });
   }
-
-  final onlineDuration = const Duration(hours: 6);
 
   StreamController<QuerySnapshot> _onlineUsersStreamController =
       StreamController<QuerySnapshot>.broadcast();

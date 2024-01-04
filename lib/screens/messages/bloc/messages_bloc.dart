@@ -223,7 +223,7 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
               .where((element) => element.currentRoomChatId == chat.id)
               .where((element) => element.id != getUserId())
               .where((element) => element.lastActive.toDate().isAfter(
-              DateTime.now().subtract(_firestoreRepository.onlineDuration)))
+              DateTime.now().subtract(onlineDuration)))
               .toList();
 
           final myUser =

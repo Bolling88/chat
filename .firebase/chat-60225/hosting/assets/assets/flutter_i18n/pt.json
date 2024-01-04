@@ -118,6 +118,8 @@
   "inappropriate_image": "Imagem inapropriada",
   "hateful_language": "Linguagem de ódio",
   "likely_bot": "Provavelmente um bot",
-  "sensitive_content": "Conteúdo sensível",
-  "show_image": "Mostrar imagem"
+  "sensitive_content": "Imagem ainda não revisada ou contém conteúdo sensível. A discrição dos espectadores é aconselhada.",
+  "show_image": "Mostrar imagem",
+  "hide_image": "Ocultar imagem",
+  "review_info": "(Sua imagem de perfil será revisada e aparecerá desfocada para os outros até que seja aprovada.)"
 }

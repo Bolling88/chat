@@ -127,7 +127,7 @@ class PeopleBloc extends Bloc<PeopleEvent, PeopleState> {
       final filteredUsers = users
           .where((element) => element.id != getUserId())
           .where((element) => element.lastActive.toDate().isAfter(
-              DateTime.now().subtract(_firestoreRepository.onlineDuration)))
+              DateTime.now().subtract(onlineDuration)))
           .where((element) {
         if (_chat == null) {
           return true;
