@@ -13,7 +13,6 @@ import '../../utils/constants.dart';
 import '../../utils/flag.dart';
 import '../account/account_screen.dart';
 import '../error/error_screen.dart';
-import '../messages/other_message_widget.dart';
 import 'bloc/people_bloc.dart';
 import 'bloc/people_event.dart';
 import 'bloc/people_state.dart';
@@ -131,18 +130,14 @@ class PeopleScreenBuilder extends StatelessWidget {
                 if (users[index].birthDate != null && users[index].showAge)
                   Text(
                     getAge(users[index].birthDate),
-                    style: Theme.of(context).textTheme.displaySmall?.merge(TextStyle(
-                        color: getGenderColor(Gender.fromValue(users[index].gender)), fontSize: 16)),
+                    style: Theme.of(context).textTheme.displaySmall?.merge(
+                        TextStyle(
+                            color: getGenderColor(
+                                Gender.fromValue(users[index].gender)),
+                            fontSize: 16)),
                   ),
                 if (users[index].birthDate != null) const SizedBox(width: 4),
-                if (users[index].gender != Gender.secret.value)
-                  SizedBox(
-                      width: 18,
-                      height: 18,
-                      child: AppLottie(
-                        url: getGenderUrl(users[index].gender),
-                        animate: false,
-                      )),
+                  getGenderIcon(Gender.fromValue(users[index].gender)),
               ],
             ),
             trailing:
@@ -152,7 +147,8 @@ class PeopleScreenBuilder extends StatelessWidget {
               url: users[index].pictureData,
               gender: users[index].gender,
               imageReports: users[index].imageReports,
-              approvalState: ApprovedImage.fromValue(users[index].approvedImage),
+              approvalState:
+                  ApprovedImage.fromValue(users[index].approvedImage),
               size: 40,
             ),
             onTap: () {
@@ -210,7 +206,7 @@ class PeopleScreenBuilder extends StatelessWidget {
                     child: Text(
               '${state.allOnlineUsers.length} ${FlutterI18n.translate(
                 context,
-                chat != null? 'in_this_room' : 'user_online',
+                chat != null ? 'in_this_room' : 'user_online',
               )}',
               style: Theme.of(context).textTheme.displaySmall,
             ))),
@@ -240,10 +236,11 @@ class PeopleScreenBuilder extends StatelessWidget {
                     (index == 0)
                         ? FlutterI18n.translate(context, 'all')
                         : getGenderName(context, Gender.fromValue(index - 1)),
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyMedium
-                        ?.merge(TextStyle(color: (index == state.genderFilterIndex)?  AppColors.white : AppColors.main)),
+                    style: Theme.of(context).textTheme.bodyMedium?.merge(
+                        TextStyle(
+                            color: (index == state.genderFilterIndex)
+                                ? AppColors.white
+                                : AppColors.main)),
                   ),
                   selected: index == state.genderFilterIndex,
                   selectedColor: (index == 0)

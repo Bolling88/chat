@@ -16,7 +16,6 @@ import '../../utils/gender.dart';
 import '../../utils/lottie.dart';
 import '../../utils/translate.dart';
 import '../feedback/feedback_screen.dart';
-import '../messages/other_message_widget.dart';
 
 class AccountScreen extends StatelessWidget {
   static const routeName = "/account_screen";
@@ -215,14 +214,7 @@ Row getProfileRow({
           textAlign: TextAlign.left,
           style: Theme.of(context).textTheme.displaySmall?.merge(
               TextStyle(color: getGenderColor(Gender.fromValue(gender)), fontSize: 26))),
-      if (gender != Gender.secret.value)
-        SizedBox(
-            width: 30,
-            height: 30,
-            child: AppLottie(
-              url: getGenderUrl(gender),
-              animate: false,
-            )),
+      getGenderIcon(Gender.fromValue(gender)),
       const SizedBox(width: 2),
       //Show age
       if (birthDate != null && showAge)

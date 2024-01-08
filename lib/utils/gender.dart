@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:chat/utils/app_colors.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 
 import '../repository/firestore_repository.dart';
@@ -42,5 +43,17 @@ Color getGenderColor(Gender gender) {
       return AppColors.purple;
     case Gender.secret:
       return AppColors.blue;
+  }
+}
+
+Widget getGenderIcon(Gender gender) {
+  if (gender == Gender.male) {
+    return Icon(Icons.male, color: getGenderColor(gender));
+  } else if (gender == Gender.female) {
+    return  Icon(Icons.female, color: getGenderColor(gender));
+  } else if (gender == Gender.nonBinary) {
+    return  Icon(Icons.transgender, color: getGenderColor(gender));
+  } else {
+    return  const SizedBox.shrink();
   }
 }
