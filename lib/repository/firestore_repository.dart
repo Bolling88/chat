@@ -117,6 +117,7 @@ class FirestoreRepository {
         .doc(getUserId())
         .set({
           'gender': gender.value,
+          'lastActive': FieldValue.serverTimestamp(),
         }, SetOptions(merge: true))
         .then((value) => Log.d("User gender updated"))
         .catchError((error) => Log.e("Failed to update user gender: $error"));
@@ -127,6 +128,7 @@ class FirestoreRepository {
         .doc(getUserId())
         .set({
           'birthDate': Timestamp.fromDate(birthDate),
+          'lastActive': FieldValue.serverTimestamp(),
         }, SetOptions(merge: true))
         .then((value) => Log.d("User birthday updated"))
         .catchError(
@@ -137,6 +139,7 @@ class FirestoreRepository {
     return users
         .doc(getUserId())
         .set({
+          'lastActive': FieldValue.serverTimestamp(),
           'showAge': showAge,
         }, SetOptions(merge: true))
         .then((value) => Log.d("User show age updated"))
@@ -150,21 +153,26 @@ class FirestoreRepository {
         .set({
           'displayName': fullName,
           'searchArray': searchArray,
+          'lastActive': FieldValue.serverTimestamp(),
         }, SetOptions(merge: true))
         .then((value) => Log.d("User displayName updated"))
         .catchError(
             (error) => Log.e("Failed to update user displayName: $error"));
   }
 
-  Future<void> updateUserProfileImage(String profileImageUrl, ChatUser user) async {
+  Future<void> updateUserProfileImage(
+      String profileImageUrl, ChatUser user) async {
     //Images that have a report and is not reviewed will always be blurred.
     //If a user have an existing report, and changes image, it should be blurred until reviewed.
     return users
         .doc(getUserId())
         .set({
+          'lastActive': FieldValue.serverTimestamp(),
           'pictureData': profileImageUrl,
           'approvedImage': ApprovedImage.notReviewed.value,
-          'imageReports': user.approvedImage == ApprovedImage.notApproved.value ? ['needs_review'] : [],
+          'imageReports': user.approvedImage == ApprovedImage.notApproved.value
+              ? ['needs_review']
+              : [],
         }, SetOptions(merge: true))
         .then((value) => Log.d("User profile image updated"))
         .catchError((error) => Log.e("Failed to update user image: $error"));
@@ -434,13 +442,6 @@ class FirestoreRepository {
       Log.e("Failed to get chat: $error");
       return false;
     });
-  }
-
-  void updateUserPresence({required bool present}) {
-    users.doc(getUserId()).set({
-      'presence': present,
-      'lastActive': FieldValue.serverTimestamp(),
-    }, SetOptions(merge: true));
   }
 
   Future<void> updateUserOnLogout() async {
