@@ -68,6 +68,7 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
             chatType: ChatType.message,
             message: currentState.currentMessage,
             isPrivateChat: isPrivateChat,
+            replyMessage: currentState.replyMessage,
             sendPushToUserId: (chat is PrivateChat
                 ? (chat as PrivateChat)
                     .users
@@ -75,7 +76,7 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
                     .firstOrNull
                 : null),
           );
-          yield currentState.copyWith(currentMessage: "");
+          yield getBaseState(currentState);
         }
       }
     } else if (event is MessagesChangedEvent) {
@@ -106,7 +107,7 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
       } else {
         final currentChat = chat;
         yield MessagesBaseState(event.messages, _user, '', _anchoredAdaptiveAd,
-            (currentChat is PrivateChat) ? currentChat : null, const []);
+            (currentChat is PrivateChat) ? currentChat : null, const [], null);
       }
     } else if (event is MessagesUserUpdatedEvent) {
       if (currentState is MessagesBaseState) {
@@ -158,18 +159,42 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
             .toList();
         yield currentState.copyWith(messages: updatedMessages);
       }
-    }else if(event is MessagesChatUsersInRoomUpdatedEvent){
+    } else if (event is MessagesChatUsersInRoomUpdatedEvent) {
       if (currentState is MessagesBaseState) {
         yield currentState.copyWith(usersInRoom: event.chatUsers);
-      }else{
+      } else {
         final currentChat = chat;
-        yield MessagesBaseState(const [], _user, '', _anchoredAdaptiveAd,
-            (currentChat is PrivateChat) ? currentChat : null, event.chatUsers);
+        yield MessagesBaseState(const [],
+            _user,
+            '',
+            _anchoredAdaptiveAd,
+            (currentChat is PrivateChat) ? currentChat : null,
+            event.chatUsers,
+            null);
+      }
+    } else if (event is MessagesReplyEvent) {
+      if (currentState is MessagesBaseState) {
+        yield currentState.copyWith(replyMessage: event.message);
+      }
+    } else if (event is MessagesReplyEventClear) {
+      if (currentState is MessagesBaseState) {
+        yield getBaseState(currentState);
       }
     } else {
       yield MessagesErrorState();
       Log.e("Error in messages");
     }
+  }
+
+  MessagesBaseState getBaseState(MessagesBaseState currentState) {
+    return MessagesBaseState(
+          currentState.messages,
+          currentState.myUser,
+          currentState.currentMessage,
+          currentState.bannerAd,
+          currentState.privateChat,
+          currentState.usersInRoom,
+          null);
   }
 
   void _setUpMessagesListener(String chatId) async {
@@ -215,26 +240,27 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
   void _setUpOnlineUsersListener() {
     onlineUsersStream =
         _firestoreRepository.onlineUsersStream.listen((event) async {
-          final users = event.docs
-              .map((e) => ChatUser.fromJson(e.id, e.data() as Map<String, dynamic>))
-              .toList();
+      final users = event.docs
+          .map((e) => ChatUser.fromJson(e.id, e.data() as Map<String, dynamic>))
+          .toList();
 
-          final filteredUsers = users
-              .where((element) => element.currentRoomChatId == chat.id)
-              .where((element) => element.id != getUserId())
-              .where((element) => element.lastActive.toDate().isAfter(
-              DateTime.now().subtract(onlineDuration)))
-              .toList();
+      final filteredUsers = users
+          .where((element) => element.currentRoomChatId == chat.id)
+          .where((element) => element.id != getUserId())
+          .where((element) => element.lastActive
+              .toDate()
+              .isAfter(DateTime.now().subtract(onlineDuration)))
+          .toList();
 
-          final myUser =
-              users.where((element) => element.id == getUserId()).firstOrNull;
+      final myUser =
+          users.where((element) => element.id == getUserId()).firstOrNull;
 
-          //Sort users with the same country code as my users first
-          if (myUser != null) {
-            sortOnlineUsers(filteredUsers, myUser.countryCode);
-            add(MessagesChatUsersInRoomUpdatedEvent(filteredUsers));
-          }
-        });
+      //Sort users with the same country code as my users first
+      if (myUser != null) {
+        sortOnlineUsers(filteredUsers, myUser.countryCode);
+        add(MessagesChatUsersInRoomUpdatedEvent(filteredUsers));
+      }
+    });
   }
 
   Future<void> loadAd(int adWidth) async {

@@ -11,7 +11,6 @@ import '../../utils/app_colors.dart';
 import '../../utils/app_widgets.dart';
 import '../messages/bloc/messages_bloc.dart';
 import '../messages/bloc/messages_event.dart';
-import '../messages/other_message_widget.dart';
 import 'bloc/options_event.dart';
 
 class OptionsScreen extends StatelessWidget {
@@ -34,7 +33,6 @@ class OptionsScreen extends StatelessWidget {
 }
 
 class OptionsScreenBuilder extends StatelessWidget {
-  final _bottomsheetHeight = 100.0;
   final Message message;
   final BuildContext parentContext;
 
@@ -56,96 +54,109 @@ class OptionsScreenBuilder extends StatelessWidget {
           BlocBuilder<OptionsBloc, OptionsState>(builder: (blocContext, state) {
         if (state is OptionsBaseState) {
           return Container(
-            height: _bottomsheetHeight,
             width: double.infinity,
             decoration: getDecoration(),
             child: SafeArea(
               child: Padding(
                 padding: const EdgeInsets.only(
                     left: 30, bottom: 10, top: 10, right: 30),
-                child: Row(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                child: Wrap(
+                  crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
-                    GestureDetector(
-                      onTap: () {},
-                      child: Column(
-                        children: [
-                          const Icon(
-                            Icons.reply,
-                            color: AppColors.main,
-                          ),
-                          Text(FlutterI18n.translate(context, 'reply'),
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyMedium),
-                        ],
+                    Padding(
+                      padding: const EdgeInsets.only(top: 10),
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.of(context).pop();
+                          BlocProvider.of<MessagesBloc>(parentContext)
+                              .add(MessagesReplyEvent(message: message));
+                        },
+                        child: Column(
+                          children: [
+                            const Icon(
+                              Icons.reply,
+                              color: AppColors.main,
+                            ),
+                            Text(FlutterI18n.translate(context, 'reply'),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium),
+                          ],
+                        ),
                       ),
                     ),
                     const SizedBox(width: 20),
-                    GestureDetector(
-                      onTap: () {
-                        BlocProvider.of<OptionsBloc>(blocContext).add(
-                            OptionsTranslateEvent( message.text));
-                      },
-                      child: Column(
-                        children: [
-                          const Icon(
-                            Icons.translate,
-                            color: AppColors.main,
-                          ),
-                          Text(FlutterI18n.translate(context, 'translate'),
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyMedium),
-                        ],
+                    Padding(
+                      padding: const EdgeInsets.only(top: 10),
+                      child: GestureDetector(
+                        onTap: () {
+                          BlocProvider.of<OptionsBloc>(blocContext).add(
+                              OptionsTranslateEvent( message.text));
+                        },
+                        child: Column(
+                          children: [
+                            const Icon(
+                              Icons.translate,
+                              color: AppColors.main,
+                            ),
+                            Text(FlutterI18n.translate(context, 'translate'),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium),
+                          ],
+                        ),
                       ),
                     ),
                     const SizedBox(width: 20),
-                    GestureDetector(
-                      onTap: () {
-                        Clipboard.setData(ClipboardData(text: message.text));
-                        Navigator.of(context).pop();
-                        //Show a snackbar
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(FlutterI18n.translate(
-                                context, 'copied_to_clipboard')),
-                            duration: const Duration(seconds: 1),
-                          ),
-                        );
-                      },
-                      child: Column(
-                        children: [
-                          const Icon(
-                            Icons.copy,
-                            color: AppColors.main,
-                          ),
-                          Text(FlutterI18n.translate(context, 'copy_text'),
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyMedium),
-                        ],
+                    Padding(
+                      padding: const EdgeInsets.only(top: 10),
+                      child: GestureDetector(
+                        onTap: () {
+                          Clipboard.setData(ClipboardData(text: message.text));
+                          Navigator.of(context).pop();
+                          //Show a snackbar
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(FlutterI18n.translate(
+                                  context, 'copied_to_clipboard')),
+                              duration: const Duration(seconds: 1),
+                            ),
+                          );
+                        },
+                        child: Column(
+                          children: [
+                            const Icon(
+                              Icons.copy,
+                              color: AppColors.main,
+                            ),
+                            Text(FlutterI18n.translate(context, 'copy_text'),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium),
+                          ],
+                        ),
                       ),
                     ),
                     const SizedBox(width: 20),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.of(context).pop();
-                        showReportScreen(context, message.createdById);
-                                            },
-                      child: Column(
-                        children: [
-                          const Icon(
-                            Icons.report,
-                            color: AppColors.main,
-                          ),
-                          Text(FlutterI18n.translate(context, 'report'),
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyMedium),
-                        ],
+                    Padding(
+                      padding: const EdgeInsets.only(top: 10),
+                      child: GestureDetector(
+                        onTap: () {
+                          Navigator.of(context).pop();
+                          showReportScreen(context, message.createdById);
+                                              },
+                        child: Column(
+                          children: [
+                            const Icon(
+                              Icons.report,
+                              color: AppColors.main,
+                            ),
+                            Text(FlutterI18n.translate(context, 'report'),
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium),
+                          ],
+                        ),
                       ),
                     )
                   ],
@@ -156,7 +167,6 @@ class OptionsScreenBuilder extends StatelessWidget {
         } else {
           return Container(
             width: double.infinity,
-            height: _bottomsheetHeight,
             decoration: getDecoration(),
             child: const Center(
               child: AppSpinner(),

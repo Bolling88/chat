@@ -23,9 +23,10 @@ class MessagesBaseState extends MessagesState {
   final BannerAd? bannerAd;
   final PrivateChat? privateChat;
   final List<ChatUser> usersInRoom;
+  final Message? replyMessage;
 
   MessagesBaseState(this.messages, this.myUser, this.currentMessage,
-      this.bannerAd, this.privateChat, this.usersInRoom);
+      this.bannerAd, this.privateChat, this.usersInRoom, this.replyMessage);
 
   MessagesBaseState copyWith(
       {List<Message>? messages,
@@ -34,17 +35,26 @@ class MessagesBaseState extends MessagesState {
       String? currentMessage,
       BannerAd? bannerAd,
       PrivateChat? privateChat,
-      List<ChatUser>? usersInRoom}) {
+      List<ChatUser>? usersInRoom,
+      Message? replyMessage}) {
     return MessagesBaseState(
         messages ?? this.messages,
         myUser ?? this.myUser,
         currentMessage ?? this.currentMessage,
         bannerAd ?? this.bannerAd,
         privateChat ?? this.privateChat,
-        usersInRoom ?? this.usersInRoom);
+        usersInRoom ?? this.usersInRoom,
+        replyMessage ?? this.replyMessage);
   }
 
   @override
-  List<Object?> get props =>
-      [messages, myUser, currentMessage, bannerAd, privateChat, usersInRoom];
+  List<Object?> get props => [
+        messages,
+        myUser,
+        currentMessage,
+        bannerAd,
+        privateChat,
+        usersInRoom,
+        replyMessage
+      ];
 }

@@ -170,9 +170,7 @@ class FirestoreRepository {
           'lastActive': FieldValue.serverTimestamp(),
           'pictureData': profileImageUrl,
           'approvedImage': ApprovedImage.notReviewed.value,
-          'imageReports': user.approvedImage == ApprovedImage.notApproved.value
-              ? ['needs_review']
-              : [],
+          'imageReports': [],
         }, SetOptions(merge: true))
         .then((value) => Log.d("User profile image updated"))
         .catchError((error) => Log.e("Failed to update user image: $error"));
@@ -209,6 +207,7 @@ class FirestoreRepository {
     required bool isPrivateChat,
     bool isGiphy = false,
     String? sendPushToUserId,
+    Message? replyMessage,
   }) async {
     if (isPrivateChat) {
       if (chatType == ChatType.message || chatType == ChatType.giphy) {
@@ -225,6 +224,19 @@ class FirestoreRepository {
           'birthDate': user.birthDate,
           'showAge': user.showAge,
           'imageReports': user.imageReports,
+          'replyId': replyMessage?.id ?? '',
+          'replyText': replyMessage?.text,
+          'replyChatType': replyMessage?.chatType.value,
+          'replyCreatedById': replyMessage?.createdById,
+          'replyCreatedByName': replyMessage?.createdByName,
+          'replyCreatedByGender': replyMessage?.createdByGender,
+          'replyCreatedByCountryCode': replyMessage?.createdByCountryCode,
+          'replyCreatedByImageUrl': replyMessage?.createdByImageUrl,
+          'replyApprovedImage': replyMessage?.approvedImage,
+          'replyCreated': replyMessage?.created,
+          'replyBirthDate': replyMessage?.birthDate,
+          'replyShowAge': replyMessage?.showAge,
+          'replyImageReports': replyMessage?.imageReports,
         });
       }
     } else {
@@ -242,6 +254,19 @@ class FirestoreRepository {
         'birthDate': user.birthDate,
         'showAge': user.showAge,
         'imageReports': user.imageReports,
+        'replyId': replyMessage?.id ?? '',
+        'replyText': replyMessage?.text,
+        'replyChatType': replyMessage?.chatType.value,
+        'replyCreatedById': replyMessage?.createdById,
+        'replyCreatedByName': replyMessage?.createdByName,
+        'replyCreatedByGender': replyMessage?.createdByGender,
+        'replyCreatedByCountryCode': replyMessage?.createdByCountryCode,
+        'replyCreatedByImageUrl': replyMessage?.createdByImageUrl,
+        'replyApprovedImage': replyMessage?.approvedImage,
+        'replyCreated': replyMessage?.created,
+        'replyBirthDate': replyMessage?.birthDate,
+        'replyShowAge': replyMessage?.showAge,
+        'replyImageReports': replyMessage?.imageReports,
       });
     }
 

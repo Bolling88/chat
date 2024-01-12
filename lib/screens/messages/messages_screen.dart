@@ -116,6 +116,7 @@ class ChatsScreenContent extends StatelessWidget {
                                     pictureData: state
                                         .messages[getActualIndex(index)]
                                         .createdByImageUrl,
+                                    chat: chat,
                                   );
                                 } else {
                                   return AppOtherMessageWidget(
@@ -185,6 +186,7 @@ class ChatsScreenContent extends StatelessWidget {
                           BlocProvider.of<MessagesBloc>(context)
                               .add(MessagesSendEvent());
                         },
+                        replyMessage: state.replyMessage,
                       ),
                       if (!kIsWeb)
                         AnimatedSize(

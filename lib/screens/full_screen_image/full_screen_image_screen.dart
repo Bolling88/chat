@@ -109,7 +109,7 @@ class FullScreenImageScreenContent extends StatelessWidget {
                           ),
                         ),
                       ),
-                    if(state.showHideButton)
+                    if (state.showHideButton)
                       SafeArea(
                         child: Center(
                           child: Column(
@@ -146,7 +146,10 @@ class FullScreenImageScreenContent extends StatelessWidget {
 
 bool shouldBlur(
     String? url, List<String> imageReport, ApprovedImage approvalState) {
-  return (approvalState == ApprovedImage.notApproved ||
-      approvalState == ApprovedImage.notReviewed) &&
-      imageReport.isNotEmpty && url != null && url.isNotEmpty;
+  return ((approvalState == ApprovedImage.notApproved ||
+              approvalState == ApprovedImage.notReviewed ||
+              approvalState == ApprovedImage.notSet) ||
+          imageReport.isNotEmpty) &&
+      url != null &&
+      url.isNotEmpty;
 }

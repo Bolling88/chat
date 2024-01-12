@@ -5,8 +5,6 @@ import 'package:chat/utils/lottie.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_i18n/flutter_i18n.dart';
-
 import '../../model/chat.dart';
 import '../../model/message.dart';
 import '../../repository/firestore_repository.dart';
@@ -31,6 +29,8 @@ class AppOtherMessageWidget extends StatelessWidget {
   final Timestamp? birthDate;
   final bool showAge;
   final Chat chat;
+  final double paddingRight;
+  final double paddingLeft;
 
   const AppOtherMessageWidget({
     Key? key,
@@ -45,12 +45,14 @@ class AppOtherMessageWidget extends StatelessWidget {
     required this.birthDate,
     required this.showAge,
     required this.chat,
+    this.paddingRight = 40,
+    this.paddingLeft = 20,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(left: 20, bottom: 5, top: 5, right: 40),
+      padding: EdgeInsets.only(left: paddingLeft, bottom: 5, top: 5, right: paddingRight),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
@@ -72,132 +74,132 @@ class AppOtherMessageWidget extends StatelessWidget {
           if (message.chatType == ChatType.giphy)
             giphyMessage(context)
           else
-            regularMessage(context),
+            Expanded(child: regularMessage(context)),
         ],
       ),
     );
   }
 
-  Expanded regularMessage(BuildContext context) {
-    return Expanded(
-            child: GestureDetector(
-              onTap: (){
-                BlocProvider.of<MessagesBloc>(context)
-                    .add(MessagesMarkedEvent(message: message, marked: true));
-                showOptionsScreen(context, message);
-              },
-              child: Align(
-                alignment: Alignment.bottomLeft,
-                child: DecoratedBox(
-                  decoration: BoxDecoration(
-                      borderRadius: const BorderRadius.only(
-                        bottomLeft: Radius.circular(10.0),
-                        bottomRight: Radius.circular(10.0),
-                        topRight: Radius.circular(10.0),
-                      ),
-                      gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                          colors: [
-                            message.marked
-                                ? AppColors.main_3
-                                : AppColors.grey_4,
-                            message.marked
-                                ? AppColors.main_3
-                                : AppColors.grey_4
-                          ])),
-                  child: Padding(
-                    padding: const EdgeInsets.only(
-                        left: 10, right: 10, top: 5, bottom: 5),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(displayName,
-                                textAlign: TextAlign.left,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodySmall
-                                    ?.merge(TextStyle(
-                                        color: getGenderColor(
-                                            Gender.fromValue(gender)),
-                                        fontWeight: FontWeight.bold))),
-                            if (gender != Gender.secret.value)
-                              SizedBox(
-                                  width: 18,
-                                  height: 18,
-                                  child: AppLottie(
-                                    url: getGenderUrl(gender),
-                                    animate: false,
-                                  )),
-                            const SizedBox(width: 2),
-                            if (birthDate != null && showAge)
-                              Text(
-                                getAge(birthDate),
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .displaySmall
-                                    ?.merge(TextStyle(
-                                        color: getGenderColor(
-                                            Gender.fromValue(gender)),
-                                        fontSize: 16)),
-                              ),
-                            if (birthDate != null) const SizedBox(width: 8),
-                            getFlag(countryCode: countryCode, fontSize: 16),
-                          ],
-                        ),
-                        Column(
-                          children: [
-                            Text(
-                              message.text,
-                              textAlign: TextAlign.left,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .bodyMedium
-                                  ?.merge(
-                                    TextStyle(
-                                      color: message.marked? AppColors.white: AppColors.grey_1,
-                                      fontSize: isOnlyEmojis(message.text)
-                                          ? 40
-                                          : Theme.of(context)
-                                              .textTheme
-                                              .bodyMedium
-                                              ?.fontSize,
-                                    ),
-                                  ),
-                            ),
-                            if (message.translation != null &&
-                                message.translation?.isNotEmpty == true)
-                              Text(
-                                message.translation ?? '',
-                                textAlign: TextAlign.left,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyMedium
-                                    ?.merge(
-                                      TextStyle(
-                                        color: AppColors.main,
-                                        fontSize: isOnlyEmojis(message.text)
-                                            ? 40
-                                            : Theme.of(context)
-                                                .textTheme
-                                                .bodyMedium
-                                                ?.fontSize,
-                                      ),
-                                    ),
-                              ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
+  Widget regularMessage(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        BlocProvider.of<MessagesBloc>(context)
+            .add(MessagesMarkedEvent(message: message, marked: true));
+        showOptionsScreen(context, message);
+      },
+      child: Align(
+        alignment: Alignment.bottomLeft,
+        child: Material(
+          type: MaterialType.card,
+          elevation: 1,
+            color: message.marked ? AppColors.main_3 : AppColors.grey_4,
+            shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(0.0),
+                    topRight: Radius.circular(5.0),
+                    bottomRight: Radius.circular(5.0),
+                    bottomLeft: Radius.circular(5.0))),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Padding(
+                padding:
+                const EdgeInsets.only(left: 10, top: 5),
+                child: getPostedByName(
+                  context: context,
+                  displayName: displayName,
+                  gender: gender,
+                  countryCode: countryCode,
+                  showAge: showAge,
+                  birthDate: birthDate,
                 ),
               ),
-            ),
-          );
+              if(message.replyId.isNotEmpty)
+                Transform.scale(
+                  scale: 0.8,
+                  child: AppOtherMessageWidget(
+                    message: Message(
+                        id: '',
+                        text: message.replyText,
+                        createdById: message.replyCreatedById,
+                        createdByName: message.replyCreatedByName,
+                        createdByGender:
+                        message.replyCreatedByGender,
+                        createdByCountryCode:
+                        message.replyCreatedByCountryCode,
+                        createdByImageUrl:
+                        message.replyCreatedByImageUrl,
+                        chatType: message.replyChatType,
+                        approvedImage: message.replyApprovedImage,
+                        created: message.replyCreated ??
+                            Timestamp.now(),
+                        showAge: message.replyShowAge,
+                        marked: false,
+                        imageReports: message.replyImageReports),
+                    pictureData: message.replyCreatedByImageUrl,
+                    gender: message.replyCreatedByGender,
+                    userId: message.replyCreatedById,
+                    imageReports: message.replyImageReports,
+                    displayName: message.replyCreatedByName,
+                    approvedImage: message.replyApprovedImage,
+                    countryCode:
+                    message.replyCreatedByCountryCode,
+                    birthDate: message.replyBirthDate,
+                    showAge: message.replyShowAge,
+                    chat: chat,
+                    paddingLeft: 0,
+                    paddingRight: 0,
+                  ),
+                ),
+              Padding(
+                padding:
+                const EdgeInsets.only(left: 10, right: 10),
+                child: Text(
+                  message.text,
+                  textAlign: TextAlign.left,
+                  style: Theme.of(context).textTheme.bodyMedium?.merge(
+                        TextStyle(
+                          color: message.marked
+                              ? AppColors.white
+                              : AppColors.grey_1,
+                          fontSize: isOnlyEmojis(message.text)
+                              ? 40
+                              : Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium
+                                  ?.fontSize,
+                        ),
+                      ),
+                ),
+              ),
+              if (message.translation != null &&
+                  message.translation?.isNotEmpty == true)
+                Padding(
+                  padding:
+                  const EdgeInsets.only(left: 10, right: 10),
+                  child: Text(
+                    message.translation ?? '',
+                    textAlign: TextAlign.left,
+                    style: Theme.of(context).textTheme.bodyMedium?.merge(
+                          TextStyle(
+                            color: AppColors.main,
+                            fontSize: isOnlyEmojis(message.text)
+                                ? 40
+                                : Theme.of(context)
+                                    .textTheme
+                                    .bodyMedium
+                                    ?.fontSize,
+                          ),
+                        ),
+                  ),
+                ),
+              const SizedBox(height: 5),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   Widget giphyMessage(BuildContext context) {
@@ -216,12 +218,8 @@ class AppOtherMessageWidget extends StatelessWidget {
             children: [
               Text(displayName,
                   textAlign: TextAlign.left,
-                  style: Theme.of(context)
-                      .textTheme
-                      .bodySmall
-                      ?.merge(TextStyle(
-                      color: getGenderColor(
-                          Gender.fromValue(gender)),
+                  style: Theme.of(context).textTheme.bodySmall?.merge(TextStyle(
+                      color: getGenderColor(Gender.fromValue(gender)),
                       fontWeight: FontWeight.bold))),
               if (gender != Gender.secret.value)
                 SizedBox(
@@ -235,39 +233,72 @@ class AppOtherMessageWidget extends StatelessWidget {
               if (birthDate != null && showAge)
                 Text(
                   getAge(birthDate),
-                  style: Theme.of(context)
-                      .textTheme
-                      .displaySmall
-                      ?.merge(TextStyle(
-                      color: getGenderColor(
-                          Gender.fromValue(gender)),
-                      fontSize: 16)),
+                  style: Theme.of(context).textTheme.displaySmall?.merge(
+                      TextStyle(
+                          color: getGenderColor(Gender.fromValue(gender)),
+                          fontSize: 16)),
                 ),
               if (birthDate != null) const SizedBox(width: 8),
               getFlag(countryCode: countryCode, fontSize: 16),
             ],
           ),
           Align(
-                  alignment: Alignment.bottomLeft,
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(20.0),
-                    child: SizedBox(
-                      width: 200,
-                      height: 200,
-                      child: CachedNetworkImage(
-                        imageUrl: message.text,
-                        placeholder: (context, url) =>
-                            const Center(child: AppSpinner()),
-                        errorWidget: (context, url, error) =>
-                            const Icon(Icons.error),
-                      ),
-                    ),
-                  ),
+            alignment: Alignment.bottomLeft,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(20.0),
+              child: SizedBox(
+                width: 200,
+                height: 200,
+                child: CachedNetworkImage(
+                  imageUrl: message.text,
+                  placeholder: (context, url) =>
+                      const Center(child: AppSpinner()),
+                  errorWidget: (context, url, error) => const Icon(Icons.error),
                 ),
+              ),
+            ),
+          ),
         ],
       ),
     );
   }
+}
+
+Row getPostedByName({
+  required BuildContext context,
+  required String displayName,
+  required int gender,
+  required String countryCode,
+  required bool showAge,
+  Timestamp? birthDate,
+}) {
+  return Row(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      Text(displayName,
+          textAlign: TextAlign.left,
+          style: Theme.of(context).textTheme.bodySmall?.merge(TextStyle(
+              color: getGenderColor(Gender.fromValue(gender)),
+              fontWeight: FontWeight.bold))),
+      if (gender != Gender.secret.value)
+        SizedBox(
+            width: 18,
+            height: 18,
+            child: AppLottie(
+              url: getGenderUrl(gender),
+              animate: false,
+            )),
+      const SizedBox(width: 2),
+      if (birthDate != null && showAge)
+        Text(
+          getAge(birthDate),
+          style: Theme.of(context).textTheme.displaySmall?.merge(TextStyle(
+              color: getGenderColor(Gender.fromValue(gender)), fontSize: 16)),
+        ),
+      if (birthDate != null) const SizedBox(width: 8),
+      getFlag(countryCode: countryCode, fontSize: 16),
+    ],
+  );
 }
 
 String getGenderUrl(int gender) {

@@ -98,3 +98,17 @@ class MessagesChatUsersInRoomUpdatedEvent extends MessagesEvent {
   @override
   List<Object> get props => [chatUsers];
 }
+
+class MessagesReplyEvent extends MessagesEvent {
+  final Message message;
+
+  MessagesReplyEvent({required this.message});
+
+  @override
+  List<Object> get props => [message];
+}
+
+class MessagesReplyEventClear extends MessagesEvent {
+  @override
+  List<Object> get props => [];
+}

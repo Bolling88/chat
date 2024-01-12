@@ -1,6 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:chat/screens/messages/other_message_widget.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
+import '../../model/chat.dart';
 import '../../model/message.dart';
 import '../../repository/firestore_repository.dart';
 import '../../utils/app_colors.dart';
@@ -10,11 +13,13 @@ class AppMyMessageWidget extends StatelessWidget {
   final Message message;
   final String pictureData;
   final int gender;
+  final Chat chat;
 
   const AppMyMessageWidget({
     required this.message,
     required this.pictureData,
     required this.gender,
+    required this.chat,
     Key? key,
   }) : super(key: key);
 
@@ -61,25 +66,73 @@ class AppMyMessageWidget extends StatelessWidget {
                                 begin: Alignment.topCenter,
                                 end: Alignment.bottomCenter,
                                 colors: [AppColors.main, AppColors.main_2])),
-                        child: Padding(
-                            padding: const EdgeInsets.only(
-                                top: 15, bottom: 15, left: 10, right: 10),
-                            child: Text(message.text,
-                                textAlign: TextAlign.left,
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyMedium
-                                    ?.merge(
-                                      TextStyle(
-                                        color: Colors.white,
-                                        fontSize: isOnlyEmojis(message.text)
-                                            ? 40
-                                            : Theme.of(context)
-                                                .textTheme
-                                                .bodyMedium
-                                                ?.fontSize,
-                                      ),
-                                    ))),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            if (message.replyId.isNotEmpty)
+                              Transform.scale(
+                                scale: 0.8,
+                                child: AppOtherMessageWidget(
+                                  message: Message(
+                                      id: '',
+                                      text: message.replyText,
+                                      createdById: message.replyCreatedById,
+                                      createdByName: message.replyCreatedByName,
+                                      createdByGender:
+                                          message.replyCreatedByGender,
+                                      createdByCountryCode:
+                                          message.replyCreatedByCountryCode,
+                                      createdByImageUrl:
+                                          message.replyCreatedByImageUrl,
+                                      chatType: message.replyChatType,
+                                      approvedImage: message.replyApprovedImage,
+                                      created: message.replyCreated ??
+                                          Timestamp.now(),
+                                      showAge: message.replyShowAge,
+                                      marked: false,
+                                      imageReports: message.replyImageReports),
+                                  pictureData: message.replyCreatedByImageUrl,
+                                  gender: message.replyCreatedByGender,
+                                  userId: message.replyCreatedById,
+                                  imageReports: message.replyImageReports,
+                                  displayName: message.replyCreatedByName,
+                                  approvedImage: message.replyApprovedImage,
+                                  countryCode:
+                                      message.replyCreatedByCountryCode,
+                                  birthDate: message.replyBirthDate,
+                                  showAge: message.replyShowAge,
+                                  chat: chat,
+                                  paddingLeft: 0,
+                                  paddingRight: 0,
+                                ),
+                              ),
+                            Padding(
+                              padding: EdgeInsets.only(
+                                  top: message.replyId.isNotEmpty ? 0 : 15,
+                                  bottom: 15,
+                                  left: 10,
+                                  right: 10),
+                              child: Text(message.text,
+                                  textAlign: TextAlign.right,
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium
+                                      ?.merge(
+                                        TextStyle(
+                                          color: Colors.white,
+                                          fontSize: isOnlyEmojis(message.text)
+                                              ? 40
+                                              : Theme.of(context)
+                                                  .textTheme
+                                                  .bodyMedium
+                                                  ?.fontSize,
+                                        ),
+                                      )),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
