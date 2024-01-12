@@ -115,7 +115,6 @@ class AppMyMessageWidget extends StatelessWidget {
                                   left: 10,
                                   right: 10),
                               child: Text(message.text,
-                                  textAlign: TextAlign.right,
                                   style: Theme.of(context)
                                       .textTheme
                                       .bodyMedium
