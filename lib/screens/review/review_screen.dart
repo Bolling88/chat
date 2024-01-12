@@ -52,6 +52,11 @@ class ReviewScreenBuilder extends StatelessWidget {
               return SafeArea(
                 child: Column(
                   children: [
+                    Text(
+                      'Images left to review: ${state.users.length}',
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.displaySmall,
+                    ),
                     Expanded(
                       child: Center(
                         child: InteractiveViewer(
@@ -60,7 +65,8 @@ class ReviewScreenBuilder extends StatelessWidget {
                             minScale: 1,
                             clipBehavior: Clip.none,
                             maxScale: 3,
-                            child: Image.network(state.underReview.pictureData)),
+                            child:
+                                Image.network(state.underReview.pictureData)),
                       ),
                     ),
                     Row(
@@ -93,7 +99,9 @@ class ReviewScreenBuilder extends StatelessWidget {
                         ),
                       ],
                     ),
-                    const SizedBox(height: 50,),
+                    const SizedBox(
+                      height: 50,
+                    ),
                   ],
                 ),
               );
