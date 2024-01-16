@@ -76,6 +76,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
           .toList();
 
       Map<String, List<ChatUser>> usersPerChat = groupUsersByChat(users);
+      Log.d('ChatOnlineUsersUpdatedEvent');
       add(ChatOnlineUsersUpdatedEvent(usersPerChat));
     });
   }

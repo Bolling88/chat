@@ -17,9 +17,9 @@ import '../../repository/presence_database.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_widgets.dart';
 import '../account/account_screen.dart';
+import '../app_life_cycle/app_life_cycle_screen.dart';
 import '../messages/messages_screen.dart';
 import '../people/people_screen.dart';
-import '../profile/profile_screen.dart';
 import 'bloc/message_holder_bloc.dart';
 import 'bloc/message_holder_event.dart';
 import 'bloc/message_holder_state.dart';
@@ -42,7 +42,7 @@ class MessageHolderScreen extends StatelessWidget {
     return BlocProvider(
       create: (BuildContext context) => MessageHolderBloc(
           context.read<FirestoreRepository>(), context.read<FcmRepository>()),
-      child: const MessageHolderScreenContent(),
+      child: const AppLifecycleScreen(child: MessageHolderScreenContent()),
     );
   }
 }
@@ -56,7 +56,7 @@ class MessageHolderScreenContent extends StatelessWidget {
         listener: (context, state) {
       if (state is MessageHolderLikeDialogState) {
         showLikeDialog(context, state);
-      }else if(state is MessageHolderShowOnlineUsersInChatState){
+      } else if (state is MessageHolderShowOnlineUsersInChatState) {
         showPeopleScreen(context, state.chat, state.onlineUsers);
       }
     }, child: BlocBuilder<MessageHolderBloc, MessageHolderState>(
@@ -183,8 +183,7 @@ class MessageHolderScreenContent extends StatelessWidget {
                   //Close keyboard
                   FocusManager.instance.primaryFocus?.unfocus();
                   if (index == state.privateChats.length + 1) {
-                    showPeopleScreen(
-                        context, null, state.onlineUsers);
+                    showPeopleScreen(context, null, state.onlineUsers);
                     return;
                   }
                   HapticFeedback.heavyImpact();
@@ -351,8 +350,7 @@ class MessageHolderScreenContent extends StatelessWidget {
                 child: InkWell(
                   customBorder: const CircleBorder(),
                   onTap: () {
-                    showPeopleScreen(
-                        context, null, state.onlineUsers);
+                    showPeopleScreen(context, null, state.onlineUsers);
                   },
                   child: SizedBox(
                     height: 60,

@@ -105,7 +105,7 @@ class AppOtherMessageWidget extends StatelessWidget {
             children: [
               Padding(
                 padding:
-                const EdgeInsets.only(left: 10, top: 5),
+                const EdgeInsets.only(left: 10, top: 5, right: 10),
                 child: getPostedByName(
                   context: context,
                   displayName: displayName,

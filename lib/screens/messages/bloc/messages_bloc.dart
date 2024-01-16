@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:chat/model/chat_user.dart';
 import 'package:chat/model/private_chat.dart';
+import 'package:chat/model/room_chat.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -49,15 +50,15 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
 
   @override
   Stream<MessagesState> mapEventToState(MessagesEvent event) async* {
-    Log.d(event.toString());
     final currentState = state;
     if (event is MessagesInitialEvent) {
       _user = (await _firestoreRepository.getUser())!;
       _setUpMessagesListener(chat.id);
       _setUpUserListener();
-      _setUpOnlineUsersListener();
       if (isPrivateChat) {
         _setUpPrivateChatStream();
+      }else{
+        _setUpOnlineUsersListener();
       }
     } else if (event is MessagesSendEvent) {
       if (currentState is MessagesBaseState) {
@@ -258,6 +259,7 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
       //Sort users with the same country code as my users first
       if (myUser != null) {
         sortOnlineUsers(filteredUsers, myUser.countryCode);
+        Log.d('MessagesChatUsersInRoomUpdatedEvent');
         add(MessagesChatUsersInRoomUpdatedEvent(filteredUsers));
       }
     });

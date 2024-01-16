@@ -167,6 +167,7 @@ class OptionsScreenBuilder extends StatelessWidget {
         } else {
           return Container(
             width: double.infinity,
+            height: 100,
             decoration: getDecoration(),
             child: const Center(
               child: AppSpinner(),

@@ -141,6 +141,7 @@ class PeopleBloc extends Bloc<PeopleEvent, PeopleState> {
 
       if (myUser != null) {
         sortOnlineUsers(filteredUsers, myUser.countryCode);
+        Log.d('PeopleLoadedEvent');
         add(PeopleLoadedEvent(filteredUsers));
       }
     });

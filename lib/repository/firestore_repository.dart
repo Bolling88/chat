@@ -540,7 +540,7 @@ class FirestoreRepository {
     }
   }
 
-  StreamController<QuerySnapshot> _privateChatsStreamController =
+  final StreamController<QuerySnapshot> _privateChatsStreamController =
       StreamController<QuerySnapshot>.broadcast();
   StreamSubscription<QuerySnapshot>? _privateChatsStream;
 
@@ -550,10 +550,7 @@ class FirestoreRepository {
   void startPrivateChatsStream(String userId) {
     if (_privateChatsStream != null) {
       _privateChatsStream?.cancel();
-      _privateChatsStreamController.close();
     }
-
-    _privateChatsStreamController = StreamController<QuerySnapshot>.broadcast();
 
     _privateChatsStream = privateChats
         .where('users', arrayContains: userId)
@@ -582,7 +579,7 @@ class FirestoreRepository {
     });
   }
 
-  StreamController<QuerySnapshot> _onlineUsersStreamController =
+  final StreamController<QuerySnapshot> _onlineUsersStreamController =
       StreamController<QuerySnapshot>.broadcast();
   StreamSubscription<QuerySnapshot>? _onlineUsersStream;
 
@@ -592,14 +589,9 @@ class FirestoreRepository {
   void startOnlineUsersStream() {
     if (_onlineUsersStream != null) {
       _onlineUsersStream?.cancel();
-      _onlineUsersStreamController.close();
     }
 
     DateTime onlineDurationDate = DateTime.now().subtract(onlineDuration);
-
-    _onlineUsersStreamController = StreamController<QuerySnapshot>.broadcast();
-
-    _onlineUsersStreamController = StreamController<QuerySnapshot>.broadcast();
 
     _onlineUsersStream = users
         .where('lastActive',
@@ -662,20 +654,6 @@ class FirestoreRepository {
     await users.doc(id).set({
       'approvedImage': ApprovedImage.notApproved.value,
     }, SetOptions(merge: true));
-
-    final currentDay = DateTime.now();
-    final yesterday = currentDay.subtract(const Duration(hours: 24));
-
-    //Make sure to unapprove all messages by the user in the last 24 hours
-    await messages
-        .where('createdById', isEqualTo: id)
-        .where('created', isGreaterThan: yesterday)
-        .get()
-        .then((value) => value.docs.forEach((element) {
-              messages.doc(element.id).set({
-                'approvedImage': ApprovedImage.notApproved.value,
-              }, SetOptions(merge: true));
-            }));
   }
 
   Future<void> postInappropriateImageReport(String userId) async {
@@ -707,5 +685,12 @@ class FirestoreRepository {
     _onlineUsersStream?.cancel();
     _privateChatsStreamController.close();
     _onlineUsersStreamController.close();
+  }
+
+  void setUserAsActive() {
+    users.doc(getUserId()).set({
+      'presence': true,
+      'lastActive': FieldValue.serverTimestamp(),
+    }, SetOptions(merge: true));
   }
 }

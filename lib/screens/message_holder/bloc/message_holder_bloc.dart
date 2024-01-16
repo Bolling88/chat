@@ -27,7 +27,6 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
   final FcmRepository _fcmRepository;
 
   StreamSubscription<QuerySnapshot>? privateChatStream;
-  StreamSubscription<QuerySnapshot>? roomChatStream;
   StreamSubscription<QuerySnapshot>? onlineUsersStream;
   StreamSubscription<QuerySnapshot>? userStream;
 
@@ -44,7 +43,6 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
     _firestoreRepository.closeOnlineUsersStream();
     _firestoreRepository.closePrivateChatStream();
     privateChatStream?.cancel();
-    roomChatStream?.cancel();
     onlineUsersStream?.cancel();
     userStream?.cancel();
     return super.close();
@@ -338,6 +336,7 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
       //Sort users with the same country code as my users first
       if (myUser != null) {
         sortOnlineUsers(filteredUsers, myUser.countryCode);
+        Log.d('MessageHolderUsersUpdatedEvent');
         add(MessageHolderUsersUpdatedEvent(filteredUsers));
       }
     });
