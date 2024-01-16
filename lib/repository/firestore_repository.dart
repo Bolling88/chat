@@ -34,7 +34,7 @@ enum Gender {
   final int value;
 }
 
-const onlineDuration = Duration(hours: 5);
+const onlineDuration = Duration(hours: 4);
 
 enum ApprovedImage {
   notReviewed(0),

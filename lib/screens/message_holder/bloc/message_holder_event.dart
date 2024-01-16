@@ -82,10 +82,6 @@ class MessageHolderLikeAppEvent extends MessageHolderEvent {
   MessageHolderLikeAppEvent();
 }
 
-class MessageHolderRateLaterAppEvent extends MessageHolderEvent {
-  MessageHolderRateLaterAppEvent();
-}
-
 class MessageHolderRateNeverAppEvent extends MessageHolderEvent {
   MessageHolderRateNeverAppEvent();
 }

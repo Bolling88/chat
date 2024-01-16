@@ -446,8 +446,6 @@ class MessageHolderScreenContent extends StatelessWidget {
                 TextButton(
                     onPressed: () {
                       Navigator.pop(context);
-                      BlocProvider.of<MessageHolderBloc>(parentContext)
-                          .add(MessageHolderRateLaterAppEvent());
                     },
                     child: Text(
                         FlutterI18n.translate(context, "later").toUpperCase()))

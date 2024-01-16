@@ -263,9 +263,6 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
       if (currentState is MessageHolderBaseState) {
         yield MessageHolderLikeDialogState(currentState);
       }
-    } else if (event is MessageHolderRateLaterAppEvent) {
-      final SharedPreferences prefs = await SharedPreferences.getInstance();
-      prefs.setInt('app_opens', 0);
     } else if (event is MessageHolderRateNeverAppEvent) {
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.setBool('rated', true);
@@ -376,7 +373,7 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
       final int appOpens = prefs.getInt('app_opens') ?? 0;
       final bool hasRatedOrDenied = prefs.getBool('rated') ?? false;
       final opens = appOpens + 1;
-      if (appOpens > 5 && hasRatedOrDenied == false) {
+      if (appOpens % 5 == 0 && hasRatedOrDenied == false) {
         final InAppReview inAppReview = InAppReview.instance;
         final isInAppReviewAvailable = await inAppReview.isAvailable();
         if (isInAppReviewAvailable) {

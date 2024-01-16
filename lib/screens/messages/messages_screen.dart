@@ -87,27 +87,11 @@ class ChatsScreenContent extends StatelessWidget {
                                     return const SizedBox.shrink();
                                   }
                                 } else if (state.messages[getActualIndex(index)]
-                                        .chatType ==
-                                    ChatType.joined) {
-                                  return getChatInfoMessage(
-                                      text:
-                                          '${state.messages[getActualIndex(index)].text} ${FlutterI18n.translate(context, 'joined_chat')}',
-                                      state: state,
-                                      index: getActualIndex(index),
-                                      context: context);
-                                } else if (state.messages[getActualIndex(index)]
-                                        .chatType ==
-                                    ChatType.left) {
-                                  return getChatInfoMessage(
-                                      text:
-                                          '${state.messages[getActualIndex(index)].text} ${FlutterI18n.translate(context, 'left_chat')}',
-                                      state: state,
-                                      index: getActualIndex(index),
-                                      context: context);
-                                } else if (state.messages[getActualIndex(index)]
                                         .createdById ==
                                     state.myUser.id) {
                                   return AppMyMessageWidget(
+                                    key: ValueKey(state
+                                        .messages[getActualIndex(index)].id),
                                     message:
                                         state.messages[getActualIndex(index)],
                                     gender: state
@@ -120,6 +104,8 @@ class ChatsScreenContent extends StatelessWidget {
                                   );
                                 } else {
                                   return AppOtherMessageWidget(
+                                    key: ValueKey(state
+                                        .messages[getActualIndex(index)].id),
                                     message:
                                         state.messages[getActualIndex(index)],
                                     pictureData: state
