@@ -14,7 +14,7 @@ class PeopleBloc extends Bloc<PeopleEvent, PeopleState> {
   final Chat? _chat;
 
   StreamSubscription<QuerySnapshot>? chatStream;
-  StreamSubscription<QuerySnapshot>? onlineUsersStream;
+  StreamSubscription<List<ChatUser>>? onlineUsersStream;
 
   PeopleBloc(this._firestoreRepository, this._initialUsers, this._chat)
       : super(PeopleLoadingState()) {
@@ -34,13 +34,13 @@ class PeopleBloc extends Bloc<PeopleEvent, PeopleState> {
     try {
       if (event is PeopleInitialEvent) {
         if (_initialUsers != null) {
-          if(_chat != null){
+          if (_chat != null) {
             //Filter to only show people in the chat
             final filteredUsers = _initialUsers!
                 .where((element) => element.currentRoomChatId == _chat?.id)
                 .toList();
             yield PeopleBaseState(filteredUsers, filteredUsers, 0);
-          }else {
+          } else {
             yield PeopleBaseState(_initialUsers!, _initialUsers!, 0);
           }
         }
@@ -120,30 +120,18 @@ class PeopleBloc extends Bloc<PeopleEvent, PeopleState> {
   void setUpPeopleListener() {
     onlineUsersStream =
         _firestoreRepository.onlineUsersStream.listen((event) async {
-      final users = event.docs
-          .map((e) => ChatUser.fromJson(e.id, e.data() as Map<String, dynamic>))
-          .toList();
-
-      final filteredUsers = users
-          .where((element) => element.id != getUserId())
-          .where((element) => element.lastActive.toDate().isAfter(
-              DateTime.now().subtract(onlineDuration)))
-          .where((element) {
-        if (_chat == null) {
-          return true;
-        } else {
-          return element.currentRoomChatId == _chat?.id;
-        }
-      }).toList();
-
-      final myUser =
-          users.where((element) => element.id == getUserId()).firstOrNull;
-
-      if (myUser != null) {
-        sortOnlineUsers(filteredUsers, myUser.countryCode);
-        Log.d('PeopleLoadedEvent');
-        add(PeopleLoadedEvent(filteredUsers));
-      }
+          if(_chat == null){
+            add(PeopleLoadedEvent(event));
+          }else {
+            final filteredUsers = event.where((element) {
+              if (_chat == null) {
+                return true;
+              } else {
+                return element.currentRoomChatId == _chat?.id;
+              }
+            }).toList();
+            add(PeopleLoadedEvent(filteredUsers));
+          }
     });
   }
 }

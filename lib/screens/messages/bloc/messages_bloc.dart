@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:chat/model/chat_user.dart';
 import 'package:chat/model/private_chat.dart';
-import 'package:chat/model/room_chat.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -13,7 +12,6 @@ import '../../../model/message.dart';
 import '../../../repository/firestore_repository.dart';
 import '../../../utils/audio.dart';
 import '../../../utils/log.dart';
-import '../../people/bloc/people_bloc.dart';
 import 'messages_event.dart';
 import 'messages_state.dart';
 import 'package:collection/collection.dart';
@@ -29,7 +27,7 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
   StreamSubscription<QuerySnapshot>? messagesStream;
   StreamSubscription<QuerySnapshot>? userStream;
   StreamSubscription<QuerySnapshot>? privateChatsStream;
-  StreamSubscription<QuerySnapshot>? onlineUsersStream;
+  StreamSubscription<List<ChatUser>>? onlineUsersStream;
 
   late ChatUser _user;
 
@@ -57,7 +55,7 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
       _setUpUserListener();
       if (isPrivateChat) {
         _setUpPrivateChatStream();
-      }else{
+      } else {
         _setUpOnlineUsersListener();
       }
     } else if (event is MessagesSendEvent) {
@@ -189,13 +187,13 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
 
   MessagesBaseState getBaseState(MessagesBaseState currentState) {
     return MessagesBaseState(
-          currentState.messages,
-          currentState.myUser,
-          currentState.currentMessage,
-          currentState.bannerAd,
-          currentState.privateChat,
-          currentState.usersInRoom,
-          null);
+        currentState.messages,
+        currentState.myUser,
+        currentState.currentMessage,
+        currentState.bannerAd,
+        currentState.privateChat,
+        currentState.usersInRoom,
+        null);
   }
 
   void _setUpMessagesListener(String chatId) async {
@@ -217,8 +215,18 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
       if (event.docs.isEmpty) {
         return;
       }
-      final user = ChatUser.fromJson(
-          event.docs.first.id, event.docs.first.data() as Map<String, dynamic>);
+
+      final Map<String, dynamic> userData =
+          event.docs.first.data() as Map<String, dynamic>;
+
+      // Convert Timestamp to int (milliseconds since epoch)
+      if (userData.containsKey('lastActive') &&
+          userData['lastActive'] is Timestamp) {
+        userData['lastActive'] =
+            (userData['lastActive'] as Timestamp).millisecondsSinceEpoch;
+      }
+
+      final user = ChatUser.fromJson(event.docs.first.id, userData);
       add(MessagesUserUpdatedEvent(user));
     });
   }
@@ -241,27 +249,15 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
   void _setUpOnlineUsersListener() {
     onlineUsersStream =
         _firestoreRepository.onlineUsersStream.listen((event) async {
-      final users = event.docs
-          .map((e) => ChatUser.fromJson(e.id, e.data() as Map<String, dynamic>))
-          .toList();
 
-      final filteredUsers = users
+      final filteredUsers = event
           .where((element) => element.currentRoomChatId == chat.id)
           .where((element) => element.id != getUserId())
-          .where((element) => element.lastActive
-              .toDate()
-              .isAfter(DateTime.now().subtract(onlineDuration)))
           .toList();
 
-      final myUser =
-          users.where((element) => element.id == getUserId()).firstOrNull;
-
       //Sort users with the same country code as my users first
-      if (myUser != null) {
-        sortOnlineUsers(filteredUsers, myUser.countryCode);
-        Log.d('MessagesChatUsersInRoomUpdatedEvent');
-        add(MessagesChatUsersInRoomUpdatedEvent(filteredUsers));
-      }
+      Log.d('MessagesChatUsersInRoomUpdatedEvent');
+      add(MessagesChatUsersInRoomUpdatedEvent(filteredUsers));
     });
   }
 

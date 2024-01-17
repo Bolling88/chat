@@ -87,7 +87,16 @@ class ReviewBloc extends Bloc<ReviewEvent, ReviewState> {
             (error) => Log.e('Error while listening to review stream: $error'))
         .listen((event) async {
       final users = event.docs
-          .map((e) => ChatUser.fromJson(e.id, e.data() as Map<String, dynamic>))
+          .map((e) {
+        final data = e.data() as Map<String, dynamic>;
+
+        // Serialize timestamp if it exists in the data
+        if (data.containsKey('lastActive') && data['lastActive'] is Timestamp) {
+          data['lastActive'] = (data['lastActive'] as Timestamp).millisecondsSinceEpoch;
+        }
+
+        return ChatUser.fromJson(e.id, data);
+      })
           .where((element) => element.pictureData.isNotEmpty)
           .toList()
           .reversed

@@ -17,7 +17,6 @@ import '../../../repository/network_repository.dart';
 import '../../../utils/analytics.dart';
 import '../../../utils/audio.dart';
 import '../../../utils/log.dart';
-import '../../people/bloc/people_bloc.dart';
 import 'message_holder_event.dart';
 import 'message_holder_state.dart';
 import 'dart:core';
@@ -27,12 +26,13 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
   final FcmRepository _fcmRepository;
 
   StreamSubscription<QuerySnapshot>? privateChatStream;
-  StreamSubscription<QuerySnapshot>? onlineUsersStream;
+  StreamSubscription<List<ChatUser>>? onlineUsersStream;
   StreamSubscription<QuerySnapshot>? userStream;
 
   InterstitialAd? _interstitialAd;
 
-  MessageHolderBloc(this._firestoreRepository, this._fcmRepository)
+  MessageHolderBloc(
+      this._firestoreRepository, this._fcmRepository)
       : super(MessageHolderLoadingState()) {
     add(MessageHolderInitialEvent());
   }
@@ -72,7 +72,7 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
             selectedChat: null,
             selectedChatIndex: 0);
 
-        _setUpOnlineUsersListener();
+        _setUpOnlineUsersListener(event.user.countryCode);
         _setUpPrivateChatsListener(event.user);
         _setUpRateMyApp();
       }
@@ -313,38 +313,33 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
     }
   }
 
-  void _setUpOnlineUsersListener() {
-    _firestoreRepository.startOnlineUsersStream();
+  void _setUpOnlineUsersListener(String countryCode) {
+    _firestoreRepository.startOnlineUsersStream(countryCode);
     onlineUsersStream =
         _firestoreRepository.onlineUsersStream.listen((event) async {
-      final users = event.docs
-          .map((e) => ChatUser.fromJson(e.id, e.data() as Map<String, dynamic>))
-          .toList();
-
-      final filteredUsers = users
-          .where((element) => element.id != getUserId())
-          .where((element) => element.lastActive.toDate().isAfter(
-              DateTime.now().subtract(onlineDuration)))
-          .toList();
-
-      final myUser =
-          users.where((element) => element.id == getUserId()).firstOrNull;
 
       //Sort users with the same country code as my users first
-      if (myUser != null) {
-        sortOnlineUsers(filteredUsers, myUser.countryCode);
-        Log.d('MessageHolderUsersUpdatedEvent');
-        add(MessageHolderUsersUpdatedEvent(filteredUsers));
-      }
+      Log.d('MessageHolderUsersUpdatedEvent');
+      add(MessageHolderUsersUpdatedEvent(event));
     });
   }
 
   void _setUpUserListener() async {
     Log.d('Setting up private chats stream');
     userStream = _firestoreRepository.streamUser().listen((event) async {
-      if(event.docs.isEmpty) return;
-      final user = ChatUser.fromJson(
-          event.docs.first.id, event.docs.first.data() as Map<String, dynamic>);
+      if (event.docs.isEmpty) return;
+      final Map<String, dynamic> userData =
+          event.docs.first.data() as Map<String, dynamic>;
+
+      // Convert Timestamp to int (milliseconds since epoch)
+      if (userData.containsKey('lastActive') &&
+          userData['lastActive'] is Timestamp) {
+        userData['lastActive'] =
+            (userData['lastActive'] as Timestamp).millisecondsSinceEpoch;
+      }
+
+      final user = ChatUser.fromJson(event.docs.first.id, userData);
+
       if (ApprovedImage.fromValue(user.approvedImage) == ApprovedImage.notSet &&
           user.pictureData.isNotEmpty) {
         _firestoreRepository.updateImageNotReviewedStatus();

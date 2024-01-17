@@ -3,6 +3,7 @@ import 'package:chat/repository/firestore_repository.dart';
 import 'package:chat/screens/chat/chat_screen.dart';
 import 'package:chat/screens/feedback/feedback_screen.dart';
 import 'package:chat/screens/visit/visit_screen.dart';
+import 'package:chat/utils/online_users_processor.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';

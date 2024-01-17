@@ -12,7 +12,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   final FirestoreRepository _firestoreRepository;
 
   late StreamSubscription<QuerySnapshot> chatStream;
-  late StreamSubscription<QuerySnapshot> onlineUsersStream;
+  late StreamSubscription<List<ChatUser>> onlineUsersStream;
   final List<ChatUser> _initialUsers;
 
   ChatBloc(this._firestoreRepository, this._initialUsers) : super(ChatLoadingState()) {
@@ -71,11 +71,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   void setUpPeopleListener() {
     onlineUsersStream =
         _firestoreRepository.onlineUsersStream.listen((event) async {
-      final users = event.docs
-          .map((e) => ChatUser.fromJson(e.id, e.data() as Map<String, dynamic>))
-          .toList();
-
-      Map<String, List<ChatUser>> usersPerChat = groupUsersByChat(users);
+      Map<String, List<ChatUser>> usersPerChat = groupUsersByChat(event);
       Log.d('ChatOnlineUsersUpdatedEvent');
       add(ChatOnlineUsersUpdatedEvent(usersPerChat));
     });

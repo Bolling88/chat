@@ -10,6 +10,7 @@ import 'package:flutter/foundation.dart';
 import '../model/room_chat.dart';
 import '../model/chat_user.dart';
 import '../utils/log.dart';
+import '../utils/online_users_processor.dart';
 
 enum Gender {
   female(0),
@@ -74,7 +75,8 @@ enum ChatType {
 getUserId() => FirebaseAuth.instance.currentUser!.uid;
 
 class FirestoreRepository {
-  FirestoreRepository();
+  final OnlineUsersProcessor _processor;
+  FirestoreRepository(this._processor);
 
   final CollectionReference users =
       FirebaseFirestore.instance.collection('users');
@@ -91,9 +93,18 @@ class FirestoreRepository {
     return users
         .doc((userId != null) ? userId : FirebaseAuth.instance.currentUser?.uid)
         .get()
-        .then((value) => value.exists
-            ? ChatUser.fromJson(value.id, value.data() as Map<String, dynamic>)
-            : null)
+        .then((value) {
+      if (!value.exists) return null;
+
+      final Map<String, dynamic> userData = value.data() as Map<String, dynamic>;
+
+      // Convert Timestamp to int (milliseconds since epoch)
+      if (userData.containsKey('lastActive') && userData['lastActive'] is Timestamp) {
+        userData['lastActive'] = (userData['lastActive'] as Timestamp).millisecondsSinceEpoch;
+      }
+
+      return ChatUser.fromJson(value.id, userData);
+    })
         .catchError((error) {
       Log.e("Failed to fetch user: $error");
       return null;
@@ -579,19 +590,21 @@ class FirestoreRepository {
     });
   }
 
-  final StreamController<QuerySnapshot> _onlineUsersStreamController =
-      StreamController<QuerySnapshot>.broadcast();
+  final StreamController<List<ChatUser>> _onlineUsersStreamController =
+      StreamController<List<ChatUser>>.broadcast();
   StreamSubscription<QuerySnapshot>? _onlineUsersStream;
 
-  Stream<QuerySnapshot> get onlineUsersStream =>
+  Stream<List<ChatUser>> get onlineUsersStream =>
       _onlineUsersStreamController.stream;
 
-  void startOnlineUsersStream() {
+  Future<void> startOnlineUsersStream(String countryCode) async {
     if (_onlineUsersStream != null) {
       _onlineUsersStream?.cancel();
     }
+    _onlineUsersStreamController.sink.add([]);
 
     DateTime onlineDurationDate = DateTime.now().subtract(onlineDuration);
+    await _processor.start();
 
     _onlineUsersStream = users
         .where('lastActive',
@@ -599,9 +612,11 @@ class FirestoreRepository {
         .snapshots()
         .handleError((error) {
       Log.e("Failed to get online users: $error");
-    }).listen((event) {
+    }).listen((event) async {
+      final processedUsers = await _processor.process(
+          event.docs, getUserId(), countryCode, onlineDuration);
       if (!_onlineUsersStreamController.isClosed) {
-        _onlineUsersStreamController.sink.add(event);
+        _onlineUsersStreamController.sink.add(processedUsers);
       }
     });
   }
@@ -609,6 +624,7 @@ class FirestoreRepository {
   void closeOnlineUsersStream() {
     _onlineUsersStream?.cancel();
     _onlineUsersStreamController.close();
+    _processor.stop();
   }
 
   void updateCurrentUsersCurrentChatRoom({required String chatId}) {

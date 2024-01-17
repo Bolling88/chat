@@ -19,6 +19,7 @@ import 'package:chat/screens/terms/terms.dart';
 import 'package:chat/utils/app_colors.dart';
 import 'package:chat/utils/image_util.dart';
 import 'package:chat/utils/log.dart';
+import 'package:chat/utils/online_users_processor.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -89,7 +90,8 @@ class KvitterApp extends StatelessWidget {
         // Once complete, show your application
         if (snapshot.connectionState == ConnectionState.done) {
           final SaveFile saveFile = SaveFile(prefs);
-          final FirestoreRepository firestoreRepository = FirestoreRepository();
+          final OnlineUsersProcessor onlineUsersProcessor = OnlineUsersProcessor();
+          final FirestoreRepository firestoreRepository = FirestoreRepository(onlineUsersProcessor);
           final LoginRepository loginRepository = LoginRepository();
           final StorageRepository storageRepository = StorageRepository();
           final FcmRepository fcmRepository =
@@ -106,6 +108,7 @@ class KvitterApp extends StatelessWidget {
               Provider<PresenceDatabase>.value(value: presenceDatabase),
               Provider<AppImageCropper>.value(value: appImageCropper),
               Provider<FcmRepository>.value(value: fcmRepository),
+              Provider<OnlineUsersProcessor>.value(value: onlineUsersProcessor),
             ],
             child: MaterialApp(
               title: 'Kvitter',

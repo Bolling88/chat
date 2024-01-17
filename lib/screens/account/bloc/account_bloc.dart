@@ -71,8 +71,17 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
         Log.d('No user found');
         return;
       }
-      final user = ChatUser.fromJson(
-          event.docs.first.id, event.docs.first.data() as Map<String, dynamic>);
+      final Map<String, dynamic> userData =
+      event.docs.first.data() as Map<String, dynamic>;
+
+      // Convert Timestamp to int (milliseconds since epoch)
+      if (userData.containsKey('lastActive') &&
+          userData['lastActive'] is Timestamp) {
+        userData['lastActive'] =
+            (userData['lastActive'] as Timestamp).millisecondsSinceEpoch;
+      }
+
+      final user = ChatUser.fromJson(event.docs.first.id, userData);
       add(AccountUserChangedEvent(user));
     });
   }

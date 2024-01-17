@@ -12,7 +12,7 @@ class ChatUser extends Equatable {
   final bool onboardingCompleted;
   final bool isAdmin;
   final Timestamp created;
-  final Timestamp lastActive;
+  final int lastActive;
   final String city;
   final String countryCode;
   final String country;
@@ -53,7 +53,7 @@ class ChatUser extends Equatable {
 
   ChatUser.fromJson(this.id, Map<String, dynamic> json)
       : created = json['created'] ?? Timestamp.now(),
-        lastActive = json['lastActive'] ?? Timestamp.now(),
+        lastActive = json['lastActive'] ?? Timestamp.now().millisecondsSinceEpoch,
         displayName = json['displayName'] ?? "",
         onboardingCompleted = json['onboardingCompleted'] ?? false,
         isAdmin = json['isAdmin'] ?? false,
@@ -76,7 +76,7 @@ class ChatUser extends Equatable {
 
   ChatUser.asUnknown(this.id)
       : created = Timestamp.now(),
-        lastActive = Timestamp.now(),
+        lastActive = Timestamp.now().millisecondsSinceEpoch,
         displayName = "",
         onboardingCompleted = false,
         isAdmin = false,
@@ -106,7 +106,7 @@ class ChatUser extends Equatable {
       bool? onboardingCompleted,
       bool? isAdmin,
       Timestamp? created,
-      Timestamp? lastActive,
+      int? lastActive,
       String? city,
       String? countryCode,
       String? country,
