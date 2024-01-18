@@ -75,7 +75,7 @@ enum ChatType {
 getUserId() => FirebaseAuth.instance.currentUser!.uid;
 
 class FirestoreRepository {
-  final OnlineUsersProcessor _processor;
+  final OnlineUserProcessor _processor;
   FirestoreRepository(this._processor);
 
   final CollectionReference users =

@@ -2,18 +2,28 @@ import 'dart:isolate';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../model/chat_user.dart';
-import '../repository/firestore_repository.dart';
 
-class OnlineUsersProcessor {
+abstract class OnlineUserProcessor {
+  Future<List<ChatUser>> process(List<QueryDocumentSnapshot> events,
+      String userId, String userCountryCode, Duration onlineDuration);
+
+  void stop();
+
+  Future<void> start();
+}
+
+class MobileOnlineUsersProcessor extends OnlineUserProcessor{
   Isolate? _isolate;
   SendPort? _sendPort;
   final ReceivePort _receivePort = ReceivePort();
 
+  @override
   Future<void> start() async {
     _isolate = await Isolate.spawn(processUsers, _receivePort.sendPort);
     _sendPort = await _receivePort.first as SendPort;
   }
 
+  @override
   Future<List<ChatUser>> process(List<QueryDocumentSnapshot> events,
       String userId, String userCountryCode, Duration onlineDuration) async {
     // Convert Firestore data to a serializable format
@@ -42,41 +52,6 @@ class OnlineUsersProcessor {
 
     var result = await responsePort.first as List;
     return result as List<ChatUser>;
-  }
-
-  static void sortOnlineUsers(List<ChatUser> filteredUsers, String countryCode) {
-    filteredUsers.sort((a, b) {
-      // Check if the user is from the same country as yours
-      bool isSameCountryAsMineA = a.countryCode == countryCode;
-      bool isSameCountryAsMineB = b.countryCode == countryCode;
-
-      // Handle empty country codes by moving them to the end
-      if (a.countryCode.isEmpty) {
-        return 1;
-      } else if (b.countryCode.isEmpty) {
-        return -1;
-      }
-
-      // If both users are from the same country as yours, sort by lastActive in descending order
-      if (isSameCountryAsMineA && isSameCountryAsMineB) {
-        return b.lastActive.compareTo(a.lastActive);
-      }
-
-      // Sort users from the same country as yours first
-      if (isSameCountryAsMineA) {
-        return -1;
-      } else if (isSameCountryAsMineB) {
-        return 1;
-      }
-
-      // If the users are not from the same country, sort by countryCode and then lastActive
-      int countryCodeComparison = a.countryCode.compareTo(b.countryCode);
-      if (countryCodeComparison != 0) {
-        return countryCodeComparison;
-      } else {
-        return b.lastActive.compareTo(a.lastActive);
-      }
-    });
   }
 
   static void processUsers(SendPort sendPort) {
@@ -111,8 +86,44 @@ class OnlineUsersProcessor {
     });
   }
 
+  @override
   void stop() {
     _isolate?.kill(priority: Isolate.immediate);
     _isolate = null;
   }
+}
+
+void sortOnlineUsers(List<ChatUser> filteredUsers, String countryCode) {
+  filteredUsers.sort((a, b) {
+    // Check if the user is from the same country as yours
+    bool isSameCountryAsMineA = a.countryCode == countryCode;
+    bool isSameCountryAsMineB = b.countryCode == countryCode;
+
+    // Handle empty country codes by moving them to the end
+    if (a.countryCode.isEmpty) {
+      return 1;
+    } else if (b.countryCode.isEmpty) {
+      return -1;
+    }
+
+    // If both users are from the same country as yours, sort by lastActive in descending order
+    if (isSameCountryAsMineA && isSameCountryAsMineB) {
+      return b.lastActive.compareTo(a.lastActive);
+    }
+
+    // Sort users from the same country as yours first
+    if (isSameCountryAsMineA) {
+      return -1;
+    } else if (isSameCountryAsMineB) {
+      return 1;
+    }
+
+    // If the users are not from the same country, sort by countryCode and then lastActive
+    int countryCodeComparison = a.countryCode.compareTo(b.countryCode);
+    if (countryCodeComparison != 0) {
+      return countryCodeComparison;
+    } else {
+      return b.lastActive.compareTo(a.lastActive);
+    }
+  });
 }

@@ -61,6 +61,7 @@ class OptionsScreenBuilder extends StatelessWidget {
                 padding: const EdgeInsets.only(
                     left: 30, bottom: 10, top: 10, right: 30),
                 child: Wrap(
+                  alignment: WrapAlignment.center,
                   crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
                     Padding(
