@@ -89,8 +89,17 @@ class VisitBloc extends Bloc<VisitEvent, VisitState> {
         add(VisitUserLoadedState(null));
         return;
       } else {
-        final user = ChatUser.fromJson(
-            userId, event.docs.first.data() as Map<String, dynamic>);
+        final Map<String, dynamic> userData =
+        event.docs.first.data() as Map<String, dynamic>;
+
+        // Convert Timestamp to int (milliseconds since epoch)
+        if (userData.containsKey('lastActive') &&
+            userData['lastActive'] is Timestamp) {
+          userData['lastActive'] =
+              (userData['lastActive'] as Timestamp).millisecondsSinceEpoch;
+        }
+
+        final user = ChatUser.fromJson(event.docs.first.id, userData);
         add(VisitUserLoadedState(user));
       }
     });

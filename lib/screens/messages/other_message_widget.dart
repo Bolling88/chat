@@ -52,7 +52,8 @@ class AppOtherMessageWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(left: paddingLeft, bottom: 5, top: 5, right: paddingRight),
+      padding: EdgeInsets.only(
+          left: paddingLeft, bottom: 5, top: 5, right: paddingRight),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
@@ -92,20 +93,19 @@ class AppOtherMessageWidget extends StatelessWidget {
         child: Material(
           type: MaterialType.card,
           elevation: 1,
-            color: message.marked ? AppColors.main_3 : AppColors.grey_4,
-            shape: const RoundedRectangleBorder(
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(0.0),
-                    topRight: Radius.circular(5.0),
-                    bottomRight: Radius.circular(5.0),
-                    bottomLeft: Radius.circular(5.0))),
+          color: message.marked ? AppColors.main_3 : AppColors.grey_4,
+          shape: const RoundedRectangleBorder(
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(0.0),
+                  topRight: Radius.circular(5.0),
+                  bottomRight: Radius.circular(5.0),
+                  bottomLeft: Radius.circular(5.0))),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: [
               Padding(
-                padding:
-                const EdgeInsets.only(left: 10, top: 5, right: 10),
+                padding: const EdgeInsets.only(left: 10, top: 5, right: 10),
                 child: getPostedByName(
                   context: context,
                   displayName: displayName,
@@ -115,46 +115,43 @@ class AppOtherMessageWidget extends StatelessWidget {
                   birthDate: birthDate,
                 ),
               ),
-              if(message.replyId.isNotEmpty)
-                Transform.scale(
-                  scale: 0.8,
-                  child: AppOtherMessageWidget(
-                    message: Message(
-                        id: '',
-                        text: message.replyText,
-                        createdById: message.replyCreatedById,
-                        createdByName: message.replyCreatedByName,
-                        createdByGender:
-                        message.replyCreatedByGender,
-                        createdByCountryCode:
-                        message.replyCreatedByCountryCode,
-                        createdByImageUrl:
-                        message.replyCreatedByImageUrl,
-                        chatType: message.replyChatType,
-                        approvedImage: message.replyApprovedImage,
-                        created: message.replyCreated ??
-                            Timestamp.now(),
-                        showAge: message.replyShowAge,
-                        marked: false,
-                        imageReports: message.replyImageReports),
-                    pictureData: message.replyCreatedByImageUrl,
-                    gender: message.replyCreatedByGender,
-                    userId: message.replyCreatedById,
-                    imageReports: message.replyImageReports,
-                    displayName: message.replyCreatedByName,
-                    approvedImage: message.replyApprovedImage,
-                    countryCode:
-                    message.replyCreatedByCountryCode,
-                    birthDate: message.replyBirthDate,
-                    showAge: message.replyShowAge,
-                    chat: chat,
-                    paddingLeft: 0,
-                    paddingRight: 0,
+              if (message.replyId.isNotEmpty)
+                IgnorePointer(
+                  child: Transform.scale(
+                    scale: 0.8,
+                    child: AppOtherMessageWidget(
+                      message: Message(
+                          id: '',
+                          text: message.replyText,
+                          createdById: message.replyCreatedById,
+                          createdByName: message.replyCreatedByName,
+                          createdByGender: message.replyCreatedByGender,
+                          createdByCountryCode:
+                              message.replyCreatedByCountryCode,
+                          createdByImageUrl: message.replyCreatedByImageUrl,
+                          chatType: message.replyChatType,
+                          approvedImage: message.replyApprovedImage,
+                          created: message.replyCreated ?? Timestamp.now(),
+                          showAge: message.replyShowAge,
+                          marked: false,
+                          imageReports: message.replyImageReports),
+                      pictureData: message.replyCreatedByImageUrl,
+                      gender: message.replyCreatedByGender,
+                      userId: message.replyCreatedById,
+                      imageReports: message.replyImageReports,
+                      displayName: message.replyCreatedByName,
+                      approvedImage: message.replyApprovedImage,
+                      countryCode: message.replyCreatedByCountryCode,
+                      birthDate: message.replyBirthDate,
+                      showAge: message.replyShowAge,
+                      chat: chat,
+                      paddingLeft: 0,
+                      paddingRight: 0,
+                    ),
                   ),
                 ),
               Padding(
-                padding:
-                const EdgeInsets.only(left: 10, right: 10),
+                padding: const EdgeInsets.only(left: 10, right: 10),
                 child: Text(
                   message.text,
                   textAlign: TextAlign.left,
@@ -176,8 +173,7 @@ class AppOtherMessageWidget extends StatelessWidget {
               if (message.translation != null &&
                   message.translation?.isNotEmpty == true)
                 Padding(
-                  padding:
-                  const EdgeInsets.only(left: 10, right: 10),
+                  padding: const EdgeInsets.only(left: 10, right: 10),
                   child: Text(
                     message.translation ?? '',
                     textAlign: TextAlign.left,
@@ -264,7 +260,7 @@ class AppOtherMessageWidget extends StatelessWidget {
   }
 }
 
-Row getPostedByName({
+Widget getPostedByName({
   required BuildContext context,
   required String displayName,
   required int gender,
@@ -272,14 +268,18 @@ Row getPostedByName({
   required bool showAge,
   Timestamp? birthDate,
 }) {
-  return Row(
-    mainAxisSize: MainAxisSize.min,
+  return Wrap(
+    alignment: WrapAlignment.start,
+    runAlignment: WrapAlignment.start,
     children: [
-      Text(displayName,
-          textAlign: TextAlign.left,
-          style: Theme.of(context).textTheme.bodySmall?.merge(TextStyle(
-              color: getGenderColor(Gender.fromValue(gender)),
-              fontWeight: FontWeight.bold))),
+      Padding(
+        padding: const EdgeInsets.only(top: 3),
+        child: Text(displayName,
+            textAlign: TextAlign.left,
+            style: Theme.of(context).textTheme.bodySmall?.merge(TextStyle(
+                color: getGenderColor(Gender.fromValue(gender)),
+                fontWeight: FontWeight.bold))),
+      ),
       if (gender != Gender.secret.value)
         SizedBox(
             width: 18,
@@ -295,7 +295,7 @@ Row getPostedByName({
           style: Theme.of(context).textTheme.displaySmall?.merge(TextStyle(
               color: getGenderColor(Gender.fromValue(gender)), fontSize: 16)),
         ),
-      if (birthDate != null) const SizedBox(width: 8),
+      if (birthDate != null && showAge) const SizedBox(width: 8),
       getFlag(countryCode: countryCode, fontSize: 16),
     ],
   );

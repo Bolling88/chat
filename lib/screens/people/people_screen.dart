@@ -117,8 +117,7 @@ class PeopleScreenBuilder extends StatelessWidget {
         itemBuilder: (BuildContext context, int index) {
           return ListTile(
             visualDensity: const VisualDensity(vertical: -4),
-            title: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
+            title: Wrap(
               children: [
                 Text(users[index].displayName,
                     style: Theme.of(context).textTheme.displaySmall?.merge(
@@ -136,8 +135,9 @@ class PeopleScreenBuilder extends StatelessWidget {
                                 Gender.fromValue(users[index].gender)),
                             fontSize: 16)),
                   ),
-                if (users[index].birthDate != null) const SizedBox(width: 4),
-                  getGenderIcon(Gender.fromValue(users[index].gender)),
+                if (users[index].birthDate != null && users[index].showAge)
+                  const SizedBox(width: 4),
+                getGenderIcon(Gender.fromValue(users[index].gender)),
               ],
             ),
             trailing:
