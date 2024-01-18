@@ -524,13 +524,15 @@ void showExitAppDialog(BuildContext context) {
                   onPressed: () {
                     Navigator.pop(context);
                   },
-                  child: Text(FlutterI18n.translate(context, "no"))),
+                  child:
+                      Text(FlutterI18n.translate(context, "no").toUpperCase())),
               TextButton(
                   onPressed: () {
                     Navigator.pop(context);
                     SystemNavigator.pop();
                   },
-                  child: Text(FlutterI18n.translate(context, "yes")))
+                  child:
+                      Text(FlutterI18n.translate(context, "yes").toUpperCase()))
             ],
           ));
 }
