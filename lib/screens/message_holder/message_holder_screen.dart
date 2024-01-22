@@ -3,7 +3,6 @@ import 'package:chat/repository/firestore_repository.dart';
 import 'package:chat/screens/chat/chat_screen.dart';
 import 'package:chat/screens/feedback/feedback_screen.dart';
 import 'package:chat/screens/visit/visit_screen.dart';
-import 'package:chat/utils/online_users_processor.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -63,24 +62,24 @@ class MessageHolderScreenContent extends StatelessWidget {
     }, child: BlocBuilder<MessageHolderBloc, MessageHolderState>(
       builder: (context, state) {
         if (state is MessageHolderBaseState) {
-          return WillPopScope(
-            onWillPop: () {
+          return PopScope(
+            canPop: false,
+            onPopInvoked: (didPop) {
+              if (didPop) {
+                return;
+              }
               if (state.selectedChat != null && state.selectedChatIndex == 0) {
                 BlocProvider.of<MessageHolderBloc>(context)
                     .add(MessageHolderChangeChatRoomEvent());
-                return Future.value(false);
               } else if (state.selectedChat != null &&
                   state.selectedChatIndex != 0) {
                 BlocProvider.of<MessageHolderBloc>(context)
                     .add(MessageHolderChatClickedEvent(0, state.roomChat));
-                return Future.value(false);
               } else if (state.selectedChat == null &&
                   state.selectedChatIndex == 0 &&
                   !kIsWeb) {
                 showExitAppDialog(context);
-                return Future.value(false);
               }
-              return Future.value(true);
             },
             child: Scaffold(
                 key: const Key("message_holder_screen"),
@@ -199,28 +198,6 @@ class MessageHolderScreenContent extends StatelessWidget {
               ),
             );
           }),
-    );
-  }
-
-  Row getLargeScreenCard(
-      int index, BuildContext context, MessageHolderBaseState state) {
-    return Row(
-      mainAxisSize: MainAxisSize.max,
-      children: [
-        if (index != 0 && index != state.privateChats.length + 1)
-          IconButton(
-            onPressed: () {
-              BlocProvider.of<MessageHolderBloc>(context).add(
-                  MessageHolderClosePrivateChatEvent(
-                      state.privateChats[index - 1]));
-            },
-            icon: const Icon(
-              Icons.close,
-              color: AppColors.main,
-            ),
-          ),
-        Expanded(child: getCard(state, index, context))
-      ],
     );
   }
 

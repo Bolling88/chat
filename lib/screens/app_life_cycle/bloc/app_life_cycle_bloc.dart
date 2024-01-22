@@ -37,7 +37,7 @@ class AppLifeCycleBloc extends Bloc<AppLifeCycleEvent, AppLifeCycleState> {
       if (!kIsWeb) {
         final SharedPreferences prefs = await SharedPreferences.getInstance();
         final int appOpens = prefs.getInt('app_opens') ?? 0;
-        if(appOpens > 4) {
+        if(appOpens > 1) {
           _loadAd();
         }
       }

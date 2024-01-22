@@ -20,7 +20,6 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
   final Chat chat;
   final bool isPrivateChat;
   final FirestoreRepository _firestoreRepository;
-  final secondsInFiveMinutes = 300;
 
   BannerAd? _anchoredAdaptiveAd;
 
@@ -252,7 +251,6 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
 
       final filteredUsers = event
           .where((element) => element.currentRoomChatId == chat.id)
-          .where((element) => element.id != getUserId())
           .toList();
 
       //Sort users with the same country code as my users first
