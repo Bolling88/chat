@@ -31,8 +31,8 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
         setUpUserListener();
       } else if (event is ProfileUserChangedEvent) {
         yield ProfileBaseState(user: event.user);
-      }else if(event is ProfileShowAgeChangedEvent){
-        if(currentState is ProfileBaseState){
+      } else if (event is ProfileShowAgeChangedEvent) {
+        if (currentState is ProfileBaseState) {
           _firestoreRepository.updateUserShowAge(event.showAge);
         }
       } else {
@@ -48,8 +48,20 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   void setUpUserListener() async {
     Log.d('Setting up private chats stream');
     userStream = _firestoreRepository.streamUser().listen((event) async {
-      final user = ChatUser.fromJson(
-          event.docs.first.id, event.docs.first.data() as Map<String, dynamic>);
+      if (event.docs.isEmpty) {
+        Log.d('No user found');
+        return;
+      }
+      final Map<String, dynamic> userData =
+          event.docs.first.data() as Map<String, dynamic>;
+
+      // Convert Timestamp to int (milliseconds since epoch)
+      if (userData.containsKey('lastActive') &&
+          userData['lastActive'] is Timestamp) {
+        userData['lastActive'] =
+            (userData['lastActive'] as Timestamp).millisecondsSinceEpoch;
+      }
+      final user = ChatUser.fromJson(event.docs.first.id, userData);
       add(ProfileUserChangedEvent(user));
     });
   }

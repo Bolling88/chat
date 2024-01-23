@@ -9,6 +9,7 @@ import '../../model/message.dart';
 import '../../repository/firestore_repository.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_widgets.dart';
+import '../credits/credits_screen.dart';
 import '../messages/bloc/messages_bloc.dart';
 import '../messages/bloc/messages_event.dart';
 import 'bloc/options_event.dart';
@@ -48,6 +49,8 @@ class OptionsScreenBuilder extends StatelessWidget {
               MessagesTranslateEvent(
                   message: message.copyWith(translation: state.translation.translatedText)));
           Navigator.of(context).pop();
+        }else if(state is OptionsShowCreditsOfferState){
+          showCreditsScreen(context);
         }
       },
       child:

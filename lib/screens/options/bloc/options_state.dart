@@ -20,6 +20,8 @@ class OptionsBaseState extends OptionsState {
   List<Object?> get props => [user];
 }
 
+class OptionsShowCreditsOfferState extends OptionsBaseState {}
+
 class OptionsTranslationDoneState extends OptionsState {
   final TranslationModel translation;
 
