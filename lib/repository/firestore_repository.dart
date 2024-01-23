@@ -709,4 +709,16 @@ class FirestoreRepository {
       'lastActive': FieldValue.serverTimestamp(),
     }, SetOptions(merge: true));
   }
+
+  void reduceUserCredits(String id, int i) {
+    users.doc(id).set({
+      'kvitterCredits': FieldValue.increment(-i),
+    }, SetOptions(merge: true));
+  }
+
+  void increaseUserCredits(String id, int i) {
+    users.doc(id).set({
+      'kvitterCredits': FieldValue.increment(i),
+    }, SetOptions(merge: true));
+  }
 }

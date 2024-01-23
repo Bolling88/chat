@@ -26,6 +26,7 @@ class ChatUser extends Equatable {
   final List<String> imageReports;
   final List<String> botReports;
   final List<String> languageReports;
+  final int kvitterCredits;
 
   const ChatUser(
       {required this.id,
@@ -49,11 +50,13 @@ class ChatUser extends Equatable {
       required this.currentRoomChatId,
       required this.imageReports,
       required this.botReports,
-      required this.languageReports});
+      required this.languageReports,
+      required this.kvitterCredits});
 
   ChatUser.fromJson(this.id, Map<String, dynamic> json)
       : created = json['created'] ?? Timestamp.now(),
-        lastActive = json['lastActive'] ?? Timestamp.now().millisecondsSinceEpoch,
+        lastActive =
+            json['lastActive'] ?? Timestamp.now().millisecondsSinceEpoch,
         displayName = json['displayName'] ?? "",
         onboardingCompleted = json['onboardingCompleted'] ?? false,
         isAdmin = json['isAdmin'] ?? false,
@@ -72,7 +75,8 @@ class ChatUser extends Equatable {
         blockedBy = json['blockedBy']?.cast<String>() ?? [],
         imageReports = json['imageReports']?.cast<String>() ?? [],
         botReports = json['botReports']?.cast<String>() ?? [],
-        languageReports = json['languageReports']?.cast<String>() ?? [];
+        languageReports = json['languageReports']?.cast<String>() ?? [],
+        kvitterCredits = json['kvitterCredits'] ?? 0;
 
   ChatUser.asUnknown(this.id)
       : created = Timestamp.now(),
@@ -95,7 +99,8 @@ class ChatUser extends Equatable {
         blockedBy = [],
         imageReports = [],
         botReports = [],
-        languageReports = [];
+        languageReports = [],
+        kvitterCredits = 0;
 
   ChatUser copyWith(
       {String? name,
@@ -119,7 +124,8 @@ class ChatUser extends Equatable {
       List<String>? blockedBy,
       List<String>? imageReports,
       List<String>? botReports,
-      List<String>? languageReports}) {
+      List<String>? languageReports,
+      int? kvitterCredits}) {
     return ChatUser(
         id: id,
         displayName: displayName ?? this.displayName,
@@ -142,7 +148,8 @@ class ChatUser extends Equatable {
         blockedBy: blockedBy ?? this.blockedBy,
         imageReports: imageReports ?? this.imageReports,
         botReports: botReports ?? this.botReports,
-        languageReports: languageReports ?? this.languageReports);
+        languageReports: languageReports ?? this.languageReports,
+        kvitterCredits: kvitterCredits ?? this.kvitterCredits);
   }
 
   @override
@@ -168,7 +175,8 @@ class ChatUser extends Equatable {
         blockedBy,
         imageReports,
         botReports,
-        languageReports
+        languageReports,
+        kvitterCredits
       ];
 
   bool isUserBlocked() {
