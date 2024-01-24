@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:universal_io/io.dart';
 import '../../../repository/firestore_repository.dart';
 import '../../../utils/log.dart';
@@ -35,11 +34,7 @@ class AppLifeCycleBloc extends Bloc<AppLifeCycleEvent, AppLifeCycleState> {
       _firestoreRepository.setUserAsActive();
     } else if (event is AppLifeCyclePausedEvent) {
       if (!kIsWeb) {
-        final SharedPreferences prefs = await SharedPreferences.getInstance();
-        final int appOpens = prefs.getInt('app_opens') ?? 0;
-        if(appOpens > 1) {
           _loadAd();
-        }
       }
     } else {
       throw UnimplementedError();

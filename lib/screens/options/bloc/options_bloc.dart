@@ -42,15 +42,15 @@ class OptionsBloc extends Bloc<OptionsEvent, OptionsState> {
           if(user == null){
             throw Exception('User is null');
           }else{
-            //if(user.kvitterCredits > 1){
+            if(user.kvitterCredits > 1){
               String deviceLanguage = Platform.localeName.substring(0, 2);
               final translation =
               await translator.translate(text: event.text, to: deviceLanguage);
               yield OptionsTranslationDoneState(translation: translation);
               _firestoreRepository.reduceUserCredits(user.id, 1);
-            // }else{
-            //   yield OptionsShowCreditsOfferState();
-            // }
+            }else{
+              yield OptionsShowCreditsOfferState();
+            }
           }
         }
       } else if (event is OptionsUserChangedEvent) {

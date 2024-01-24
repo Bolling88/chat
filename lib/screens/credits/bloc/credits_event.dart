@@ -11,6 +11,8 @@ abstract class CreditsEvent extends Equatable {
 }
 
 class CreditsInitialEvent extends CreditsEvent {}
-
+class CreditsShowAdEvent extends CreditsEvent {}
+class CreditsAdFailedEvent extends CreditsEvent {}
+class CreditsAdSuccessEvent extends CreditsEvent {}
 
 
