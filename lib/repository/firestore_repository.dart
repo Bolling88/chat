@@ -710,14 +710,14 @@ class FirestoreRepository {
     }, SetOptions(merge: true));
   }
 
-  void reduceUserCredits(String id, int i) {
-    users.doc(id).set({
+  Future<void> reduceUserCredits(String id, int i) async {
+    await users.doc(id).set({
       'kvitterCredits': FieldValue.increment(-i),
     }, SetOptions(merge: true));
   }
 
-  void increaseUserCredits(String id, int i) {
-    users.doc(id).set({
+  Future<void> increaseUserCredits(String id, int i) async{
+    await users.doc(id).set({
       'kvitterCredits': FieldValue.increment(i),
     }, SetOptions(merge: true));
   }

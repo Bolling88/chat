@@ -126,6 +126,10 @@
   "sensitive_content": "Image pas encore examinée ou contenant du contenu sensible. La prudence est conseillée aux spectateurs.",
   "show_image": "Afficher l'image",
   "hide_image": "Masquer l'image",
-  "review_info": "(Votre image de profil sera examinée et apparaîtra floue aux autres jusqu'à son approbation.)"
+  "review_info": "(Votre image de profil sera examinée et apparaîtra floue aux autres jusqu'à son approbation.)",
+  "get_credits": "Obtenez 10 Crédits Kvitter",
+  "awesome": "Génial!",
+  "watch_ad": "Regarder une annonce",
+  "claim_reward": "Réclamer la récompense (10)"
 }
 

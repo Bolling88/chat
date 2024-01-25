@@ -126,5 +126,9 @@
   "sensitive_content": "Bilden har ännu inte granskats eller innehåller känsligt innehåll. Tittarens försiktighet rekommenderas.",
   "show_image": "Visa bild",
   "hide_image": "Dölj bild",
-  "review_info": "(Din profilbild kommer att granskas och kommer att visas suddig för andra tills den godkänns.)"
+  "review_info": "(Din profilbild kommer att granskas och kommer att visas suddig för andra tills den godkänns.)",
+  "get_credits": "Få 10 Kvitter-krediter",
+  "awesome": "Fantastiskt!",
+  "watch_ad": "Titta på annons",
+  "claim_reward": "Hävda belöning (10)"
 }

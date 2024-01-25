@@ -126,5 +126,9 @@
   "sensitive_content": "Bild noch nicht überprüft oder enthält sensible Inhalte. Zuschauer sollten mit Vorsicht vorgehen.",
   "show_image": "Bild anzeigen",
   "hide_image": "Bild verbergen",
-  "review_info": "(Ihr Profilbild wird überprüft und erscheint anderen Personen verschwommen, bis es genehmigt wird.)"
+  "review_info": "(Ihr Profilbild wird überprüft und erscheint anderen Personen verschwommen, bis es genehmigt wird.)",
+  "get_credits": "Erhalte 10 Kvitter Credits",
+  "awesome": "Großartig!",
+  "watch_ad": "Werbung ansehen",
+  "claim_reward": "Belohnung beanspruchen (10)"
 }

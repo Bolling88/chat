@@ -12,15 +12,17 @@ abstract class OptionsState extends Equatable {
 }
 
 class OptionsBaseState extends OptionsState {
-  final ChatUser? user;
+  final ChatUser user;
 
-  const OptionsBaseState({this.user});
+  const OptionsBaseState({required this.user});
 
   @override
-  List<Object?> get props => [user];
+  List<Object> get props => [user];
 }
 
-class OptionsShowCreditsOfferState extends OptionsBaseState {}
+class OptionsShowCreditsOfferState extends OptionsBaseState {
+  const OptionsShowCreditsOfferState({required super.user});
+}
 
 class OptionsTranslationDoneState extends OptionsState {
   final TranslationModel translation;

@@ -50,7 +50,7 @@ class OptionsScreenBuilder extends StatelessWidget {
                   message: message.copyWith(translation: state.translation.translatedText)));
           Navigator.of(context).pop();
         }else if(state is OptionsShowCreditsOfferState){
-          showCreditsScreen(context);
+          showCreditsScreen(context, state.user);
         }
       },
       child:
@@ -68,7 +68,7 @@ class OptionsScreenBuilder extends StatelessWidget {
                   crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
                     Padding(
-                      padding: const EdgeInsets.only(top: 10),
+                      padding: const EdgeInsets.only(top: 10, bottom: 20),
                       child: GestureDetector(
                         onTap: () {
                           Navigator.of(context).pop();
@@ -107,13 +107,27 @@ class OptionsScreenBuilder extends StatelessWidget {
                                 style: Theme.of(context)
                                     .textTheme
                                     .bodyMedium),
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(FlutterI18n.translate(context, '1'),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium),
+                                const Icon(Icons.paid_outlined, color: AppColors.grey_1, size: 18,),
+                                Text(FlutterI18n.translate(context, '(${state.user.kvitterCredits})'),
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium),
+                              ],
+                            ),
                           ],
                         ),
                       ),
                     ),
                     const SizedBox(width: 20),
                     Padding(
-                      padding: const EdgeInsets.only(top: 10),
+                      padding: const EdgeInsets.only(top: 10, bottom: 20),
                       child: GestureDetector(
                         onTap: () {
                           Clipboard.setData(ClipboardData(text: message.text));
@@ -143,7 +157,7 @@ class OptionsScreenBuilder extends StatelessWidget {
                     ),
                     const SizedBox(width: 20),
                     Padding(
-                      padding: const EdgeInsets.only(top: 10),
+                      padding: const EdgeInsets.only(top: 10, bottom: 20),
                       child: GestureDetector(
                         onTap: () {
                           Navigator.of(context).pop();

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:lottie/lottie.dart';
-import '../../model/message.dart';
+import '../../model/chat_user.dart';
 import '../../repository/firestore_repository.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_widgets.dart';
@@ -11,15 +12,17 @@ import 'bloc/credits_state.dart';
 
 class CreditsScreen extends StatelessWidget {
   final BuildContext parentContext;
+  final ChatUser user;
 
-  const CreditsScreen({Key? key, required this.parentContext})
+  const CreditsScreen(
+      {Key? key, required this.parentContext, required this.user})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (BuildContext context) =>
-          CreditsBloc(context.read<FirestoreRepository>()),
+          CreditsBloc(context.read<FirestoreRepository>(), user),
       child: CreditsScreenBuilder(parentContext: parentContext),
     );
   }
@@ -45,52 +48,72 @@ class CreditsScreenBuilder extends StatelessWidget {
             decoration: getDecoration(),
             child: SafeArea(
               child: Padding(
-                  padding:
-                      const EdgeInsets.only(left: 30, bottom: 10, top: 10, right: 30),
+                  padding: const EdgeInsets.only(
+                      left: 30, bottom: 10, top: 20, right: 30),
                   child: Column(
                     children: [
                       Text(
-                        'Get 10 Kvitter Credits',
+                        FlutterI18n.translate(context, 'get_credits'),
                         style: Theme.of(context).textTheme.displaySmall,
                       ),
-                      MyLottieAnimation(),
+                      const Expanded(
+                          child: MyLottieAnimation(
+                              lowerBound: 0.25, upperBond: 0.35, repeat: true)),
                       //Button with a movie icon
                       ElevatedButton.icon(
                         icon: const Icon(Icons.movie),
                         onPressed: () {
-                          BlocProvider.of<CreditsBloc>(blocContext).add(CreditsShowAdEvent());
+                          BlocProvider.of<CreditsBloc>(blocContext)
+                              .add(CreditsShowAdEvent());
                         },
-                        label: const Text('Get 10 Kvitter Credits'),
+                        label: Text(FlutterI18n.translate(context, 'watch_ad')),
                       )
                     ],
                   )),
             ),
           );
-        }else if(state is CreditsSuccessState){
+        } else if (state is CreditsSuccessState) {
           return Container(
             height: _bottomsheetHeight,
             width: double.infinity,
             decoration: getDecoration(),
             child: SafeArea(
               child: Padding(
-                  padding:
-                  const EdgeInsets.only(left: 30, bottom: 10, top: 10, right: 30),
+                  padding: const EdgeInsets.only(
+                      left: 30, bottom: 10, top: 20, right: 30),
                   child: Column(
                     children: [
-                      Lottie.asset('assets/lottie/chest.json', animate: false),
+                      Text(
+                        FlutterI18n.translate(context, 'awesome'),
+                        style: Theme.of(context).textTheme.displaySmall,
+                      ),
+                      const Expanded(
+                          child: MyLottieAnimation(
+                        lowerBound: 0.35,
+                        upperBond: 1,
+                        repeat: false,
+                      )),
+                      //Button with a movie icon
+                      ElevatedButton.icon(
+                        icon: const Icon(Icons.monetization_on),
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        label:  Text(FlutterI18n.translate(context, 'claim_reward')),
+                      )
                     ],
                   )),
             ),
           );
-        }else if(state is CreditsFailedState){
+        } else if (state is CreditsFailedState) {
           return Container(
             height: _bottomsheetHeight,
             width: double.infinity,
             decoration: getDecoration(),
             child: SafeArea(
               child: Padding(
-                  padding:
-                  const EdgeInsets.only(left: 30, bottom: 10, top: 10, right: 30),
+                  padding: const EdgeInsets.only(
+                      left: 30, bottom: 10, top: 10, right: 30),
                   child: Column(
                     children: [
                       Lottie.asset('assets/lottie/chest.json', animate: false),
@@ -101,7 +124,7 @@ class CreditsScreenBuilder extends StatelessWidget {
         } else {
           return Container(
             width: double.infinity,
-            height: 100,
+            height: _bottomsheetHeight,
             decoration: getDecoration(),
             child: const Center(
               child: AppSpinner(),
@@ -120,7 +143,7 @@ class CreditsScreenBuilder extends StatelessWidget {
   }
 }
 
-Future showCreditsScreen(BuildContext parentContext) async {
+Future showCreditsScreen(BuildContext parentContext, ChatUser user) async {
   await showModalBottomSheet(
     useRootNavigator: true,
     isScrollControlled: true,
@@ -132,34 +155,50 @@ Future showCreditsScreen(BuildContext parentContext) async {
             EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
         child: CreditsScreen(
           parentContext: parentContext,
+          user: user,
         ),
       );
     },
   );
 }
 
-import 'package:flutter/material.dart';
-import 'package:lottie/lottie.dart';
-
 class MyLottieAnimation extends StatefulWidget {
+  final double lowerBound;
+  final double upperBond;
+  final bool repeat;
+
+  const MyLottieAnimation(
+      {super.key,
+      required this.lowerBound,
+      required this.upperBond,
+      required this.repeat});
+
   @override
-  _MyLottieAnimationState createState() => _MyLottieAnimationState();
+  MyLottieAnimationState createState() {
+    return MyLottieAnimationState();
+  }
 }
 
-class _MyLottieAnimationState extends State<MyLottieAnimation> with TickerProviderStateMixin {
+class MyLottieAnimationState extends State<MyLottieAnimation>
+    with TickerProviderStateMixin {
   late AnimationController _controller;
 
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(vsync: this);
+    _controller = AnimationController(
+        vsync: this,
+        lowerBound: widget.lowerBound,
+        upperBound: widget.upperBond);
 
     // Adjust the duration according to your animation
-    _controller.duration = Duration(seconds: 1);
+    _controller.duration = const Duration(seconds: 2);
     _controller.addListener(() {
       if (_controller.isCompleted) {
-        _controller.reset();
-        _controller.forward();
+        if (widget.repeat) {
+          _controller.reset();
+          _controller.forward();
+        }
       }
     });
   }
@@ -173,19 +212,11 @@ class _MyLottieAnimationState extends State<MyLottieAnimation> with TickerProvid
   @override
   Widget build(BuildContext context) {
     return Lottie.asset(
-      'assets/lottie_animation.json',
+      'assets/lottie/chest.json',
       controller: _controller,
       onLoaded: (composition) {
-        // Set the range of frames here
-        final startProgress = composition.startFrame / composition.endFrame;
-        final endProgress = 60 / composition.endFrame; // 60 is the end frame you want
-
-        _controller.lowerBound = startProgress;
-          ..lowerBound = startProgress
-          ..upperBound = endProgress
-          ..forward();
+        _controller.forward();
       },
     );
   }
 }
-

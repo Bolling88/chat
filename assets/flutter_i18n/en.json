@@ -126,5 +126,9 @@
   "sensitive_content": "Image not yet reviewed or has sensitive content. Viewers discretion is advised.",
   "show_image": "Show image",
   "hide_image": "Hide image",
-  "review_info": "(Your profile image will be reviewed and will appear blurred to others until it is approved.)"
+  "review_info": "(Your profile image will be reviewed and will appear blurred to others until it is approved.)",
+  "get_credits": "Get 10 Kvitter Credits",
+  "awesome": "Awesome!",
+  "watch_ad": "Watch ad",
+  "claim_reward": "Claim reward (10)"
 }

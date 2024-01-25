@@ -4,6 +4,7 @@ import 'package:chat/repository/firestore_repository.dart';
 import 'package:chat/screens/options/bloc/options_state.dart';
 import 'package:chat/screens/options/bloc/options_event.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:universal_io/io.dart';
 import '../../../model/chat_user.dart';
@@ -34,29 +35,24 @@ class OptionsBloc extends Bloc<OptionsEvent, OptionsState> {
       if (event is OptionsInitialEvent) {
         translator = getTranslator();
         setUpUserListener();
-        yield const OptionsBaseState();
       } else if (event is OptionsTranslateEvent) {
         if (currentState is OptionsBaseState) {
           yield OptionsLoadingState();
           final user = currentState.user;
-          if(user == null){
-            throw Exception('User is null');
-          }else{
-            if(user.kvitterCredits > 1){
-              String deviceLanguage = Platform.localeName.substring(0, 2);
-              final translation =
-              await translator.translate(text: event.text, to: deviceLanguage);
-              yield OptionsTranslationDoneState(translation: translation);
+          if (user.kvitterCredits > 0 || kIsWeb) {
+            String deviceLanguage = Platform.localeName.substring(0, 2);
+            final translation = await translator.translate(
+                text: event.text, to: deviceLanguage);
+            yield OptionsTranslationDoneState(translation: translation);
+            if (!kIsWeb) {
               _firestoreRepository.reduceUserCredits(user.id, 1);
-            }else{
-              yield OptionsShowCreditsOfferState();
             }
+          } else {
+            yield OptionsShowCreditsOfferState(user: user);
           }
         }
       } else if (event is OptionsUserChangedEvent) {
-        if (currentState is OptionsBaseState) {
-          yield OptionsBaseState(user: event.user);
-        }
+        yield OptionsBaseState(user: event.user);
       }
     } on Exception catch (error, stacktrace) {
       yield OptionsErrorState();
@@ -72,7 +68,7 @@ class OptionsBloc extends Bloc<OptionsEvent, OptionsState> {
         return;
       }
       final Map<String, dynamic> userData =
-      event.docs.first.data() as Map<String, dynamic>;
+          event.docs.first.data() as Map<String, dynamic>;
 
       // Convert Timestamp to int (milliseconds since epoch)
       if (userData.containsKey('lastActive') &&
