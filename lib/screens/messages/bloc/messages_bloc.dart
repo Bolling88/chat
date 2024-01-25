@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:chat/model/chat_user.dart';
 import 'package:chat/model/private_chat.dart';
+import 'package:chat/repository/chat_clicked_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -20,6 +21,7 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
   final Chat chat;
   final bool isPrivateChat;
   final FirestoreRepository _firestoreRepository;
+  final ChatClickedRepository _chatClickedRepository;
 
   BannerAd? _anchoredAdaptiveAd;
 
@@ -30,7 +32,7 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
 
   late ChatUser _user;
 
-  MessagesBloc(this.chat, this._firestoreRepository,
+  MessagesBloc(this.chat, this._firestoreRepository, this._chatClickedRepository,
       {required this.isPrivateChat})
       : super(MessagesLoadingState()) {
     add(MessagesInitialEvent());
@@ -42,6 +44,10 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
     userStream?.cancel();
     privateChatsStream?.cancel();
     onlineUsersStream?.cancel();
+    messagesStream = null;
+    userStream = null;
+    privateChatsStream = null;
+    onlineUsersStream = null;
     return super.close();
   }
 
@@ -50,12 +56,14 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
     final currentState = state;
     if (event is MessagesInitialEvent) {
       _user = (await _firestoreRepository.getUser())!;
-      _setUpMessagesListener(chat.id);
       _setUpUserListener();
       if (isPrivateChat) {
         _setUpPrivateChatStream();
+        _setUpChatClickedListener();
       } else {
         _setUpOnlineUsersListener();
+        //We don't want to set up message listeners for a private chat until we know the user is in the chat
+        _setUpMessagesListener(chat.id);
       }
     } else if (event is MessagesSendEvent) {
       if (currentState is MessagesBaseState) {
@@ -294,5 +302,13 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
       ),
     );
     return _anchoredAdaptiveAd?.load();
+  }
+
+  void _setUpChatClickedListener() {
+    _chatClickedRepository.listenToChatClicked().listen((event) {
+      if (event.id == chat.id && messagesStream == null) {
+        _setUpMessagesListener(chat.id);
+      }
+    });
   }
 }

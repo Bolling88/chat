@@ -1,4 +1,5 @@
 import 'package:chat/model/private_chat.dart';
+import 'package:chat/repository/chat_clicked_repository.dart';
 import 'package:chat/screens/message_holder/bloc/message_holder_bloc.dart';
 import 'package:chat/screens/message_holder/bloc/message_holder_event.dart';
 import 'package:chat/utils/app_colors.dart';
@@ -34,7 +35,7 @@ class MessagesScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (BuildContext context) => MessagesBloc(
-          chat, context.read<FirestoreRepository>(),
+          chat, context.read<FirestoreRepository>(), context.read<ChatClickedRepository>(),
           isPrivateChat: isPrivateChat),
       child: ChatsScreenContent(
         chat: chat,

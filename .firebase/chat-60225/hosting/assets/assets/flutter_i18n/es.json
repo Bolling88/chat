@@ -126,5 +126,9 @@
   "sensitive_content": "Imagen aún no revisada o contiene contenido sensible. Se aconseja discreción a los espectadores.",
   "show_image": "Mostrar imagen",
   "hide_image": "Ocultar imagen",
-  "review_info": "(Tu imagen de perfil será revisada y aparecerá borrosa para otros hasta que sea aprobada.)"
+  "review_info": "(Tu imagen de perfil será revisada y aparecerá borrosa para otros hasta que sea aprobada.)",
+  "get_credits": "Obtén 10 Créditos Kvitter",
+  "awesome": "¡Increíble!",
+  "watch_ad": "Ver anuncio",
+  "claim_reward": "Reclamar recompensa (10)"
 }

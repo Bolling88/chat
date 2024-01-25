@@ -1,3 +1,4 @@
+import 'package:chat/repository/chat_clicked_repository.dart';
 import 'package:chat/repository/fcm_repository.dart';
 import 'package:chat/repository/firestore_repository.dart';
 import 'package:chat/repository/login_repository.dart';
@@ -99,6 +100,7 @@ class KvitterApp extends StatelessWidget {
               FcmRepository(firestoreRepository);
           final AppImageCropper appImageCropper = AppImageCropper(context);
           final PresenceDatabase presenceDatabase = PresenceDatabase();
+          final ChatClickedRepository chatClickedRepository = ChatClickedRepository();
 
           return MultiProvider(
             providers: [
@@ -110,6 +112,7 @@ class KvitterApp extends StatelessWidget {
               Provider<AppImageCropper>.value(value: appImageCropper),
               Provider<FcmRepository>.value(value: fcmRepository),
               Provider<OnlineUserProcessor>.value(value: onlineUsersProcessor),
+              Provider<ChatClickedRepository>.value(value: chatClickedRepository),
             ],
             child: MaterialApp(
               title: 'Kvitter',

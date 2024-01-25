@@ -13,6 +13,14 @@ class MessageHolderEvent extends Equatable {
 class MessageHolderInitialEvent extends MessageHolderEvent {}
 class MessageHolderChangeChatRoomEvent extends MessageHolderEvent {}
 class MessageHolderShowRateDialogEvent extends MessageHolderEvent {}
+class MessageHolderNewChatAddedEvent extends MessageHolderEvent {
+  final Chat chat;
+
+  MessageHolderNewChatAddedEvent(this.chat);
+
+  @override
+  List<Object?> get props => [chat];
+}
 class MessageHolderClosePrivateChatEvent extends MessageHolderEvent {
   final PrivateChat? privateChat;
 

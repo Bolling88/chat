@@ -12,6 +12,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:universal_io/io.dart';
 import '../../../model/room_chat.dart';
 import '../../../model/user_location.dart';
+import '../../../repository/chat_clicked_repository.dart';
 import '../../../repository/firestore_repository.dart';
 import '../../../repository/network_repository.dart';
 import '../../../utils/analytics.dart';
@@ -24,15 +25,17 @@ import 'dart:core';
 class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
   final FirestoreRepository _firestoreRepository;
   final FcmRepository _fcmRepository;
+  final ChatClickedRepository _chatClickedRepository;
 
   StreamSubscription<QuerySnapshot>? privateChatStream;
   StreamSubscription<List<ChatUser>>? onlineUsersStream;
   StreamSubscription<QuerySnapshot>? userStream;
 
   InterstitialAd? _interstitialAd;
+  bool privateChatFirstLoad = true;
 
   MessageHolderBloc(
-      this._firestoreRepository, this._fcmRepository)
+      this._firestoreRepository, this._fcmRepository, this._chatClickedRepository)
       : super(MessageHolderLoadingState()) {
     add(MessageHolderInitialEvent());
   }
@@ -45,6 +48,7 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
     privateChatStream?.cancel();
     onlineUsersStream?.cancel();
     userStream?.cancel();
+    _chatClickedRepository.close();
     return super.close();
   }
 
@@ -113,17 +117,24 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
               currentState.selectedChat == null) {
             //If we are in the group chat or in all chats
             if (event.privateChats.length > currentState.privateChats.length) {
-              //And private chats have increased
-              if (event.privateChats.last.initiatedBy == getUserId()) {
-                //And it was by you, move to that chat
-                yield currentState.copyWith(
-                    privateChats: event.privateChats,
-                    selectedChat: event.privateChats.last,
-                    selectedChatIndex: event.privateChats.length);
-              } else {
-                //else just update the chats and play a sound
-                playNewChatSound();
+              //If this is actually the initial load, just update the chats
+              if(privateChatFirstLoad) {
+                privateChatFirstLoad = false;
                 yield currentState.copyWith(privateChats: event.privateChats);
+              }else {
+                //If private chats have increased and not initial load
+                if (event.privateChats.last.initiatedBy == getUserId()) {
+                  //And it was by you, move to that chat
+                  yield currentState.copyWith(
+                      privateChats: event.privateChats,
+                      selectedChat: event.privateChats.last,
+                      selectedChatIndex: event.privateChats.length);
+                  add(MessageHolderNewChatAddedEvent(event.privateChats.last));
+                } else {
+                  //else just update the chats and play a sound
+                  playNewChatSound();
+                  yield currentState.copyWith(privateChats: event.privateChats);
+                }
               }
             } else {
               yield currentState.copyWith(privateChats: event.privateChats);
@@ -199,6 +210,12 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
           yield currentState.copyWith(privateChats: event.privateChats);
         }
       }
+    }else if(event is MessageHolderNewChatAddedEvent){
+      if(currentState is MessageHolderBaseState){
+        //Wait a second
+        await Future.delayed(const Duration(seconds: 1));
+        _chatClickedRepository.addChatClicked(event.chat);
+      }
     } else if (event is MessageHolderRoomChatUpdatedEvent) {
       if (currentState is MessageHolderBaseState) {
         if (currentState.selectedChat?.id == event.chat.id) {
@@ -210,7 +227,8 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
       }
     } else if (event is MessageHolderChatClickedEvent) {
       if (currentState is MessageHolderBaseState) {
-        if (event.chat is RoomChat) {
+        final chat = event.chat;
+        if (chat is RoomChat) {
           final RoomChat chat =
               (event.chat as RoomChat).copyWith(lastMessageReadByUser: true);
           //Set user current chat and mark as present
@@ -218,10 +236,11 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
               chatId: chat.id);
           yield currentState.copyWith(
               selectedChatIndex: 0, selectedChat: chat, roomChat: chat);
-        } else if (event.chat is PrivateChat) {
-          _firestoreRepository.setLastMessageRead(chatId: event.chat!.id);
+        } else if (chat is PrivateChat) {
+          _firestoreRepository.setLastMessageRead(chatId: chat.id);
           yield currentState.copyWith(
-              selectedChatIndex: event.index, selectedChat: event.chat);
+              selectedChatIndex: event.index, selectedChat: chat);
+          _chatClickedRepository.addChatClicked(chat);
         } else {
           yield MessageHolderBaseState(
               roomChat: null,
