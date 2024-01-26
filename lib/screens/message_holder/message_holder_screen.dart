@@ -13,6 +13,7 @@ import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:in_app_review/in_app_review.dart';
 import '../../model/chat.dart';
 import '../../model/chat_user.dart';
+import '../../model/private_chat.dart';
 import '../../model/room_chat.dart';
 import '../../repository/presence_database.dart';
 import '../../utils/app_colors.dart';
@@ -297,6 +298,10 @@ class MessageHolderScreenContent extends StatelessWidget {
           if (state.selectedChatIndex == 0) {
             BlocProvider.of<MessageHolderBloc>(context)
                 .add(MessageHolderChangeChatRoomEvent());
+          }else{
+            final PrivateChat privateChat = chat as PrivateChat;
+            showVisitScreen(
+                context, chat.getOtherUserId(getUserId()), privateChat, false);
           }
         },
         child: Row(
@@ -442,19 +447,25 @@ Widget getChatImage(
         .where((element) => element.id == chat.getOtherUserId(getUserId()))
         .firstOrNull;
     if (user != null) {
-      return GestureDetector(
-          onTap: () {
-            showVisitScreen(
-                context, chat.getOtherUserId(getUserId()), chat, false);
-          },
-          child: AppUserImage(
-            url: user.pictureData,
-            gender: user.gender,
-            imageReports: user.imageReports,
-            approvalState: ApprovedImage.fromValue(user.approvedImage),
-          ));
+      return AppUserImage(
+        url: user.pictureData,
+        gender: user.gender,
+        imageReports: user.imageReports,
+        approvalState: ApprovedImage.fromValue(user.approvedImage),
+      );
     } else {
-      return const SizedBox.shrink();
+      final PrivateChat privateChat = chat as PrivateChat;
+      final String? imageUrl = privateChat.getChatImage(getUserId());
+      if(imageUrl != null && imageUrl.isNotEmpty) {
+        return AppUserImage(
+          url: imageUrl,
+          gender: privateChat.getOtherUserGender(getUserId()),
+          imageReports: const [],
+          approvalState: ApprovedImage.approved,
+        );
+      } else {
+        return const SizedBox.shrink();
+      }
     }
   } else {
     return const SizedBox.shrink();

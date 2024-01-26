@@ -173,4 +173,8 @@ class PrivateChat extends Chat implements Comparable<PrivateChat> {
   bool isPrivateChat() {
     return true;
   }
+
+  int getOtherUserGender(String userId) {
+    return userId == initiatedBy ? initiatedByUserGender : otherUserGender;
+  }
 }
