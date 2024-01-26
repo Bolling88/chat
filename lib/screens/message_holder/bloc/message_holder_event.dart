@@ -94,6 +94,10 @@ class MessageHolderRateNeverAppEvent extends MessageHolderEvent {
   MessageHolderRateNeverAppEvent();
 }
 
+class MessageHolderRateLaterAppEvent extends MessageHolderEvent {
+  MessageHolderRateLaterAppEvent();
+}
+
 class MessageHolderShowOnlineUsersInChatEvent extends MessageHolderEvent {
   final Chat chat;
   MessageHolderShowOnlineUsersInChatEvent(this.chat);

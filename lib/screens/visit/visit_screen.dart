@@ -14,6 +14,7 @@ import '../account/account_screen.dart';
 import '../full_screen_image/full_screen_image_screen.dart';
 import '../message_holder/bloc/message_holder_bloc.dart';
 import '../message_holder/bloc/message_holder_event.dart';
+import '../message_holder/message_holder_screen.dart';
 import '../messages/message_edit_text_widget.dart';
 import 'bloc/visit_bloc.dart';
 import 'bloc/visit_event.dart';
@@ -114,12 +115,13 @@ class VisitScreenContent extends StatelessWidget {
                     if (user.pictureData.isNotEmpty) {
                       Navigator.of(context).push(
                         MaterialPageRoute<bool>(
-                          builder: (BuildContext context) => FullScreenImageScreen(
-                              imageUrl: user.pictureData,
-                              userName: user.displayName,
-                              imageReports: user.imageReports,
-                              approvalState:
-                                  ApprovedImage.fromValue(user.approvedImage)),
+                          builder: (BuildContext context) =>
+                              FullScreenImageScreen(
+                                  imageUrl: user.pictureData,
+                                  userName: user.displayName,
+                                  imageReports: user.imageReports,
+                                  approvalState: ApprovedImage.fromValue(
+                                      user.approvedImage)),
                         ),
                       );
                     }
@@ -147,6 +149,34 @@ class VisitScreenContent extends StatelessWidget {
                       context: context),
                 ),
                 getRegionText(user, context),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    user.lastActive >
+                            DateTime.now()
+                                .subtract(onlineDuration)
+                                .millisecondsSinceEpoch
+                        ? Text(
+                            FlutterI18n.translate(context, 'online'),
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium
+                                ?.copyWith(color: AppColors.main),
+                          )
+                        : Text(FlutterI18n.translate(context, 'offline'),
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodyMedium
+                                ?.copyWith(color: AppColors.grey_1)),
+                    const SizedBox(width: 5),
+                    //If lats active is more than $onlineDuration ago, show offline dot
+                    getOnlineDot(user.lastActive >
+                        DateTime.now()
+                            .subtract(onlineDuration)
+                            .millisecondsSinceEpoch)
+                  ],
+                ),
                 const SizedBox(height: 20),
                 if (!state.userBlocked &&
                     !state.myUser.blockedBy.contains(user.id))
@@ -195,9 +225,12 @@ class VisitScreenContent extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                       Icon(
-                        state.userBlocked? Icons.check_circle_outline: Icons.block,
-                        color: state.userBlocked? AppColors.main: AppColors.red,
+                      Icon(
+                        state.userBlocked
+                            ? Icons.check_circle_outline
+                            : Icons.block,
+                        color:
+                            state.userBlocked ? AppColors.main : AppColors.red,
                         size: 14,
                       ),
                       TextButton(
@@ -223,7 +256,10 @@ class VisitScreenContent extends StatelessWidget {
                           style: Theme.of(context)
                               .textTheme
                               .bodyMedium
-                              ?.copyWith(color: state.userBlocked? AppColors.main: AppColors.red),
+                              ?.copyWith(
+                                  color: state.userBlocked
+                                      ? AppColors.main
+                                      : AppColors.red),
                         ),
                       ),
                     ],

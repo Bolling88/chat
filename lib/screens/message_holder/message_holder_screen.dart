@@ -425,6 +425,8 @@ class MessageHolderScreenContent extends StatelessWidget {
                 TextButton(
                     onPressed: () {
                       Navigator.pop(context);
+                      BlocProvider.of<MessageHolderBloc>(parentContext)
+                          .add(MessageHolderRateLaterAppEvent());
                     },
                     child: Text(
                         FlutterI18n.translate(context, "later").toUpperCase()))
@@ -484,7 +486,7 @@ Container getOnlineDot(bool isOnline) {
         height: 10,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          color: isOnline ? AppColors.green : AppColors.grey_1,
+          color: isOnline ? AppColors.main : AppColors.grey_1,
         ),
       ),
     ),

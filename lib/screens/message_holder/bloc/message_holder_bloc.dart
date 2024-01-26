@@ -285,6 +285,9 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
     } else if (event is MessageHolderRateNeverAppEvent) {
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.setBool('rated', true);
+    }else if(event is MessageHolderRateLaterAppEvent){
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      prefs.setInt('app_opens', 0);
     } else if (event is MessageHolderShowOnlineUsersInChatEvent) {
       if (currentState is MessageHolderBaseState) {
         yield MessageHolderShowOnlineUsersInChatState(currentState, event.chat);
