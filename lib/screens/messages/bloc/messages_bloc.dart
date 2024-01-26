@@ -32,7 +32,8 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
 
   late ChatUser _user;
 
-  MessagesBloc(this.chat, this._firestoreRepository, this._chatClickedRepository,
+  MessagesBloc(
+      this.chat, this._firestoreRepository, this._chatClickedRepository,
       {required this.isPrivateChat})
       : super(MessagesLoadingState()) {
     add(MessagesInitialEvent());
@@ -68,21 +69,36 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
     } else if (event is MessagesSendEvent) {
       if (currentState is MessagesBaseState) {
         if (currentState.currentMessage.isNotEmpty) {
-          await _firestoreRepository.postMessage(
-            chatId: chat.id,
-            user: currentState.myUser,
-            chatType: ChatType.message,
-            message: currentState.currentMessage,
-            isPrivateChat: isPrivateChat,
-            replyMessage: currentState.replyMessage,
-            sendPushToUserId: (chat is PrivateChat
-                ? (chat as PrivateChat)
-                    .users
-                    .where((element) => element != getUserId())
-                    .firstOrNull
-                : null),
-          );
-          yield getBaseState(currentState);
+          if (currentState.messages.firstOrNull?.text ==
+                  currentState.currentMessage &&
+              currentState.messages.firstOrNull?.createdById ==
+                  currentState.myUser.id) {
+            //We don't allow spamming the same message
+            yield MessageNoSpammingState(
+                currentState.messages,
+                currentState.myUser,
+                '',
+                currentState.bannerAd,
+                currentState.privateChat,
+                currentState.usersInRoom,
+                null);
+          }else {
+            await _firestoreRepository.postMessage(
+              chatId: chat.id,
+              user: currentState.myUser,
+              chatType: ChatType.message,
+              message: currentState.currentMessage,
+              isPrivateChat: isPrivateChat,
+              replyMessage: currentState.replyMessage,
+              sendPushToUserId: (chat is PrivateChat
+                  ? (chat as PrivateChat)
+                  .users
+                  .where((element) => element != getUserId())
+                  .firstOrNull
+                  : null),
+            );
+            yield getBaseState(currentState);
+          }
         }
       }
     } else if (event is MessagesChangedEvent) {
@@ -123,20 +139,34 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
       Log.d("Got giphy event");
       if (currentState is MessagesBaseState) {
         final String giphyUrl = event.gif.images?.downsized?.url ?? "";
-        await _firestoreRepository.postMessage(
-            chatId: chat.id,
-            user: currentState.myUser,
-            chatType: ChatType.giphy,
-            message: giphyUrl,
-            isPrivateChat: isPrivateChat,
-            sendPushToUserId: (chat is PrivateChat
-                ? (chat as PrivateChat)
-                    .users
-                    .where((element) => element != getUserId())
-                    .firstOrNull
-                : null),
-            isGiphy: true);
-        yield currentState.copyWith(currentMessage: "");
+        if (currentState.messages.firstOrNull?.text == giphyUrl &&
+            currentState.messages.firstOrNull?.createdById ==
+                currentState.myUser.id) {
+          //We don't allow spamming the same message
+          yield MessageNoSpammingState(
+              currentState.messages,
+              currentState.myUser,
+              '',
+              currentState.bannerAd,
+              currentState.privateChat,
+              currentState.usersInRoom,
+              null);
+        }else {
+          await _firestoreRepository.postMessage(
+              chatId: chat.id,
+              user: currentState.myUser,
+              chatType: ChatType.giphy,
+              message: giphyUrl,
+              isPrivateChat: isPrivateChat,
+              sendPushToUserId: (chat is PrivateChat
+                  ? (chat as PrivateChat)
+                  .users
+                  .where((element) => element != getUserId())
+                  .firstOrNull
+                  : null),
+              isGiphy: true);
+          yield currentState.copyWith(currentMessage: "");
+        }
       }
     } else if (event is MessagesReportMessageEvent) {
       _firestoreRepository.reportMessage(event.message);
@@ -256,7 +286,6 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
   void _setUpOnlineUsersListener() {
     onlineUsersStream =
         _firestoreRepository.onlineUsersStream.listen((event) async {
-
       final filteredUsers = event
           .where((element) => element.currentRoomChatId == chat.id)
           .toList();

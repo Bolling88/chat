@@ -56,7 +56,15 @@ class ChatsScreenContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocListener<MessagesBloc, MessagesState>(
-        listener: (context, state) {},
+        listener: (context, state) {
+          if(state is MessageNoSpammingState){
+            SnackBar snackBar = SnackBar(
+              content: Text(FlutterI18n.translate(context, "no_spamming")),
+              duration: const Duration(seconds: 2),
+            );
+            ScaffoldMessenger.of(context).showSnackBar(snackBar);
+          }
+        },
         child: BlocBuilder<MessagesBloc, MessagesState>(
           builder: (context, state) {
             if (state is MessagesBaseState) {

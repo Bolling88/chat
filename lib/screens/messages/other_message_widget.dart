@@ -1,7 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chat/screens/messages/bloc/messages_bloc.dart';
 import 'package:chat/screens/options/options_screen.dart';
-import 'package:chat/utils/lottie.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

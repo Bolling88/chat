@@ -58,3 +58,7 @@ class MessagesBaseState extends MessagesState {
         replyMessage
       ];
 }
+
+class MessageNoSpammingState extends MessagesBaseState {
+  MessageNoSpammingState(super.messages, super.myUser, super.currentMessage, super.bannerAd, super.privateChat, super.usersInRoom, super.replyMessage);
+}

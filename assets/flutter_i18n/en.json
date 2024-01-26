@@ -130,5 +130,6 @@
   "get_credits": "Get 10 Kvitter Credits",
   "awesome": "Awesome!",
   "watch_ad": "Watch ad",
-  "claim_reward": "Claim reward (10)"
+  "claim_reward": "Claim reward (10)",
+  "no_spamming": "No duplicate messages please"
 }
