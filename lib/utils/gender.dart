@@ -46,13 +46,13 @@ Color getGenderColor(Gender gender) {
   }
 }
 
-Widget getGenderIcon(Gender gender) {
+Widget getGenderIcon(Gender gender, {double size = 24}) {
   if (gender == Gender.male) {
-    return Icon(Icons.male, color: getGenderColor(gender));
+    return Icon(Icons.male, color: getGenderColor(gender), size: size,);
   } else if (gender == Gender.female) {
-    return  Icon(Icons.female, color: getGenderColor(gender));
+    return  Icon(Icons.female, color: getGenderColor(gender),size: size,);
   } else if (gender == Gender.nonBinary) {
-    return  Icon(Icons.transgender, color: getGenderColor(gender));
+    return  Icon(Icons.transgender, color: getGenderColor(gender),size: size,);
   } else {
     return  const SizedBox.shrink();
   }

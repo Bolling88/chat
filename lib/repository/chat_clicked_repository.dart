@@ -4,17 +4,19 @@ import '../model/chat.dart';
 
 class ChatClickedRepository {
   //Listen to chat clicked events
-  final StreamController<Chat> _chatClickedController = StreamController<Chat>.broadcast();
+  StreamController<Chat>? _chatClickedController;
   Stream<Chat> listenToChatClicked() {
-    return _chatClickedController.stream;
+    _chatClickedController ??= StreamController<Chat>.broadcast();
+    return _chatClickedController!.stream;
   }
 
   //Add chat clicked event
   void addChatClicked(Chat chat) {
-    _chatClickedController.sink.add(chat);
+    _chatClickedController?.sink.add(chat);
   }
 
   close() {
-    _chatClickedController.close();
+    _chatClickedController?.close();
+    _chatClickedController = null;
   }
 }

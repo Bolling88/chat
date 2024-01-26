@@ -221,10 +221,7 @@ class AppOtherMessageWidget extends StatelessWidget {
                 SizedBox(
                     width: 18,
                     height: 18,
-                    child: AppLottie(
-                      url: getGenderUrl(gender),
-                      animate: false,
-                    )),
+                    child: getGenderIcon(Gender.fromValue(gender))),
               const SizedBox(width: 2),
               if (birthDate != null && showAge)
                 Text(
@@ -281,13 +278,7 @@ Widget getPostedByName({
                 fontWeight: FontWeight.bold))),
       ),
       if (gender != Gender.secret.value)
-        SizedBox(
-            width: 18,
-            height: 18,
-            child: AppLottie(
-              url: getGenderUrl(gender),
-              animate: false,
-            )),
+        getGenderIcon(Gender.fromValue(gender), size: 18),
       const SizedBox(width: 2),
       if (birthDate != null && showAge)
         Text(
