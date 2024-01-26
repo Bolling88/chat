@@ -130,5 +130,8 @@
   "get_credits": "Erhalte 10 Kvitter Credits",
   "awesome": "Großartig!",
   "watch_ad": "Werbung ansehen",
-  "claim_reward": "Belohnung beanspruchen (10)"
+  "claim_reward": "Belohnung beanspruchen (10)",
+  "no_spamming": "Bitte keine doppelten Nachrichten",
+  "online": "Online",
+  "offline": "Offline"
 }

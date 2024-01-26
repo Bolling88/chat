@@ -130,5 +130,8 @@
   "get_credits": "Obtén 10 Créditos Kvitter",
   "awesome": "¡Increíble!",
   "watch_ad": "Ver anuncio",
-  "claim_reward": "Reclamar recompensa (10)"
+  "claim_reward": "Reclamar recompensa (10)",
+  "no_spamming": "Por favor, no enviar mensajes duplicados",
+  "online": "En línea",
+  "offline": "Desconectado"
 }
