@@ -89,7 +89,7 @@ class CreditsScreenBuilder extends StatelessWidget {
                       ),
                       const Expanded(
                           child: MyLottieAnimation(
-                        lowerBound: 0.35,
+                        lowerBound: 0,
                         upperBond: 1,
                         repeat: false,
                       )),

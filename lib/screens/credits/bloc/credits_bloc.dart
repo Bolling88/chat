@@ -12,7 +12,7 @@ import 'credits_state.dart';
 
 class CreditsBloc extends Bloc<CreditsEvent, CreditsState> {
   final FirestoreRepository _firestoreRepository;
-  RewardedInterstitialAd? _rewardedInterstitialAd;
+  RewardedAd? _rewardedAd;
   final rewardAmount = 10;
   final ChatUser _user;
 
@@ -21,6 +21,12 @@ class CreditsBloc extends Bloc<CreditsEvent, CreditsState> {
   CreditsBloc(this._firestoreRepository, this._user)
       : super(const CreditsBaseState()) {
     add(CreditsInitialEvent());
+  }
+
+  @override
+  Future<void> close() {
+    _rewardedAd?.dispose();
+    return super.close();
   }
 
   @override
@@ -33,11 +39,10 @@ class CreditsBloc extends Bloc<CreditsEvent, CreditsState> {
         yield CreditsLoadingState();
         loadAd();
       } else if (event is CreditsAdLoadedEvent) {
-        _rewardedInterstitialAd?.show(onUserEarnedReward:
+        _rewardedAd?.show(onUserEarnedReward:
             (AdWithoutView ad, RewardItem rewardItem) async {
           await _firestoreRepository.increaseUserCredits(
               getUserId(), rewardAmount);
-          add(CreditsAdSuccessEvent());
         });
       } else if (event is CreditsAdFailedEvent) {
         //For now the user will still get rewarded, due to fill rates might be low
@@ -59,7 +64,7 @@ class CreditsBloc extends Bloc<CreditsEvent, CreditsState> {
 
   final adUnitId = Platform.isAndroid
       ? kDebugMode
-          ? 'ca-app-pub-3940256099942544/5354046379'
+          ? 'ca-app-pub-3940256099942544/5224354917'
           : 'ca-app-pub-5287847424239288/7721457165'
       : kDebugMode
           ? 'ca-app-pub-3940256099942544/6978759866'
@@ -67,13 +72,12 @@ class CreditsBloc extends Bloc<CreditsEvent, CreditsState> {
 
   /// Loads a rewarded ad.
   void loadAd() {
-    RewardedInterstitialAd.load(
+    RewardedAd.load(
         adUnitId: adUnitId,
         request: const AdRequest(),
-        rewardedInterstitialAdLoadCallback: RewardedInterstitialAdLoadCallback(
+        rewardedAdLoadCallback: RewardedAdLoadCallback(
           // Called when an ad is successfully received.
           onAdLoaded: (ad) {
-            add(CreditsAdLoadedEvent());
             ad.fullScreenContentCallback = FullScreenContentCallback(
                 // Called when the ad showed the full screen content.
                 onAdShowedFullScreenContent: (ad) {},
@@ -86,16 +90,18 @@ class CreditsBloc extends Bloc<CreditsEvent, CreditsState> {
                 onAdDismissedFullScreenContent: (ad) {
                   // Dispose the ad here to free resources.
                   ad.dispose();
+                  add(CreditsAdSuccessEvent());
                 },
                 // Called when a click is recorded for an ad.
                 onAdClicked: (ad) {});
             debugPrint('$ad loaded.');
             // Keep a reference to the ad so you can show it later.
-            _rewardedInterstitialAd = ad;
+            _rewardedAd = ad;
+            add(CreditsAdLoadedEvent());
           },
           // Called when an ad request failed.
           onAdFailedToLoad: (LoadAdError error) {
-            Log.e('RewardedInterstitialAd failed to load: $error');
+            Log.e('RewardedAd failed to load: $error');
             add(CreditsAdFailedEvent());
           },
         ));
