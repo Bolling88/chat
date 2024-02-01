@@ -129,7 +129,7 @@ class ProfileScreenBuilder extends StatelessWidget {
                     ),
                     const SizedBox(height: 20),
                     ElevatedButton.icon(
-                      icon: const Icon(Icons.psychology_rounded),
+                      icon: const Icon(Icons.redeem),
                       onPressed: () {
                         Navigator.pushNamed(
                             blocContext, OnboardingAgeScreen.routeName,

@@ -133,5 +133,6 @@
   "claim_reward": "Claim reward (10)",
   "no_spamming": "No duplicate messages please",
   "online": "Online",
-  "offline": "Offline"
+  "offline": "Offline",
+  "delete_photo": "Delete photo"
 }

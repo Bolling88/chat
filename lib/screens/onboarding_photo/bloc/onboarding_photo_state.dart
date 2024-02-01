@@ -1,6 +1,8 @@
 import 'package:chat/screens/login/bloc/login_state.dart';
 import 'package:equatable/equatable.dart';
 
+import '../../../model/chat_user.dart';
+
 abstract class OnboardingPhotoState extends Equatable {
   const OnboardingPhotoState();
 
@@ -9,12 +11,12 @@ abstract class OnboardingPhotoState extends Equatable {
 }
 
 class OnboardingPhotoBaseState extends OnboardingPhotoState {
-  final String name;
+  final ChatUser user;
 
-  const OnboardingPhotoBaseState(this.name);
+  const OnboardingPhotoBaseState(this.user);
 
   @override
-  List<Object> get props => [name];
+  List<Object> get props => [user];
 }
 
 class OnboardingPhotoDoneState extends OnboardingPhotoState {

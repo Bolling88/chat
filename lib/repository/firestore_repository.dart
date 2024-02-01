@@ -420,7 +420,7 @@ class FirestoreRepository {
     });
   }
 
-  Future<void> _deleteAllUserFiles(String userId) async {
+  Future<void> _deleteUserPhoto(String userId) async {
     FirebaseStorage storage = FirebaseStorage.instance;
     Reference userFolderRef = storage.ref().child('images/$userId');
 
@@ -445,7 +445,7 @@ class FirestoreRepository {
 
     if (user != null) {
       try {
-        await _deleteAllUserFiles(user.uid);
+        await _deleteUserPhoto(user.uid);
         Log.d("Files deleted successfully");
       } catch (e) {
         Log.d("Error deleting files: $e");
@@ -467,6 +467,15 @@ class FirestoreRepository {
     } else {
       Log.d("No user is currently signed in.");
     }
+  }
+
+  Future<void> deleteUserPhoto() async {
+    await _deleteUserPhoto(getUserId());
+    //Update user in firestore
+    await users.doc(getUserId()).set({
+      'pictureData': '',
+      'approvedImage': ApprovedImage.notReviewed.value,
+    }, SetOptions(merge: true));
   }
 
   getIsNameAvailable(String displayName) {

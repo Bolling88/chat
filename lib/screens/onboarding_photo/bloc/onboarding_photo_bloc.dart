@@ -37,7 +37,7 @@ class OnboardingPhotoBloc
     try {
       if (event is OnboardingPhotoInitialEvent) {
         _chatUser = (await _firestoreRepository.getUser())!;
-        yield OnboardingPhotoBaseState(_chatUser.displayName);
+        yield OnboardingPhotoBaseState(_chatUser);
       } else if (event is OnboardingPhotoCameraClickedEvent) {
         final pickedFile = await picker.pickImage(
           maxHeight: 400, maxWidth: 400,
@@ -109,6 +109,10 @@ class OnboardingPhotoBloc
         } else {
           yield const OnboardingPhotoSuccessState(OnboardingNavigation.DONE);
         }
+      }else if(event is OnboardingPhotoRemoveEvent){
+        yield OnboardingPhotoLoadingState();
+        await _firestoreRepository.deleteUserPhoto();
+        yield const OnboardingPhotoSuccessState(OnboardingNavigation.DONE);
       } else {
         Log.e('OnboardingPhotoErrorState: Not implemented');
         throw UnimplementedError();

@@ -107,7 +107,7 @@ class OnboardingPhotoScreenContent extends StatelessWidget {
         children: [
           Center(
             child: Text(
-              '${state.name},',
+              '${state.user.displayName},',
               textAlign: TextAlign.center,
               style: Theme.of(context).textTheme.displayMedium,
             ),
@@ -157,6 +157,14 @@ class OnboardingPhotoScreenContent extends StatelessWidget {
             child: Text(FlutterI18n.translate(context, "select_from_images")),
           ),
           const SizedBox(height: 20),
+          if(isEditMode && state.user.pictureData.isNotEmpty)
+            ElevatedButton(
+              onPressed: () {
+                BlocProvider.of<OnboardingPhotoBloc>(context)
+                    .add(OnboardingPhotoRemoveEvent());
+              },
+              child: Text(FlutterI18n.translate(context, "delete_photo")),
+            ),
           if (!isEditMode) Text(FlutterI18n.translate(context, 'or')),
           if (!isEditMode) const SizedBox(height: 20),
           if (!isEditMode)
