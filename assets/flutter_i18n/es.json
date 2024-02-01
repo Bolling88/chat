@@ -133,5 +133,6 @@
   "claim_reward": "Reclamar recompensa (10)",
   "no_spamming": "Por favor, no enviar mensajes duplicados",
   "online": "En línea",
-  "offline": "Desconectado"
+  "offline": "Desconectado",
+  "delete_photo": "Eliminar foto"
 }

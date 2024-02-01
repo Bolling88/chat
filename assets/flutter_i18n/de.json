@@ -133,5 +133,6 @@
   "claim_reward": "Belohnung beanspruchen (10)",
   "no_spamming": "Bitte keine doppelten Nachrichten",
   "online": "Online",
-  "offline": "Offline"
+  "offline": "Offline",
+  "delete_photo": "Foto löschen"
 }
