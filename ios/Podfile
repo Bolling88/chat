@@ -13,6 +13,7 @@ project 'Runner', {
 pod 'Google-Mobile-Ads-SDK'
 pod 'FBAudienceNetwork'
 pod 'GoogleMobileAdsMediationFacebook'
+pod 'GoogleMobileAdsMediationMintegral'
 
 def flutter_root
   generated_xcode_build_settings_path = File.expand_path(File.join('..', 'Flutter', 'Generated.xcconfig'), __FILE__)
