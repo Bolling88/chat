@@ -29,6 +29,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:glassfy_flutter/glassfy_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
@@ -41,6 +42,7 @@ import 'firebase_options.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   if (!kIsWeb) {
     MobileAds.instance.initialize().then((initializationStatus) {
       initializationStatus.adapterStatuses.forEach((key, value) {
@@ -48,6 +50,13 @@ Future<void> main() async {
       });
     });
   }
+
+  try {
+    await Glassfy.initialize('bf2702924a484b569661bfcaeffd41f1',watcherMode: true);
+  } catch (e) {
+    Log.e("Glassfy error: $e");
+  }
+
   final FlutterI18nDelegate flutterI18nDelegate = FlutterI18nDelegate(
     translationLoader: FileTranslationLoader(
         fallbackFile: 'en', basePath: 'assets/flutter_i18n'),

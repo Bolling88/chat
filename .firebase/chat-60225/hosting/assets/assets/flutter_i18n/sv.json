@@ -133,5 +133,6 @@
   "claim_reward": "Hävda belöning (10)",
   "no_spamming": "Vänligen skicka inte dubbla meddelanden",
   "online": "Online",
-  "offline": "Offline"
+  "offline": "Offline",
+  "delete_photo": "Radera foto"
 }

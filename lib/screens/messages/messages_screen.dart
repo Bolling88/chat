@@ -35,7 +35,9 @@ class MessagesScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (BuildContext context) => MessagesBloc(
-          chat, context.read<FirestoreRepository>(), context.read<ChatClickedRepository>(),
+          chat,
+          context.read<FirestoreRepository>(),
+          context.read<ChatClickedRepository>(),
           isPrivateChat: isPrivateChat),
       child: ChatsScreenContent(
         chat: chat,
@@ -57,214 +59,242 @@ class ChatsScreenContent extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocListener<MessagesBloc, MessagesState>(
         listener: (context, state) {
-          if(state is MessageNoSpammingState){
-            SnackBar snackBar = SnackBar(
-              content: Text(FlutterI18n.translate(context, "no_spamming")),
-              duration: const Duration(seconds: 2),
-            );
-            ScaffoldMessenger.of(context).showSnackBar(snackBar);
-          }
-        },
-        child: BlocBuilder<MessagesBloc, MessagesState>(
-          builder: (context, state) {
-            if (state is MessagesBaseState) {
-              return Stack(
+      if (state is MessageNoSpammingState) {
+        SnackBar snackBar = SnackBar(
+          content: Text(FlutterI18n.translate(context, "no_spamming")),
+          duration: const Duration(seconds: 2),
+        );
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      }
+    }, child: BlocBuilder<MessagesBloc, MessagesState>(
+      builder: (context, state) {
+        if (state is MessagesBaseState) {
+          return Stack(
+            children: [
+              Column(
                 children: [
-                  Column(
-                    children: [
-                      Expanded(
-                        child: Stack(
-                          children: [
-                            ListView.builder(
-                              shrinkWrap: false,
-                              padding: const EdgeInsets.only(bottom: 10),
-                              reverse: true,
-                              keyboardDismissBehavior:
-                                  ScrollViewKeyboardDismissBehavior.onDrag,
-                              itemCount: state.messages.length + 1,
-                              itemBuilder: (BuildContext context, int index) {
-                                if (index == 0) {
-                                  if (isPrivateChat &&
-                                      state.privateChat?.lastMessageUserId ==
-                                          getUserId()) {
-                                    return (state.privateChat?.lastMessageReadBy
-                                                .length ==
-                                            2)
-                                        ? getSeenWidget(context, true)
-                                        : getSeenWidget(context, false);
-                                  } else {
-                                    return const SizedBox.shrink();
-                                  }
-                                } else if (state.messages[getActualIndex(index)]
-                                        .createdById ==
-                                    state.myUser.id) {
-                                  return AppMyMessageWidget(
-                                    key: ValueKey(state
-                                        .messages[getActualIndex(index)].id),
-                                    message:
-                                        state.messages[getActualIndex(index)],
-                                    gender: state
-                                        .messages[getActualIndex(index)]
-                                        .createdByGender,
-                                    pictureData: state
-                                        .messages[getActualIndex(index)]
-                                        .createdByImageUrl,
-                                    chat: chat,
-                                  );
-                                } else {
-                                  return AppOtherMessageWidget(
-                                    key: ValueKey(state
-                                        .messages[getActualIndex(index)].id),
-                                    message:
-                                        state.messages[getActualIndex(index)],
-                                    pictureData: state
-                                        .messages[getActualIndex(index)]
-                                        .createdByImageUrl,
-                                    userId: state
-                                        .messages[getActualIndex(index)]
-                                        .createdById,
-                                    displayName: state
-                                        .messages[getActualIndex(index)]
-                                        .createdByName,
-                                    gender: state
-                                        .messages[getActualIndex(index)]
-                                        .createdByGender,
-                                    chat: chat,
-                                    birthDate: state
-                                        .messages[getActualIndex(index)]
-                                        .birthDate,
-                                    showAge: state
-                                        .messages[getActualIndex(index)]
-                                        .showAge,
-                                    countryCode: state
-                                        .messages[getActualIndex(index)]
-                                        .createdByCountryCode
-                                        .toLowerCase(),
-                                    approvedImage: state
-                                        .messages[getActualIndex(index)]
-                                        .approvedImage,
-                                    imageReports: state
-                                        .messages[getActualIndex(index)]
-                                        .imageReports,
-                                  );
-                                }
-                              },
-                            ),
-                          ],
-                        ),
-                      ),
-                      const Divider(height: 1),
-                      MessageEditTextWidget(
-                        currentMessage: state.currentMessage,
-                        onTextChanged: (text) {
-                          BlocProvider.of<MessagesBloc>(context)
-                              .add(MessagesChangedEvent(text));
-                        },
-                        hintText: FlutterI18n.translate(
-                            context, "write_message_hint"),
-                        showGiphy: true,
-                        onTapGiphy: () async {
-                          final GiphyGif? gif = await GiphyGet.getGif(
-                            context: context, //Required
-                            apiKey: giphyKey, //Required.
-                            randomID: state.myUser
-                                .id, // Optional - An ID/proxy for a specific user.
-                          );
-                          if (gif != null) {
-                            if (context.mounted) {
-                              BlocProvider.of<MessagesBloc>(context)
-                                  .add(MessagesGiphyPickedEvent(gif));
-                            }
-                          }
-                        },
-                        onSendTapped: (String message) {
-                          BlocProvider.of<MessagesBloc>(context)
-                              .add(MessagesSendEvent());
-                        },
-                        replyMessage: state.replyMessage,
-                      ),
-                      if (!kIsWeb)
-                        AnimatedSize(
-                          duration: const Duration(milliseconds: 500),
-                          curve: Curves.easeIn,
-                          child: SafeArea(child: LayoutBuilder(
-                            builder: (context, constraints) {
-                              BlocProvider.of<MessagesBloc>(context)
-                                  .loadAd(constraints.maxWidth.round());
-                              final banner = state.bannerAd;
-                              if (banner != null) {
-                                return Container(
-                                    color: AppColors.background,
-                                    width: banner.size.width.toDouble(),
-                                    height: banner.size.height.toDouble(),
-                                    child: AdWidget(ad: banner));
+                  Expanded(
+                    child: Stack(
+                      children: [
+                        ListView.builder(
+                          shrinkWrap: false,
+                          padding: const EdgeInsets.only(bottom: 10),
+                          reverse: true,
+                          keyboardDismissBehavior:
+                              ScrollViewKeyboardDismissBehavior.onDrag,
+                          itemCount: state.messages.length + 1,
+                          itemBuilder: (BuildContext context, int index) {
+                            if (index == 0) {
+                              if (isPrivateChat &&
+                                  state.privateChat?.lastMessageUserId ==
+                                      getUserId()) {
+                                return (state.privateChat?.lastMessageReadBy
+                                            .length ==
+                                        2)
+                                    ? getSeenWidget(context, true)
+                                    : getSeenWidget(context, false);
                               } else {
                                 return const SizedBox.shrink();
                               }
-                            },
-                          )),
+                            } else if (state.messages[getActualIndex(index)]
+                                    .createdById ==
+                                state.myUser.id) {
+                              return AppMyMessageWidget(
+                                key: ValueKey(
+                                    state.messages[getActualIndex(index)].id),
+                                message: state.messages[getActualIndex(index)],
+                                gender: state.messages[getActualIndex(index)]
+                                    .createdByGender,
+                                pictureData: state
+                                    .messages[getActualIndex(index)]
+                                    .createdByImageUrl,
+                                chat: chat,
+                              );
+                            } else {
+                              return AppOtherMessageWidget(
+                                key: ValueKey(
+                                    state.messages[getActualIndex(index)].id),
+                                message: state.messages[getActualIndex(index)],
+                                pictureData: state
+                                    .messages[getActualIndex(index)]
+                                    .createdByImageUrl,
+                                userId: state.messages[getActualIndex(index)]
+                                    .createdById,
+                                displayName: state
+                                    .messages[getActualIndex(index)]
+                                    .createdByName,
+                                gender: state.messages[getActualIndex(index)]
+                                    .createdByGender,
+                                chat: chat,
+                                birthDate: state
+                                    .messages[getActualIndex(index)].birthDate,
+                                showAge: state
+                                    .messages[getActualIndex(index)].showAge,
+                                countryCode: state
+                                    .messages[getActualIndex(index)]
+                                    .createdByCountryCode
+                                    .toLowerCase(),
+                                approvedImage: state
+                                    .messages[getActualIndex(index)]
+                                    .approvedImage,
+                                imageReports: state
+                                    .messages[getActualIndex(index)]
+                                    .imageReports,
+                              );
+                            }
+                          },
                         ),
-                    ],
-                  ),
-                  Align(
-                    alignment: Alignment.topCenter,
-                    child: Padding(
-                      padding: const EdgeInsets.only(top: 20),
-                      child: Wrap(
-                        children: [
-                          ElevatedButton.icon(
-                            icon: Icon((chat is PrivateChat)
-                                ? Icons.delete
-                                : Icons.exit_to_app),
-                            onPressed: () {
-                              if (chat is PrivateChat) {
-                                //show warning dialog
-                                showDeleteChatDialog(context);
-                              } else {
-                                BlocProvider.of<MessageHolderBloc>(context)
-                                    .add(MessageHolderChangeChatRoomEvent());
-                              }
-                            },
-                            label: Text(translate(
-                                context,
-                                (chat is PrivateChat)
-                                    ? 'delete_chat'
-                                    : 'change_room')),
-                          ),
-                          if(!isPrivateChat)
-                            const SizedBox(width: 10),
-                          if(!isPrivateChat)
-                            ElevatedButton.icon(
-                              onPressed: () {
-                                BlocProvider.of<MessageHolderBloc>(context)
-                                    .add(MessageHolderShowOnlineUsersInChatEvent(chat));
-                              },
-                              label: Text(state.usersInRoom.length.toString()),
-                              icon: const FittedBox(
-                                  fit: BoxFit.fitWidth,
-                                  child: Icon(Icons.people)),
-                            )
-                        ],
-                      ),
+                      ],
                     ),
                   ),
+                  const Divider(height: 1),
+                  MessageEditTextWidget(
+                    currentMessage: state.currentMessage,
+                    onTextChanged: (text) {
+                      BlocProvider.of<MessagesBloc>(context)
+                          .add(MessagesChangedEvent(text));
+                    },
+                    hintText:
+                        FlutterI18n.translate(context, "write_message_hint"),
+                    showGiphy: true,
+                    onTapGiphy: () async {
+                      final GiphyGif? gif = await GiphyGet.getGif(
+                        context: context, //Required
+                        apiKey: giphyKey, //Required.
+                        randomID: state.myUser
+                            .id, // Optional - An ID/proxy for a specific user.
+                      );
+                      if (gif != null) {
+                        if (context.mounted) {
+                          BlocProvider.of<MessagesBloc>(context)
+                              .add(MessagesGiphyPickedEvent(gif));
+                        }
+                      }
+                    },
+                    onSendTapped: (String message) {
+                      BlocProvider.of<MessagesBloc>(context)
+                          .add(MessagesSendEvent());
+                    },
+                    replyMessage: state.replyMessage,
+                  ),
+                  if (!kIsWeb)
+                    AnimatedSize(
+                      duration: const Duration(milliseconds: 500),
+                      curve: Curves.easeIn,
+                      child: SafeArea(child: LayoutBuilder(
+                        builder: (context, constraints) {
+                          BlocProvider.of<MessagesBloc>(context)
+                              .loadAd(constraints.maxWidth.round());
+                          final banner = state.bannerAd;
+                          if (banner != null) {
+                            return Container(
+                                color: AppColors.background,
+                                width: banner.size.width.toDouble(),
+                                height: banner.size.height.toDouble(),
+                                child: AdWidget(ad: banner));
+                          } else {
+                            return const SizedBox.shrink();
+                          }
+                        },
+                      )),
+                    ),
                 ],
-              );
-            } else if (state is MessagesEmptyState) {
-              return Center(
+              ),
+              Align(
+                alignment: Alignment.topCenter,
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 20),
+                  child: Wrap(
+                    children: [
+                      ElevatedButton.icon(
+                        icon: Icon((chat is PrivateChat)
+                            ? Icons.delete
+                            : Icons.exit_to_app),
+                        onPressed: () {
+                          if (chat is PrivateChat) {
+                            //show warning dialog
+                            showDeleteChatDialog(context);
+                          } else {
+                            BlocProvider.of<MessageHolderBloc>(context)
+                                .add(MessageHolderChangeChatRoomEvent());
+                          }
+                        },
+                        label: Text(translate(
+                            context,
+                            (chat is PrivateChat)
+                                ? 'delete_chat'
+                                : 'change_room')),
+                      ),
+                      if (!isPrivateChat) const SizedBox(width: 10),
+                      if (!isPrivateChat)
+                        ElevatedButton.icon(
+                          onPressed: () {
+                            BlocProvider.of<MessageHolderBloc>(context).add(
+                                MessageHolderShowOnlineUsersInChatEvent(chat));
+                          },
+                          label: Text(state.usersInRoom.length.toString()),
+                          icon: const FittedBox(
+                              fit: BoxFit.fitWidth, child: Icon(Icons.people)),
+                        )
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          );
+        } else if (state is MessagesEmptyState) {
+          return Stack(
+            children: [
+              Center(
                 child: Text(FlutterI18n.translate(context, "no_messages")),
-              );
-            } else if (state is MessagesErrorState) {
-              return Center(
+              ),
+              getTopButton(context)
+            ],
+          );
+        } else if (state is MessagesErrorState) {
+          return Stack(
+            children: [
+              Center(
                 child: Text(FlutterI18n.translate(context, "unknown_error")),
-              );
-            } else {
-              return const Center(
+              ),
+              getTopButton(context)
+            ],
+          );
+        } else {
+          return Stack(
+            children: [
+              const Center(
                 child: AppSpinner(),
-              );
+              ),
+              getTopButton(context)
+            ],
+          );
+        }
+      },
+    ));
+  }
+
+  Align getTopButton(BuildContext context) {
+    return Align(
+      alignment: Alignment.topCenter,
+      child: Padding(
+        padding: const EdgeInsets.only(top: 20),
+        child: ElevatedButton.icon(
+          icon: Icon((chat is PrivateChat) ? Icons.delete : Icons.exit_to_app),
+          onPressed: () {
+            if (chat is PrivateChat) {
+              //show warning dialog
+              showDeleteChatDialog(context);
+            } else {
+              BlocProvider.of<MessageHolderBloc>(context)
+                  .add(MessageHolderChangeChatRoomEvent());
             }
           },
-        ));
+          label: Text(translate(
+              context, (chat is PrivateChat) ? 'delete_chat' : 'change_room')),
+        ),
+      ),
+    );
   }
 
   Align getSeenWidget(BuildContext context, bool isSeen) {
@@ -305,7 +335,8 @@ class ChatsScreenContent extends StatelessWidget {
                     onPressed: () {
                       Navigator.pop(context);
                     },
-                    child: Text(FlutterI18n.translate(context, "no").toUpperCase())),
+                    child: Text(
+                        FlutterI18n.translate(context, "no").toUpperCase())),
                 TextButton(
                     onPressed: () {
                       BlocProvider.of<MessageHolderBloc>(parentContext).add(
@@ -313,7 +344,8 @@ class ChatsScreenContent extends StatelessWidget {
                               chat as PrivateChat));
                       Navigator.pop(context);
                     },
-                    child: Text(FlutterI18n.translate(context, "yes").toUpperCase()))
+                    child: Text(
+                        FlutterI18n.translate(context, "yes").toUpperCase()))
               ],
             ));
   }
