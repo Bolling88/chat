@@ -91,7 +91,7 @@ class OptionsScreenBuilder extends StatelessWidget {
                     ),
                     const SizedBox(width: 20),
                     Padding(
-                      padding: const EdgeInsets.only(top: 10),
+                      padding: EdgeInsets.only(top: 11, bottom: state.user.isPremiumUser ? 20 : 0),
                       child: GestureDetector(
                         onTap: () {
                           BlocProvider.of<OptionsBloc>(blocContext).add(
@@ -107,6 +107,7 @@ class OptionsScreenBuilder extends StatelessWidget {
                                 style: Theme.of(context)
                                     .textTheme
                                     .bodyMedium),
+                            if(state.user.isPremiumUser == false)
                             Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [

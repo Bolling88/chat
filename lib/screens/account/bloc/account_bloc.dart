@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:chat/repository/firestore_repository.dart';
+import 'package:chat/repository/subscription_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -11,10 +12,11 @@ import 'account_state.dart';
 
 class AccountBloc extends Bloc<AccountEvent, AccountState> {
   final FirestoreRepository _firestoreRepository;
+  final SubscriptionRepository _subscriptionRepository;
 
   late StreamSubscription<QuerySnapshot<Object?>> userStream;
 
-  AccountBloc(this._firestoreRepository) : super(AccountLoadingState()) {
+  AccountBloc(this._firestoreRepository, this._subscriptionRepository) : super(AccountLoadingState()) {
     add(AccountInitialEvent());
   }
 
@@ -54,6 +56,8 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
           await FirebaseAuth.instance.signOut();
         }
         yield AccountLogoutState();
+      }else if(event is AccountBuyPremiumEvent){
+        _subscriptionRepository.getOfferings();
       } else {
         Log.e('AccountBloc: Not implemented');
         throw UnimplementedError();

@@ -4,12 +4,14 @@ import 'package:chat/repository/firestore_repository.dart';
 import 'package:chat/repository/login_repository.dart';
 import 'package:chat/repository/presence_database.dart';
 import 'package:chat/repository/storage_repository.dart';
+import 'package:chat/repository/subscription_repository.dart';
 import 'package:chat/screens/account/account_screen.dart';
 import 'package:chat/screens/message_holder/message_holder_screen.dart';
 import 'package:chat/screens/onboarding_age/onboarding_age_screen.dart';
 import 'package:chat/screens/onboarding_gender/onboarding_gender_screen.dart';
 import 'package:chat/screens/onboarding_name/onboarding_name_screen.dart';
 import 'package:chat/screens/onboarding_photo/onboarding_photo_screen.dart';
+import 'package:chat/screens/premium/premium_screen.dart';
 import 'package:chat/screens/profile/profile_screen.dart';
 import 'package:chat/screens/review/review_screen.dart';
 import 'package:chat/screens/splash/splash_screen.dart';
@@ -110,6 +112,7 @@ class KvitterApp extends StatelessWidget {
           final AppImageCropper appImageCropper = AppImageCropper(context);
           final PresenceDatabase presenceDatabase = PresenceDatabase();
           final ChatClickedRepository chatClickedRepository = ChatClickedRepository();
+          final SubscriptionRepository subscriptionRepository = SubscriptionRepository();
 
           return MultiProvider(
             providers: [
@@ -122,6 +125,7 @@ class KvitterApp extends StatelessWidget {
               Provider<FcmRepository>.value(value: fcmRepository),
               Provider<OnlineUserProcessor>.value(value: onlineUsersProcessor),
               Provider<ChatClickedRepository>.value(value: chatClickedRepository),
+              Provider<SubscriptionRepository>.value(value: subscriptionRepository),
             ],
             child: MaterialApp(
               title: 'Kvitter',
@@ -224,6 +228,7 @@ class KvitterApp extends StatelessWidget {
                 CopyrightScreen.routeName: (context) => const CopyrightScreen(),
                 EulaScreen.routeName: (context) => const EulaScreen(),
                 ReviewScreen.routeName: (context) => const ReviewScreen(),
+                PremiumScreen.routeName: (context) => const PremiumScreen(),
               },
             ),
           );

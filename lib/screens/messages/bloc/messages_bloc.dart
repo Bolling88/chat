@@ -56,7 +56,6 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
   Stream<MessagesState> mapEventToState(MessagesEvent event) async* {
     final currentState = state;
     if (event is MessagesInitialEvent) {
-      _user = (await _firestoreRepository.getUser())!;
       _setUpUserListener();
       if (isPrivateChat) {
         _setUpPrivateChatStream();
@@ -132,6 +131,7 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
             (currentChat is PrivateChat) ? currentChat : null, const [], null);
       }
     } else if (event is MessagesUserUpdatedEvent) {
+      _user = event.user;
       if (currentState is MessagesBaseState) {
         yield currentState.copyWith(myUser: event.user);
       }
@@ -297,6 +297,9 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
   }
 
   Future<void> loadAd(int adWidth) async {
+    if(_user.isPremiumUser) {
+      return;
+    }
     if (_anchoredAdaptiveAd != null) {
       return;
     }

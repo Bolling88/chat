@@ -6,6 +6,7 @@ import '../../model/chat_user.dart';
 import '../../repository/firestore_repository.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_widgets.dart';
+import '../premium/premium_screen.dart';
 import 'bloc/credits_bloc.dart';
 import 'bloc/credits_event.dart';
 import 'bloc/credits_state.dart';
@@ -52,10 +53,6 @@ class CreditsScreenBuilder extends StatelessWidget {
                       left: 30, bottom: 10, top: 20, right: 30),
                   child: Column(
                     children: [
-                      Text(
-                        FlutterI18n.translate(context, 'get_credits'),
-                        style: Theme.of(context).textTheme.displaySmall,
-                      ),
                       const Expanded(
                           child: MyLottieAnimation(
                               lowerBound: 0.25, upperBond: 0.35, repeat: true)),
@@ -66,8 +63,18 @@ class CreditsScreenBuilder extends StatelessWidget {
                           BlocProvider.of<CreditsBloc>(blocContext)
                               .add(CreditsShowAdEvent());
                         },
-                        label: Text(FlutterI18n.translate(context, 'watch_ad')),
-                      )
+                        label: Text(FlutterI18n.translate(context, 'watch_ad_10')),
+                      ),
+                      const SizedBox(height: 20),
+                      ElevatedButton.icon(
+                        icon: const Icon(Icons.translate),
+                        onPressed: () {
+                          Navigator.pop(context);
+                          Navigator.pushNamed(blocContext, PremiumScreen.routeName);
+                        },
+                        label: Text(FlutterI18n.translate(context, 'get_unlimited_translations')),
+                      ),
+                      const SizedBox(height: 20),
                     ],
                   )),
             ),
@@ -83,10 +90,6 @@ class CreditsScreenBuilder extends StatelessWidget {
                       left: 30, bottom: 10, top: 20, right: 30),
                   child: Column(
                     children: [
-                      Text(
-                        FlutterI18n.translate(context, 'awesome'),
-                        style: Theme.of(context).textTheme.displaySmall,
-                      ),
                       const Expanded(
                           child: MyLottieAnimation(
                         lowerBound: 0,
@@ -100,7 +103,8 @@ class CreditsScreenBuilder extends StatelessWidget {
                           Navigator.pop(context);
                         },
                         label:  Text(FlutterI18n.translate(context, 'claim_reward')),
-                      )
+                      ),
+                      const SizedBox(height: 20),
                     ],
                   )),
             ),

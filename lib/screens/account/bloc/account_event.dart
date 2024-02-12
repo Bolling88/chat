@@ -12,6 +12,7 @@ abstract class AccountEvent extends Equatable {
 class AccountInitialEvent extends AccountEvent {}
 class AccountDeleteAccountEvent extends AccountEvent {}
 class AccountLogoutEvent extends AccountEvent {}
+class AccountBuyPremiumEvent extends AccountEvent {}
 class AccountContinueClickedEvent extends AccountEvent {}
 class AccountUserChangedEvent extends AccountEvent {
   final ChatUser user;

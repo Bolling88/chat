@@ -27,6 +27,7 @@ class ChatUser extends Equatable {
   final List<String> botReports;
   final List<String> languageReports;
   final int kvitterCredits;
+  final bool isPremiumUser;
 
   const ChatUser(
       {required this.id,
@@ -51,7 +52,8 @@ class ChatUser extends Equatable {
       required this.imageReports,
       required this.botReports,
       required this.languageReports,
-      required this.kvitterCredits});
+      required this.kvitterCredits,
+      required this.isPremiumUser});
 
   ChatUser.fromJson(this.id, Map<String, dynamic> json)
       : created = json['created'] ?? Timestamp.now(),
@@ -76,7 +78,8 @@ class ChatUser extends Equatable {
         imageReports = json['imageReports']?.cast<String>() ?? [],
         botReports = json['botReports']?.cast<String>() ?? [],
         languageReports = json['languageReports']?.cast<String>() ?? [],
-        kvitterCredits = json['kvitterCredits'] ?? 0;
+        kvitterCredits = json['kvitterCredits'] ?? 0,
+        isPremiumUser = json['isPremiumUser'] ?? false;
 
   ChatUser.asUnknown(this.id)
       : created = Timestamp.now(),
@@ -100,7 +103,8 @@ class ChatUser extends Equatable {
         imageReports = [],
         botReports = [],
         languageReports = [],
-        kvitterCredits = 0;
+        kvitterCredits = 0,
+        isPremiumUser = false;
 
   ChatUser copyWith(
       {String? name,
@@ -125,7 +129,8 @@ class ChatUser extends Equatable {
       List<String>? imageReports,
       List<String>? botReports,
       List<String>? languageReports,
-      int? kvitterCredits}) {
+      int? kvitterCredits,
+      bool? isPremiumUser}) {
     return ChatUser(
         id: id,
         displayName: displayName ?? this.displayName,
@@ -149,7 +154,8 @@ class ChatUser extends Equatable {
         imageReports: imageReports ?? this.imageReports,
         botReports: botReports ?? this.botReports,
         languageReports: languageReports ?? this.languageReports,
-        kvitterCredits: kvitterCredits ?? this.kvitterCredits);
+        kvitterCredits: kvitterCredits ?? this.kvitterCredits,
+        isPremiumUser: isPremiumUser ?? this.isPremiumUser);
   }
 
   @override
@@ -176,7 +182,8 @@ class ChatUser extends Equatable {
         imageReports,
         botReports,
         languageReports,
-        kvitterCredits
+        kvitterCredits,
+        isPremiumUser
       ];
 
   bool isUserBlocked() {

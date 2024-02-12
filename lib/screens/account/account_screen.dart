@@ -1,4 +1,5 @@
 //a bloc builder widget class for creating a chat
+import 'package:chat/repository/subscription_repository.dart';
 import 'package:chat/screens/account/bloc/account_bloc.dart';
 import 'package:chat/screens/account/bloc/account_event.dart';
 import 'package:chat/screens/account/bloc/account_state.dart';
@@ -8,6 +9,8 @@ import 'package:chat/screens/review/review_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_i18n/flutter_i18n.dart';
+import 'package:lottie/lottie.dart';
 import '../../repository/firestore_repository.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_widgets.dart';
@@ -16,6 +19,7 @@ import '../../utils/gender.dart';
 import '../../utils/lottie.dart';
 import '../../utils/translate.dart';
 import '../feedback/feedback_screen.dart';
+import '../premium/premium_screen.dart';
 
 class AccountScreen extends StatelessWidget {
   static const routeName = "/account_screen";
@@ -25,8 +29,9 @@ class AccountScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (BuildContext context) =>
-          AccountBloc(context.read<FirestoreRepository>()),
+      create: (BuildContext context) => AccountBloc(
+          context.read<FirestoreRepository>(),
+          context.read<SubscriptionRepository>()),
       child: const AccountScreenBuilder(),
     );
   }
@@ -83,6 +88,36 @@ class AccountScreenBuilder extends StatelessWidget {
                       showAge: state.user.showAge,
                       context: context,
                     )),
+                if (state.user.isPremiumUser)
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Lottie.asset('assets/lottie/premium.json',
+                          animate: true,
+                          fit: BoxFit.cover,
+                          width: 60,
+                          height: 60),
+                      Text(
+                        FlutterI18n.translate(context, 'premium_user'),
+                        style: Theme.of(context)
+                            .textTheme
+                            .displaySmall
+                            ?.copyWith(fontSize: 20),
+                      )
+                    ],
+                  )
+                else
+                  Padding(
+                    padding: const EdgeInsets.only(top: 20),
+                    child: ElevatedButton.icon(
+                      icon: const Icon(Icons.block),
+                      onPressed: () {
+                        Navigator.pushNamed(blocContext, PremiumScreen.routeName);
+                      },
+                      label: Text(translate(context, 'remove_ads')),
+                    ),
+                  ),
                 const SizedBox(height: 20),
                 ElevatedButton.icon(
                   icon: const Icon(Icons.person),
@@ -212,8 +247,8 @@ Row getProfileRow({
     children: [
       Text(displayName,
           textAlign: TextAlign.left,
-          style: Theme.of(context).textTheme.displaySmall?.merge(
-              TextStyle(color: getGenderColor(Gender.fromValue(gender)), fontSize: 26))),
+          style: Theme.of(context).textTheme.displaySmall?.merge(TextStyle(
+              color: getGenderColor(Gender.fromValue(gender)), fontSize: 26))),
       getGenderIcon(Gender.fromValue(gender)),
       const SizedBox(width: 2),
       //Show age
@@ -230,7 +265,7 @@ Row getProfileRow({
 }
 
 String getAge(Timestamp? birthDate) {
-  if(birthDate == null) {
+  if (birthDate == null) {
     return '';
   }
   DateTime date = birthDate.toDate();

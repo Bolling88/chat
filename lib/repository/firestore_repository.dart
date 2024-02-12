@@ -730,4 +730,10 @@ class FirestoreRepository {
       'kvitterCredits': FieldValue.increment(i),
     }, SetOptions(merge: true));
   }
+
+  Future<void> setUserAsPremium(bool isPremiumUser) async {
+    await users.doc(getUserId()).set({
+      'isPremiumUser': isPremiumUser,
+    }, SetOptions(merge: true));
+  }
 }

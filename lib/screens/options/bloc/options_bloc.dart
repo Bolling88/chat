@@ -39,7 +39,7 @@ class OptionsBloc extends Bloc<OptionsEvent, OptionsState> {
         if (currentState is OptionsBaseState) {
           yield OptionsLoadingState();
           final user = currentState.user;
-          if (user.kvitterCredits > 0 || kIsWeb) {
+          if (user.kvitterCredits > 0 || kIsWeb || user.isPremiumUser) {
             String deviceLanguage = Platform.localeName.substring(0, 2);
             final translation = await translator.translate(
                 text: event.text, to: deviceLanguage);

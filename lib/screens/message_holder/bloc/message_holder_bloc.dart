@@ -33,6 +33,7 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
 
   InterstitialAd? _interstitialAd;
   bool privateChatFirstLoad = true;
+  ChatUser? _user;
 
   MessageHolderBloc(
       this._firestoreRepository, this._fcmRepository, this._chatClickedRepository)
@@ -65,6 +66,7 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
       }
       logEvent('started_chatting');
     } else if (event is MessageHolderUserUpdatedEvent) {
+      _user = event.user;
       if (currentState is MessageHolderBaseState) {
         yield currentState.copyWith(user: event.user);
       } else if (state is MessageHolderLoadingState) {
@@ -90,7 +92,9 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
             myUser: currentState.user,
             initialMessage: event.message,
           );
-          _interstitialAd?.show();
+          if(_user?.isPremiumUser != true){
+            _interstitialAd?.show();
+          }
           if (!kIsWeb) {
             loadInterstitialAd();
           }
@@ -403,6 +407,9 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
   }
 
   void loadInterstitialAd() {
+    if(_user?.isPremiumUser == true){
+      return;
+    }
     InterstitialAd.load(
         adUnitId: Platform.isAndroid
             ? kDebugMode
