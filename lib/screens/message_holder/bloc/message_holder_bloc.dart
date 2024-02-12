@@ -290,8 +290,7 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
       final SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.setBool('rated', true);
     }else if(event is MessageHolderRateLaterAppEvent){
-      final SharedPreferences prefs = await SharedPreferences.getInstance();
-      prefs.setInt('app_opens', 0);
+      //Don't do anything, it will pop up again after 5 visits
     } else if (event is MessageHolderShowOnlineUsersInChatEvent) {
       if (currentState is MessageHolderBaseState) {
         yield MessageHolderShowOnlineUsersInChatState(currentState, event.chat);
@@ -391,17 +390,21 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
   void _setUpRateMyApp() async {
     if (!kIsWeb) {
       final SharedPreferences prefs = await SharedPreferences.getInstance();
-      final int appOpens = prefs.getInt('app_opens') ?? 0;
+      int appOpens = prefs.getInt('app_opens') ?? 0;
       final bool hasRatedOrDenied = prefs.getBool('rated') ?? false;
-      final opens = appOpens + 1;
-      if (appOpens % 5 == 0 && hasRatedOrDenied == false) {
+
+      // Increment the app opens counter here
+      appOpens += 1;
+      // Always save the incremented value of app opens
+      await prefs.setInt('app_opens', appOpens);
+
+      // Check if it's the right time to show the rate dialog
+      if (appOpens % 3 == 0 && !hasRatedOrDenied) {
         final InAppReview inAppReview = InAppReview.instance;
         final isInAppReviewAvailable = await inAppReview.isAvailable();
         if (isInAppReviewAvailable) {
           add(MessageHolderShowRateDialogEvent());
         }
-      } else {
-        prefs.setInt('app_opens', opens);
       }
     }
   }
