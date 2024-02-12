@@ -96,7 +96,7 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
                   .firstOrNull
                   : null),
             );
-            yield getBaseState(currentState);
+            yield getBaseState(currentState.copyWith(currentMessage: ''));
           }
         }
       }

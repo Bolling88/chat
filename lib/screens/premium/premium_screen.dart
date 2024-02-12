@@ -59,12 +59,13 @@ class PremiumScreenBuilder extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Center(
-                  child: Lottie.asset('assets/lottie/premium.json',
-                      animate: true,
-                      fit: BoxFit.cover,
-                      width: 300,
-                      height: 300)),
+              Expanded(
+                flex: 2,
+                child: Center(
+                    child: Lottie.asset('assets/lottie/premium.json',
+                        animate: true,
+                        fit: BoxFit.cover)),
+              ),
               Center(
                 child: Text(
                   translate(context, 'kvitter_premium'),
@@ -138,6 +139,7 @@ class PremiumScreenBuilder extends StatelessWidget {
                 ),
               ),
               Expanded(
+                flex: 1,
                 child: Container(),
               ),
               Center(
