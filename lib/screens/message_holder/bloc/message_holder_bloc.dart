@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:chat/model/chat_user.dart';
 import 'package:chat/model/private_chat.dart';
 import 'package:chat/repository/fcm_repository.dart';
+import 'package:chat/repository/subscription_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_app_badger/flutter_app_badger.dart';
@@ -26,6 +27,7 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
   final FirestoreRepository _firestoreRepository;
   final FcmRepository _fcmRepository;
   final ChatClickedRepository _chatClickedRepository;
+  final SubscriptionRepository _subscriptionRepository;
 
   StreamSubscription<QuerySnapshot>? privateChatStream;
   StreamSubscription<List<ChatUser>>? onlineUsersStream;
@@ -36,7 +38,7 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
   ChatUser? _user;
 
   MessageHolderBloc(
-      this._firestoreRepository, this._fcmRepository, this._chatClickedRepository)
+      this._firestoreRepository, this._fcmRepository, this._chatClickedRepository, this._subscriptionRepository)
       : super(MessageHolderLoadingState()) {
     add(MessageHolderInitialEvent());
   }
@@ -64,6 +66,7 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
       if (!kIsWeb) {
         loadInterstitialAd();
       }
+      await _handleSubscription();
       logEvent('started_chatting');
     } else if (event is MessageHolderUserUpdatedEvent) {
       _user = event.user;
@@ -298,6 +301,16 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
       }
     } else {
       throw UnimplementedError();
+    }
+  }
+
+  Future<void> _handleSubscription() async {
+    if(!kIsWeb) {
+      final subscription = await _subscriptionRepository
+          .restoreSubscription();
+      if (subscription) {
+        _firestoreRepository.setUserAsPremium(subscription);
+      }
     }
   }
 

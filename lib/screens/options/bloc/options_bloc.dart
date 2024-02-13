@@ -44,7 +44,7 @@ class OptionsBloc extends Bloc<OptionsEvent, OptionsState> {
             final translation = await translator.translate(
                 text: event.text, to: deviceLanguage);
             yield OptionsTranslationDoneState(translation: translation);
-            if (!kIsWeb) {
+            if (!kIsWeb || user.isPremiumUser) {
               _firestoreRepository.reduceUserCredits(user.id, 1);
             }
           } else {

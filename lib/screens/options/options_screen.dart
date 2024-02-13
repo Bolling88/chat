@@ -1,6 +1,7 @@
 import 'package:chat/screens/options/bloc/options_state.dart';
 import 'package:chat/screens/options/bloc/options_bloc.dart';
 import 'package:chat/screens/report/report_screen.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -47,9 +48,10 @@ class OptionsScreenBuilder extends StatelessWidget {
         if (state is OptionsTranslationDoneState) {
           BlocProvider.of<MessagesBloc>(parentContext).add(
               MessagesTranslateEvent(
-                  message: message.copyWith(translation: state.translation.translatedText)));
+                  message: message.copyWith(
+                      translation: state.translation.translatedText)));
           Navigator.of(context).pop();
-        }else if(state is OptionsShowCreditsOfferState){
+        } else if (state is OptionsShowCreditsOfferState) {
           showCreditsScreen(context, state.user);
         }
       },
@@ -82,20 +84,21 @@ class OptionsScreenBuilder extends StatelessWidget {
                               color: AppColors.main,
                             ),
                             Text(FlutterI18n.translate(context, 'reply'),
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyMedium),
+                                style: Theme.of(context).textTheme.bodyMedium),
                           ],
                         ),
                       ),
                     ),
                     const SizedBox(width: 20),
                     Padding(
-                      padding: EdgeInsets.only(top: 11, bottom: state.user.isPremiumUser ? 20 : 0),
+                      padding: EdgeInsets.only(
+                          top: 11,
+                          bottom:
+                              (state.user.isPremiumUser || kIsWeb) ? 20 : 0),
                       child: GestureDetector(
                         onTap: () {
-                          BlocProvider.of<OptionsBloc>(blocContext).add(
-                              OptionsTranslateEvent( message.text));
+                          BlocProvider.of<OptionsBloc>(blocContext)
+                              .add(OptionsTranslateEvent(message.text));
                         },
                         child: Column(
                           children: [
@@ -104,24 +107,29 @@ class OptionsScreenBuilder extends StatelessWidget {
                               color: AppColors.main,
                             ),
                             Text(FlutterI18n.translate(context, 'translate'),
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyMedium),
-                            if(state.user.isPremiumUser == false)
-                            Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(FlutterI18n.translate(context, '1'),
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyMedium),
-                                const Icon(Icons.paid_outlined, color: AppColors.grey_1, size: 18,),
-                                Text(FlutterI18n.translate(context, '(${state.user.kvitterCredits})'),
-                                    style: Theme.of(context)
-                                        .textTheme
-                                        .bodyMedium),
-                              ],
-                            ),
+                                style: Theme.of(context).textTheme.bodyMedium),
+                            if (state.user.isPremiumUser == false &&
+                                kIsWeb == false)
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(FlutterI18n.translate(context, '1'),
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium),
+                                  const Icon(
+                                    Icons.paid_outlined,
+                                    color: AppColors.grey_1,
+                                    size: 18,
+                                  ),
+                                  Text(
+                                      FlutterI18n.translate(context,
+                                          '(${state.user.kvitterCredits})'),
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium),
+                                ],
+                              ),
                           ],
                         ),
                       ),
@@ -149,9 +157,7 @@ class OptionsScreenBuilder extends StatelessWidget {
                               color: AppColors.main,
                             ),
                             Text(FlutterI18n.translate(context, 'copy_text'),
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyMedium),
+                                style: Theme.of(context).textTheme.bodyMedium),
                           ],
                         ),
                       ),
@@ -163,7 +169,7 @@ class OptionsScreenBuilder extends StatelessWidget {
                         onTap: () {
                           Navigator.of(context).pop();
                           showReportScreen(context, message.createdById);
-                                              },
+                        },
                         child: Column(
                           children: [
                             const Icon(
@@ -171,9 +177,7 @@ class OptionsScreenBuilder extends StatelessWidget {
                               color: AppColors.main,
                             ),
                             Text(FlutterI18n.translate(context, 'report'),
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyMedium),
+                                style: Theme.of(context).textTheme.bodyMedium),
                           ],
                         ),
                       ),

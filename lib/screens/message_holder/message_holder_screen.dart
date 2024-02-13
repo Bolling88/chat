@@ -1,6 +1,7 @@
 import 'package:chat/repository/chat_clicked_repository.dart';
 import 'package:chat/repository/fcm_repository.dart';
 import 'package:chat/repository/firestore_repository.dart';
+import 'package:chat/repository/subscription_repository.dart';
 import 'package:chat/screens/chat/chat_screen.dart';
 import 'package:chat/screens/feedback/feedback_screen.dart';
 import 'package:chat/screens/visit/visit_screen.dart';
@@ -43,7 +44,10 @@ class MessageHolderScreen extends StatelessWidget {
     context.read<PresenceDatabase>().updateUserPresence();
     return BlocProvider(
       create: (BuildContext context) => MessageHolderBloc(
-          context.read<FirestoreRepository>(), context.read<FcmRepository>(), context.read<ChatClickedRepository>()),
+          context.read<FirestoreRepository>(),
+          context.read<FcmRepository>(),
+          context.read<ChatClickedRepository>(),
+          context.read<SubscriptionRepository>()),
       child: const AppLifecycleScreen(child: MessageHolderScreenContent()),
     );
   }
@@ -298,7 +302,7 @@ class MessageHolderScreenContent extends StatelessWidget {
           if (state.selectedChatIndex == 0) {
             BlocProvider.of<MessageHolderBloc>(context)
                 .add(MessageHolderChangeChatRoomEvent());
-          }else{
+          } else {
             final PrivateChat privateChat = chat as PrivateChat;
             showVisitScreen(
                 context, chat.getOtherUserId(getUserId()), privateChat, false);
@@ -456,7 +460,7 @@ Widget getChatImage(
     } else {
       final PrivateChat privateChat = chat as PrivateChat;
       final String? imageUrl = privateChat.getChatImage(getUserId());
-      if(imageUrl != null && imageUrl.isNotEmpty) {
+      if (imageUrl != null && imageUrl.isNotEmpty) {
         return AppUserImage(
           url: imageUrl,
           gender: privateChat.getOtherUserGender(getUserId()),

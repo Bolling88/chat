@@ -7,6 +7,7 @@ import 'package:chat/screens/login/login_screen.dart';
 import 'package:chat/screens/profile/profile_screen.dart';
 import 'package:chat/screens/review/review_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
@@ -107,7 +108,7 @@ class AccountScreenBuilder extends StatelessWidget {
                       )
                     ],
                   )
-                else
+                else if(!kIsWeb)
                   Padding(
                     padding: const EdgeInsets.only(top: 20),
                     child: ElevatedButton.icon(

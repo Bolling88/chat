@@ -151,14 +151,16 @@ class PremiumScreenBuilder extends StatelessWidget {
                       ?.copyWith(fontSize: 20),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.only(left: 30, right: 30, top: 20),
-                child: GestureDetector(
-                  onTap: () {
-                    context.read<PremiumBloc>().add(PremiumBuyEvent());
-                  },
-                  child: Lottie.asset('assets/lottie/premium_button.json',
-                      animate: true),
+              Center(
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 30, right: 30, top: 20),
+                  child: GestureDetector(
+                    onTap: () {
+                      context.read<PremiumBloc>().add(PremiumBuyEvent());
+                    },
+                    child: Lottie.asset('assets/lottie/premium_button.json',
+                        animate: true),
+                  ),
                 ),
               ),
               Center(

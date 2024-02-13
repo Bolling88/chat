@@ -134,5 +134,20 @@
   "no_spamming": "يرجى عدم إرسال رسائل مكررة",
   "online": "متصل",
   "offline": "غير متصل",
-  "delete_photo": "حذف الصورة"
+  "delete_photo": "حذف الصورة",
+  "remove_ads": "إزالة جميع الإعلانات",
+  "kvitter_premium": "كفيتر بريميوم",
+  "monthly": "شهري",
+  "includes": "يتضمن:",
+  "no_ads": "بدون إعلانات!",
+  "and_more_to_come": "...والمزيد قادم!",
+  "free_translation": "ترجمات مجانية!",
+  "per_month": "/ شهر",
+  "only": "فقط",
+  "unknown_error": "خطأ غير معروف...",
+  "restore_purchases": "استعادة الشراء",
+  "no_subscription_to_restore": "لم يتم العثور على اشتراكات",
+  "premium_user": "مستخدم بريميوم",
+  "get_unlimited_translations": "احصل على ترجمات غير محدودة",
+  "watch_ad_10": "شاهد إعلاناً واحصل على 10 ائتمانات"
 }
