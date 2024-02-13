@@ -49,6 +49,24 @@
   <script src="flutter.js" defer></script>
 </head>
 <body>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js"></script> <!-- If using Firestore -->
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js"></script>
+<script>
+  var firebaseConfig = {
+    apiKey: "AIzaSyChD4747kdf9R6l5WehknJfXeTgPmUK34o",
+    authDomain: "chat-60225.firebaseapp.com",
+      databaseURL: "https://chat-60225-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "chat-60225",
+    storageBucket: "chat-60225.appspot.com",
+    messagingSenderId: "164406258776",
+     appId: "1:164406258776:web:a252174bd62c40c71c2e2d",
+  measurementId: "G-ZXS4REBS88"
+  };
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+</script>
+
   <script>
     let useHtml = false;
 

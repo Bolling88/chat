@@ -134,5 +134,20 @@
   "no_spamming": "Vänligen skicka inte dubbla meddelanden",
   "online": "Online",
   "offline": "Offline",
-  "delete_photo": "Radera foto"
+  "delete_photo": "Radera foto",
+  "remove_ads": "Ta bort alla annonser",
+  "kvitter_premium": "Kvitter Premium",
+  "monthly": "Månadsvis",
+  "includes": "Inkluderar:",
+  "no_ads": "Inga annonser!",
+  "and_more_to_come": "...och mer kommer!",
+  "free_translation": "Gratis översättningar!",
+  "per_month": "/ månad",
+  "only": "Endast",
+  "unknown_error": "Okänt fel...",
+  "restore_purchases": "Återställ köp",
+  "no_subscription_to_restore": "Inga prenumerationer hittades",
+  "premium_user": "Premiumanvändare",
+  "get_unlimited_translations": "Få obegränsade översättningar",
+  "watch_ad_10": "Titta på annons, få 10 krediter"
 }

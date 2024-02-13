@@ -134,5 +134,20 @@
   "no_spamming": "Пожалуйста, не отправляйте повторные сообщения",
   "online": "Онлайн",
   "offline": "Офлайн",
-  "delete_photo": "Удалить фото"
+  "delete_photo": "Удалить фото",
+  "remove_ads": "Убрать все рекламы",
+  "kvitter_premium": "Kvitter Премиум",
+  "monthly": "Ежемесячно",
+  "includes": "Включает:",
+  "no_ads": "Без рекламы!",
+  "and_more_to_come": "...и это ещё не всё!",
+  "free_translation": "Бесплатный перевод!",
+  "per_month": "/ месяц",
+  "only": "Только",
+  "unknown_error": "Неизвестная ошибка...",
+  "restore_purchases": "Восстановить покупки",
+  "no_subscription_to_restore": "Подписки для восстановления не найдены",
+  "premium_user": "Премиум пользователь",
+  "get_unlimited_translations": "Получить неограниченный перевод",
+  "watch_ad_10": "Смотреть рекламу, получить 10 кредитов"
 }
