@@ -134,5 +134,20 @@
   "no_spamming": "कृपया डुप्लिकेट संदेश न भेजें",
   "online": "ऑनलाइन",
   "offline": "ऑफलाइन",
-  "delete_photo": "फोटो हटाएं"
+  "delete_photo": "फोटो हटाएं",
+  "remove_ads": "सभी विज्ञापन हटाएं",
+  "kvitter_premium": "क्विटर प्रीमियम",
+  "monthly": "मासिक",
+  "includes": "शामिल हैं:",
+  "no_ads": "कोई विज्ञापन नहीं!",
+  "and_more_to_come": "...और भी बहुत कुछ आने वाला है!",
+  "free_translation": "नि:शुल्क अनुवाद!",
+  "per_month": "/ महीना",
+  "only": "केवल",
+  "unknown_error": "अज्ञात त्रुटि...",
+  "restore_purchases": "खरीदारी पुनः स्थापित करें",
+  "no_subscription_to_restore": "कोई सदस्यता नहीं मिली",
+  "premium_user": "प्रीमियम उपयोगकर्ता",
+  "get_unlimited_translations": "असीमित अनुवाद प्राप्त करें",
+  "watch_ad_10": "विज्ञापन देखें, 10 क्रेडिट प्राप्त करें"
 }

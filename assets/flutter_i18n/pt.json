@@ -129,5 +129,20 @@
   "no_spamming": "Por favor, não envie mensagens duplicadas",
   "online": "Online",
   "offline": "Offline",
-  "delete_photo": "Excluir foto"
+  "delete_photo": "Excluir foto",
+  "remove_ads": "Remover todos os anúncios",
+  "kvitter_premium": "Kvitter Premium",
+  "monthly": "Mensal",
+  "includes": "Inclui:",
+  "no_ads": "Sem anúncios!",
+  "and_more_to_come": "...e mais novidades em breve!",
+  "free_translation": "Traduções grátis!",
+  "per_month": "/ mês",
+  "only": "Apenas",
+  "unknown_error": "Erro desconhecido...",
+  "restore_purchases": "Restaurar compras",
+  "no_subscription_to_restore": "Nenhuma assinatura encontrada",
+  "premium_user": "Usuário Premium",
+  "get_unlimited_translations": "Obter traduções ilimitadas",
+  "watch_ad_10": "Assista a um anúncio, ganhe 10 créditos"
 }
