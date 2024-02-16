@@ -50,7 +50,7 @@ class PremiumBloc extends Bloc<PremiumEvent, PremiumState> {
           yield const PremiumErrorState();
         }
       }else if(event is PremiumRestoreEvent){
-        final isNowPremiumUser = await _subscriptionRepository.restoreSubscription();
+        final isNowPremiumUser = await _subscriptionRepository.isPremiumUser();
         await _firestoreRepository.setUserAsPremium(isNowPremiumUser);
         if (isNowPremiumUser) {
           yield const PremiumDoneState();

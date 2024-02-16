@@ -41,22 +41,10 @@ class SubscriptionRepository {
 
   Future<bool> isPremiumUser() async {
     try {
-      var permission = await Glassfy.permissions();
-      return permission.all?.any(
-              (permission) => permission.permissionId == 'kvitter_premium') ??
-          false;
-    } catch (e) {
-      Log.e('Error getting permissions: $e');
-      return false;
-    }
-  }
-
-  Future<bool> restoreSubscription() async {
-    try {
-      final permission = await Glassfy.restorePurchases();
-      return permission.all?.any(
-              (permission) => permission.permissionId == 'kvitter_premium') ??
-          false;
+      var permissions = await Glassfy.permissions();
+      final p = permissions.all?.singleWhere(
+              (permission) => permission.permissionId == 'kvitter_premium');
+      return p?.isValid ?? false;
     } catch (e) {
       Log.e('Error getting permissions: $e');
       return false;

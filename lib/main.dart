@@ -54,7 +54,9 @@ Future<void> main() async {
   }
 
   try {
-    await Glassfy.initialize('bf2702924a484b569661bfcaeffd41f1',watcherMode: true);
+    if(!kIsWeb) {
+      await Glassfy.initialize('bf2702924a484b569661bfcaeffd41f1',watcherMode: true);
+    }
   } catch (e) {
     Log.e("Glassfy error: $e");
   }
