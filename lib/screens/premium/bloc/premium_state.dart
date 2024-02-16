@@ -42,8 +42,15 @@ class PremiumDoneState extends PremiumState {
   List<Object> get props => [];
 }
 
-class PremiumNothingRestoreState extends PremiumState {
-  const PremiumNothingRestoreState();
+class PremiumNothingRestoreState extends PremiumBaseState {
+  const PremiumNothingRestoreState(super.offerings);
+
+  @override
+  List<Object> get props => [];
+}
+
+class PremiumAbortedState extends PremiumBaseState {
+  const PremiumAbortedState(super.offerings);
 
   @override
   List<Object> get props => [];

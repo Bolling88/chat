@@ -65,8 +65,11 @@ class AppUserImage extends StatelessWidget {
 }
 
 class AppErrorScreen extends StatelessWidget {
+  final String? message;
+
   const AppErrorScreen({
     Key? key,
+    this.message,
   }) : super(key: key);
 
   @override
@@ -75,7 +78,7 @@ class AppErrorScreen extends StatelessWidget {
       color: AppColors.white,
       child: Center(
           child: Text(
-        translate(context, 'unknown_error'),
+        message ?? translate(context, 'unknown_error'),
         style: Theme.of(context).textTheme.displayMedium,
       )),
     );

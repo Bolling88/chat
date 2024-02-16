@@ -40,11 +40,19 @@ class PremiumScreenBuilder extends StatelessWidget {
       body: BlocListener<PremiumBloc, PremiumState>(listener: (context, state) {
         if (state is PremiumDoneState) {
           Navigator.of(context).pop();
-        }else if(state is PremiumNothingRestoreState){
+        } else if (state is PremiumNothingRestoreState) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(FlutterI18n.translate(
-                  context, 'no_subscription_to_restore')),
+              content: Text(
+                  FlutterI18n.translate(context, 'no_subscription_to_restore')),
+              duration: const Duration(seconds: 1),
+            ),
+          );
+        }else if(state is PremiumAbortedState){
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(
+                  FlutterI18n.translate(context, 'transaction_aborted')),
               duration: const Duration(seconds: 1),
             ),
           );
@@ -52,7 +60,7 @@ class PremiumScreenBuilder extends StatelessWidget {
       }, child:
           BlocBuilder<PremiumBloc, PremiumState>(builder: (blocContext, state) {
         if (state is PremiumErrorState) {
-          return const AppErrorScreen();
+          return AppErrorScreen(message: translate(context, 'transaction_aborted'),);
         } else if (state is PremiumBaseState) {
           return Column(
             mainAxisSize: MainAxisSize.max,
@@ -63,8 +71,7 @@ class PremiumScreenBuilder extends StatelessWidget {
                 flex: 2,
                 child: Center(
                     child: Lottie.asset('assets/lottie/premium.json',
-                        animate: true,
-                        fit: BoxFit.cover)),
+                        animate: true, fit: BoxFit.cover)),
               ),
               Center(
                 child: Text(
@@ -142,15 +149,32 @@ class PremiumScreenBuilder extends StatelessWidget {
                 flex: 1,
                 child: Container(),
               ),
-              Center(
-                child: Text(
-                  '${FlutterI18n.translate(context, 'only')} ${state.offerings?.product?.price} ${state.offerings?.product?.currencyCode} ${FlutterI18n.translate(context, 'per_month')}',
-                  style: Theme.of(context)
-                      .textTheme
-                      .displaySmall
-                      ?.copyWith(fontSize: 20),
+              if (state.offerings?.product?.price != null)
+                Center(
+                  child: Text(
+                    '${FlutterI18n.translate(context, 'only')} ${state.offerings?.product?.price} ${state.offerings?.product?.currencyCode} ${FlutterI18n.translate(context, 'per_month')}',
+                    style: Theme.of(context)
+                        .textTheme
+                        .displaySmall
+                        ?.copyWith(fontSize: 20),
+                  ),
+                )
+              else
+                Center(
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const CircularProgressIndicator(),
+                      Text(
+                        FlutterI18n.translate(context, 'fetching_price'),
+                        style: Theme.of(context)
+                            .textTheme
+                            .displaySmall
+                            ?.copyWith(fontSize: 20),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
               Center(
                 child: Padding(
                   padding: const EdgeInsets.only(left: 30, right: 30, top: 20),
@@ -167,9 +191,13 @@ class PremiumScreenBuilder extends StatelessWidget {
                 child: SafeArea(
                     child: Padding(
                   padding: const EdgeInsets.only(bottom: 20, top: 20),
-                  child: TextButton(onPressed: (){
-                    context.read<PremiumBloc>().add(PremiumRestoreEvent());
-                  }, child: Text(FlutterI18n.translate(context, 'restore_purchases')),),
+                  child: TextButton(
+                    onPressed: () {
+                      context.read<PremiumBloc>().add(PremiumRestoreEvent());
+                    },
+                    child: Text(
+                        FlutterI18n.translate(context, 'restore_purchases')),
+                  ),
                 )),
               )
             ],

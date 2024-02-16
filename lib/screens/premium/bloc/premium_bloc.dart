@@ -35,27 +35,32 @@ class PremiumBloc extends Bloc<PremiumEvent, PremiumState> {
         final offerings = await _subscriptionRepository.getOfferings();
         yield PremiumBaseState(offerings?.skus?.firstOrNull);
       } else if (event is PremiumBuyEvent) {
-        yield const PremiumLoadingState();
-        final sku =
-            currentState is PremiumBaseState ? currentState.offerings : null;
-        if (sku != null) {
-          final isNowPremiumUser = await _subscriptionRepository.purchase(sku);
+        if(currentState is PremiumBaseState) {
+          yield const PremiumLoadingState();
+          final sku = currentState.offerings;
+          if (sku != null) {
+            final isNowPremiumUser = await _subscriptionRepository.purchase(
+                sku);
+            await _firestoreRepository.setUserAsPremium(isNowPremiumUser);
+            if (isNowPremiumUser) {
+              yield const PremiumDoneState();
+            } else {
+              yield PremiumAbortedState(currentState.offerings);
+            }
+          } else {
+            yield PremiumAbortedState(currentState.offerings);
+          }
+        }
+      }else if(event is PremiumRestoreEvent){
+        if(currentState is PremiumBaseState) {
+          final isNowPremiumUser = await _subscriptionRepository
+              .isPremiumUser();
           await _firestoreRepository.setUserAsPremium(isNowPremiumUser);
           if (isNowPremiumUser) {
             yield const PremiumDoneState();
           } else {
-            yield const PremiumErrorState();
+            yield PremiumNothingRestoreState(currentState.offerings);
           }
-        } else {
-          yield const PremiumErrorState();
-        }
-      }else if(event is PremiumRestoreEvent){
-        final isNowPremiumUser = await _subscriptionRepository.isPremiumUser();
-        await _firestoreRepository.setUserAsPremium(isNowPremiumUser);
-        if (isNowPremiumUser) {
-          yield const PremiumDoneState();
-        } else {
-          yield const PremiumNothingRestoreState();
         }
       } else {
         yield const PremiumErrorState();
