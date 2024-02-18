@@ -66,7 +66,7 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
       if (!kIsWeb) {
         loadInterstitialAd();
       }
-      await _handleSubscription();
+      _handleSubscription();
       logEvent('started_chatting');
     } else if (event is MessageHolderUserUpdatedEvent) {
       _user = event.user;
@@ -95,10 +95,8 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
             myUser: currentState.user,
             initialMessage: event.message,
           );
-          if(_user?.isPremiumUser != true){
+          if(_user?.isPremiumUser != true && !kIsWeb) {
             _interstitialAd?.show();
-          }
-          if (!kIsWeb) {
             loadInterstitialAd();
           }
         } else {
@@ -421,7 +419,7 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
   }
 
   void loadInterstitialAd() {
-    if(_user?.isPremiumUser == true){
+    if(_user?.isPremiumUser == true || kIsWeb){
       return;
     }
     InterstitialAd.load(

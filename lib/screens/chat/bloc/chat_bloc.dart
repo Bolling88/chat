@@ -11,18 +11,21 @@ import 'chat_state.dart';
 class ChatBloc extends Bloc<ChatEvent, ChatState> {
   final FirestoreRepository _firestoreRepository;
 
-  late StreamSubscription<QuerySnapshot> chatStream;
-  late StreamSubscription<List<ChatUser>> onlineUsersStream;
+  StreamSubscription<QuerySnapshot>? chatStream;
+  StreamSubscription<List<ChatUser>>? onlineUsersStream;
+  StreamSubscription<QuerySnapshot>? userStream;
   final List<ChatUser> _initialUsers;
 
-  ChatBloc(this._firestoreRepository, this._initialUsers) : super(ChatLoadingState()) {
+  ChatBloc(this._firestoreRepository, this._initialUsers)
+      : super(ChatLoadingState()) {
     add(ChatInitialEvent());
   }
 
   @override
   Future<void> close() {
-    chatStream.cancel();
-    onlineUsersStream.cancel();
+    chatStream?.cancel();
+    onlineUsersStream?.cancel();
+    userStream?.cancel();
     return super.close();
   }
 
@@ -30,24 +33,30 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
   Stream<ChatState> mapEventToState(ChatEvent event) async* {
     final currentState = state;
     if (event is ChatInitialEvent) {
-      final user = await _firestoreRepository.getUser();
-      if(user != null) {
-        setUpChatListener(user);
-        setUpPeopleListener();
-      }else{
-        Log.e('ChatInitialEvent: User is null');
-      }
+      setUpUserListener();
     } else if (event is ChatUpdatedEvent) {
       if (currentState is ChatBaseState) {
         yield currentState.copyWith(chats: event.chats);
       } else {
-        yield ChatBaseState(event.chats, groupUsersByChat(_initialUsers));
+        yield ChatBaseState(
+            chats: event.chats, onlineUsers: groupUsersByChat(_initialUsers));
       }
     } else if (event is ChatOnlineUsersUpdatedEvent) {
       if (currentState is ChatBaseState) {
         yield currentState.copyWith(onlineUsers: event.onlineUsers);
       } else {
-        yield ChatBaseState(const [], event.onlineUsers);
+        yield ChatBaseState(
+            chats: const [], onlineUsers: event.onlineUsers);
+      }
+    } else if (event is ChatUserUpdatedEvent) {
+      if (currentState is ChatBaseState) {
+        //Do nothing, user info is not of interest for the state
+      } else {
+        //Set up the remaining listeners and load the UI
+        setUpPeopleListener();
+        setUpChatListener(event.chatUser);
+        yield ChatBaseState(
+            chats: const [], onlineUsers: groupUsersByChat(_initialUsers));
       }
     } else {
       throw UnimplementedError();
@@ -77,6 +86,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     });
   }
 
+  // TODO move to isolate?
   Map<String, List<ChatUser>> groupUsersByChat(List<ChatUser> users) {
     final usersPerChat = <String, List<ChatUser>>{};
     for (var user in users) {
@@ -89,5 +99,26 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       }
     }
     return usersPerChat;
+  }
+
+  void setUpUserListener() async {
+    Log.d('Setting up private chats stream');
+    userStream = _firestoreRepository.streamUser().listen((event) async {
+      if (event.docs.isEmpty) {
+        Log.d('No user found');
+        return;
+      }
+      final Map<String, dynamic> userData =
+          event.docs.first.data() as Map<String, dynamic>;
+
+      // Convert Timestamp to int (milliseconds since epoch)
+      if (userData.containsKey('lastActive') &&
+          userData['lastActive'] is Timestamp) {
+        userData['lastActive'] =
+            (userData['lastActive'] as Timestamp).millisecondsSinceEpoch;
+      }
+      final user = ChatUser.fromJson(event.docs.first.id, userData);
+      add(ChatUserUpdatedEvent(user));
+    });
   }
 }

@@ -15,13 +15,16 @@ class ChatBaseState extends ChatState {
   final List<RoomChat> chats;
   final Map<String, List<ChatUser>> onlineUsers;
 
-  ChatBaseState(this.chats, this.onlineUsers);
+  ChatBaseState({required this.chats, required this.onlineUsers});
 
-  ChatBaseState copyWith(
-      {List<RoomChat>? chats,
-      Map<String, List<ChatUser>>? onlineUsers,
-      ChatUser? user}) {
-    return ChatBaseState(chats ?? this.chats, onlineUsers ?? this.onlineUsers);
+  ChatBaseState copyWith({
+    List<RoomChat>? chats,
+    Map<String, List<ChatUser>>? onlineUsers,
+  }) {
+    return ChatBaseState(
+      chats: chats ?? this.chats,
+      onlineUsers: onlineUsers ?? this.onlineUsers,
+    );
   }
 
   @override

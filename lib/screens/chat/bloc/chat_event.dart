@@ -26,3 +26,12 @@ class ChatOnlineUsersUpdatedEvent extends ChatEvent {
   @override
   List<Object?> get props => [onlineUsers];
 }
+
+class ChatUserUpdatedEvent extends ChatEvent{
+  final ChatUser chatUser;
+
+  ChatUserUpdatedEvent(this.chatUser);
+
+  @override
+  List<Object?> get props => [chatUser];
+}
