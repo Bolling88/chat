@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:lottie/lottie.dart';
 import '../../repository/firestore_repository.dart';
+import '../../utils/app_colors.dart';
 import '../../utils/app_widgets.dart';
 import '../../utils/translate.dart';
 import 'bloc/premium_bloc.dart';
@@ -48,11 +49,11 @@ class PremiumScreenBuilder extends StatelessWidget {
               duration: const Duration(seconds: 1),
             ),
           );
-        }else if(state is PremiumAbortedState){
+        } else if (state is PremiumAbortedState) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(
-                  FlutterI18n.translate(context, 'transaction_aborted')),
+              content:
+                  Text(FlutterI18n.translate(context, 'transaction_aborted')),
               duration: const Duration(seconds: 1),
             ),
           );
@@ -60,7 +61,9 @@ class PremiumScreenBuilder extends StatelessWidget {
       }, child:
           BlocBuilder<PremiumBloc, PremiumState>(builder: (blocContext, state) {
         if (state is PremiumErrorState) {
-          return AppErrorScreen(message: translate(context, 'transaction_aborted'),);
+          return AppErrorScreen(
+            message: translate(context, 'transaction_aborted'),
+          );
         } else if (state is PremiumBaseState) {
           return Column(
             mainAxisSize: MainAxisSize.max,
@@ -152,7 +155,7 @@ class PremiumScreenBuilder extends StatelessWidget {
               if (state.offerings?.product?.price != null)
                 Center(
                   child: Text(
-                    '${FlutterI18n.translate(context, 'only')} ${state.offerings?.product?.price} ${state.offerings?.product?.currencyCode} ${FlutterI18n.translate(context, 'per_month')}',
+                    '${state.offerings?.product?.price} ${state.offerings?.product?.currencyCode} ${FlutterI18n.translate(context, 'monthly')}',
                     style: Theme.of(context)
                         .textTheme
                         .displaySmall
@@ -188,8 +191,7 @@ class PremiumScreenBuilder extends StatelessWidget {
                 ),
               ),
               Center(
-                child: SafeArea(
-                    child: Padding(
+                child: Padding(
                   padding: const EdgeInsets.only(bottom: 20, top: 20),
                   child: TextButton(
                     onPressed: () {
@@ -198,8 +200,53 @@ class PremiumScreenBuilder extends StatelessWidget {
                     child: Text(
                         FlutterI18n.translate(context, 'restore_purchases')),
                   ),
-                )),
-              )
+                ),
+              ),
+              Center(
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.pushNamed(context, "/terms_screen");
+                  },
+                  child: Text('${FlutterI18n.translate(context, "terms")},',
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.bodySmall?.merge(
+                            const TextStyle(color: AppColors.main),
+                          )),
+                ),
+              ),
+              Center(
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.pushNamed(context, "/privacy_screen");
+                  },
+                  child: Text(FlutterI18n.translate(context, "privacy"),
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.bodySmall?.merge(
+                            const TextStyle(color: AppColors.main),
+                          )),
+                ),
+              ),
+              Center(
+                child: Text(
+                  FlutterI18n.translate(context, "and"),
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+              ),
+              Center(
+                child: SafeArea(
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.pushNamed(context, "/eula_screen");
+                    },
+                    child: Text(FlutterI18n.translate(context, "eula"),
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.bodySmall?.merge(
+                              const TextStyle(color: AppColors.main),
+                            )),
+                  ),
+                ),
+              ),
             ],
           );
         } else {
