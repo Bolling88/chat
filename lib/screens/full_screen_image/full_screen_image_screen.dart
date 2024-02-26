@@ -2,11 +2,10 @@ import 'package:blur/blur.dart';
 import 'package:chat/repository/firestore_repository.dart';
 import 'package:chat/screens/full_screen_image/bloc/full_screen_image_bloc.dart';
 import 'package:chat/screens/full_screen_image/bloc/full_screen_image_state.dart';
+import 'package:chat/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
-
-import '../../utils/app_colors.dart';
 import 'bloc/full_screen_image_event.dart';
 
 class FullScreenImageScreen extends StatelessWidget {
@@ -58,7 +57,7 @@ class FullScreenImageScreenContent extends StatelessWidget {
           if (state is FullScreenImageBaseState) {
             return Scaffold(
               appBar: AppBar(title: Text(userName)),
-              backgroundColor: AppColors.black,
+              backgroundColor: context.black,
               body: Hero(
                 tag: 'fullscreenImage',
                 child: Stack(
@@ -73,7 +72,7 @@ class FullScreenImageScreenContent extends StatelessWidget {
                             child: Image.network(imageUrl).blurred(
                               blur: state.shouldBlur ? 10 : 0,
                               colorOpacity: state.shouldBlur ? 0.5 : 0,
-                              blurColor: AppColors.white,
+                              blurColor: context.white,
                             ))),
                     if (state.shouldBlur)
                       SafeArea(
@@ -90,7 +89,7 @@ class FullScreenImageScreenContent extends StatelessWidget {
                                 FlutterI18n.translate(
                                     blocContext, 'sensitive_content'),
                                 textAlign: TextAlign.center,
-                                style: const TextStyle(color: AppColors.white),
+                                style:  TextStyle(color: context.white),
                               ),
                               Expanded(
                                 child: Container(),

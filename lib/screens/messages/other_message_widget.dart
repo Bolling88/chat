@@ -1,13 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chat/screens/messages/bloc/messages_bloc.dart';
 import 'package:chat/screens/options/options_screen.dart';
+import 'package:chat/utils/app_colors.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../model/chat.dart';
 import '../../model/message.dart';
 import '../../repository/firestore_repository.dart';
-import '../../utils/app_colors.dart';
 import '../../utils/app_widgets.dart';
 import '../../utils/flag.dart';
 import '../../utils/gender.dart';
@@ -92,7 +92,7 @@ class AppOtherMessageWidget extends StatelessWidget {
         child: Material(
           type: MaterialType.card,
           elevation: 1,
-          color: message.marked ? AppColors.main_3 : AppColors.grey_4,
+          color: message.marked ? context.main_3 : context.grey_4,
           shape: const RoundedRectangleBorder(
               borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(0.0),
@@ -156,9 +156,8 @@ class AppOtherMessageWidget extends StatelessWidget {
                   textAlign: TextAlign.left,
                   style: Theme.of(context).textTheme.bodyMedium?.merge(
                         TextStyle(
-                          color: message.marked
-                              ? AppColors.white
-                              : AppColors.grey_1,
+                          color:
+                              message.marked ? context.white : context.grey_1,
                           fontSize: isOnlyEmojis(message.text)
                               ? 40
                               : Theme.of(context)
@@ -178,7 +177,7 @@ class AppOtherMessageWidget extends StatelessWidget {
                     textAlign: TextAlign.left,
                     style: Theme.of(context).textTheme.bodyMedium?.merge(
                           TextStyle(
-                            color: AppColors.main,
+                            color: context.main,
                             fontSize: isOnlyEmojis(message.text)
                                 ? 40
                                 : Theme.of(context)
@@ -214,20 +213,21 @@ class AppOtherMessageWidget extends StatelessWidget {
               Text(displayName,
                   textAlign: TextAlign.left,
                   style: Theme.of(context).textTheme.bodySmall?.merge(TextStyle(
-                      color: getGenderColor(Gender.fromValue(gender)),
+                      color: getGenderColor(context, Gender.fromValue(gender)),
                       fontWeight: FontWeight.bold))),
               if (gender != Gender.secret.value)
                 SizedBox(
                     width: 18,
                     height: 18,
-                    child: getGenderIcon(Gender.fromValue(gender))),
+                    child: getGenderIcon(context, Gender.fromValue(gender))),
               const SizedBox(width: 2),
               if (birthDate != null && showAge)
                 Text(
                   getAge(birthDate),
                   style: Theme.of(context).textTheme.displaySmall?.merge(
                       TextStyle(
-                          color: getGenderColor(Gender.fromValue(gender)),
+                          color:
+                              getGenderColor(context, Gender.fromValue(gender)),
                           fontSize: 16)),
                 ),
               if (birthDate != null) const SizedBox(width: 8),
@@ -273,17 +273,18 @@ Widget getPostedByName({
         child: Text(displayName,
             textAlign: TextAlign.left,
             style: Theme.of(context).textTheme.bodySmall?.merge(TextStyle(
-                color: getGenderColor(Gender.fromValue(gender)),
+                color: getGenderColor(context, Gender.fromValue(gender)),
                 fontWeight: FontWeight.bold))),
       ),
       if (gender != Gender.secret.value)
-        getGenderIcon(Gender.fromValue(gender), size: 18),
+        getGenderIcon(context, Gender.fromValue(gender), size: 18),
       const SizedBox(width: 2),
       if (birthDate != null && showAge)
         Text(
           getAge(birthDate),
           style: Theme.of(context).textTheme.displaySmall?.merge(TextStyle(
-              color: getGenderColor(Gender.fromValue(gender)), fontSize: 16)),
+              color: getGenderColor(context, Gender.fromValue(gender)),
+              fontSize: 16)),
         ),
       if (birthDate != null && showAge) const SizedBox(width: 8),
       getFlag(countryCode: countryCode, fontSize: 16),

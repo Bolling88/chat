@@ -1,26 +1,63 @@
-import 'dart:ui';
+import 'package:flutter/material.dart';
 
-class AppColors {
-  static const Color main = Color(0xFF30c7c2);
-  static const Color mainIcon = Color(0xFF5deda6);
-  static const Color main_2 = Color(0xFF199E99);
-  static const Color main_3 = Color(0xFF199E99);
-  static const Color grey_1 = Color(0xFF909090);
-  static const Color grey_2 = Color(0x60909090);
-  static const Color grey_3 = Color(0xFFE3E3E3);
-  static const Color grey_4 = Color(0xFFf2f2f2);
-  static const Color grey_5 = Color(0xFFbfbfbf);
-  static const Color grey_6 = Color(0xFF303030);
-  static const Color white = Color(0xFFFFFFFF);
-  static const Color highlight = Color(0xFFFF6600);
-  static const Color black = Color(0xFF000000);
-  static const Color transparent = Color(0x00000000);
-  static const Color background = Color(0xFFf2ffff);
-  static const Color purple = Color(0xFF673AB7);
-  static const Color red = Color(0xFFF44336);
-  static const Color pink = Color(0xFFE91E63);
-  static const Color blue = Color(0xFF2196F3);
-  static const Color green = Color(0xFF4CAF50);
+extension ColorUtil on BuildContext {
+  Color dynamicColor({required int light, required int dark}) {
+    return (Theme
+        .of(this)
+        .brightness == Brightness.light) ? Color(light) : Color(dark);
+  }
 
-  const AppColors();
+  Color dynamicColour({required Color light, required Color dark}) {
+    return (Theme
+        .of(this)
+        .brightness == Brightness.light) ? light : dark;
+  }
+
+  Color get main =>
+      dynamicColour(light: const Color(0xFF30c7c2), dark: const Color(0xFF30c7c2));
+
+  Color get main_2 =>
+      dynamicColour(light: const Color(0xFF199E99), dark: const Color(0xFF199E99));
+
+  Color get main_3 =>
+      dynamicColour(light: const Color(0xFF199E99), dark: const Color(0xFF199E99));
+
+  Color get grey_1 =>
+      dynamicColour(light: const Color(0xFF909090), dark: const Color(0xFF909090));
+
+  Color get grey_2 =>
+      dynamicColour(light: const Color(0xFF303030), dark: const Color(0xFF303030));
+
+  Color get grey_3 =>
+      dynamicColour(light: const Color(0xFFE3E3E3), dark: const Color(0xFFE3E3E3));
+
+  Color get grey_4 =>
+      dynamicColour(light: const Color(0xFFf2f2f2), dark: const Color(0xFFf2f2f2));
+
+  Color get grey_5 =>
+      dynamicColour(light: const Color(0xFFbfbfbf), dark: const Color(0xFFbfbfbf));
+
+  Color get white =>
+      dynamicColour(light: const Color(0xFFFFFFFF), dark: const Color(0xFFFFFFFF));
+
+  Color get black =>
+      dynamicColour(light: const Color(0xFF000000), dark: const Color(0xFF000000));
+
+  Color get transparent =>
+      dynamicColour(light: const Color(0x00000000), dark: const Color(0x00000000));
+
+  Color get background =>
+      dynamicColour(light: const Color(0xFFf2ffff), dark: const Color(0xFFf2ffff));
+
+  Color get purple =>
+      dynamicColour(light: const Color(0xFF673AB7), dark: const Color(0xFF673AB7));
+
+  Color get red =>
+      dynamicColour(light: const Color(0xFFF44336), dark: const Color(0xFFF44336));
+
+  Color get pink =>
+      dynamicColour(light: const Color(0xFFE91E63), dark: const Color(0xFFE91E63));
+
+  Color get blue =>
+      dynamicColour(light: const Color(0xFF2196F3), dark: const Color(0xFF2196F3));
 }

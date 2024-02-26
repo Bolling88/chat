@@ -133,7 +133,7 @@ class RoomChat extends Chat implements Comparable<RoomChat> {
   }
 
   @override
-  Color getChatColor(String userId) {
+  Color getChatColor(String userId, BuildContext context) {
     return Color(chatColor);
   }
 

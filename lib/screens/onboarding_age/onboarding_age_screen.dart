@@ -133,9 +133,9 @@ class OnboardingAgeScreenContent extends StatelessWidget {
                     .read<OnboardingAgeBloc>()
                     .add(OnboardingAgeChangedEvent(newDate));
               },
-              pickerTheme: const DateTimePickerTheme(
+              pickerTheme:  DateTimePickerTheme(
                 backgroundColor: Colors.transparent,
-                itemTextStyle: TextStyle(color: AppColors.grey_1, fontSize: 19),
+                itemTextStyle: TextStyle(color: context.grey_1, fontSize: 19),
                 dividerColor: Colors.white,
               ),
             ),
@@ -144,7 +144,7 @@ class OnboardingAgeScreenContent extends StatelessWidget {
               Text(
                 FlutterI18n.translate(context, "age_error"),
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: AppColors.red,
+                      color: context.red,
                     ),
               ),
             const SizedBox(height: 30),

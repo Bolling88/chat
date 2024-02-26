@@ -44,8 +44,8 @@ class _MessageEditTextWidgetState extends State<MessageEditTextWidget> {
             Padding(
               padding: const EdgeInsets.only(left: 10, right: 10, bottom: 10),
               child: Container(
-                decoration: const BoxDecoration(
-                  color: AppColors.grey_4,
+                decoration:  BoxDecoration(
+                  color: context.grey_4,
                     borderRadius: BorderRadius.all(Radius.circular(10.0))),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -73,9 +73,9 @@ class _MessageEditTextWidgetState extends State<MessageEditTextWidget> {
                               BlocProvider.of<MessagesBloc>(context)
                                   .add(MessagesReplyEventClear());
                             },
-                            icon: const Icon(
+                            icon:  Icon(
                               Icons.close,
-                              color: AppColors.main,
+                              color: context.main,
                             ))
                       ],
                     ),
@@ -87,7 +87,7 @@ class _MessageEditTextWidgetState extends State<MessageEditTextWidget> {
                         style: Theme.of(context)
                             .textTheme
                             .bodyMedium
-                            ?.merge(const TextStyle(color: AppColors.grey_1)),
+                            ?.merge( TextStyle(color: context.grey_1)),
                       ),
                     ),
                   ],
@@ -111,9 +111,9 @@ class _MessageEditTextWidgetState extends State<MessageEditTextWidget> {
                     style: Theme.of(context)
                         .textTheme
                         .bodyMedium
-                        ?.merge(const TextStyle(color: AppColors.main)),
+                        ?.merge( TextStyle(color: context.main)),
                     textCapitalization: TextCapitalization.sentences,
-                    cursorColor: AppColors.main,
+                    cursorColor: context.main,
                     onChanged: widget.onTextChanged,
                     onEditingComplete: () {
                       widget.onSendTapped.call(controller.text);
@@ -133,25 +133,25 @@ class _MessageEditTextWidgetState extends State<MessageEditTextWidget> {
                             },
                             icon: Icon(Icons.send,
                                 color: (controller.text.isNotEmpty)
-                                    ? AppColors.main
-                                    : AppColors.grey_1),
+                                    ? context.main
+                                    : context.grey_1),
                           ),
                         ),
                         enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10.0),
-                            borderSide: const BorderSide(
+                            borderSide:  BorderSide(
                               width: 2,
-                              color: AppColors.grey_1,
+                              color: context.grey_1,
                               style: BorderStyle.solid,
                             )),
                         focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10.0),
-                            borderSide: const BorderSide(
+                            borderSide:  BorderSide(
                               width: 3,
-                              color: AppColors.main,
+                              color: context.main,
                               style: BorderStyle.solid,
                             )),
-                        fillColor: AppColors.grey_4,
+                        fillColor: context.grey_4,
                         hintStyle: Theme.of(context).textTheme.bodyMedium,
                         contentPadding:
                             const EdgeInsets.only(left: 15, right: 15),
@@ -163,9 +163,9 @@ class _MessageEditTextWidgetState extends State<MessageEditTextWidget> {
               if (widget.currentMessage.isEmpty && widget.showGiphy)
                 Material(
                   child: InkWell(
-                    splashColor: AppColors.main.withOpacity(0.5),
-                    hoverColor: AppColors.main.withOpacity(0.5),
-                    highlightColor: AppColors.main.withOpacity(0.5),
+                    splashColor: context.main.withOpacity(0.5),
+                    hoverColor: context.main.withOpacity(0.5),
+                    highlightColor: context.main.withOpacity(0.5),
                     borderRadius: BorderRadius.circular(25.0),
                     onTap: widget.onTapGiphy,
                     child: Container(
@@ -173,11 +173,11 @@ class _MessageEditTextWidgetState extends State<MessageEditTextWidget> {
                       height: 50,
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(10.0),
-                          border: Border.all(color: AppColors.main, width: 3)),
-                      child: const Icon(
+                          border: Border.all(color: context.main, width: 3)),
+                      child:  Icon(
                         Icons.gif,
                         size: 30,
-                        color: AppColors.main,
+                        color: context.main,
                       ),
                     ),
                   ),

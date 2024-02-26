@@ -71,9 +71,9 @@ class VisitScreenContent extends StatelessWidget {
           return Container(
             height: _bottomsheetHeight,
             width: double.infinity,
-            decoration: const BoxDecoration(
-                color: AppColors.white,
-                borderRadius: BorderRadius.only(
+            decoration: BoxDecoration(
+                color: context.white,
+                borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(20),
                     topRight: Radius.circular(20))),
             child: Column(
@@ -162,19 +162,21 @@ class VisitScreenContent extends StatelessWidget {
                             style: Theme.of(context)
                                 .textTheme
                                 .bodyMedium
-                                ?.copyWith(color: AppColors.main),
+                                ?.copyWith(color: context.main),
                           )
                         : Text(FlutterI18n.translate(context, 'offline'),
                             style: Theme.of(context)
                                 .textTheme
                                 .bodyMedium
-                                ?.copyWith(color: AppColors.grey_1)),
+                                ?.copyWith(color: context.grey_1)),
                     const SizedBox(width: 5),
                     //If lats active is more than $onlineDuration ago, show offline dot
-                    getOnlineDot(user.lastActive >
-                        DateTime.now()
-                            .subtract(onlineDuration)
-                            .millisecondsSinceEpoch)
+                    getOnlineDot(
+                        user.lastActive >
+                            DateTime.now()
+                                .subtract(onlineDuration)
+                                .millisecondsSinceEpoch,
+                        context),
                   ],
                 ),
                 const SizedBox(height: 20),
@@ -229,8 +231,7 @@ class VisitScreenContent extends StatelessWidget {
                         state.userBlocked
                             ? Icons.check_circle_outline
                             : Icons.block,
-                        color:
-                            state.userBlocked ? AppColors.main : AppColors.red,
+                        color: state.userBlocked ? context.main : context.red,
                         size: 14,
                       ),
                       TextButton(
@@ -258,8 +259,8 @@ class VisitScreenContent extends StatelessWidget {
                               .bodyMedium
                               ?.copyWith(
                                   color: state.userBlocked
-                                      ? AppColors.main
-                                      : AppColors.red),
+                                      ? context.main
+                                      : context.red),
                         ),
                       ),
                     ],
@@ -269,9 +270,9 @@ class VisitScreenContent extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(
+                      Icon(
                         Icons.report,
-                        color: AppColors.red,
+                        color: context.red,
                         size: 14,
                       ),
                       TextButton(
@@ -286,7 +287,7 @@ class VisitScreenContent extends StatelessWidget {
                           style: Theme.of(context)
                               .textTheme
                               .bodyMedium
-                              ?.copyWith(color: AppColors.red),
+                              ?.copyWith(color: context.red),
                         ),
                       ),
                     ],
@@ -300,9 +301,9 @@ class VisitScreenContent extends StatelessWidget {
           return Container(
             width: double.infinity,
             height: _bottomsheetHeight,
-            decoration: const BoxDecoration(
-                color: AppColors.white,
-                borderRadius: BorderRadius.only(
+            decoration: BoxDecoration(
+                color: context.white,
+                borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(20),
                     topRight: Radius.circular(20))),
             child: Column(
@@ -324,9 +325,9 @@ class VisitScreenContent extends StatelessWidget {
           return Container(
             width: double.infinity,
             height: _bottomsheetHeight,
-            decoration: const BoxDecoration(
-                color: AppColors.white,
-                borderRadius: BorderRadius.only(
+            decoration: BoxDecoration(
+                color: context.white,
+                borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(20),
                     topRight: Radius.circular(20))),
             child: const Center(
@@ -381,20 +382,20 @@ AlertDialog getBlockAccountDialog(
   );
 }
 
-Future showVisitScreen(BuildContext parentContext, String userId, Chat? chat,
+Future showVisitScreen(BuildContext context, String userId, Chat? chat,
     bool showBackButton) async {
   await showModalBottomSheet(
     useRootNavigator: true,
     isScrollControlled: true,
-    context: parentContext,
-    backgroundColor: AppColors.transparent,
+    context: context,
+    backgroundColor: context.transparent,
     builder: (BuildContext context) {
       return Padding(
         padding:
             EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
         child: VisitScreen(
             userId: userId,
-            parentContext: parentContext,
+            parentContext: context,
             chat: chat,
             showBackButton: showBackButton),
       );

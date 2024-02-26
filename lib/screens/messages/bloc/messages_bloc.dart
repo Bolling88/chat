@@ -338,7 +338,9 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
 
   void _setUpChatClickedListener() {
     _chatClickedRepository.listenToChatClicked().listen((event) {
+      Log.d('Chat got clicked 1');
       if (event.id == chat.id && messagesStream == null) {
+        Log.d('Chat got clicked 2');
         _setUpMessagesListener(chat.id);
       }
     });

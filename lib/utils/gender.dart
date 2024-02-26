@@ -1,7 +1,4 @@
-import 'dart:ui';
-
 import 'package:chat/utils/app_colors.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 
@@ -33,26 +30,26 @@ String getGenderName(BuildContext context, Gender gender){
   }
 }
 
-Color getGenderColor(Gender gender) {
+Color getGenderColor(BuildContext context, Gender gender) {
   switch (gender) {
     case Gender.female:
-      return AppColors.pink;
+      return context.pink;
     case Gender.male:
-      return AppColors.main;
+      return context.main;
     case Gender.nonBinary:
-      return AppColors.purple;
+      return context.purple;
     case Gender.secret:
-      return AppColors.blue;
+      return context.blue;
   }
 }
 
-Widget getGenderIcon(Gender gender, {double size = 24}) {
+Widget getGenderIcon(BuildContext context, Gender gender, {double size = 24}) {
   if (gender == Gender.male) {
-    return Icon(Icons.male, color: getGenderColor(gender), size: size,);
+    return Icon(Icons.male, color: getGenderColor(context, gender), size: size,);
   } else if (gender == Gender.female) {
-    return  Icon(Icons.female, color: getGenderColor(gender),size: size,);
+    return  Icon(Icons.female, color: getGenderColor(context, gender),size: size,);
   } else if (gender == Gender.nonBinary) {
-    return  Icon(Icons.transgender, color: getGenderColor(gender),size: size,);
+    return  Icon(Icons.transgender, color: getGenderColor(context, gender),size: size,);
   } else {
     return  const SizedBox.shrink();
   }

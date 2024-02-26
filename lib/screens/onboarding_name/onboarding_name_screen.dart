@@ -1,8 +1,8 @@
+import 'package:chat/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import '../../repository/firestore_repository.dart';
-import '../../utils/app_colors.dart';
 import '../../utils/app_widgets.dart';
 import '../login/bloc/login_state.dart';
 import '../message_holder/message_holder_screen.dart';
@@ -135,7 +135,7 @@ class OnboardingNameScreenContent extends StatelessWidget {
                   autocorrect: false,
                   style: Theme.of(context).textTheme.bodyMedium,
                   textCapitalization: TextCapitalization.sentences,
-                  cursorColor: AppColors.main,
+                  cursorColor: context.main,
                   onChanged: (text) {
                     BlocProvider.of<OnboardingNameBloc>(context)
                         .add(OnboardingNameChangedEvent(text));
@@ -151,7 +151,7 @@ class OnboardingNameScreenContent extends StatelessWidget {
                             width: 0,
                             style: BorderStyle.none,
                           )),
-                      fillColor: AppColors.white,
+                      fillColor: context.white,
                       hintStyle: Theme.of(context).textTheme.bodyMedium,
                       contentPadding:
                           const EdgeInsets.only(left: 15, right: 15),

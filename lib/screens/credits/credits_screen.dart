@@ -1,10 +1,10 @@
+import 'package:chat/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:lottie/lottie.dart';
 import '../../model/chat_user.dart';
 import '../../repository/firestore_repository.dart';
-import '../../utils/app_colors.dart';
 import '../../utils/app_widgets.dart';
 import '../premium/premium_screen.dart';
 import 'bloc/credits_bloc.dart';
@@ -46,7 +46,7 @@ class CreditsScreenBuilder extends StatelessWidget {
           return Container(
             height: _bottomsheetHeight,
             width: double.infinity,
-            decoration: getDecoration(),
+            decoration: getDecoration(context),
             child: SafeArea(
               child: Padding(
                   padding: const EdgeInsets.only(
@@ -83,7 +83,7 @@ class CreditsScreenBuilder extends StatelessWidget {
           return Container(
             height: _bottomsheetHeight,
             width: double.infinity,
-            decoration: getDecoration(),
+            decoration: getDecoration(context),
             child: SafeArea(
               child: Padding(
                   padding: const EdgeInsets.only(
@@ -113,7 +113,7 @@ class CreditsScreenBuilder extends StatelessWidget {
           return Container(
             height: _bottomsheetHeight,
             width: double.infinity,
-            decoration: getDecoration(),
+            decoration: getDecoration(context),
             child: SafeArea(
               child: Padding(
                   padding: const EdgeInsets.only(
@@ -129,7 +129,7 @@ class CreditsScreenBuilder extends StatelessWidget {
           return Container(
             width: double.infinity,
             height: _bottomsheetHeight,
-            decoration: getDecoration(),
+            decoration: getDecoration(context),
             child: const Center(
               child: AppSpinner(),
             ),
@@ -139,26 +139,26 @@ class CreditsScreenBuilder extends StatelessWidget {
     );
   }
 
-  BoxDecoration getDecoration() {
-    return const BoxDecoration(
-        color: AppColors.white,
-        borderRadius: BorderRadius.only(
+  BoxDecoration getDecoration(BuildContext context) {
+    return BoxDecoration(
+        color: context.white,
+        borderRadius: const BorderRadius.only(
             topLeft: Radius.circular(20), topRight: Radius.circular(20)));
   }
 }
 
-Future showCreditsScreen(BuildContext parentContext, ChatUser user) async {
+Future showCreditsScreen(BuildContext context, ChatUser user) async {
   await showModalBottomSheet(
     useRootNavigator: true,
     isScrollControlled: true,
-    context: parentContext,
-    backgroundColor: AppColors.transparent,
+    context: context,
+    backgroundColor: context.transparent,
     builder: (BuildContext context) {
       return Padding(
         padding:
             EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
         child: CreditsScreen(
-          parentContext: parentContext,
+          parentContext: context,
           user: user,
         ),
       );

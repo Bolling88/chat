@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'package:chat/model/chat_user.dart';
 import 'package:chat/repository/firestore_repository.dart';
 import 'package:chat/screens/report/bloc/report_bloc.dart';
 import 'package:chat/screens/report/bloc/report_event.dart';
@@ -9,7 +8,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_widgets.dart';
-import '../../utils/translate.dart';
 
 class ReportScreen extends StatelessWidget {
   final BuildContext parentContext;
@@ -53,9 +51,9 @@ class ReportScreenContent extends StatelessWidget {
           return Container(
             height: _bottomsheetHeight,
             width: double.infinity,
-            decoration: const BoxDecoration(
-                color: AppColors.white,
-                borderRadius: BorderRadius.only(
+            decoration: BoxDecoration(
+                color: context.white,
+                borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(20),
                     topRight: Radius.circular(20))),
             child: Column(
@@ -105,7 +103,8 @@ class ReportScreenContent extends StatelessWidget {
                     BlocProvider.of<ReportBloc>(blocContext)
                         .add(ReportInappropriateImageEvent());
                   },
-                  label: Text( FlutterI18n.translate(context, 'inappropriate_image')),
+                  label: Text(
+                      FlutterI18n.translate(context, 'inappropriate_image')),
                 ),
                 const SizedBox(height: 20),
                 ElevatedButton.icon(
@@ -114,7 +113,8 @@ class ReportScreenContent extends StatelessWidget {
                     BlocProvider.of<ReportBloc>(blocContext)
                         .add(ReportHatefulLanguageEvent());
                   },
-                  label: Text( FlutterI18n.translate(context, 'hateful_language')),
+                  label:
+                      Text(FlutterI18n.translate(context, 'hateful_language')),
                 ),
                 const SizedBox(height: 20),
                 ElevatedButton.icon(
@@ -123,7 +123,7 @@ class ReportScreenContent extends StatelessWidget {
                     BlocProvider.of<ReportBloc>(blocContext)
                         .add(ReportBotEvent());
                   },
-                  label: Text( FlutterI18n.translate(context, 'likely_bot')),
+                  label: Text(FlutterI18n.translate(context, 'likely_bot')),
                 ),
               ],
             ),
@@ -132,9 +132,9 @@ class ReportScreenContent extends StatelessWidget {
           return Container(
             width: double.infinity,
             height: _bottomsheetHeight,
-            decoration: const BoxDecoration(
-                color: AppColors.white,
-                borderRadius: BorderRadius.only(
+            decoration: BoxDecoration(
+                color: context.white,
+                borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(20),
                     topRight: Radius.circular(20))),
             child: const Center(
@@ -147,17 +147,17 @@ class ReportScreenContent extends StatelessWidget {
   }
 }
 
-Future showReportScreen(BuildContext parentContext, String userId) async {
+Future showReportScreen(BuildContext context, String userId) async {
   await showModalBottomSheet(
     useRootNavigator: true,
-    context: parentContext,
+    context: context,
     isScrollControlled: true,
-    backgroundColor: AppColors.transparent,
+    backgroundColor: context.transparent,
     builder: (BuildContext context) {
       return Padding(
         padding:
             EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-        child: ReportScreen(parentContext: parentContext, userId: userId),
+        child: ReportScreen(parentContext: context, userId: userId),
       );
     },
   );

@@ -188,7 +188,7 @@ class ChatsScreenContent extends StatelessWidget {
                           final banner = state.bannerAd;
                           if (banner != null) {
                             return Container(
-                                color: AppColors.background,
+                                color: context.background,
                                 width: banner.size.width.toDouble(),
                                 height: banner.size.height.toDouble(),
                                 child: AdWidget(ad: banner));
@@ -311,7 +311,7 @@ class ChatsScreenContent extends StatelessWidget {
           ),
           Icon(
             isSeen ? Icons.check_circle : Icons.check_circle_outline,
-            color: isSeen ? AppColors.main : AppColors.grey_1,
+            color: isSeen ? context.main : context.grey_1,
           ),
           const SizedBox(
             width: 10,

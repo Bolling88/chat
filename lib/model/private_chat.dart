@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:chat/model/chat_user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import '../repository/firestore_repository.dart';
 import '../utils/gender.dart';
 import '../utils/time_util.dart';
@@ -151,10 +152,10 @@ class PrivateChat extends Chat implements Comparable<PrivateChat> {
   }
 
   @override
-  Color getChatColor(String userId) {
+  Color getChatColor(String userId, BuildContext context) {
     return userId == initiatedBy
-        ? getGenderColor(Gender.fromValue(otherUserGender))
-        : getGenderColor(Gender.fromValue(initiatedByUserGender));
+        ? getGenderColor(context,Gender.fromValue(otherUserGender))
+        : getGenderColor(context,Gender.fromValue(initiatedByUserGender));
   }
 
   @override

@@ -1,4 +1,5 @@
 import 'package:chat/screens/visit/visit_screen.dart';
+import 'package:chat/utils/app_colors.dart';
 import 'package:chat/utils/gender.dart';
 import 'package:chat/utils/lottie.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +8,6 @@ import 'package:flutter_i18n/flutter_i18n.dart';
 import '../../model/chat.dart';
 import '../../model/chat_user.dart';
 import '../../repository/firestore_repository.dart';
-import '../../utils/app_colors.dart';
 import '../../utils/app_widgets.dart';
 import '../../utils/constants.dart';
 import '../../utils/flag.dart';
@@ -59,8 +59,8 @@ class PeopleScreenBuilder extends StatelessWidget {
               height: getSize(context) == ScreenSize.large
                   ? double.infinity
                   : MediaQuery.of(context).size.height * 0.8,
-              decoration: const BoxDecoration(
-                color: AppColors.white,
+              decoration: BoxDecoration(
+                color: context.white,
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(20),
                   topRight: Radius.circular(20),
@@ -94,8 +94,8 @@ class PeopleScreenBuilder extends StatelessWidget {
             return Container(
               width: double.infinity,
               height: MediaQuery.of(context).size.height * 0.8,
-              decoration: const BoxDecoration(
-                  color: AppColors.white,
+              decoration: BoxDecoration(
+                  color: context.white,
                   borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(20),
                       topRight: Radius.circular(20))),
@@ -123,7 +123,7 @@ class PeopleScreenBuilder extends StatelessWidget {
                     style: Theme.of(context).textTheme.displaySmall?.merge(
                         TextStyle(
                             fontSize: 20,
-                            color: getGenderColor(
+                            color: getGenderColor(context,
                                 Gender.fromValue(users[index].gender))))),
                 const SizedBox(width: 4),
                 if (users[index].birthDate != null && users[index].showAge)
@@ -132,12 +132,12 @@ class PeopleScreenBuilder extends StatelessWidget {
                     style: Theme.of(context).textTheme.displaySmall?.merge(
                         TextStyle(
                             color: getGenderColor(
-                                Gender.fromValue(users[index].gender)),
+                                context, Gender.fromValue(users[index].gender)),
                             fontSize: 16)),
                   ),
                 if (users[index].birthDate != null && users[index].showAge)
                   const SizedBox(width: 4),
-                getGenderIcon(Gender.fromValue(users[index].gender)),
+                getGenderIcon(context, Gender.fromValue(users[index].gender)),
               ],
             ),
             trailing:
@@ -239,18 +239,18 @@ class PeopleScreenBuilder extends StatelessWidget {
                     style: Theme.of(context).textTheme.bodyMedium?.merge(
                         TextStyle(
                             color: (index == state.genderFilterIndex)
-                                ? AppColors.white
-                                : AppColors.main)),
+                                ? context.white
+                                : context.main)),
                   ),
                   selected: index == state.genderFilterIndex,
                   selectedColor: (index == 0)
-                      ? AppColors.main
-                      : getGenderColor(Gender.fromValue(index - 1)),
+                      ? context.main
+                      : getGenderColor(context, Gender.fromValue(index - 1)),
                   onSelected: (value) {
                     BlocProvider.of<PeopleBloc>(context)
                         .add(PeopleFilterEvent(index));
                   },
-                  checkmarkColor: AppColors.white,
+                  checkmarkColor: context.white,
                   // backgroundColor: color,
                   elevation: 1,
                   padding: const EdgeInsets.all(6.0),
@@ -264,16 +264,16 @@ class PeopleScreenBuilder extends StatelessWidget {
   }
 }
 
-Future showPeopleScreen(BuildContext parentContext, Chat? chat,
-    List<ChatUser>? initialUsers) async {
+Future showPeopleScreen(
+    BuildContext context, Chat? chat, List<ChatUser>? initialUsers) async {
   await showModalBottomSheet(
     useRootNavigator: true,
-    context: parentContext,
+    context: context,
     isScrollControlled: true,
-    backgroundColor: AppColors.transparent,
+    backgroundColor: context.transparent,
     builder: (BuildContext context) {
       return PeopleScreen(
-          chat: chat, parentContext: parentContext, users: initialUsers);
+          chat: chat, parentContext: context, users: initialUsers);
     },
   );
 }

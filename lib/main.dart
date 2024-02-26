@@ -20,6 +20,7 @@ import 'package:chat/screens/terms/eula.dart';
 import 'package:chat/screens/terms/privacy.dart';
 import 'package:chat/screens/terms/terms.dart';
 import 'package:chat/utils/app_colors.dart';
+import 'package:chat/utils/color_schemes.dart';
 import 'package:chat/utils/image_util.dart';
 import 'package:chat/utils/log.dart';
 import 'package:chat/utils/online_users_processor.dart';
@@ -54,8 +55,9 @@ Future<void> main() async {
   }
 
   try {
-    if(!kIsWeb) {
-      await Glassfy.initialize('bf2702924a484b569661bfcaeffd41f1',watcherMode: true);
+    if (!kIsWeb) {
+      await Glassfy.initialize('bf2702924a484b569661bfcaeffd41f1',
+          watcherMode: true);
     }
   } catch (e) {
     Log.e("Glassfy error: $e");
@@ -105,16 +107,20 @@ class KvitterApp extends StatelessWidget {
         // Once complete, show your application
         if (snapshot.connectionState == ConnectionState.done) {
           final SaveFile saveFile = SaveFile(prefs);
-          final OnlineUserProcessor onlineUsersProcessor = kIsWeb? WebOnlineUsersProcessor() : MobileOnlineUsersProcessor();
-          final FirestoreRepository firestoreRepository = FirestoreRepository(onlineUsersProcessor);
+          final OnlineUserProcessor onlineUsersProcessor =
+              kIsWeb ? WebOnlineUsersProcessor() : MobileOnlineUsersProcessor();
+          final FirestoreRepository firestoreRepository =
+              FirestoreRepository(onlineUsersProcessor);
           final LoginRepository loginRepository = LoginRepository();
           final StorageRepository storageRepository = StorageRepository();
           final FcmRepository fcmRepository =
               FcmRepository(firestoreRepository);
           final AppImageCropper appImageCropper = AppImageCropper(context);
           final PresenceDatabase presenceDatabase = PresenceDatabase();
-          final ChatClickedRepository chatClickedRepository = ChatClickedRepository();
-          final SubscriptionRepository subscriptionRepository = SubscriptionRepository();
+          final ChatClickedRepository chatClickedRepository =
+              ChatClickedRepository();
+          final SubscriptionRepository subscriptionRepository =
+              SubscriptionRepository();
 
           return MultiProvider(
             providers: [
@@ -126,8 +132,10 @@ class KvitterApp extends StatelessWidget {
               Provider<AppImageCropper>.value(value: appImageCropper),
               Provider<FcmRepository>.value(value: fcmRepository),
               Provider<OnlineUserProcessor>.value(value: onlineUsersProcessor),
-              Provider<ChatClickedRepository>.value(value: chatClickedRepository),
-              Provider<SubscriptionRepository>.value(value: subscriptionRepository),
+              Provider<ChatClickedRepository>.value(
+                  value: chatClickedRepository),
+              Provider<SubscriptionRepository>.value(
+                  value: subscriptionRepository),
             ],
             child: MaterialApp(
               title: 'Kvitter',
@@ -152,64 +160,8 @@ class KvitterApp extends StatelessWidget {
                 Locale('ne', 'NE'),
               ],
               builder: FlutterI18n.rootAppBuilder(),
-              theme: ThemeData(
-                useMaterial3: true,
-                primaryColor: AppColors.main,
-                colorScheme: ColorScheme.fromSeed(
-                  brightness: Brightness.light,
-                  seedColor: AppColors.main,
-                  background: AppColors.background,
-                ),
-                iconTheme: const IconThemeData(
-                  color: Colors.white, // <= You can change your color here.
-                ),
-                appBarTheme: AppBarTheme(
-                  backgroundColor: AppColors.main,
-                  elevation: 4,
-                  surfaceTintColor: AppColors.main,
-                  titleTextStyle:
-                      GoogleFonts.lobster(fontSize: 30, color: AppColors.white),
-                  shadowColor: Colors.black,
-                  toolbarTextStyle:
-                      GoogleFonts.lobster(fontSize: 30, color: AppColors.white),
-                  iconTheme: const IconThemeData(color: Colors.white),
-                ),
-                dialogTheme: DialogTheme(
-                  backgroundColor: AppColors.white,
-                  titleTextStyle:
-                      GoogleFonts.lobster(fontSize: 30, color: AppColors.main),
-                  contentTextStyle: const TextStyle(
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.grey_1,
-                      fontSize: 16),
-                ),
-                textTheme: TextTheme(
-                  displayLarge: GoogleFonts.lobster(color: AppColors.main),
-                  displayMedium: const TextStyle(
-                    color: AppColors.grey_1,
-                    fontWeight: FontWeight.w800,
-                  ),
-                  displaySmall: GoogleFonts.lobster(color: AppColors.main),
-                  titleLarge: const TextStyle(
-                    color: AppColors.grey_1,
-                    fontWeight: FontWeight.w800,
-                  ),
-                  titleMedium: const TextStyle(
-                    color: AppColors.grey_1,
-                    fontWeight: FontWeight.w800,
-                  ),
-                  titleSmall: const TextStyle(
-                    color: AppColors.grey_1,
-                    fontWeight: FontWeight.w800,
-                  ),
-                  bodyLarge: const TextStyle(
-                      fontWeight: FontWeight.w600, color: AppColors.grey_1),
-                  bodyMedium: const TextStyle(
-                      fontWeight: FontWeight.w600, color: AppColors.grey_1),
-                  bodySmall: const TextStyle(
-                      fontWeight: FontWeight.w400, color: AppColors.grey_1),
-                ),
-              ),
+              darkTheme: getDarkTheme(context),
+              theme: getLightTheme(context),
               home: const SplashScreen(),
               routes: {
                 LoginScreen.routeName: (context) => const LoginScreen(),
@@ -240,5 +192,107 @@ class KvitterApp extends StatelessWidget {
         return const LoadingScreen();
       },
     );
+  }
+
+  ThemeData getLightTheme(BuildContext context) {
+    return ThemeData(
+      useMaterial3: true,
+      primaryColor: context.main,
+      colorScheme: lightColorScheme,
+      iconTheme: const IconThemeData(
+        color: Colors.white, // <= You can change your color here.
+      ),
+      appBarTheme: AppBarTheme(
+        backgroundColor: context.main,
+        elevation: 4,
+        surfaceTintColor: context.main,
+        titleTextStyle: GoogleFonts.lobster(fontSize: 30, color: context.white),
+        shadowColor: Colors.black,
+        toolbarTextStyle:
+            GoogleFonts.lobster(fontSize: 30, color: context.white),
+        iconTheme: const IconThemeData(color: Colors.white),
+      ),
+      dialogTheme: DialogTheme(
+        backgroundColor: context.white,
+        titleTextStyle: GoogleFonts.lobster(fontSize: 30, color: context.main),
+        contentTextStyle: TextStyle(
+            fontWeight: FontWeight.w600, color: context.grey_1, fontSize: 16),
+      ),
+      textTheme: TextTheme(
+        displayLarge: GoogleFonts.lobster(color: context.main),
+        displayMedium: TextStyle(
+          color: context.grey_1,
+          fontWeight: FontWeight.w800,
+        ),
+        displaySmall: GoogleFonts.lobster(color: context.main),
+        titleLarge: TextStyle(
+          color: context.grey_1,
+          fontWeight: FontWeight.w800,
+        ),
+        titleMedium: TextStyle(
+          color: context.grey_1,
+          fontWeight: FontWeight.w800,
+        ),
+        titleSmall: TextStyle(
+          color: context.grey_1,
+          fontWeight: FontWeight.w800,
+        ),
+        bodyLarge:
+            TextStyle(fontWeight: FontWeight.w600, color: context.grey_1),
+        bodyMedium:
+            TextStyle(fontWeight: FontWeight.w600, color: context.grey_1),
+        bodySmall:
+            TextStyle(fontWeight: FontWeight.w400, color: context.grey_1),
+      ),
+    );
+  }
+
+  ThemeData getDarkTheme(BuildContext context) {
+    return ThemeData(
+        useMaterial3: true,
+        colorScheme: darkColorScheme,
+        appBarTheme: AppBarTheme(
+          backgroundColor: context.main,
+          elevation: 4,
+          surfaceTintColor: context.main,
+          titleTextStyle:
+              GoogleFonts.lobster(fontSize: 30, color: context.white),
+          shadowColor: Colors.black,
+          toolbarTextStyle:
+              GoogleFonts.lobster(fontSize: 30, color: context.white),
+          iconTheme: const IconThemeData(color: Colors.white),
+        ),
+        dialogTheme: DialogTheme(
+          backgroundColor: context.white,
+          titleTextStyle:
+              GoogleFonts.lobster(fontSize: 30, color: context.main),
+          contentTextStyle: TextStyle(
+              fontWeight: FontWeight.w600, color: context.grey_1, fontSize: 16),
+        ),
+        textTheme: TextTheme(
+            displayLarge: GoogleFonts.lobster(color: context.main),
+            displayMedium: TextStyle(
+              color: context.grey_1,
+              fontWeight: FontWeight.w800,
+            ),
+            displaySmall: GoogleFonts.lobster(color: context.main),
+            titleLarge: TextStyle(
+              color: context.grey_1,
+              fontWeight: FontWeight.w800,
+            ),
+            titleMedium: TextStyle(
+              color: context.grey_1,
+              fontWeight: FontWeight.w800,
+            ),
+            titleSmall: TextStyle(
+              color: context.grey_1,
+              fontWeight: FontWeight.w800,
+            ),
+            bodyLarge:
+                TextStyle(fontWeight: FontWeight.w600, color: context.grey_1),
+            bodyMedium:
+                TextStyle(fontWeight: FontWeight.w600, color: context.grey_1),
+            bodySmall:
+                TextStyle(fontWeight: FontWeight.w400, color: context.grey_1)));
   }
 }

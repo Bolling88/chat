@@ -210,7 +210,7 @@ class PremiumScreenBuilder extends StatelessWidget {
                   child: Text('${FlutterI18n.translate(context, "terms")},',
                       textAlign: TextAlign.center,
                       style: Theme.of(context).textTheme.bodySmall?.merge(
-                            const TextStyle(color: AppColors.main),
+                            TextStyle(color: context.main),
                           )),
                 ),
               ),
@@ -222,7 +222,7 @@ class PremiumScreenBuilder extends StatelessWidget {
                   child: Text(FlutterI18n.translate(context, "privacy"),
                       textAlign: TextAlign.center,
                       style: Theme.of(context).textTheme.bodySmall?.merge(
-                            const TextStyle(color: AppColors.main),
+                            TextStyle(color: context.main),
                           )),
                 ),
               ),
@@ -242,7 +242,7 @@ class PremiumScreenBuilder extends StatelessWidget {
                     child: Text(FlutterI18n.translate(context, "eula"),
                         textAlign: TextAlign.center,
                         style: Theme.of(context).textTheme.bodySmall?.merge(
-                              const TextStyle(color: AppColors.main),
+                              TextStyle(color: context.main),
                             )),
                   ),
                 ),

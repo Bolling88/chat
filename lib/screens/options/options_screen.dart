@@ -60,7 +60,7 @@ class OptionsScreenBuilder extends StatelessWidget {
         if (state is OptionsBaseState) {
           return Container(
             width: double.infinity,
-            decoration: getDecoration(),
+            decoration: getDecoration(context),
             child: SafeArea(
               child: Padding(
                 padding: const EdgeInsets.only(
@@ -79,9 +79,9 @@ class OptionsScreenBuilder extends StatelessWidget {
                         },
                         child: Column(
                           children: [
-                            const Icon(
+                            Icon(
                               Icons.reply,
-                              color: AppColors.main,
+                              color: context.main,
                             ),
                             Text(FlutterI18n.translate(context, 'reply'),
                                 style: Theme.of(context).textTheme.bodyMedium),
@@ -102,9 +102,9 @@ class OptionsScreenBuilder extends StatelessWidget {
                         },
                         child: Column(
                           children: [
-                            const Icon(
+                            Icon(
                               Icons.translate,
-                              color: AppColors.main,
+                              color: context.main,
                             ),
                             Text(FlutterI18n.translate(context, 'translate'),
                                 style: Theme.of(context).textTheme.bodyMedium),
@@ -117,9 +117,9 @@ class OptionsScreenBuilder extends StatelessWidget {
                                       style: Theme.of(context)
                                           .textTheme
                                           .bodyMedium),
-                                  const Icon(
+                                  Icon(
                                     Icons.paid_outlined,
-                                    color: AppColors.grey_1,
+                                    color: context.grey_1,
                                     size: 18,
                                   ),
                                   Text(
@@ -152,9 +152,9 @@ class OptionsScreenBuilder extends StatelessWidget {
                         },
                         child: Column(
                           children: [
-                            const Icon(
+                            Icon(
                               Icons.copy,
-                              color: AppColors.main,
+                              color: context.main,
                             ),
                             Text(FlutterI18n.translate(context, 'copy_text'),
                                 style: Theme.of(context).textTheme.bodyMedium),
@@ -172,9 +172,9 @@ class OptionsScreenBuilder extends StatelessWidget {
                         },
                         child: Column(
                           children: [
-                            const Icon(
+                            Icon(
                               Icons.report,
-                              color: AppColors.main,
+                              color: context.main,
                             ),
                             Text(FlutterI18n.translate(context, 'report'),
                                 style: Theme.of(context).textTheme.bodyMedium),
@@ -191,7 +191,7 @@ class OptionsScreenBuilder extends StatelessWidget {
           return Container(
             width: double.infinity,
             height: 100,
-            decoration: getDecoration(),
+            decoration: getDecoration(context),
             child: const Center(
               child: AppSpinner(),
             ),
@@ -201,30 +201,30 @@ class OptionsScreenBuilder extends StatelessWidget {
     );
   }
 
-  BoxDecoration getDecoration() {
-    return const BoxDecoration(
-        color: AppColors.white,
+  BoxDecoration getDecoration(BuildContext context) {
+    return BoxDecoration(
+        color: context.white,
         borderRadius: BorderRadius.only(
             topLeft: Radius.circular(20), topRight: Radius.circular(20)));
   }
 }
 
-Future showOptionsScreen(BuildContext parentContext, Message message) async {
+Future showOptionsScreen(BuildContext context, Message message) async {
   await showModalBottomSheet(
     useRootNavigator: true,
     isScrollControlled: true,
-    context: parentContext,
-    backgroundColor: AppColors.transparent,
+    context: context,
+    backgroundColor: context.transparent,
     builder: (BuildContext context) {
       return Padding(
         padding:
             EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
         child: OptionsScreen(
-          parentContext: parentContext,
+          parentContext: context,
           message: message,
         ),
       );
     },
-  ).whenComplete(() => BlocProvider.of<MessagesBloc>(parentContext)
+  ).whenComplete(() => BlocProvider.of<MessagesBloc>(context)
       .add(MessagesMarkedEvent(message: message, marked: false)));
 }

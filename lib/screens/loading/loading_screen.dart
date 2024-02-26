@@ -12,8 +12,8 @@ class LoadingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: AppColors.background,
-      child: Center(
+      color: context.background,
+      child: const Center(
         child: AppSpinner(),
       ),
     );

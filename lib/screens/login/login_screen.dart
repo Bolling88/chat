@@ -116,7 +116,7 @@ class LoginScreenContent extends StatelessWidget {
               style: Theme.of(context)
                   .textTheme
                   .displayLarge
-                  ?.merge(const TextStyle(color: AppColors.main)),
+                  ?.merge(TextStyle(color: context.main)),
             ),
             Text(
               FlutterI18n.translate(context, "chat_rooms_intro"),
@@ -178,7 +178,7 @@ class LoginScreenContent extends StatelessWidget {
               child: Text('${FlutterI18n.translate(context, "terms")},',
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodySmall?.merge(
-                        const TextStyle(color: AppColors.main),
+                        TextStyle(color: context.main),
                       )),
             ),
             GestureDetector(
@@ -188,7 +188,7 @@ class LoginScreenContent extends StatelessWidget {
               child: Text(FlutterI18n.translate(context, "privacy"),
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodySmall?.merge(
-                        const TextStyle(color: AppColors.main),
+                        TextStyle(color: context.main),
                       )),
             ),
             Text(
@@ -203,7 +203,7 @@ class LoginScreenContent extends StatelessWidget {
               child: Text(FlutterI18n.translate(context, "eula"),
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.bodySmall?.merge(
-                        const TextStyle(color: AppColors.main),
+                        TextStyle(color: context.main),
                       )),
             ),
             const SizedBox(height: 40),

@@ -4,10 +4,10 @@ import 'package:chat/repository/firestore_repository.dart';
 import 'package:chat/screens/feedback/bloc/feedback_bloc.dart';
 import 'package:chat/screens/feedback/bloc/feedback_event.dart';
 import 'package:chat/screens/feedback/bloc/feedback_state.dart';
+import 'package:chat/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
-import '../../utils/app_colors.dart';
 import '../../utils/app_widgets.dart';
 import '../../utils/translate.dart';
 import '../messages/message_edit_text_widget.dart';
@@ -58,8 +58,8 @@ class FeedbackScreenContent extends StatelessWidget {
           return Container(
             height: _bottomsheetHeight,
             width: double.infinity,
-            decoration: const BoxDecoration(
-                color: AppColors.white,
+            decoration: BoxDecoration(
+                color: context.white,
                 borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(20),
                     topRight: Radius.circular(20))),
@@ -136,9 +136,9 @@ class FeedbackScreenContent extends StatelessWidget {
           return Container(
             width: double.infinity,
             height: _bottomsheetHeight,
-            decoration: const BoxDecoration(
-                color: AppColors.white,
-                borderRadius: BorderRadius.only(
+            decoration: BoxDecoration(
+                color: context.white,
+                borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(20),
                     topRight: Radius.circular(20))),
             child: const Center(
@@ -151,17 +151,17 @@ class FeedbackScreenContent extends StatelessWidget {
   }
 }
 
-Future showFeedbackScreen(BuildContext parentContext, ChatUser user) async {
+Future showFeedbackScreen(BuildContext context, ChatUser user) async {
   await showModalBottomSheet(
     useRootNavigator: true,
-    context: parentContext,
+    context: context,
     isScrollControlled: true,
-    backgroundColor: AppColors.transparent,
+    backgroundColor: context.transparent,
     builder: (BuildContext context) {
       return Padding(
         padding:
             EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-        child: FeedbackScreen(parentContext: parentContext, user: user),
+        child: FeedbackScreen(parentContext: context, user: user),
       );
     },
   );

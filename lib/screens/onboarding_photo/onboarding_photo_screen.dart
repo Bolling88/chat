@@ -323,11 +323,11 @@ Flexible getOptionWidget(
               style: ButtonStyle(
                 elevation: MaterialStateProperty.all<double>(2.0),
                 backgroundColor:
-                    MaterialStateProperty.all<Color>(AppColors.white),
+                    MaterialStateProperty.all<Color>(context.white),
                 overlayColor: MaterialStateProperty.resolveWith(
                   (states) {
                     return states.contains(MaterialState.pressed)
-                        ? AppColors.main
+                        ? context.main
                         : null;
                   },
                 ),

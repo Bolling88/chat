@@ -108,13 +108,14 @@ class AccountScreenBuilder extends StatelessWidget {
                       )
                     ],
                   )
-                else if(!kIsWeb)
+                else if (!kIsWeb)
                   Padding(
                     padding: const EdgeInsets.only(top: 20),
                     child: ElevatedButton.icon(
                       icon: const Icon(Icons.block),
                       onPressed: () {
-                        Navigator.pushNamed(blocContext, PremiumScreen.routeName);
+                        Navigator.pushNamed(
+                            blocContext, PremiumScreen.routeName);
                       },
                       label: Text(translate(context, 'remove_ads')),
                     ),
@@ -207,7 +208,7 @@ class AccountScreenBuilder extends StatelessWidget {
       BuildContext blocContext, BuildContext context) {
     return AlertDialog(
       title: Text(translate(context, 'delete_account'),
-          style: const TextStyle(color: AppColors.red)),
+          style: TextStyle(color: context.red)),
       content: Text(translate(context, 'delete_account_info')),
       actions: [
         TextButton(
@@ -249,15 +250,17 @@ Row getProfileRow({
       Text(displayName,
           textAlign: TextAlign.left,
           style: Theme.of(context).textTheme.displaySmall?.merge(TextStyle(
-              color: getGenderColor(Gender.fromValue(gender)), fontSize: 26))),
-      getGenderIcon(Gender.fromValue(gender)),
+              color: getGenderColor(context, Gender.fromValue(gender)),
+              fontSize: 26))),
+      getGenderIcon(context, Gender.fromValue(gender)),
       const SizedBox(width: 2),
       //Show age
       if (birthDate != null && showAge)
         Text(
           getAge(birthDate),
           style: Theme.of(context).textTheme.displaySmall?.merge(TextStyle(
-              color: getGenderColor(Gender.fromValue(gender)), fontSize: 26)),
+              color: getGenderColor(context, Gender.fromValue(gender)),
+              fontSize: 26)),
         ),
       if (birthDate != null) const SizedBox(width: 8),
       getFlag(countryCode: countryCode, fontSize: 30),

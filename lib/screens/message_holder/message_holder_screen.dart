@@ -5,6 +5,7 @@ import 'package:chat/repository/subscription_repository.dart';
 import 'package:chat/screens/chat/chat_screen.dart';
 import 'package:chat/screens/feedback/feedback_screen.dart';
 import 'package:chat/screens/visit/visit_screen.dart';
+import 'package:chat/utils/app_colors.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -17,7 +18,6 @@ import '../../model/chat_user.dart';
 import '../../model/private_chat.dart';
 import '../../model/room_chat.dart';
 import '../../repository/presence_database.dart';
-import '../../utils/app_colors.dart';
 import '../../utils/app_widgets.dart';
 import '../account/account_screen.dart';
 import '../app_life_cycle/app_life_cycle_screen.dart';
@@ -150,7 +150,7 @@ class MessageHolderScreenContent extends StatelessWidget {
     return Container(
       width: double.infinity,
       height: double.infinity,
-      color: AppColors.main,
+      color: context.main,
       child: Center(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -177,7 +177,7 @@ class MessageHolderScreenContent extends StatelessWidget {
 
   Widget getSideMenu(MessageHolderBaseState state, BuildContext context) {
     return Container(
-      color: AppColors.grey_3,
+      color: context.grey_3,
       width: 60,
       child: ListView.builder(
           itemCount: state.privateChats.length + 2,
@@ -215,18 +215,18 @@ class MessageHolderScreenContent extends StatelessWidget {
         type: MaterialType.card,
         elevation: 2,
         color: (state.selectedChatIndex == index)
-            ? AppColors.background
+            ? context.background
             : (index == 0)
                 ? (state.roomChat?.lastMessageReadByUser == true ||
                         state.roomChat == null)
-                    ? AppColors.grey_5
-                    : AppColors.main
+                    ? context.grey_5
+                    : context.main
                 : (index == state.privateChats.length + 1)
-                    ? AppColors.main
+                    ? context.main
                     : (state.privateChats[index - 1].lastMessageReadBy
                             .contains(getUserId()))
-                        ? AppColors.grey_5
-                        : AppColors.main,
+                        ? context.grey_5
+                        : context.main,
         shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(5.0),
@@ -248,8 +248,8 @@ class MessageHolderScreenContent extends StatelessWidget {
                         style: Theme.of(context).textTheme.bodySmall?.merge(
                               TextStyle(
                                   color: state.selectedChatIndex == index
-                                      ? AppColors.main
-                                      : AppColors.white,
+                                      ? context.main
+                                      : context.white,
                                   fontWeight: FontWeight.bold),
                             )),
                   )
@@ -265,8 +265,8 @@ class MessageHolderScreenContent extends StatelessWidget {
                           style: Theme.of(context).textTheme.bodySmall?.merge(
                                 TextStyle(
                                     color: state.selectedChatIndex == index
-                                        ? AppColors.main
-                                        : AppColors.white,
+                                        ? context.main
+                                        : context.white,
                                     fontWeight: FontWeight.bold),
                               ),
                         ),
@@ -312,7 +312,8 @@ class MessageHolderScreenContent extends StatelessWidget {
           children: [
             if (chat != null) getChatImage(chat, state.onlineUsers, context),
             if (chat != null) const SizedBox(width: 8),
-            if (chat != null) getOnlineStatusWidget(chat, state.onlineUsers),
+            if (chat != null)
+              getOnlineStatusWidget(chat, state.onlineUsers, context),
             if (chat != null) const SizedBox(width: 8),
             Expanded(
               child: Text(
@@ -327,8 +328,8 @@ class MessageHolderScreenContent extends StatelessWidget {
         ),
       ),
       backgroundColor:
-          chat?.getChatColor(FirebaseAuth.instance.currentUser!.uid) ??
-              AppColors.main,
+          chat?.getChatColor(FirebaseAuth.instance.currentUser!.uid, context) ??
+              context.main,
       actions: [
         MediaQuery.of(context).size.width >
                 (state.privateChats.isEmpty ? 855 : 970)
@@ -350,14 +351,14 @@ class MessageHolderScreenContent extends StatelessWidget {
                         Text(
                           state.onlineUsers.length.toString(),
                           style: Theme.of(context).textTheme.bodyLarge?.merge(
-                              const TextStyle(
-                                  color: AppColors.white,
+                              TextStyle(
+                                  color: context.white,
                                   fontWeight: FontWeight.bold)),
                         ),
                         const SizedBox(width: 2),
-                        const Icon(
+                        Icon(
                           Icons.person,
-                          color: AppColors.white,
+                          color: context.white,
                         )
                       ],
                     ),
@@ -476,24 +477,25 @@ Widget getChatImage(
   }
 }
 
-Widget getOnlineStatusWidget(Chat chat, List<ChatUser> onlineUsers) {
+Widget getOnlineStatusWidget(
+    Chat chat, List<ChatUser> onlineUsers, BuildContext context) {
   if (chat.isPrivateChat() == true) {
     final user = onlineUsers
         .where((element) => element.id == chat.getOtherUserId(getUserId()))
         .firstOrNull;
-    return getOnlineDot(user != null);
+    return getOnlineDot(user != null, context);
   } else {
     return const SizedBox.shrink();
   }
 }
 
-Container getOnlineDot(bool isOnline) {
+Container getOnlineDot(bool isOnline, BuildContext context) {
   return Container(
     width: 14,
     height: 14,
-    decoration: const BoxDecoration(
+    decoration: BoxDecoration(
       shape: BoxShape.circle,
-      color: AppColors.white,
+      color: context.white,
     ),
     child: Center(
       child: Container(
@@ -501,7 +503,7 @@ Container getOnlineDot(bool isOnline) {
         height: 10,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          color: isOnline ? AppColors.main : AppColors.grey_1,
+          color: isOnline ? context.main : context.grey_1,
         ),
       ),
     ),

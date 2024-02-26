@@ -10,7 +10,7 @@ class ErrorScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: AppColors.background,
+      color: context.background,
       child: const Center(child: Text('Unknown error')),
     );
   }

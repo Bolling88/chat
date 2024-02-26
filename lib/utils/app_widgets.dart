@@ -1,10 +1,10 @@
 import 'package:blur/blur.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:chat/utils/app_colors.dart';
 import 'package:chat/utils/translate.dart';
 import 'package:flutter/material.dart';
 import '../repository/firestore_repository.dart';
 import '../screens/full_screen_image/full_screen_image_screen.dart';
-import 'app_colors.dart';
 import 'gender.dart';
 
 class AppSpinner extends StatelessWidget {
@@ -40,7 +40,7 @@ class AppUserImage extends StatelessWidget {
               blur: shouldBlur(url, imageReports, approvalState) ? 6 : 0,
               colorOpacity:
                   shouldBlur(url, imageReports, approvalState) ? 0.5 : 0,
-              blurColor: AppColors.white,
+              blurColor: context.white,
               child: getImage(),
             )
           : getImage(),
@@ -75,7 +75,7 @@ class AppErrorScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      color: AppColors.white,
+      color: context.white,
       child: Center(
           child: Text(
         message ?? translate(context, 'unknown_error'),

@@ -1,19 +1,10 @@
 //a bloc builder widget class for creating a chat
 import 'package:chat/screens/login/login_screen.dart';
-import 'package:chat/screens/onboarding_name/onboarding_name_screen.dart';
-import 'package:chat/utils/gender.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../repository/firestore_repository.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_widgets.dart';
-import '../../utils/flag.dart';
-import '../../utils/lottie.dart';
-import '../../utils/translate.dart';
-import '../feedback/feedback_screen.dart';
-import '../messages/other_message_widget.dart';
-import '../onboarding_gender/onboarding_gender_screen.dart';
-import '../onboarding_photo/onboarding_photo_screen.dart';
 import 'bloc/review_bloc.dart';
 import 'bloc/review_event.dart';
 import 'bloc/review_state.dart';
@@ -74,9 +65,9 @@ class ReviewScreenBuilder extends StatelessWidget {
                         Expanded(
                           child: IconButton(
                             iconSize: 60,
-                            icon: const Icon(
+                            icon:  Icon(
                               Icons.check,
-                              color: AppColors.main,
+                              color: context.main,
                             ),
                             onPressed: () {
                               BlocProvider.of<ReviewBloc>(blocContext)
@@ -91,9 +82,9 @@ class ReviewScreenBuilder extends StatelessWidget {
                               BlocProvider.of<ReviewBloc>(blocContext)
                                   .add(ReviewRejectEvent(state.underReview));
                             },
-                            icon: const Icon(
+                            icon:  Icon(
                               Icons.close,
-                              color: AppColors.red,
+                              color: context.red,
                             ),
                           ),
                         ),
