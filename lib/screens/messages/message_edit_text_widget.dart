@@ -46,7 +46,7 @@ class _MessageEditTextWidgetState extends State<MessageEditTextWidget> {
               child: Container(
                 decoration:  BoxDecoration(
                   color: context.grey_4,
-                    borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                    borderRadius: const BorderRadius.all(Radius.circular(10.0))),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.start,
@@ -87,7 +87,7 @@ class _MessageEditTextWidgetState extends State<MessageEditTextWidget> {
                         style: Theme.of(context)
                             .textTheme
                             .bodyMedium
-                            ?.merge( TextStyle(color: context.grey_1)),
+                            ?.merge( TextStyle(color: context.textColor)),
                       ),
                     ),
                   ],
@@ -134,14 +134,14 @@ class _MessageEditTextWidgetState extends State<MessageEditTextWidget> {
                             icon: Icon(Icons.send,
                                 color: (controller.text.isNotEmpty)
                                     ? context.main
-                                    : context.grey_1),
+                                    : context.textColor),
                           ),
                         ),
                         enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10.0),
                             borderSide:  BorderSide(
                               width: 2,
-                              color: context.grey_1,
+                              color: context.textColor,
                               style: BorderStyle.solid,
                             )),
                         focusedBorder: OutlineInputBorder(
@@ -152,7 +152,9 @@ class _MessageEditTextWidgetState extends State<MessageEditTextWidget> {
                               style: BorderStyle.solid,
                             )),
                         fillColor: context.grey_4,
-                        hintStyle: Theme.of(context).textTheme.bodyMedium,
+                        hintStyle: Theme.of(context).textTheme.bodyMedium?.merge(
+                              TextStyle(color: context.textColor),
+                            ),
                         contentPadding:
                             const EdgeInsets.only(left: 15, right: 15),
                         hintText: widget.hintText)),

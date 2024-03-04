@@ -48,14 +48,9 @@ class ReportScreenContent extends StatelessWidget {
       child:
           BlocBuilder<ReportBloc, ReportState>(builder: (blocContext, state) {
         if (state is ReportBaseState) {
-          return Container(
+          return SizedBox(
             height: _bottomsheetHeight,
             width: double.infinity,
-            decoration: BoxDecoration(
-                color: context.white,
-                borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(20),
-                    topRight: Radius.circular(20))),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -129,15 +124,10 @@ class ReportScreenContent extends StatelessWidget {
             ),
           );
         } else {
-          return Container(
+          return const SizedBox(
             width: double.infinity,
             height: _bottomsheetHeight,
-            decoration: BoxDecoration(
-                color: context.white,
-                borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(20),
-                    topRight: Radius.circular(20))),
-            child: const Center(
+            child: Center(
               child: AppSpinner(),
             ),
           );
@@ -147,17 +137,16 @@ class ReportScreenContent extends StatelessWidget {
   }
 }
 
-Future showReportScreen(BuildContext context, String userId) async {
+Future showReportScreen(BuildContext parentContext, String userId) async {
   await showModalBottomSheet(
     useRootNavigator: true,
-    context: context,
+    context: parentContext,
     isScrollControlled: true,
-    backgroundColor: context.transparent,
     builder: (BuildContext context) {
       return Padding(
         padding:
             EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-        child: ReportScreen(parentContext: context, userId: userId),
+        child: ReportScreen(parentContext: parentContext, userId: userId),
       );
     },
   );

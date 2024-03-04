@@ -216,33 +216,42 @@ class KvitterApp extends StatelessWidget {
         backgroundColor: context.white,
         titleTextStyle: GoogleFonts.lobster(fontSize: 30, color: context.main),
         contentTextStyle: TextStyle(
-            fontWeight: FontWeight.w600, color: context.grey_1, fontSize: 16),
+            fontWeight: FontWeight.w600,
+            color: context.textColor,
+            fontSize: 16),
+      ),
+      bottomSheetTheme: BottomSheetThemeData(
+        backgroundColor: context.backgroundColor,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+        ),
       ),
       textTheme: TextTheme(
         displayLarge: GoogleFonts.lobster(color: context.main),
         displayMedium: TextStyle(
-          color: context.grey_1,
+          color: context.textColor,
           fontWeight: FontWeight.w800,
         ),
         displaySmall: GoogleFonts.lobster(color: context.main),
         titleLarge: TextStyle(
-          color: context.grey_1,
+          color: context.textColor,
           fontWeight: FontWeight.w800,
         ),
         titleMedium: TextStyle(
-          color: context.grey_1,
+          color: context.textColor,
           fontWeight: FontWeight.w800,
         ),
         titleSmall: TextStyle(
-          color: context.grey_1,
+          color: context.textColor,
           fontWeight: FontWeight.w800,
         ),
         bodyLarge:
-            TextStyle(fontWeight: FontWeight.w600, color: context.grey_1),
+            TextStyle(fontWeight: FontWeight.w600, color: context.textColor),
         bodyMedium:
-            TextStyle(fontWeight: FontWeight.w600, color: context.grey_1),
+            TextStyle(fontWeight: FontWeight.w600, color: context.textColor),
         bodySmall:
-            TextStyle(fontWeight: FontWeight.w400, color: context.grey_1),
+            TextStyle(fontWeight: FontWeight.w400, color: context.textColor),
       ),
     );
   }
@@ -252,47 +261,56 @@ class KvitterApp extends StatelessWidget {
         useMaterial3: true,
         colorScheme: darkColorScheme,
         appBarTheme: AppBarTheme(
-          backgroundColor: context.main,
+          backgroundColor: const Color(0xFF002022),
           elevation: 4,
           surfaceTintColor: context.main,
           titleTextStyle:
-              GoogleFonts.lobster(fontSize: 30, color: context.white),
+              GoogleFonts.lobster(fontSize: 30, color: const Color(0xFFFFFFFF)),
           shadowColor: Colors.black,
           toolbarTextStyle:
-              GoogleFonts.lobster(fontSize: 30, color: context.white),
-          iconTheme: const IconThemeData(color: Colors.white),
+              GoogleFonts.lobster(fontSize: 30, color: const Color(0xFFFFFFFF)),
+          iconTheme: const IconThemeData(color: Color(0xFFFFFFFF)),
+        ),
+        bottomSheetTheme: const BottomSheetThemeData(
+          backgroundColor: Color(0xFF002022),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20), topRight: Radius.circular(20)),
+          ),
         ),
         dialogTheme: DialogTheme(
-          backgroundColor: context.white,
+          backgroundColor: const Color(0xFF002022),
           titleTextStyle:
-              GoogleFonts.lobster(fontSize: 30, color: context.main),
-          contentTextStyle: TextStyle(
-              fontWeight: FontWeight.w600, color: context.grey_1, fontSize: 16),
+              GoogleFonts.lobster(fontSize: 30, color: const Color(0xFF30c7c2)),
+          contentTextStyle: const TextStyle(
+              fontWeight: FontWeight.w600,
+              color: Color(0xFFFFFFFF),
+              fontSize: 16),
         ),
         textTheme: TextTheme(
-            displayLarge: GoogleFonts.lobster(color: context.main),
-            displayMedium: TextStyle(
-              color: context.grey_1,
+            displayLarge: GoogleFonts.lobster(color: const Color(0xFF30c7c2)),
+            displayMedium: const TextStyle(
+              color: Color(0xFFFFFFFF),
               fontWeight: FontWeight.w800,
             ),
-            displaySmall: GoogleFonts.lobster(color: context.main),
-            titleLarge: TextStyle(
-              color: context.grey_1,
+            displaySmall: GoogleFonts.lobster(color: const Color(0xFF30c7c2)),
+            titleLarge: const TextStyle(
+              color: Color(0xFFFFFFFF),
               fontWeight: FontWeight.w800,
             ),
-            titleMedium: TextStyle(
-              color: context.grey_1,
+            titleMedium: const TextStyle(
+              color: Color(0xFFFFFFFF),
               fontWeight: FontWeight.w800,
             ),
-            titleSmall: TextStyle(
-              color: context.grey_1,
+            titleSmall: const TextStyle(
+              color: Color(0xFFFFFFFF),
               fontWeight: FontWeight.w800,
             ),
-            bodyLarge:
-                TextStyle(fontWeight: FontWeight.w600, color: context.grey_1),
-            bodyMedium:
-                TextStyle(fontWeight: FontWeight.w600, color: context.grey_1),
-            bodySmall:
-                TextStyle(fontWeight: FontWeight.w400, color: context.grey_1)));
+            bodyLarge: const TextStyle(
+                fontWeight: FontWeight.w600, color: Color(0xFFFFFFFF)),
+            bodyMedium: const TextStyle(
+                fontWeight: FontWeight.w600, color: Color(0xFFFFFFFF)),
+            bodySmall: const TextStyle(
+                fontWeight: FontWeight.w400, color: Color(0xFFFFFFFF))));
   }
 }

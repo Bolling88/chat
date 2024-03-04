@@ -157,7 +157,7 @@ class AppOtherMessageWidget extends StatelessWidget {
                   style: Theme.of(context).textTheme.bodyMedium?.merge(
                         TextStyle(
                           color:
-                              message.marked ? context.white : context.grey_1,
+                              message.marked ? context.white : context.textColor,
                           fontSize: isOnlyEmojis(message.text)
                               ? 40
                               : Theme.of(context)

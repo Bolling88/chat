@@ -55,14 +55,9 @@ class FeedbackScreenContent extends StatelessWidget {
       child: BlocBuilder<FeedbackBloc, FeedbackState>(
           builder: (blocContext, state) {
         if (state is FeedbackBaseState) {
-          return Container(
+          return SizedBox(
             height: _bottomsheetHeight,
             width: double.infinity,
-            decoration: BoxDecoration(
-                color: context.white,
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(20),
-                    topRight: Radius.circular(20))),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -133,15 +128,10 @@ class FeedbackScreenContent extends StatelessWidget {
             ),
           );
         } else {
-          return Container(
+          return const SizedBox(
             width: double.infinity,
             height: _bottomsheetHeight,
-            decoration: BoxDecoration(
-                color: context.white,
-                borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(20),
-                    topRight: Radius.circular(20))),
-            child: const Center(
+            child: Center(
               child: AppSpinner(),
             ),
           );
@@ -151,17 +141,16 @@ class FeedbackScreenContent extends StatelessWidget {
   }
 }
 
-Future showFeedbackScreen(BuildContext context, ChatUser user) async {
+Future showFeedbackScreen(BuildContext parentContext, ChatUser user) async {
   await showModalBottomSheet(
     useRootNavigator: true,
-    context: context,
+    context: parentContext,
     isScrollControlled: true,
-    backgroundColor: context.transparent,
     builder: (BuildContext context) {
       return Padding(
         padding:
             EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-        child: FeedbackScreen(parentContext: context, user: user),
+        child: FeedbackScreen(parentContext: parentContext, user: user),
       );
     },
   );

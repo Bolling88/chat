@@ -58,9 +58,8 @@ class OptionsScreenBuilder extends StatelessWidget {
       child:
           BlocBuilder<OptionsBloc, OptionsState>(builder: (blocContext, state) {
         if (state is OptionsBaseState) {
-          return Container(
+          return SizedBox(
             width: double.infinity,
-            decoration: getDecoration(context),
             child: SafeArea(
               child: Padding(
                 padding: const EdgeInsets.only(
@@ -119,7 +118,7 @@ class OptionsScreenBuilder extends StatelessWidget {
                                           .bodyMedium),
                                   Icon(
                                     Icons.paid_outlined,
-                                    color: context.grey_1,
+                                    color: context.textColor,
                                     size: 18,
                                   ),
                                   Text(
@@ -188,11 +187,10 @@ class OptionsScreenBuilder extends StatelessWidget {
             ),
           );
         } else {
-          return Container(
+          return const SizedBox(
             width: double.infinity,
             height: 100,
-            decoration: getDecoration(context),
-            child: const Center(
+            child: Center(
               child: AppSpinner(),
             ),
           );
@@ -200,31 +198,23 @@ class OptionsScreenBuilder extends StatelessWidget {
       }),
     );
   }
-
-  BoxDecoration getDecoration(BuildContext context) {
-    return BoxDecoration(
-        color: context.white,
-        borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(20), topRight: Radius.circular(20)));
-  }
 }
 
-Future showOptionsScreen(BuildContext context, Message message) async {
+Future showOptionsScreen(BuildContext parentContext, Message message) async {
   await showModalBottomSheet(
     useRootNavigator: true,
     isScrollControlled: true,
-    context: context,
-    backgroundColor: context.transparent,
+    context: parentContext,
     builder: (BuildContext context) {
       return Padding(
         padding:
             EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
         child: OptionsScreen(
-          parentContext: context,
+          parentContext: parentContext,
           message: message,
         ),
       );
     },
-  ).whenComplete(() => BlocProvider.of<MessagesBloc>(context)
+  ).whenComplete(() => BlocProvider.of<MessagesBloc>(parentContext)
       .add(MessagesMarkedEvent(message: message, marked: false)));
 }

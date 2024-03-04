@@ -68,14 +68,9 @@ class VisitScreenContent extends StatelessWidget {
       child: BlocBuilder<VisitBloc, VisitState>(builder: (blocContext, state) {
         if (state is VisitBaseState && state.user != null) {
           final user = state.user!;
-          return Container(
+          return SizedBox(
             height: _bottomsheetHeight,
             width: double.infinity,
-            decoration: BoxDecoration(
-                color: context.white,
-                borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(20),
-                    topRight: Radius.circular(20))),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -168,7 +163,7 @@ class VisitScreenContent extends StatelessWidget {
                             style: Theme.of(context)
                                 .textTheme
                                 .bodyMedium
-                                ?.copyWith(color: context.grey_1)),
+                                ?.copyWith(color: context.textColor)),
                     const SizedBox(width: 5),
                     //If lats active is more than $onlineDuration ago, show offline dot
                     getOnlineDot(
@@ -298,14 +293,9 @@ class VisitScreenContent extends StatelessWidget {
         } else if (state is VisitBaseState &&
             state.user == null &&
             state.userLoaded) {
-          return Container(
+          return SizedBox(
             width: double.infinity,
             height: _bottomsheetHeight,
-            decoration: BoxDecoration(
-                color: context.white,
-                borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(20),
-                    topRight: Radius.circular(20))),
             child: Column(
               children: [
                 Center(
@@ -322,15 +312,10 @@ class VisitScreenContent extends StatelessWidget {
             ),
           );
         } else {
-          return Container(
+          return const SizedBox(
             width: double.infinity,
             height: _bottomsheetHeight,
-            decoration: BoxDecoration(
-                color: context.white,
-                borderRadius: const BorderRadius.only(
-                    topLeft: Radius.circular(20),
-                    topRight: Radius.circular(20))),
-            child: const Center(
+            child: Center(
               child: AppSpinner(),
             ),
           );
@@ -382,20 +367,19 @@ AlertDialog getBlockAccountDialog(
   );
 }
 
-Future showVisitScreen(BuildContext context, String userId, Chat? chat,
+Future showVisitScreen(BuildContext parentContext, String userId, Chat? chat,
     bool showBackButton) async {
   await showModalBottomSheet(
     useRootNavigator: true,
     isScrollControlled: true,
-    context: context,
-    backgroundColor: context.transparent,
+    context: parentContext,
     builder: (BuildContext context) {
       return Padding(
         padding:
             EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
         child: VisitScreen(
             userId: userId,
-            parentContext: context,
+            parentContext: parentContext,
             chat: chat,
             showBackButton: showBackButton),
       );

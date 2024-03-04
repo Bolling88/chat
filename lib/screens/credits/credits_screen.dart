@@ -1,4 +1,3 @@
-import 'package:chat/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
@@ -43,10 +42,9 @@ class CreditsScreenBuilder extends StatelessWidget {
       child:
           BlocBuilder<CreditsBloc, CreditsState>(builder: (blocContext, state) {
         if (state is CreditsBaseState) {
-          return Container(
+          return SizedBox(
             height: _bottomsheetHeight,
             width: double.infinity,
-            decoration: getDecoration(context),
             child: SafeArea(
               child: Padding(
                   padding: const EdgeInsets.only(
@@ -80,10 +78,9 @@ class CreditsScreenBuilder extends StatelessWidget {
             ),
           );
         } else if (state is CreditsSuccessState) {
-          return Container(
+          return SizedBox(
             height: _bottomsheetHeight,
             width: double.infinity,
-            decoration: getDecoration(context),
             child: SafeArea(
               child: Padding(
                   padding: const EdgeInsets.only(
@@ -110,10 +107,9 @@ class CreditsScreenBuilder extends StatelessWidget {
             ),
           );
         } else if (state is CreditsFailedState) {
-          return Container(
+          return SizedBox(
             height: _bottomsheetHeight,
             width: double.infinity,
-            decoration: getDecoration(context),
             child: SafeArea(
               child: Padding(
                   padding: const EdgeInsets.only(
@@ -126,11 +122,10 @@ class CreditsScreenBuilder extends StatelessWidget {
             ),
           );
         } else {
-          return Container(
+          return const SizedBox(
             width: double.infinity,
             height: _bottomsheetHeight,
-            decoration: getDecoration(context),
-            child: const Center(
+            child: Center(
               child: AppSpinner(),
             ),
           );
@@ -138,27 +133,19 @@ class CreditsScreenBuilder extends StatelessWidget {
       }),
     );
   }
-
-  BoxDecoration getDecoration(BuildContext context) {
-    return BoxDecoration(
-        color: context.white,
-        borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(20), topRight: Radius.circular(20)));
-  }
 }
 
-Future showCreditsScreen(BuildContext context, ChatUser user) async {
+Future showCreditsScreen(BuildContext parentContext, ChatUser user) async {
   await showModalBottomSheet(
     useRootNavigator: true,
     isScrollControlled: true,
-    context: context,
-    backgroundColor: context.transparent,
+    context: parentContext,
     builder: (BuildContext context) {
       return Padding(
         padding:
             EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
         child: CreditsScreen(
-          parentContext: context,
+          parentContext: parentContext,
           user: user,
         ),
       );

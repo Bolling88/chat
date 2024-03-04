@@ -245,11 +245,11 @@ class OnboardingPhotoScreenContent extends StatelessWidget {
     return CircleAvatar(backgroundImage: image as ImageProvider<Object>);
   }
 
-  void _showBottomSheet(BuildContext appContext) async {
+  void _showBottomSheet(BuildContext parentContext) async {
     await showModalBottomSheet(
       useRootNavigator: true,
       isScrollControlled: true,
-      context: appContext,
+      context: parentContext,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.only(
             topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0)),
@@ -270,25 +270,25 @@ class OnboardingPhotoScreenContent extends StatelessWidget {
               mainAxisSize: MainAxisSize.max,
               children: [
                 getOptionWidget(
-                    appContext,
+                    parentContext,
                     FlutterI18n.translate(context, "camera"),
                     '',
                     const Icon(Icons.camera_alt, size: 30, color: Colors.black),
                     20,
                     8, () async {
-                  Navigator.of(appContext).pop();
-                  BlocProvider.of<OnboardingPhotoBloc>(appContext)
+                  Navigator.of(parentContext).pop();
+                  BlocProvider.of<OnboardingPhotoBloc>(parentContext)
                       .add(OnboardingPhotoCameraClickedEvent());
                 }),
                 getOptionWidget(
-                    appContext,
+                    parentContext,
                     FlutterI18n.translate(context, "images"),
                     '',
                     const Icon(Icons.image, size: 30, color: Colors.black),
                     8,
                     20, () {
-                  Navigator.of(appContext).pop();
-                  BlocProvider.of<OnboardingPhotoBloc>(appContext)
+                  Navigator.of(parentContext).pop();
+                  BlocProvider.of<OnboardingPhotoBloc>(parentContext)
                       .add(OnboardingPhotoGalleryClickedEvent());
                 }),
               ],
@@ -298,7 +298,7 @@ class OnboardingPhotoScreenContent extends StatelessWidget {
         );
       },
     );
-    BlocProvider.of<OnboardingPhotoBloc>(appContext)
+    BlocProvider.of<OnboardingPhotoBloc>(parentContext)
         .add(OnboardingPhotoBottomSheetClosedEvent());
   }
 }

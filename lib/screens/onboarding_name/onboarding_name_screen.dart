@@ -151,10 +151,26 @@ class OnboardingNameScreenContent extends StatelessWidget {
                             width: 0,
                             style: BorderStyle.none,
                           )),
-                      fillColor: context.white,
-                      hintStyle: Theme.of(context).textTheme.bodyMedium,
+                      hintStyle: Theme.of(context).textTheme.bodyMedium?.merge(
+                        TextStyle(color: context.textColor),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                          borderSide:  BorderSide(
+                            width: 2,
+                            color: context.textColor,
+                            style: BorderStyle.solid,
+                          )),
+                      fillColor: context.grey_4,
+                      focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                          borderSide:  BorderSide(
+                            width: 3,
+                            color: context.main,
+                            style: BorderStyle.solid,
+                          )),
                       contentPadding:
-                          const EdgeInsets.only(left: 15, right: 15),
+                      const EdgeInsets.only(left: 15, right: 15),
                       hintText:
                           FlutterI18n.translate(context, "write_firstname"))),
             ),

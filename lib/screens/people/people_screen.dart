@@ -55,17 +55,10 @@ class PeopleScreenBuilder extends StatelessWidget {
           if (state is PeopleErrorState) {
             return const ErrorScreen();
           } else if (state is PeopleBaseState) {
-            return Container(
+            return SizedBox(
               height: getSize(context) == ScreenSize.large
                   ? double.infinity
                   : MediaQuery.of(context).size.height * 0.8,
-              decoration: BoxDecoration(
-                color: context.white,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(20),
-                  topRight: Radius.circular(20),
-                ),
-              ),
               child: (state.allOnlineUsers.isEmpty)
                   ? Column(
                       children: [
@@ -91,14 +84,9 @@ class PeopleScreenBuilder extends StatelessWidget {
                     ),
             );
           } else {
-            return Container(
+            return SizedBox(
               width: double.infinity,
               height: MediaQuery.of(context).size.height * 0.8,
-              decoration: BoxDecoration(
-                  color: context.white,
-                  borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(20),
-                      topRight: Radius.circular(20))),
               child: const Center(
                 child: AppSpinner(),
               ),
@@ -265,15 +253,14 @@ class PeopleScreenBuilder extends StatelessWidget {
 }
 
 Future showPeopleScreen(
-    BuildContext context, Chat? chat, List<ChatUser>? initialUsers) async {
+    BuildContext parentContext, Chat? chat, List<ChatUser>? initialUsers) async {
   await showModalBottomSheet(
     useRootNavigator: true,
-    context: context,
+    context: parentContext,
     isScrollControlled: true,
-    backgroundColor: context.transparent,
     builder: (BuildContext context) {
       return PeopleScreen(
-          chat: chat, parentContext: context, users: initialUsers);
+          chat: chat, parentContext: parentContext, users: initialUsers);
     },
   );
 }

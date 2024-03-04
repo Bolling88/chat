@@ -16,26 +16,26 @@ extension ColorUtil on BuildContext {
   Color get main =>
       dynamicColour(light: const Color(0xFF30c7c2), dark: const Color(0xFF30c7c2));
 
+  Color get appBar =>
+      dynamicColour(light: const Color(0xFF30c7c2), dark: const Color(0xFF002022));
+
   Color get main_2 =>
       dynamicColour(light: const Color(0xFF199E99), dark: const Color(0xFF199E99));
 
   Color get main_3 =>
       dynamicColour(light: const Color(0xFF199E99), dark: const Color(0xFF199E99));
 
-  Color get grey_1 =>
-      dynamicColour(light: const Color(0xFF909090), dark: const Color(0xFF909090));
-
-  Color get grey_2 =>
-      dynamicColour(light: const Color(0xFF303030), dark: const Color(0xFF303030));
+  Color get textColor =>
+      dynamicColour(light: const Color(0xFF909090), dark: const Color(0xFFFFFFFF));
 
   Color get grey_3 =>
-      dynamicColour(light: const Color(0xFFE3E3E3), dark: const Color(0xFFE3E3E3));
+      dynamicColour(light: const Color(0xFFE3E3E3), dark: const Color(0xFF003735));
 
   Color get grey_4 =>
-      dynamicColour(light: const Color(0xFFf2f2f2), dark: const Color(0xFFf2f2f2));
+      dynamicColour(light: const Color(0xFFf2f2f2), dark: const Color(0xFF006A67));
 
   Color get grey_5 =>
-      dynamicColour(light: const Color(0xFFbfbfbf), dark: const Color(0xFFbfbfbf));
+      dynamicColour(light: const Color(0xFFbfbfbf), dark: const Color(0xFF006A67));
 
   Color get white =>
       dynamicColour(light: const Color(0xFFFFFFFF), dark: const Color(0xFFFFFFFF));
@@ -46,8 +46,8 @@ extension ColorUtil on BuildContext {
   Color get transparent =>
       dynamicColour(light: const Color(0x00000000), dark: const Color(0x00000000));
 
-  Color get background =>
-      dynamicColour(light: const Color(0xFFf2ffff), dark: const Color(0xFFf2ffff));
+  Color get backgroundColor =>
+      dynamicColour(light: const Color(0xFFF3FEFF), dark: const Color(0xFF002022));
 
   Color get purple =>
       dynamicColour(light: const Color(0xFF673AB7), dark: const Color(0xFF673AB7));

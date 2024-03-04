@@ -215,7 +215,7 @@ class MessageHolderScreenContent extends StatelessWidget {
         type: MaterialType.card,
         elevation: 2,
         color: (state.selectedChatIndex == index)
-            ? context.background
+            ? context.backgroundColor
             : (index == 0)
                 ? (state.roomChat?.lastMessageReadByUser == true ||
                         state.roomChat == null)
@@ -329,7 +329,7 @@ class MessageHolderScreenContent extends StatelessWidget {
       ),
       backgroundColor:
           chat?.getChatColor(FirebaseAuth.instance.currentUser!.uid, context) ??
-              context.main,
+              context.appBar,
       actions: [
         MediaQuery.of(context).size.width >
                 (state.privateChats.isEmpty ? 855 : 970)
@@ -503,7 +503,7 @@ Container getOnlineDot(bool isOnline, BuildContext context) {
         height: 10,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          color: isOnline ? context.main : context.grey_1,
+          color: isOnline ? context.main : context.textColor,
         ),
       ),
     ),

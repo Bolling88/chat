@@ -67,7 +67,7 @@ class CreditsBloc extends Bloc<CreditsEvent, CreditsState> {
           ? 'ca-app-pub-3940256099942544/5224354917'
           : 'ca-app-pub-5287847424239288/7721457165'
       : kDebugMode
-          ? 'ca-app-pub-3940256099942544/6978759866'
+          ? 'ca-app-pub-3940256099942544/1712485313'
           : 'ca-app-pub-5287847424239288/4903722138';
 
   /// Loads a rewarded ad.

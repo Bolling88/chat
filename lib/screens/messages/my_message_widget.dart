@@ -57,7 +57,7 @@ class AppMyMessageWidget extends StatelessWidget {
                       alignment: Alignment.bottomRight,
                       child: DecoratedBox(
                         decoration: BoxDecoration(
-                            borderRadius: BorderRadius.only(
+                            borderRadius: const BorderRadius.only(
                               bottomLeft: Radius.circular(10.0),
                               bottomRight: Radius.circular(10.0),
                               topLeft: Radius.circular(10.0),

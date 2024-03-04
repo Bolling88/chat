@@ -135,7 +135,7 @@ class OnboardingAgeScreenContent extends StatelessWidget {
               },
               pickerTheme:  DateTimePickerTheme(
                 backgroundColor: Colors.transparent,
-                itemTextStyle: TextStyle(color: context.grey_1, fontSize: 19),
+                itemTextStyle: TextStyle(color: context.textColor, fontSize: 19),
                 dividerColor: Colors.white,
               ),
             ),

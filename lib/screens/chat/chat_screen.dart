@@ -123,7 +123,7 @@ class ChatsScreenContent extends StatelessWidget {
                   maxLines: 2,
                   style: Theme.of(context).textTheme.bodySmall?.merge(
                          TextStyle(
-                            color: context.grey_2,
+                            color: context.textColor,
                             overflow: TextOverflow.ellipsis),
                       ))
             ],
@@ -139,7 +139,7 @@ class ChatsScreenContent extends StatelessWidget {
             Icons.person,
             color: (state.onlineUsers[state.chats[index].id]?.length ?? 0) > 0
                 ? context.main
-                : context.grey_1,
+                : context.textColor,
           ),
           const SizedBox(width: 20),
         ],
