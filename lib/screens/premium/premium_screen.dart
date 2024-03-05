@@ -154,11 +154,11 @@ class PremiumScreenBuilder extends StatelessWidget {
               ),
                 Center(
                   child: Text(
-                    '${state.package.storeProduct.priceString} ${state.package.storeProduct.currencyCode} ${FlutterI18n.translate(context, 'monthly')}',
+                    '${state.package.storeProduct.priceString} ${FlutterI18n.translate(context, 'monthly')}',
                     style: Theme.of(context)
                         .textTheme
                         .displaySmall
-                        ?.copyWith(fontSize: 20),
+                        ?.copyWith(fontSize: 22),
                   ),
                 ),
               Center(
