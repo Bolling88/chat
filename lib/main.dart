@@ -32,7 +32,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:glassfy_flutter/glassfy_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
@@ -56,11 +55,10 @@ Future<void> main() async {
 
   try {
     if (!kIsWeb) {
-      await Glassfy.initialize('bf2702924a484b569661bfcaeffd41f1',
-          watcherMode: true);
+      SubscriptionRepository.initPlatformState();
     }
   } catch (e) {
-    Log.e("Glassfy error: $e");
+    Log.e("Revenue cat error: $e");
   }
 
   final FlutterI18nDelegate flutterI18nDelegate = FlutterI18nDelegate(
@@ -120,7 +118,7 @@ class KvitterApp extends StatelessWidget {
           final ChatClickedRepository chatClickedRepository =
               ChatClickedRepository();
           final SubscriptionRepository subscriptionRepository =
-              SubscriptionRepository();
+              SubscriptionRepository(firestoreRepository);
 
           return MultiProvider(
             providers: [

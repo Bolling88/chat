@@ -152,30 +152,13 @@ class PremiumScreenBuilder extends StatelessWidget {
                 flex: 1,
                 child: Container(),
               ),
-              if (state.offerings?.product?.price != null)
                 Center(
                   child: Text(
-                    '${state.offerings?.product?.price} ${state.offerings?.product?.currencyCode} ${FlutterI18n.translate(context, 'monthly')}',
+                    '${state.package.storeProduct.priceString} ${state.package.storeProduct.currencyCode} ${FlutterI18n.translate(context, 'monthly')}',
                     style: Theme.of(context)
                         .textTheme
                         .displaySmall
                         ?.copyWith(fontSize: 20),
-                  ),
-                )
-              else
-                Center(
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const CircularProgressIndicator(),
-                      Text(
-                        FlutterI18n.translate(context, 'fetching_price'),
-                        style: Theme.of(context)
-                            .textTheme
-                            .displaySmall
-                            ?.copyWith(fontSize: 20),
-                      ),
-                    ],
                   ),
                 ),
               Center(
@@ -183,7 +166,7 @@ class PremiumScreenBuilder extends StatelessWidget {
                   padding: const EdgeInsets.only(left: 30, right: 30, top: 20),
                   child: GestureDetector(
                     onTap: () {
-                      context.read<PremiumBloc>().add(PremiumBuyEvent());
+                      context.read<PremiumBloc>().add(PremiumBuyEvent(state.package));
                     },
                     child: Lottie.asset('assets/lottie/premium_button.json',
                         animate: true),

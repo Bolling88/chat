@@ -1,9 +1,5 @@
-import 'package:chat/utils/cloud_translation/google_cloud_translation.dart';
 import 'package:equatable/equatable.dart';
-import 'package:glassfy_flutter/models.dart';
-
-import '../../../model/chat_user.dart';
-import '../../../utils/cloud_translation/translation_model.dart';
+import 'package:purchases_flutter/purchases_flutter.dart';
 
 abstract class PremiumState extends Equatable {
   const PremiumState();
@@ -13,12 +9,12 @@ abstract class PremiumState extends Equatable {
 }
 
 class PremiumBaseState extends PremiumState {
-  final GlassfySku? offerings;
+  final Package package;
 
-  const PremiumBaseState(this.offerings);
+  const PremiumBaseState(this.package);
 
   @override
-  List<Object?> get props => [offerings];
+  List<Object?> get props => [package];
 }
 
 class PremiumErrorState extends PremiumState {

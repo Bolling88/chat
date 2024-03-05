@@ -1,52 +1,92 @@
-import 'package:glassfy_flutter/glassfy_flutter.dart';
-import 'package:glassfy_flutter/models.dart';
+import 'package:flutter/services.dart';
+import 'package:purchases_flutter/purchases_flutter.dart';
+import 'package:universal_io/io.dart';
 
 import '../utils/log.dart';
+import 'firestore_repository.dart';
 
 class SubscriptionRepository {
-  Future<GlassfyOffering?> getOfferings() async {
-    try {
-      Log.d('Getting offerings');
-      var offerings = await Glassfy.offerings();
-      var offering = offerings.all
-          ?.singleWhere((offering) => offering.offeringId == 'premium');
+  final FirestoreRepository _firestoreRepository;
 
-      offering?.skus?.forEach((sku) {
-        Log.d('sku: ${sku.skuId}');
-        Log.d('sku: ${sku.product?.description}');
-        Log.d('sku: ${sku.product?.price}');
-        Log.d('sku: ${sku.product?.currencyCode}');
-        Log.d('sku: ${sku.product?.period}');
-        Log.d('sku: ${sku.product?.price}');
-      });
-      return offering;
-    } catch (e) {
-      Log.e('Error getting offerings: $e');
+  SubscriptionRepository(this._firestoreRepository);
+
+  static void initPlatformState() async {
+    await Purchases.setLogLevel(LogLevel.debug);
+
+    late PurchasesConfiguration configuration;
+    if (Platform.isAndroid) {
+      configuration =
+          PurchasesConfiguration('goog_AfveruTPRhPpqaMRNdoEBpoJsnl');
+    } else if (Platform.isIOS) {
+      configuration =
+          PurchasesConfiguration('appl_ievjDBXFTMbtfKLoeCAlfMvFPyP');
     }
-    return null;
+    await Purchases.configure(configuration);
   }
 
-  Future<bool> purchase(GlassfySku skuId) async {
-    try {
-      var transaction = await Glassfy.purchaseSku(skuId);
+  void setUserId() async {
+    final user = await _firestoreRepository.getUser();
+    if (user != null) {
+      LogInResult result = await Purchases.logIn(user.id);
+    }
+  }
 
-      var p = transaction.permissions?.all?.singleWhere(
-          (permission) => permission.permissionId == 'kvitter_premium');
-      return p?.isValid ?? false;
-    } catch (e) {
-      Log.e('Error purchasing sku: $e');
+  Future<Offerings?> getOfferings() async {
+    try {
+      Offerings offerings = await Purchases.getOfferings();
+      if (offerings.current != null &&
+          offerings.current?.availablePackages.isNotEmpty == true) {
+        return offerings;
+      } else {
+        return null;
+      }
+    } on PlatformException catch (e) {
+      Log.e('Error getting offerings: $e');
+      return null;
+    }
+  }
+
+  Future<bool> purchase(Package package) async {
+    try {
+      CustomerInfo customerInfo = await Purchases.purchasePackage(package);
+      return isEntitlementActive(customerInfo);
+    } on PlatformException catch (e) {
+      var errorCode = PurchasesErrorHelper.getErrorCode(e);
+      if (errorCode != PurchasesErrorCode.purchaseCancelledError) {
+        Log.e('Error purchasing: $e');
+      }
+      return false;
+    }
+  }
+
+  bool isEntitlementActive(CustomerInfo customerInfo) {
+    if (customerInfo.entitlements.all['Kvitter Premium']?.isActive == true) {
+      return true;
+    } else {
       return false;
     }
   }
 
   Future<bool> isPremiumUser() async {
     try {
-      var permissions = await Glassfy.permissions();
-      final p = permissions.all?.singleWhere(
-              (permission) => permission.permissionId == 'kvitter_premium');
-      return p?.isValid ?? false;
-    } catch (e) {
-      Log.e('Error getting permissions: $e');
+      CustomerInfo customerInfo = await Purchases.getCustomerInfo();
+      if (customerInfo.entitlements.active.isNotEmpty) {
+        return true;
+      } else {
+        return false;
+      }
+    } on PlatformException catch (e) {
+      Log.e(e);
+      return false;
+    }
+  }
+
+  Future<bool> restorePurchases() async {
+    try {
+      CustomerInfo customerInfo = await Purchases.restorePurchases();
+      return isEntitlementActive(customerInfo);
+    } on PlatformException catch (e) {
+      Log.e('Error restoring purchases: $e');
       return false;
     }
   }

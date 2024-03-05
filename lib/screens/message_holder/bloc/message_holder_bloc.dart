@@ -304,6 +304,7 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
 
   Future<void> _handleSubscription() async {
     if(!kIsWeb) {
+      _subscriptionRepository.setUserId();
       final subscription = await _subscriptionRepository
           .isPremiumUser();
         _firestoreRepository.setUserAsPremium(subscription);
