@@ -76,6 +76,7 @@ getUserId() => FirebaseAuth.instance.currentUser!.uid;
 
 class FirestoreRepository {
   final OnlineUserProcessor _processor;
+
   FirestoreRepository(this._processor);
 
   final CollectionReference users =
@@ -96,16 +97,18 @@ class FirestoreRepository {
         .then((value) {
       if (!value.exists) return null;
 
-      final Map<String, dynamic> userData = value.data() as Map<String, dynamic>;
+      final Map<String, dynamic> userData =
+          value.data() as Map<String, dynamic>;
 
       // Convert Timestamp to int (milliseconds since epoch)
-      if (userData.containsKey('lastActive') && userData['lastActive'] is Timestamp) {
-        userData['lastActive'] = (userData['lastActive'] as Timestamp).millisecondsSinceEpoch;
+      if (userData.containsKey('lastActive') &&
+          userData['lastActive'] is Timestamp) {
+        userData['lastActive'] =
+            (userData['lastActive'] as Timestamp).millisecondsSinceEpoch;
       }
 
       return ChatUser.fromJson(value.id, userData);
-    })
-        .catchError((error) {
+    }).catchError((error) {
       Log.e("Failed to fetch user: $error");
       return null;
     });
@@ -171,16 +174,17 @@ class FirestoreRepository {
             (error) => Log.e("Failed to update user displayName: $error"));
   }
 
-  Future<void> updateUserProfileImage(
-      String profileImageUrl, ChatUser user) async {
-    //Images that have a report and is not reviewed will always be blurred.
-    //If a user have an existing report, and changes image, it should be blurred until reviewed.
+  Future<void> updateUserProfileImage({
+    required String profileImageUrl,
+    required ChatUser user,
+    required bool hasNudity,
+  }) async {
     return users
         .doc(getUserId())
         .set({
           'lastActive': FieldValue.serverTimestamp(),
           'pictureData': profileImageUrl,
-          'approvedImage': ApprovedImage.notReviewed.value,
+          'approvedImage': hasNudity? ApprovedImage.notReviewed.value : ApprovedImage.approved.value,
           'imageReports': [],
         }, SetOptions(merge: true))
         .then((value) => Log.d("User profile image updated"))
@@ -725,7 +729,7 @@ class FirestoreRepository {
     }, SetOptions(merge: true));
   }
 
-  Future<void> increaseUserCredits(String id, int i) async{
+  Future<void> increaseUserCredits(String id, int i) async {
     await users.doc(id).set({
       'kvitterCredits': FieldValue.increment(i),
     }, SetOptions(merge: true));

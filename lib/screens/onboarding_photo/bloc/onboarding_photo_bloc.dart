@@ -7,6 +7,7 @@ import 'package:chat/screens/login/bloc/login_state.dart';
 import 'package:chat/utils/image_util.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_nude_detector/flutter_nude_detector.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../utils/log.dart';
@@ -40,8 +41,10 @@ class OnboardingPhotoBloc
         yield OnboardingPhotoBaseState(_chatUser);
       } else if (event is OnboardingPhotoCameraClickedEvent) {
         final pickedFile = await picker.pickImage(
-          maxHeight: 400, maxWidth: 400,
-            source: ImageSource.camera, imageQuality: photoQuality);
+            maxHeight: 400,
+            maxWidth: 400,
+            source: ImageSource.camera,
+            imageQuality: photoQuality);
         if (pickedFile != null) {
           CroppedFile? croppedFile =
               await _appImageCropper.cropImage(pickedFile);
@@ -79,10 +82,13 @@ class OnboardingPhotoBloc
       } else if (event is OnboardingPhotoContinueClickedEvent) {
         if (currentState is OnboardingPhotoDoneState) {
           yield OnboardingPhotoLoadingState();
+          final hasNudity =
+              await FlutterNudeDetector.detect(path: currentState.filePath);
           final imageUrl = await _storageRepository.uploadProfileImage(
               currentState.filePath, currentState.base64Image);
           final finalUrl = await imageUrl?.getDownloadURL() ?? "";
-          await _firestoreRepository.updateUserProfileImage(finalUrl, _chatUser);
+          await _firestoreRepository.updateUserProfileImage(
+              profileImageUrl: finalUrl, user: _chatUser, hasNudity: hasNudity);
 
           if (_chatUser.gender == -1) {
             yield const OnboardingPhotoSuccessState(
@@ -103,13 +109,14 @@ class OnboardingPhotoBloc
               currentState.filePath, currentState.base64Image);
         }
       } else if (event is OnboardingPhotoSkipEvent) {
-        await _firestoreRepository.updateUserProfileImage('', _chatUser);
+        await _firestoreRepository.updateUserProfileImage(
+            profileImageUrl: '', user: _chatUser, hasNudity: false);
         if (_chatUser.gender == -1) {
           yield const OnboardingPhotoSuccessState(OnboardingNavigation.GENDER);
         } else {
           yield const OnboardingPhotoSuccessState(OnboardingNavigation.DONE);
         }
-      }else if(event is OnboardingPhotoRemoveEvent){
+      } else if (event is OnboardingPhotoRemoveEvent) {
         yield OnboardingPhotoLoadingState();
         await _firestoreRepository.deleteUserPhoto();
         yield const OnboardingPhotoSuccessState(OnboardingNavigation.DONE);
