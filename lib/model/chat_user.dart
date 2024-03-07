@@ -26,7 +26,7 @@ class ChatUser extends Equatable {
   final List<String> imageReports;
   final List<String> botReports;
   final List<String> languageReports;
-  final int kvitterCredits;
+  final num kvitterCredits;
   final bool isPremiumUser;
 
   const ChatUser(
