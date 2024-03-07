@@ -1,4 +1,5 @@
 import 'package:chat/repository/subscription_repository.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
@@ -97,14 +98,14 @@ class PremiumScreenBuilder extends StatelessWidget {
                   children: [
                     Icon(
                       Icons.block,
-                      color: Theme.of(context).primaryColor,
+                      color: context.textColor,
                     ),
                     const SizedBox(width: 10),
                     Text(
                       translate(context, 'no_ads'),
                       style: Theme.of(context)
                           .textTheme
-                          .displaySmall
+                          .bodyLarge
                           ?.copyWith(fontSize: 20),
                     ),
                   ],
@@ -116,14 +117,14 @@ class PremiumScreenBuilder extends StatelessWidget {
                   children: [
                     Icon(
                       Icons.translate,
-                      color: Theme.of(context).primaryColor,
+                      color: context.textColor,
                     ),
                     const SizedBox(width: 10),
                     Text(
                       translate(context, 'free_translation'),
                       style: Theme.of(context)
                           .textTheme
-                          .displaySmall
+                          .bodyLarge
                           ?.copyWith(fontSize: 20),
                     ),
                   ],
@@ -135,14 +136,14 @@ class PremiumScreenBuilder extends StatelessWidget {
                   children: [
                     Icon(
                       Icons.check_circle_outline,
-                      color: Theme.of(context).primaryColor,
+                      color: context.textColor,
                     ),
                     const SizedBox(width: 10),
                     Text(
                       translate(context, 'and_more_to_come'),
                       style: Theme.of(context)
                           .textTheme
-                          .displaySmall
+                          .bodyLarge
                           ?.copyWith(fontSize: 20),
                     ),
                   ],
@@ -152,21 +153,23 @@ class PremiumScreenBuilder extends StatelessWidget {
                 flex: 1,
                 child: Container(),
               ),
-                Center(
-                  child: Text(
-                    '${state.package.storeProduct.priceString} ${FlutterI18n.translate(context, 'monthly')}',
-                    style: Theme.of(context)
-                        .textTheme
-                        .displaySmall
-                        ?.copyWith(fontSize: 22),
-                  ),
+              Center(
+                child: Text(
+                  '${state.package.storeProduct.priceString} ${FlutterI18n.translate(context, 'monthly')}',
+                  style: Theme.of(context)
+                      .textTheme
+                      .bodyLarge
+                      ?.copyWith(fontSize: 22),
                 ),
+              ),
               Center(
                 child: Padding(
                   padding: const EdgeInsets.only(left: 30, right: 30, top: 20),
                   child: GestureDetector(
                     onTap: () {
-                      context.read<PremiumBloc>().add(PremiumBuyEvent(state.package));
+                      context
+                          .read<PremiumBloc>()
+                          .add(PremiumBuyEvent(state.package));
                     },
                     child: Lottie.asset('assets/lottie/premium_button.json',
                         animate: true),
@@ -185,6 +188,19 @@ class PremiumScreenBuilder extends StatelessWidget {
                   ),
                 ),
               ),
+              Padding(
+                padding: const EdgeInsets.only(left: 20, right: 20, bottom: 10),
+                child: Center(
+                  child: Text(
+                    FlutterI18n.translate(context, 'no_trial'),
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context)
+                        .textTheme
+                        .titleSmall
+                        ?.copyWith(fontSize: 14),
+                  ),
+                ),
+              ),
               Center(
                 child: GestureDetector(
                   onTap: () {
@@ -192,7 +208,7 @@ class PremiumScreenBuilder extends StatelessWidget {
                   },
                   child: Text('${FlutterI18n.translate(context, "terms")},',
                       textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.bodySmall?.merge(
+                      style: Theme.of(context).textTheme.titleSmall?.merge(
                             TextStyle(color: context.main),
                           )),
                 ),
@@ -204,7 +220,7 @@ class PremiumScreenBuilder extends StatelessWidget {
                   },
                   child: Text(FlutterI18n.translate(context, "privacy"),
                       textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.bodySmall?.merge(
+                      style: Theme.of(context).textTheme.titleSmall?.merge(
                             TextStyle(color: context.main),
                           )),
                 ),
@@ -218,15 +234,18 @@ class PremiumScreenBuilder extends StatelessWidget {
               ),
               Center(
                 child: SafeArea(
-                  child: GestureDetector(
-                    onTap: () {
-                      Navigator.pushNamed(context, "/eula_screen");
-                    },
-                    child: Text(FlutterI18n.translate(context, "eula"),
-                        textAlign: TextAlign.center,
-                        style: Theme.of(context).textTheme.bodySmall?.merge(
-                              TextStyle(color: context.main),
-                            )),
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 20),
+                    child: GestureDetector(
+                      onTap: () {
+                        Navigator.pushNamed(context, "/eula_screen");
+                      },
+                      child: Text(FlutterI18n.translate(context, "eula"),
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context).textTheme.titleSmall?.merge(
+                                TextStyle(color: context.main),
+                              )),
+                    ),
                   ),
                 ),
               ),

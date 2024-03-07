@@ -151,5 +151,6 @@
   "get_unlimited_translations": "Get unlimited translations",
   "watch_ad_10": "Watch ad, get 10 credits",
   "fetching_price": "Fetching price...",
-  "transaction_aborted": "Transaction aborted"
+  "transaction_aborted": "Transaction aborted",
+  "no_trial": "No trial and auto renewal. Cancel at any time!"
 }

@@ -149,5 +149,6 @@
   "no_subscription_to_restore": "Inga prenumerationer hittades",
   "premium_user": "Premiumanvändare",
   "get_unlimited_translations": "Få obegränsade översättningar",
-  "watch_ad_10": "Titta på annons, få 10 krediter"
+  "watch_ad_10": "Titta på annons, få 10 krediter",
+  "no_trial": "Ingen provperiod och automatisk förnyelse. Avbryt när som helst!"
 }
