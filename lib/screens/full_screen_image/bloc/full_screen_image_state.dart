@@ -1,6 +1,4 @@
 import 'package:equatable/equatable.dart';
-import '../../../model/chat_user.dart';
-
 abstract class FullScreenImageState extends Equatable {
   @override
   List<Object> get props => [];

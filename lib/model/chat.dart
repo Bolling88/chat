@@ -1,10 +1,6 @@
-import 'dart:ui';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
-
-import 'chat_user.dart';
 
 abstract class Chat extends Equatable {
   final String id;

@@ -21,7 +21,6 @@ class FullScreenImageBloc
   @override
   Stream<FullScreenImageState> mapEventToState(
       FullScreenImageEvent event) async* {
-    final currentState = state;
     if (event is FullScreenImageInitialEvent) {
     } else if (event is FullScreenImageUnblurEvent) {
       yield FullScreenImageBaseState(false, true);

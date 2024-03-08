@@ -7,7 +7,7 @@ String getLastMessageTimeFromTimeStamp(Timestamp timeStamp) {
   final localDate = timeStamp.toDate().toLocal();
   final now = DateTime.now();
   final difference = now.difference(localDate);
-  if (difference.inSeconds < SECONDS_IN_DAY) {
+  if (difference.inSeconds < secondsInDay) {
     return hourFormat.format(localDate);
   } else {
     return dateFormat.format(localDate);
@@ -20,7 +20,7 @@ String getTimeSince(Timestamp timeStamp) {
   final localDate = timeStamp.toDate().toLocal();
   final now = DateTime.now();
   final difference = now.difference(localDate);
-  if (difference.inSeconds < SECONDS_IN_DAY) {
+  if (difference.inSeconds < secondsInDay) {
     return hourFormat.format(localDate);
   } else {
     return dateFormat.format(localDate);
@@ -51,12 +51,12 @@ String getMessageDate(Timestamp timeStamp) {
   final localDate = timeStamp.toDate().toLocal();
   final now = DateTime.now();
   final difference = now.difference(localDate);
-  if (difference.inSeconds < SECONDS_IN_DAY) {
+  if (difference.inSeconds < secondsInDay) {
     return hourFormat.format(localDate);
   } else {
     return dateFormat.format(localDate);
   }
 }
 
-const SECONDS_IN_DAY = 86400;
-const SECONDS_IN_HOUR = 3600;
+const secondsInDay = 86400;
+const secondsInHour = 3600;

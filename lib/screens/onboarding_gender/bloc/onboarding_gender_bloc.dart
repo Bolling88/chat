@@ -21,16 +21,16 @@ class OnboardingGenderBloc
       yield OnboardingGenderBaseState(user!.pictureData);
     } else if (event is OnboardingGenderMaleClickedEvent) {
       _firestoreRepository.updateUserGender(Gender.male);
-      yield const OnboardingGenderSuccessState(OnboardingNavigation.DONE);
+      yield const OnboardingGenderSuccessState(OnboardingNavigation.done);
     } else if (event is OnboardingGenderFemaleClickedEvent) {
       _firestoreRepository.updateUserGender(Gender.female);
-      yield const OnboardingGenderSuccessState(OnboardingNavigation.DONE);
+      yield const OnboardingGenderSuccessState(OnboardingNavigation.done);
     } else if (event is OnboardingGenderNonBinaryClickedEvent) {
       _firestoreRepository.updateUserGender(Gender.nonBinary);
-      yield const OnboardingGenderSuccessState(OnboardingNavigation.DONE);
+      yield const OnboardingGenderSuccessState(OnboardingNavigation.done);
     } else if (event is OnboardingGenderSecretClickedEvent) {
       _firestoreRepository.updateUserGender(Gender.secret);
-      yield const OnboardingGenderSuccessState(OnboardingNavigation.DONE);
+      yield const OnboardingGenderSuccessState(OnboardingNavigation.done);
     }
   }
 }

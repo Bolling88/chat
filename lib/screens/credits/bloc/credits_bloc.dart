@@ -31,7 +31,6 @@ class CreditsBloc extends Bloc<CreditsEvent, CreditsState> {
 
   @override
   Stream<CreditsState> mapEventToState(CreditsEvent event) async* {
-    final currentState = state;
     try {
       if (event is CreditsInitialEvent) {
         yield const CreditsBaseState();

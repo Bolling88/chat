@@ -4,7 +4,6 @@ import 'package:chat/repository/firestore_repository.dart';
 import 'package:chat/screens/feedback/bloc/feedback_bloc.dart';
 import 'package:chat/screens/feedback/bloc/feedback_event.dart';
 import 'package:chat/screens/feedback/bloc/feedback_state.dart';
-import 'package:chat/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';

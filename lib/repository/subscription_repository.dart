@@ -27,7 +27,7 @@ class SubscriptionRepository {
   void setUserId() async {
     final user = await _firestoreRepository.getUser();
     if (user != null) {
-      LogInResult result = await Purchases.logIn(user.id);
+      Purchases.logIn(user.id);
     }
   }
 

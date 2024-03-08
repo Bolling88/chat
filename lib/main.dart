@@ -31,12 +31,12 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
+// ignore: depend_on_referenced_packages
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'utils/save_file.dart';
 import 'utils/simple_bloc_observer.dart';
 import 'screens/loading/loading_screen.dart';
 import 'screens/login/login_screen.dart';
@@ -104,7 +104,6 @@ class KvitterApp extends StatelessWidget {
 
         // Once complete, show your application
         if (snapshot.connectionState == ConnectionState.done) {
-          final SaveFile saveFile = SaveFile(prefs);
           final OnlineUserProcessor onlineUsersProcessor =
               kIsWeb ? WebOnlineUsersProcessor() : MobileOnlineUsersProcessor();
           final FirestoreRepository firestoreRepository =
@@ -122,7 +121,6 @@ class KvitterApp extends StatelessWidget {
 
           return MultiProvider(
             providers: [
-              Provider<SaveFile>.value(value: saveFile),
               Provider<FirestoreRepository>.value(value: firestoreRepository),
               Provider<LoginRepository>.value(value: loginRepository),
               Provider<StorageRepository>.value(value: storageRepository),

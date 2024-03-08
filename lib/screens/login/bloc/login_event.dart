@@ -19,7 +19,7 @@ class LoginFailedEvent extends LoginEvent{}
 class FacebookLoggedInEvent extends LoginEvent{
   final String result;
 
-  FacebookLoggedInEvent(this.result);
+  const FacebookLoggedInEvent(this.result);
 
   @override
   List<Object> get props => [result];

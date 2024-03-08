@@ -49,15 +49,15 @@ class OnboardingAgeScreenContent extends StatelessWidget {
         if (state is OnboardingAgeSuccessState) {
           if (isEditMode) {
             Navigator.of(context).pop();
-          } else if (state.navigation == OnboardingNavigation.PICTURE) {
+          } else if (state.navigation == OnboardingNavigation.picture) {
             Navigator.of(context).popUntil((route) => route.isFirst);
             Navigator.pushReplacementNamed(
                 context, OnboardingPhotoScreen.routeName);
-          } else if (state.navigation == OnboardingNavigation.GENDER) {
+          } else if (state.navigation == OnboardingNavigation.gender) {
             Navigator.of(context).popUntil((route) => route.isFirst);
             Navigator.pushReplacementNamed(
                 context, OnboardingGenderScreen.routeName);
-          } else if (state.navigation == OnboardingNavigation.DONE) {
+          } else if (state.navigation == OnboardingNavigation.done) {
             Navigator.of(context).popUntil((route) => route.isFirst);
             Navigator.pushReplacementNamed(
                 context, MessageHolderScreen.routeName);

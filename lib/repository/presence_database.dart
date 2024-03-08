@@ -18,21 +18,22 @@ class PresenceDatabase {
         .child(getUserId())
         .update(presenceStatusTrue)
         .whenComplete(_logSuccess)
-        .catchError(_logError);
+        .catchError((error) {
+      Log.e('$error Updated your presence.');
+    });
 
     Map<String, dynamic> presenceStatusFalse = {
       'presence': false,
       'last_seen': DateTime.now().millisecondsSinceEpoch,
     };
 
-    databaseReference.child(getUserId()).onDisconnect().update(presenceStatusFalse);
+    databaseReference
+        .child(getUserId())
+        .onDisconnect()
+        .update(presenceStatusFalse);
   }
 
-  void _logSuccess(){
+  void _logSuccess() {
     Log.d('Updated your presence.');
-  }
-
-  void _logError(Error error){
-    Log.e('$error Updated your presence.');
   }
 }

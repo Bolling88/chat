@@ -2,8 +2,6 @@ import 'package:chat/repository/firestore_repository.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_app_badger/flutter_app_badger.dart';
-import 'package:universal_io/io.dart';
-
 import '../utils/log.dart';
 
 class FcmRepository {

@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:chat/screens/report/bloc/report_state.dart';
 import 'package:chat/screens/report/bloc/report_event.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../model/chat_user.dart';
 import '../../../repository/firestore_repository.dart';
 
 class ReportBloc extends Bloc<ReportEvent, ReportState> {

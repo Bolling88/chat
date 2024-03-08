@@ -129,7 +129,7 @@ class ChatUser extends Equatable {
       List<String>? imageReports,
       List<String>? botReports,
       List<String>? languageReports,
-      int? kvitterCredits,
+      num? kvitterCredits,
       bool? isPremiumUser}) {
     return ChatUser(
         id: id,

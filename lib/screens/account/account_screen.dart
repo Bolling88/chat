@@ -71,7 +71,7 @@ class AccountScreenBuilder extends StatelessWidget {
                     gender: state.user.gender,
                     approvalState: ApprovedImage.approved,
                     size: 60,
-                    imageReports: [],
+                    imageReports: const [],
                   ),
                   onTap: () {
                     Navigator.pushNamed(blocContext, ProfileScreen.routeName);

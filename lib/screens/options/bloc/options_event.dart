@@ -1,7 +1,6 @@
 import 'package:equatable/equatable.dart';
 
 import '../../../model/chat_user.dart';
-import '../../profile/bloc/profile_event.dart';
 
 abstract class OptionsEvent extends Equatable {
   const OptionsEvent();

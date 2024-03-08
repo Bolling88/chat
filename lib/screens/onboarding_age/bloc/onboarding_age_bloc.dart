@@ -41,11 +41,11 @@ class OnboardingAgeBloc extends Bloc<OnboardingAgeEvent, OnboardingAgeState> {
           _firestoreRepository.updateUserBirthday(currentState.birthDate);
           final chatUser = await _firestoreRepository.getUser();
           if (chatUser?.pictureData.isEmpty == true) {
-            yield const OnboardingAgeSuccessState(OnboardingNavigation.PICTURE);
+            yield const OnboardingAgeSuccessState(OnboardingNavigation.picture);
           } else if (chatUser?.gender == -1) {
-            yield const OnboardingAgeSuccessState(OnboardingNavigation.GENDER);
+            yield const OnboardingAgeSuccessState(OnboardingNavigation.gender);
           } else {
-            yield const OnboardingAgeSuccessState(OnboardingNavigation.DONE);
+            yield const OnboardingAgeSuccessState(OnboardingNavigation.done);
           }
         }
       }

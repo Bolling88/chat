@@ -24,4 +24,4 @@ class LoginErrorState extends LoginState {}
 
 class LoginAbortedState extends LoginState {}
 
-enum OnboardingNavigation { DONE, PICTURE, NAME, GENDER, AGE }
+enum OnboardingNavigation { done, picture, name, gender, age }

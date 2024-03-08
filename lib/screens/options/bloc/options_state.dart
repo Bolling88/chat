@@ -1,4 +1,3 @@
-import 'package:chat/utils/cloud_translation/google_cloud_translation.dart';
 import 'package:equatable/equatable.dart';
 
 import '../../../model/chat_user.dart';

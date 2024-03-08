@@ -6,7 +6,6 @@ import 'package:chat/screens/report/bloc/report_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
-import '../../utils/app_colors.dart';
 import '../../utils/app_widgets.dart';
 
 class ReportScreen extends StatelessWidget {

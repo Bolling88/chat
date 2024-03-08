@@ -43,6 +43,7 @@ class OnboardingPhotoScreenContent extends StatelessWidget {
   const OnboardingPhotoScreenContent({super.key});
 
   @override
+  // ignore: avoid_renaming_method_parameters
   Widget build(BuildContext appContext) {
     final args = ModalRoute.of(appContext)?.settings.arguments
         as OnboardingPhotoScreenArguments?;
@@ -61,11 +62,11 @@ class OnboardingPhotoScreenContent extends StatelessWidget {
             if (state is OnboardingPhotoRedoState) {
               _showBottomSheet(appContext);
             } else if (state is OnboardingPhotoSuccessState) {
-              if (state.navigation == OnboardingNavigation.PICTURE) {
+              if (state.navigation == OnboardingNavigation.picture) {
                 Navigator.of(context).popUntil((route) => route.isFirst);
                 Navigator.pushReplacementNamed(
                     context, OnboardingPhotoScreen.routeName);
-              } else if (state.navigation == OnboardingNavigation.GENDER) {
+              } else if (state.navigation == OnboardingNavigation.gender) {
                 if (isEditMode) {
                   Navigator.of(context).pop();
                 } else {
@@ -73,12 +74,13 @@ class OnboardingPhotoScreenContent extends StatelessWidget {
                   Navigator.pushReplacementNamed(
                       context, OnboardingGenderScreen.routeName);
                 }
-              } else if (state.navigation == OnboardingNavigation.DONE) {
+              } else if (state.navigation == OnboardingNavigation.done) {
                 if (isEditMode) {
                   Navigator.of(context).pop();
                 } else {
                   Navigator.of(context).popUntil((route) => route.isFirst);
-                  Navigator.pushReplacementNamed(context, MessageHolderScreen.routeName);
+                  Navigator.pushReplacementNamed(
+                      context, MessageHolderScreen.routeName);
                 }
               }
             }
@@ -130,7 +132,7 @@ class OnboardingPhotoScreenContent extends StatelessWidget {
           ),
           Padding(
             padding:
-            const EdgeInsets.only(left: 70, right: 70, top: 0, bottom: 20),
+                const EdgeInsets.only(left: 70, right: 70, top: 0, bottom: 20),
             child: Center(
               child: Text(
                 FlutterI18n.translate(context, "review_info"),
@@ -157,7 +159,7 @@ class OnboardingPhotoScreenContent extends StatelessWidget {
             child: Text(FlutterI18n.translate(context, "select_from_images")),
           ),
           const SizedBox(height: 20),
-          if(isEditMode && state.user.pictureData.isNotEmpty)
+          if (isEditMode && state.user.pictureData.isNotEmpty)
             ElevatedButton(
               onPressed: () {
                 BlocProvider.of<OnboardingPhotoBloc>(context)
@@ -297,9 +299,10 @@ class OnboardingPhotoScreenContent extends StatelessWidget {
           ],
         );
       },
-    );
-    BlocProvider.of<OnboardingPhotoBloc>(parentContext)
-        .add(OnboardingPhotoBottomSheetClosedEvent());
+    ).whenComplete(() {
+      BlocProvider.of<OnboardingPhotoBloc>(parentContext)
+          .add(OnboardingPhotoBottomSheetClosedEvent());
+    });
   }
 }
 

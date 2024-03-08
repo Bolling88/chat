@@ -51,19 +51,19 @@ class LoginScreenContent extends StatelessWidget {
         body: BlocListener<LoginBloc, LoginState>(
       listener: (context, state) {
         if (state is LoginSuccessState) {
-          if (state.navigation == OnboardingNavigation.DONE) {
+          if (state.navigation == OnboardingNavigation.done) {
             Navigator.of(context).popUntil((route) => route.isFirst);
             Navigator.pushReplacementNamed(
                 context, MessageHolderScreen.routeName);
-          } else if (state.navigation == OnboardingNavigation.PICTURE) {
+          } else if (state.navigation == OnboardingNavigation.picture) {
             Navigator.of(context).popUntil((route) => route.isFirst);
             Navigator.pushReplacementNamed(
                 context, OnboardingPhotoScreen.routeName);
-          } else if (state.navigation == OnboardingNavigation.GENDER) {
+          } else if (state.navigation == OnboardingNavigation.gender) {
             Navigator.of(context).popUntil((route) => route.isFirst);
             Navigator.pushReplacementNamed(
                 context, OnboardingGenderScreen.routeName);
-          } else if (state.navigation == OnboardingNavigation.NAME) {
+          } else if (state.navigation == OnboardingNavigation.name) {
             Navigator.of(context).popUntil((route) => route.isFirst);
             Navigator.pushReplacementNamed(
                 context, OnboardingNameScreen.routeName);

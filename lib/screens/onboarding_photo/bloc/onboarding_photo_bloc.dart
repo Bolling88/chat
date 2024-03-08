@@ -92,9 +92,9 @@ class OnboardingPhotoBloc
 
           if (_chatUser.gender == -1) {
             yield const OnboardingPhotoSuccessState(
-                OnboardingNavigation.GENDER);
+                OnboardingNavigation.gender);
           } else {
-            yield const OnboardingPhotoSuccessState(OnboardingNavigation.DONE);
+            yield const OnboardingPhotoSuccessState(OnboardingNavigation.done);
           }
         }
       } else if (event is OnboardingPhotoRedoClickedEvent) {
@@ -112,14 +112,14 @@ class OnboardingPhotoBloc
         await _firestoreRepository.updateUserProfileImage(
             profileImageUrl: '', user: _chatUser, hasNudity: false);
         if (_chatUser.gender == -1) {
-          yield const OnboardingPhotoSuccessState(OnboardingNavigation.GENDER);
+          yield const OnboardingPhotoSuccessState(OnboardingNavigation.gender);
         } else {
-          yield const OnboardingPhotoSuccessState(OnboardingNavigation.DONE);
+          yield const OnboardingPhotoSuccessState(OnboardingNavigation.done);
         }
       } else if (event is OnboardingPhotoRemoveEvent) {
         yield OnboardingPhotoLoadingState();
         await _firestoreRepository.deleteUserPhoto();
-        yield const OnboardingPhotoSuccessState(OnboardingNavigation.DONE);
+        yield const OnboardingPhotoSuccessState(OnboardingNavigation.done);
       } else {
         Log.e('OnboardingPhotoErrorState: Not implemented');
         throw UnimplementedError();

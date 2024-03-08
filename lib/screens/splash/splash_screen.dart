@@ -1,17 +1,11 @@
 import 'package:chat/screens/message_holder/message_holder_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:universal_io/io.dart';
 import '../../repository/firestore_repository.dart';
-import '../chat/chat_screen.dart';
 import '../error/error_screen.dart';
 import '../loading/loading_screen.dart';
 import '../login/bloc/login_state.dart';
 import '../login/login_screen.dart';
-import '../onboarding_age/onboarding_age_screen.dart';
-import '../onboarding_gender/onboarding_gender_screen.dart';
-import '../onboarding_name/onboarding_name_screen.dart';
-import '../onboarding_photo/onboarding_photo_screen.dart';
 import 'bloc/splash_bloc.dart';
 import 'bloc/splash_state.dart';
 
@@ -38,7 +32,7 @@ class SplashScreenBuilder extends StatelessWidget {
         Navigator.of(context).popUntil((route) => route.isFirst);
         Navigator.pushReplacementNamed(context, LoginScreen.routeName);
       } else if (state is SplashSuccessState) {
-        if (state.navigation == OnboardingNavigation.DONE) {
+        if (state.navigation == OnboardingNavigation.done) {
           Navigator.of(context).popUntil((route) => route.isFirst);
           Navigator.pushReplacement(
             context,

@@ -43,14 +43,14 @@ class OnboardingNameBloc
               fullName, searchArray);
           final chatUser = await _firestoreRepository.getUser();
           if (chatUser?.birthDate == null && Platform.isAndroid) {
-            yield const OnboardingNameSuccessState(OnboardingNavigation.AGE);
+            yield const OnboardingNameSuccessState(OnboardingNavigation.age);
           } else if (chatUser?.pictureData.isEmpty == true) {
             yield const OnboardingNameSuccessState(
-                OnboardingNavigation.PICTURE);
+                OnboardingNavigation.picture);
           } else if (chatUser?.gender == -1) {
-            yield const OnboardingNameSuccessState(OnboardingNavigation.GENDER);
+            yield const OnboardingNameSuccessState(OnboardingNavigation.gender);
           } else {
-            yield const OnboardingNameSuccessState(OnboardingNavigation.DONE);
+            yield const OnboardingNameSuccessState(OnboardingNavigation.done);
           }
         }
       }

@@ -502,13 +502,14 @@ class FirestoreRepository {
   }
 
   Future<void> leaveAllPrivateChats() async {
-    await privateChats
+    final querySnapshot = await privateChats
         .where('users', arrayContains: getUserId())
-        .get()
-        .then((value) => value.docs.forEach((element) {
-              leavePrivateChat(PrivateChat.fromJson(
-                  element.id, element.data() as Map<String, dynamic>));
-            }));
+        .get();
+
+    for (var doc in querySnapshot.docs) {
+      leavePrivateChat(PrivateChat.fromJson(
+          doc.id, doc.data() as Map<String, dynamic>));
+    }
   }
 
   void updateUserLocation(UserLocation userLocation) {

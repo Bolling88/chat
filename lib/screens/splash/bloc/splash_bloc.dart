@@ -30,7 +30,7 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
           } else if (chatUser.gender == -1) {
             yield SplashLoginState();
           } else {
-            yield const SplashSuccessState(OnboardingNavigation.DONE);
+            yield const SplashSuccessState(OnboardingNavigation.done);
           }
         } else {
           yield SplashLoginState();

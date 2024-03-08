@@ -27,7 +27,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
           if (chatUser == null || chatUser.displayName.isEmpty) {
             await _firestoreRepository.setInitialUserData(
                 credentials.user?.email ?? "", credentials.user?.uid ?? "");
-            yield const LoginSuccessState(OnboardingNavigation.NAME);
+            yield const LoginSuccessState(OnboardingNavigation.name);
           } else {
             yield await checkIfOnboardingIsDone(chatUser);
           }
@@ -77,13 +77,13 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
   Future<LoginState> checkIfOnboardingIsDone(final ChatUser? chatUser) async {
     if (chatUser == null || chatUser.displayName.isEmpty) {
-      return const LoginSuccessState(OnboardingNavigation.NAME);
+      return const LoginSuccessState(OnboardingNavigation.name);
     } else if (chatUser.pictureData.isEmpty) {
-      return const LoginSuccessState(OnboardingNavigation.PICTURE);
+      return const LoginSuccessState(OnboardingNavigation.picture);
     } else if (chatUser.gender == -1) {
-      return const LoginSuccessState(OnboardingNavigation.GENDER);
+      return const LoginSuccessState(OnboardingNavigation.gender);
     } else {
-      return const LoginSuccessState(OnboardingNavigation.DONE);
+      return const LoginSuccessState(OnboardingNavigation.done);
     }
   }
 }

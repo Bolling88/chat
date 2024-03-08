@@ -1,20 +1,13 @@
 //a bloc builder widget class for creating a chat
-import 'package:chat/screens/login/login_screen.dart';
 import 'package:chat/screens/onboarding_name/onboarding_name_screen.dart';
-import 'package:chat/screens/review/review_screen.dart';
-import 'package:chat/utils/gender.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import '../../repository/firestore_repository.dart';
-import '../../utils/app_colors.dart';
 import '../../utils/app_widgets.dart';
-import '../../utils/flag.dart';
 import '../../utils/lottie.dart';
 import '../../utils/translate.dart';
 import '../account/account_screen.dart';
-import '../feedback/feedback_screen.dart';
-import '../messages/other_message_widget.dart';
 import '../onboarding_age/onboarding_age_screen.dart';
 import '../onboarding_gender/onboarding_gender_screen.dart';
 import '../onboarding_photo/onboarding_photo_screen.dart';

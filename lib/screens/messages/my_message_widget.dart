@@ -141,7 +141,7 @@ class AppMyMessageWidget extends StatelessWidget {
                 url: pictureData,
                 gender: gender,
                 approvalState: ApprovedImage.approved,
-                imageReports: [],
+                imageReports: const [],
               ),
             )
           ],

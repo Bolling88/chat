@@ -1,9 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:purchases_flutter/models/package_wrapper.dart';
 
-import '../../../model/chat_user.dart';
-import '../../profile/bloc/profile_event.dart';
-
 abstract class PremiumEvent extends Equatable {
   const PremiumEvent();
 

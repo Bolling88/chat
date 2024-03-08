@@ -38,7 +38,6 @@ class AppLifeCycleBloc extends Bloc<AppLifeCycleEvent, AppLifeCycleState> {
 
   @override
   Stream<AppLifeCycleState> mapEventToState(AppLifeCycleEvent event) async* {
-    final currentState = state;
     if (event is AppLifeCycleInitialEvent) {
       _setUpUserListener();
     } else if (event is AppLifeCycleResumedEvent) {

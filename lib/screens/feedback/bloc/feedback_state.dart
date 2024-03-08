@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import '../../../model/chat_user.dart';
 
 abstract class FeedbackState extends Equatable {
   @override

@@ -1,8 +1,6 @@
-import 'dart:ui';
-
 import 'package:chat/model/chat_user.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import '../repository/firestore_repository.dart';
 import '../utils/gender.dart';
 import '../utils/time_util.dart';
