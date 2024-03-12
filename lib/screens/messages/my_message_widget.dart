@@ -8,6 +8,7 @@ import '../../model/chat.dart';
 import '../../model/message.dart';
 import '../../repository/firestore_repository.dart';
 import '../../utils/app_widgets.dart';
+import '../full_screen_image/full_screen_image_screen.dart';
 
 class AppMyMessageWidget extends StatelessWidget {
   final Message message;
@@ -59,7 +60,20 @@ class AppMyMessageWidget extends StatelessWidget {
       case ChatType.date:
         return Container();
       case ChatType.image:
-        return getImageWidget();
+        return GestureDetector(
+            onTap: (){
+              Navigator.of(context).push(
+                MaterialPageRoute<bool>(
+                  builder: (BuildContext context) => FullScreenImageScreen(
+                      imageUrl: message.text,
+                      userName: message.createdByName,
+                      imageReports: message.imageReports,
+                      approvalState:
+                      ApprovedImage.fromValue(message.approvedImage)),
+                ),
+              );
+            },
+            child: getImageWidget());
     }
   }
 

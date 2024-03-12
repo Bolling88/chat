@@ -12,6 +12,7 @@ import '../../utils/app_widgets.dart';
 import '../../utils/flag.dart';
 import '../../utils/gender.dart';
 import '../account/account_screen.dart';
+import '../full_screen_image/full_screen_image_screen.dart';
 import '../visit/visit_screen.dart';
 import 'bloc/messages_event.dart';
 import 'my_message_widget.dart';
@@ -86,11 +87,26 @@ class AppOtherMessageWidget extends StatelessWidget {
       case ChatType.left:
         return Container();
       case ChatType.giphy:
-        return getImageWidget(context);
+        return getImageWidget(context, () {
+          showVisitScreen(context, userId, chat, false);
+        });
       case ChatType.date:
         return Container();
       case ChatType.image:
-        return getImageWidget(context);
+        return getImageWidget(context, () {
+          if (message.text.isNotEmpty) {
+            Navigator.of(context).push(
+              MaterialPageRoute<bool>(
+                builder: (BuildContext context) => FullScreenImageScreen(
+                    imageUrl: message.text,
+                    userName: message.createdByName,
+                    imageReports: message.imageReports,
+                    approvalState:
+                        ApprovedImage.fromValue(message.approvedImage)),
+              ),
+            );
+          }
+        });
     }
   }
 
@@ -171,8 +187,9 @@ class AppOtherMessageWidget extends StatelessWidget {
                     textAlign: TextAlign.left,
                     style: Theme.of(context).textTheme.bodyMedium?.merge(
                           TextStyle(
-                            color:
-                                message.marked ? context.white : context.textColor,
+                            color: message.marked
+                                ? context.white
+                                : context.textColor,
                             fontSize: isOnlyEmojis(message.text)
                                 ? 40
                                 : Theme.of(context)
@@ -212,43 +229,24 @@ class AppOtherMessageWidget extends StatelessWidget {
     );
   }
 
-  Widget getImageWidget(BuildContext context) {
+  Widget getImageWidget(BuildContext context, VoidCallback onTap) {
     return GestureDetector(
-      onTap: () {
-        showVisitScreen(context, userId, chat, false);
-      },
+      onTap: onTap,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Text(displayName,
-                  textAlign: TextAlign.left,
-                  style: Theme.of(context).textTheme.bodySmall?.merge(TextStyle(
-                      color: getGenderColor(context, Gender.fromValue(gender)),
-                      fontWeight: FontWeight.bold))),
-              if (gender != Gender.secret.value)
-                SizedBox(
-                    width: 18,
-                    height: 18,
-                    child: getGenderIcon(context, Gender.fromValue(gender))),
-              const SizedBox(width: 2),
-              if (birthDate != null && showAge)
-                Text(
-                  getAge(birthDate),
-                  style: Theme.of(context).textTheme.displaySmall?.merge(
-                      TextStyle(
-                          color:
-                              getGenderColor(context, Gender.fromValue(gender)),
-                          fontSize: 16)),
-                ),
-              if (birthDate != null) const SizedBox(width: 8),
-              getFlag(countryCode: countryCode, fontSize: 16),
-            ],
+          Padding(
+            padding: const EdgeInsets.only(left: 10, top: 5, right: 10),
+            child: getPostedByName(
+              context: context,
+              displayName: displayName,
+              gender: gender,
+              countryCode: countryCode,
+              showAge: showAge,
+              birthDate: birthDate,
+            ),
           ),
           const SizedBox(height: 10),
           Align(

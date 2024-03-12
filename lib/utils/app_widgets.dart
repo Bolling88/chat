@@ -58,8 +58,12 @@ class AppUserImage extends StatelessWidget {
       height: size ?? 48,
       fit: BoxFit.cover,
       // placeholder: (context, url) => AppSpinner(),
-      errorWidget: (context, url, error) =>
-          const Icon(Icons.account_circle_rounded),
+      errorWidget: (context, url, error) {
+        return CachedNetworkImage(
+            imageUrl: getGenderImageUrl(Gender.fromValue(
+          (gender < 0 || gender > 3) ? 3 : gender,
+        )));
+      },
     );
   }
 }
