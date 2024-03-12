@@ -60,7 +60,18 @@ class OnboardingPhotoScreenContent extends StatelessWidget {
         body: BlocListener<OnboardingPhotoBloc, OnboardingPhotoState>(
           listener: (context, state) {
             if (state is OnboardingPhotoRedoState) {
-              _showBottomSheet(appContext);
+              showCameraOrImageBottomSheet(
+                  parentContext: appContext,
+                  onCameraPressed: () async {
+                    Navigator.of(appContext).pop();
+                    BlocProvider.of<OnboardingPhotoBloc>(appContext)
+                        .add(OnboardingPhotoCameraClickedEvent());
+                  },
+                  onGalleryPressed: () async {
+                    Navigator.of(appContext).pop();
+                    BlocProvider.of<OnboardingPhotoBloc>(appContext)
+                        .add(OnboardingPhotoGalleryClickedEvent());
+                  });
             } else if (state is OnboardingPhotoSuccessState) {
               if (state.navigation == OnboardingNavigation.picture) {
                 Navigator.of(context).popUntil((route) => route.isFirst);
@@ -246,64 +257,60 @@ class OnboardingPhotoScreenContent extends StatelessWidget {
         : FileImage(File.fromUri(Uri.parse(state.filePath)));
     return CircleAvatar(backgroundImage: image as ImageProvider<Object>);
   }
+}
 
-  void _showBottomSheet(BuildContext parentContext) async {
-    await showModalBottomSheet(
-      useRootNavigator: true,
-      isScrollControlled: true,
-      context: parentContext,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0)),
-      ),
-      builder: (BuildContext context) {
-        return Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const SizedBox(height: 24),
-            Text(
-              FlutterI18n.translate(context, "select_source"),
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
-            const SizedBox(height: 40),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                getOptionWidget(
-                    parentContext,
-                    FlutterI18n.translate(context, "camera"),
-                    '',
-                    const Icon(Icons.camera_alt, size: 30, color: Colors.black),
-                    20,
-                    8, () async {
-                  Navigator.of(parentContext).pop();
-                  BlocProvider.of<OnboardingPhotoBloc>(parentContext)
-                      .add(OnboardingPhotoCameraClickedEvent());
-                }),
-                getOptionWidget(
-                    parentContext,
-                    FlutterI18n.translate(context, "images"),
-                    '',
-                    const Icon(Icons.image, size: 30, color: Colors.black),
-                    8,
-                    20, () {
-                  Navigator.of(parentContext).pop();
-                  BlocProvider.of<OnboardingPhotoBloc>(parentContext)
-                      .add(OnboardingPhotoGalleryClickedEvent());
-                }),
-              ],
-            ),
-            const SizedBox(height: 152),
-          ],
-        );
-      },
-    ).whenComplete(() {
-      BlocProvider.of<OnboardingPhotoBloc>(parentContext)
-          .add(OnboardingPhotoBottomSheetClosedEvent());
-    });
-  }
+void showCameraOrImageBottomSheet(
+    {required BuildContext parentContext,
+    required VoidCallback onCameraPressed,
+    required VoidCallback onGalleryPressed}) async {
+  await showModalBottomSheet(
+    useRootNavigator: true,
+    isScrollControlled: true,
+    context: parentContext,
+    shape: const RoundedRectangleBorder(
+      borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(20.0), topRight: Radius.circular(20.0)),
+    ),
+    builder: (BuildContext context) {
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const SizedBox(height: 24),
+          Text(
+            FlutterI18n.translate(context, "select_source"),
+            style: Theme.of(context).textTheme.bodyMedium,
+          ),
+          const SizedBox(height: 40),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              getOptionWidget(
+                  parentContext,
+                  FlutterI18n.translate(context, "camera"),
+                  '',
+                  const Icon(Icons.camera_alt, size: 30, color: Colors.black),
+                  20,
+                  8,
+                  onCameraPressed),
+              getOptionWidget(
+                  parentContext,
+                  FlutterI18n.translate(context, "images"),
+                  '',
+                  const Icon(Icons.image, size: 30, color: Colors.black),
+                  8,
+                  20, onGalleryPressed),
+            ],
+          ),
+          const SizedBox(height: 152),
+        ],
+      );
+    },
+  ).whenComplete(() {
+    BlocProvider.of<OnboardingPhotoBloc>(parentContext)
+        .add(OnboardingPhotoBottomSheetClosedEvent());
+  });
 }
 
 Flexible getOptionWidget(

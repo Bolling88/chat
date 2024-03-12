@@ -14,6 +14,7 @@ import 'bloc/chat_state.dart';
 
 class ChatScreen extends StatelessWidget {
   final List<ChatUser> _initialUsers;
+
   const ChatScreen(this._initialUsers, {Key? key}) : super(key: key);
 
   @override
@@ -58,8 +59,7 @@ class ChatsScreenContent extends StatelessWidget {
   ListView getRegularChats(ChatBaseState state) {
     return ListView.separated(
       shrinkWrap: true,
-      keyboardDismissBehavior:
-      ScrollViewKeyboardDismissBehavior.onDrag,
+      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
       key: const PageStorageKey('ChatList'),
       itemCount: state.chats.length,
       physics: const NeverScrollableScrollPhysics(),
@@ -115,16 +115,15 @@ class ChatsScreenContent extends StatelessWidget {
             children: [
               Text(state.chats[index].chatName,
                   style: Theme.of(context).textTheme.displaySmall?.merge(
-                        TextStyle(color: Color(state.chats[index].chatColor), fontSize: 30),
+                        TextStyle(
+                            color: Color(state.chats[index].chatColor),
+                            fontSize: 30),
                       )),
               const SizedBox(height: 5),
-              Text(
-                  state.chats[index].getInfoText(context),
+              Text(state.chats[index].getInfoText(context),
                   maxLines: 2,
                   style: Theme.of(context).textTheme.bodySmall?.merge(
-                         TextStyle(
-                            color: context.textColor,
-                            overflow: TextOverflow.ellipsis),
+                        const TextStyle(overflow: TextOverflow.ellipsis),
                       ))
             ],
           )),

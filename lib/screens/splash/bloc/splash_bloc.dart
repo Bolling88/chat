@@ -1,6 +1,7 @@
 import 'package:chat/repository/firestore_repository.dart';
 import 'package:chat/screens/splash/bloc/splash_state.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:universal_io/io.dart';
 import '../../../utils/log.dart';
@@ -9,7 +10,6 @@ import 'splash_event.dart';
 
 class SplashBloc extends Bloc<SplashEvent, SplashState> {
   final FirestoreRepository _firestoreRepository;
-
 
   SplashBloc(this._firestoreRepository) : super(SplashBaseState()) {
     add(SplashInitialEvent());
@@ -25,17 +25,21 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
             yield SplashLoginState();
           } else if (chatUser.displayName.isEmpty) {
             yield SplashLoginState();
-          }else if(chatUser.birthDate == null && Platform.isAndroid){
+          } else if (chatUser.birthDate == null && Platform.isAndroid) {
             yield SplashLoginState();
           } else if (chatUser.gender == -1) {
             yield SplashLoginState();
           } else {
-            yield const SplashSuccessState(OnboardingNavigation.done);
+            if(kIsWeb && (chatUser.isPremiumUser == false && chatUser.isAdmin == false)){
+              yield SplashPremiumState();
+            }else {
+              yield const SplashSuccessState(OnboardingNavigation.done);
+            }
           }
         } else {
           yield SplashLoginState();
         }
-      }else{
+      } else {
         Log.e('SplashBloc: Not implemented');
         throw UnimplementedError();
       }

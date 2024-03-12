@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 
+import '../../../model/chat_user.dart';
 import '../../login/bloc/login_state.dart';
 
 abstract class OnboardingGenderState extends Equatable {
@@ -26,9 +27,10 @@ class OnboardingGenderLoadingState extends OnboardingGenderState{}
 
 class OnboardingGenderSuccessState extends OnboardingGenderState {
   final OnboardingNavigation navigation;
+  final ChatUser user;
 
-  const OnboardingGenderSuccessState(this.navigation);
+  const OnboardingGenderSuccessState(this.navigation, this.user);
 
   @override
-  List<Object> get props => [navigation];
+  List<Object> get props => [navigation, user];
 }

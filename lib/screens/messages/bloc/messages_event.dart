@@ -13,6 +13,8 @@ abstract class MessagesEvent extends Equatable {
 class MessagesInitialEvent extends MessagesEvent {}
 
 class MessagesSendEvent extends MessagesEvent {}
+class MessagesGalleryClickedEvent extends MessagesEvent {}
+class MessagesCameraClickedEvent extends MessagesEvent {}
 
 class MessagesUpdatedEvent extends MessagesEvent {
   final List<Message> messages;

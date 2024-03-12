@@ -1,3 +1,4 @@
+import 'package:chat/model/chat_user.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../repository/firestore_repository.dart';
 import '../../login/bloc/login_state.dart';
@@ -8,6 +9,8 @@ class OnboardingGenderBloc
     extends Bloc<OnboardingGenderEvent, OnboardingGenderState> {
   final FirestoreRepository _firestoreRepository;
 
+  late ChatUser user;
+
   OnboardingGenderBloc(this._firestoreRepository)
       : super(OnboardingGenderLoadingState()) {
     add(OnboardingGenderInitialState());
@@ -17,20 +20,20 @@ class OnboardingGenderBloc
   Stream<OnboardingGenderState> mapEventToState(
       OnboardingGenderEvent event) async* {
     if (event is OnboardingGenderInitialState) {
-      final user = await _firestoreRepository.getUser();
-      yield OnboardingGenderBaseState(user!.pictureData);
+      user = (await _firestoreRepository.getUser())!;
+      yield OnboardingGenderBaseState(user.pictureData);
     } else if (event is OnboardingGenderMaleClickedEvent) {
       _firestoreRepository.updateUserGender(Gender.male);
-      yield const OnboardingGenderSuccessState(OnboardingNavigation.done);
+      yield OnboardingGenderSuccessState(OnboardingNavigation.done, user);
     } else if (event is OnboardingGenderFemaleClickedEvent) {
       _firestoreRepository.updateUserGender(Gender.female);
-      yield const OnboardingGenderSuccessState(OnboardingNavigation.done);
+      yield OnboardingGenderSuccessState(OnboardingNavigation.done, user);
     } else if (event is OnboardingGenderNonBinaryClickedEvent) {
       _firestoreRepository.updateUserGender(Gender.nonBinary);
-      yield const OnboardingGenderSuccessState(OnboardingNavigation.done);
+      yield OnboardingGenderSuccessState(OnboardingNavigation.done, user);
     } else if (event is OnboardingGenderSecretClickedEvent) {
       _firestoreRepository.updateUserGender(Gender.secret);
-      yield const OnboardingGenderSuccessState(OnboardingNavigation.done);
+      yield OnboardingGenderSuccessState(OnboardingNavigation.done, user);
     }
   }
 }

@@ -32,109 +32,7 @@ class AppMyMessageWidget extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.end,
           mainAxisSize: MainAxisSize.min,
           children: [
-            (message.chatType == ChatType.giphy)
-                ? Expanded(
-                    child: Align(
-                      alignment: Alignment.bottomRight,
-                      child: SizedBox(
-                        width: 200,
-                        height: 200,
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(20.0),
-                          child: CachedNetworkImage(
-                            imageUrl: message.text,
-                            placeholder: (context, url) =>
-                                const Center(child: AppSpinner()),
-                            errorWidget: (context, url, error) =>
-                                const Icon(Icons.error),
-                          ),
-                        ),
-                      ),
-                    ),
-                  )
-                : Expanded(
-                    child: Align(
-                      alignment: Alignment.bottomRight,
-                      child: DecoratedBox(
-                        decoration: BoxDecoration(
-                            borderRadius: const BorderRadius.only(
-                              bottomLeft: Radius.circular(10.0),
-                              bottomRight: Radius.circular(10.0),
-                              topLeft: Radius.circular(10.0),
-                            ),
-                            gradient: LinearGradient(
-                                begin: Alignment.topCenter,
-                                end: Alignment.bottomCenter,
-                                colors: [context.main, context.main_2])),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            if (message.replyId.isNotEmpty)
-                              Transform.scale(
-                                scale: 0.8,
-                                child: AppOtherMessageWidget(
-                                  message: Message(
-                                      id: '',
-                                      text: message.replyText,
-                                      createdById: message.replyCreatedById,
-                                      createdByName: message.replyCreatedByName,
-                                      createdByGender:
-                                          message.replyCreatedByGender,
-                                      createdByCountryCode:
-                                          message.replyCreatedByCountryCode,
-                                      createdByImageUrl:
-                                          message.replyCreatedByImageUrl,
-                                      chatType: message.replyChatType,
-                                      approvedImage: message.replyApprovedImage,
-                                      created: message.replyCreated ??
-                                          Timestamp.now(),
-                                      showAge: message.replyShowAge,
-                                      marked: false,
-                                      imageReports: message.replyImageReports),
-                                  pictureData: message.replyCreatedByImageUrl,
-                                  gender: message.replyCreatedByGender,
-                                  userId: message.replyCreatedById,
-                                  imageReports: message.replyImageReports,
-                                  displayName: message.replyCreatedByName,
-                                  approvedImage: message.replyApprovedImage,
-                                  countryCode:
-                                      message.replyCreatedByCountryCode,
-                                  birthDate: message.replyBirthDate,
-                                  showAge: message.replyShowAge,
-                                  chat: chat,
-                                  paddingLeft: 0,
-                                  paddingRight: 0,
-                                ),
-                              ),
-                            Padding(
-                              padding: EdgeInsets.only(
-                                  top: message.replyId.isNotEmpty ? 0 : 15,
-                                  bottom: 15,
-                                  left: 10,
-                                  right: 10),
-                              child: Text(message.text,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyMedium
-                                      ?.merge(
-                                        TextStyle(
-                                          color: Colors.white,
-                                          fontSize: isOnlyEmojis(message.text)
-                                              ? 40
-                                              : Theme.of(context)
-                                                  .textTheme
-                                                  .bodyMedium
-                                                  ?.fontSize,
-                                        ),
-                                      )),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
+            Expanded(child: getMessageContent(context)),
             Padding(
               padding: const EdgeInsets.only(left: 10),
               child: AppUserImage(
@@ -146,6 +44,117 @@ class AppMyMessageWidget extends StatelessWidget {
             )
           ],
         ));
+  }
+
+  Widget getMessageContent(BuildContext context) {
+    switch (message.chatType) {
+      case ChatType.message:
+        return getMessageWidget(context);
+      case ChatType.joined:
+        return Container();
+      case ChatType.left:
+        return Container();
+      case ChatType.giphy:
+        return getImageWidget();
+      case ChatType.date:
+        return Container();
+      case ChatType.image:
+        return getImageWidget();
+    }
+  }
+
+  Align getMessageWidget(BuildContext context) {
+    return Align(
+      alignment: Alignment.bottomRight,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+            borderRadius: const BorderRadius.only(
+              bottomLeft: Radius.circular(10.0),
+              bottomRight: Radius.circular(10.0),
+              topLeft: Radius.circular(10.0),
+            ),
+            gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [context.main, context.main_2])),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.end,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            if (message.replyId.isNotEmpty)
+              Transform.scale(
+                scale: 0.8,
+                child: AppOtherMessageWidget(
+                  message: Message(
+                      id: '',
+                      text: message.replyText,
+                      createdById: message.replyCreatedById,
+                      createdByName: message.replyCreatedByName,
+                      createdByGender: message.replyCreatedByGender,
+                      createdByCountryCode: message.replyCreatedByCountryCode,
+                      createdByImageUrl: message.replyCreatedByImageUrl,
+                      chatType: message.replyChatType,
+                      approvedImage: message.replyApprovedImage,
+                      created: message.replyCreated ?? Timestamp.now(),
+                      showAge: message.replyShowAge,
+                      marked: false,
+                      imageReports: message.replyImageReports),
+                  pictureData: message.replyCreatedByImageUrl,
+                  gender: message.replyCreatedByGender,
+                  userId: message.replyCreatedById,
+                  imageReports: message.replyImageReports,
+                  displayName: message.replyCreatedByName,
+                  approvedImage: message.replyApprovedImage,
+                  countryCode: message.replyCreatedByCountryCode,
+                  birthDate: message.replyBirthDate,
+                  showAge: message.replyShowAge,
+                  chat: chat,
+                  paddingLeft: 0,
+                  paddingRight: 0,
+                ),
+              ),
+            Padding(
+              padding: EdgeInsets.only(
+                  top: message.replyId.isNotEmpty ? 0 : 15,
+                  bottom: 15,
+                  left: 10,
+                  right: 10),
+              child: Text(message.text,
+                  style: Theme.of(context).textTheme.bodyMedium?.merge(
+                        TextStyle(
+                          color: Colors.white,
+                          fontSize: isOnlyEmojis(message.text)
+                              ? 40
+                              : Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium
+                                  ?.fontSize,
+                        ),
+                      )),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Align getImageWidget() {
+    return Align(
+      alignment: Alignment.bottomRight,
+      child: SizedBox(
+        width: 200,
+        height: 200,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(20.0),
+          child: CachedNetworkImage(
+            imageUrl: message.text,
+            placeholder: (context, url) => const Center(child: AppSpinner()),
+            errorWidget: (context, url, error) => const Icon(Icons.error),
+          ),
+        ),
+      ),
+    );
   }
 }
 

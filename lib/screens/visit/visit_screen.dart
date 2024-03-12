@@ -187,9 +187,11 @@ class VisitScreenContent extends StatelessWidget {
                                   .add(VisitTextChangedEvent(value));
                             },
                             onTapGiphy: () {},
+                            onImageTap: () {},
                             hintText: FlutterI18n.translate(
                                 context, "write_private_message_hint"),
                             showGiphy: false,
+                            showImage: false,
                             onSendTapped: (String message) {
                               if (message.isEmpty) {
                                 return;

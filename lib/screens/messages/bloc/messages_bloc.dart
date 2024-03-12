@@ -1,17 +1,23 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:chat/model/chat_user.dart';
 import 'package:chat/model/private_chat.dart';
 import 'package:chat/repository/chat_clicked_repository.dart';
+import 'package:chat/repository/storage_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:universal_io/io.dart';
 import '../../../model/chat.dart';
 import '../../../model/message.dart';
 import '../../../repository/firestore_repository.dart';
 import '../../../utils/audio.dart';
+import '../../../utils/constants.dart';
+import '../../../utils/image_util.dart';
 import '../../../utils/log.dart';
 import 'messages_event.dart';
 import 'messages_state.dart';
@@ -22,6 +28,8 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
   final bool isPrivateChat;
   final FirestoreRepository _firestoreRepository;
   final ChatClickedRepository _chatClickedRepository;
+  final StorageRepository _storageRepository;
+  final picker = ImagePicker();
 
   BannerAd? _anchoredAdaptiveAd;
 
@@ -33,7 +41,7 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
   late ChatUser _user;
 
   MessagesBloc(
-      this.chat, this._firestoreRepository, this._chatClickedRepository,
+      this.chat, this._firestoreRepository, this._chatClickedRepository, this._storageRepository,
       {required this.isPrivateChat})
       : super(MessagesLoadingState()) {
     add(MessagesInitialEvent());
@@ -215,6 +223,74 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
     } else if (event is MessagesReplyEventClear) {
       if (currentState is MessagesBaseState) {
         yield getBaseState(currentState);
+      }
+    }else if(event is MessagesGalleryClickedEvent){
+      if (currentState is MessagesBaseState) {
+        yield MessagesLoadingState();
+      XFile? pickedFile;
+      try {
+        pickedFile = await picker.pickImage(
+            source: ImageSource.gallery, imageQuality: photoQuality);
+      } catch (e) {
+        Log.e(e);
+        yield currentState.copyWith(currentMessage: "");
+      }
+      if (pickedFile != null) {
+          String base64Image = '';
+          if (kIsWeb) {
+            var imageForWeb = await pickedFile.readAsBytes();
+            base64Image = base64Encode(imageForWeb);
+          }
+          final imageUrl = await _storageRepository.uploadMessageImage(
+              pickedFile.path, base64Image);
+          final finalUrl = await imageUrl?.getDownloadURL() ?? "";
+          await _firestoreRepository.postMessage(
+              chatId: chat.id,
+              user: currentState.myUser,
+              chatType: ChatType.image,
+              message: finalUrl,
+              isPrivateChat: isPrivateChat,
+              sendPushToUserId: (chat is PrivateChat
+                  ? (chat as PrivateChat)
+                  .users
+                  .where((element) => element != getUserId())
+                  .firstOrNull
+                  : null),
+              isGiphy: true);
+          yield currentState.copyWith(currentMessage: "");
+        }else{
+          yield currentState.copyWith(currentMessage: "");
+      }
+      }
+    }else if(event is MessagesCameraClickedEvent){
+      if (currentState is MessagesBaseState) {
+        yield MessagesLoadingState();
+        final pickedFile = await picker.pickImage(
+            maxHeight: 400,
+            maxWidth: 400,
+            source: ImageSource.camera,
+            imageQuality: photoQuality);
+        if (pickedFile != null) {
+          final imageUrl = await _storageRepository.uploadMessageImage(
+              pickedFile.path, '');
+          final finalUrl = await imageUrl?.getDownloadURL() ?? "";
+          await _firestoreRepository.postMessage(
+              chatId: chat.id,
+              user: currentState.myUser,
+              chatType: ChatType.image,
+              message: finalUrl,
+              isPrivateChat: isPrivateChat,
+              sendPushToUserId: (chat is PrivateChat
+                  ? (chat as PrivateChat)
+                  .users
+                  .where((element) => element != getUserId())
+                  .firstOrNull
+                  : null),
+              isGiphy: true);
+          yield currentState.copyWith(currentMessage: "");
+        }else{
+          yield currentState.copyWith(currentMessage: "");
+        }
       }
     } else {
       yield MessagesErrorState();

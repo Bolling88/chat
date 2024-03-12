@@ -65,7 +65,8 @@ enum ChatType {
   joined(1),
   left(2),
   giphy(3),
-  date(4);
+  date(4),
+  image(5);
 
   const ChatType(this.value);
 
@@ -225,7 +226,7 @@ class FirestoreRepository {
     Message? replyMessage,
   }) async {
     if (isPrivateChat) {
-      if (chatType == ChatType.message || chatType == ChatType.giphy) {
+      if (chatType == ChatType.message || chatType == ChatType.giphy || chatType == ChatType.image) {
         await privateChats.doc(chatId).collection('messages').add({
           'text': message,
           'chatType': chatType.value,

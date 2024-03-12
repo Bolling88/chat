@@ -150,5 +150,9 @@
   "premium_user": "Premiumanvändare",
   "get_unlimited_translations": "Få obegränsade översättningar",
   "watch_ad_10": "Titta på annons, få 10 krediter",
-  "no_trial": "Ingen provperiod och automatisk förnyelse. Avbryt när som helst!"
+  "no_trial": "Ingen provperiod och automatisk förnyelse. Avbryt när som helst!",
+  "web_premium_title": "Lås upp Full Tillgång med",
+  "web_premium_title_second": "Kvitter Premium",
+  "web_premium_description": "För att njuta av hela sviten av funktioner och fördelar som vår webbapp erbjuder måste du vara en Kvitter Premium-användare. Kvitter Premium låser upp en sömlös, reklamfri upplevelse. Dessutom drar Premium-användare nytta av obegränsade, gratis översättningar, vilket gör global kommunikation ansträngningslös.\n\nAtt bli en Premium-användare är enkelt! Ladda bara ner vår app som finns tillgänglig för både iOS- och Android-plattformar. Med bara några få tryck kan du uppgradera till Premium genom appen och omedelbart höja din Kvitter-upplevelse på alla dina enheter.\n\nNedan hittar du knappar för att ladda ner Kvitter-appen på din föredragna plattform. Gå med i Premium-gemenskapen idag och börja njuta av en förbättrad, reklamfri upplevelse med den tillagda bekvämligheten av gratis översättningar. Din resa till en obegränsad Kvitter-upplevelse är bara ett klick bort!",
+  "send_images": "Skicka bilder!"
 }

@@ -49,6 +49,9 @@ extension ColorUtil on BuildContext {
   Color get backgroundColor =>
       dynamicColour(light: const Color(0xFFF3FEFF), dark: const Color(0xFF002022));
 
+  Color get hintColor =>
+      dynamicColour(light: const Color(0xFFa1a1a1), dark: const Color(0xFFE3E3E3));
+
   Color get purple =>
       dynamicColour(light: const Color(0xFF673AB7), dark: const Color(0xFF673AB7));
 

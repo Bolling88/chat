@@ -1,5 +1,6 @@
 import 'package:chat/model/private_chat.dart';
 import 'package:chat/repository/chat_clicked_repository.dart';
+import 'package:chat/repository/storage_repository.dart';
 import 'package:chat/screens/message_holder/bloc/message_holder_bloc.dart';
 import 'package:chat/screens/message_holder/bloc/message_holder_event.dart';
 import 'package:chat/utils/app_colors.dart';
@@ -14,6 +15,8 @@ import '../../repository/firestore_repository.dart';
 import '../../utils/app_widgets.dart';
 import '../../utils/constants.dart';
 import '../../utils/translate.dart';
+import '../onboarding_photo/onboarding_photo_screen.dart';
+import '../premium/premium_screen.dart';
 import 'bloc/messages_bloc.dart';
 import 'bloc/messages_event.dart';
 import 'bloc/messages_state.dart';
@@ -38,6 +41,7 @@ class MessagesScreen extends StatelessWidget {
           chat,
           context.read<FirestoreRepository>(),
           context.read<ChatClickedRepository>(),
+          context.read<StorageRepository>(),
           isPrivateChat: isPrivateChat),
       child: ChatsScreenContent(
         chat: chat,
@@ -157,6 +161,7 @@ class ChatsScreenContent extends StatelessWidget {
                     hintText:
                         FlutterI18n.translate(context, "write_message_hint"),
                     showGiphy: true,
+                    showImage: state.privateChat != null,
                     onTapGiphy: () async {
                       final GiphyGif? gif = await GiphyGet.getGif(
                         context: context, //Required
@@ -169,6 +174,23 @@ class ChatsScreenContent extends StatelessWidget {
                           BlocProvider.of<MessagesBloc>(context)
                               .add(MessagesGiphyPickedEvent(gif));
                         }
+                      }
+                    },
+                    onImageTap: () {
+                      if (state.myUser.isAdmin || state.myUser.isPremiumUser) {
+                        showCameraOrImageBottomSheet(parentContext: context, onCameraPressed: () async {
+                          BlocProvider.of<MessagesBloc>(context)
+                              .add(MessagesCameraClickedEvent());
+                          Navigator.pop(context);
+                        }, onGalleryPressed: () async {
+                          BlocProvider.of<MessagesBloc>(context)
+                              .add(MessagesGalleryClickedEvent());
+                          Navigator.pop(context);
+                        });
+                      } else {
+                        //Navigate to premium screen
+                        Navigator.pushNamed(
+                            context, PremiumScreen.routeName);
                       }
                     },
                     onSendTapped: (String message) {

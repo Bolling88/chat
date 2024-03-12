@@ -36,6 +36,23 @@ class StorageRepository {
     return null;
   }
 
+  Future<Reference?> uploadMessageImage(
+      String filePath, String base64Image) async {
+    File file = File(filePath);
+
+    try {
+      final task = kIsWeb
+          ? await _storage.ref('chatImage/${file.path}.png').putData(
+          base64.decode(base64Image),
+          SettableMetadata(contentType: 'image/jpeg'))
+          : await _storage.ref('chatImage/${file.path}.png').putFile(file);
+      return task.ref;
+    } on FirebaseException catch (e) {
+      Log.e(e.toString());
+    }
+    return null;
+  }
+
   Future<Reference?> deleteImage(String filePath) async {
     try {
       await _storage.refFromURL(filePath).delete();

@@ -111,9 +111,11 @@ class FeedbackScreenContent extends StatelessWidget {
                     currentMessage: '',
                     onTextChanged: (String value) {},
                     onTapGiphy: () {},
+                    onImageTap: () {},
                     hintText:
                         FlutterI18n.translate(context, "write_feedback_hint"),
                     showGiphy: false,
+                    showImage: false,
                     onSendTapped: (String message) {
                       if (message.isEmpty) {
                         return;

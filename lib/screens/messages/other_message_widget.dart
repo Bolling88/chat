@@ -71,113 +71,108 @@ class AppOtherMessageWidget extends StatelessWidget {
               ),
             ),
           ),
-          if (message.chatType == ChatType.giphy)
-            giphyMessage(context)
-          else
-            Expanded(child: regularMessage(context)),
+          getMessageContent(context),
         ],
       ),
     );
   }
 
-  Widget regularMessage(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        BlocProvider.of<MessagesBloc>(context)
-            .add(MessagesMarkedEvent(message: message, marked: true));
-        showOptionsScreen(context, message);
-      },
-      child: Align(
-        alignment: Alignment.bottomLeft,
-        child: Material(
-          type: MaterialType.card,
-          elevation: 1,
-          color: message.marked ? context.main_3 : context.grey_4,
-          shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(0.0),
-                  topRight: Radius.circular(5.0),
-                  bottomRight: Radius.circular(5.0),
-                  bottomLeft: Radius.circular(5.0))),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Padding(
-                padding: const EdgeInsets.only(left: 10, top: 5, right: 10),
-                child: getPostedByName(
-                  context: context,
-                  displayName: displayName,
-                  gender: gender,
-                  countryCode: countryCode,
-                  showAge: showAge,
-                  birthDate: birthDate,
-                ),
-              ),
-              if (message.replyId.isNotEmpty)
-                IgnorePointer(
-                  child: Transform.scale(
-                    scale: 0.8,
-                    child: AppOtherMessageWidget(
-                      message: Message(
-                          id: '',
-                          text: message.replyText,
-                          createdById: message.replyCreatedById,
-                          createdByName: message.replyCreatedByName,
-                          createdByGender: message.replyCreatedByGender,
-                          createdByCountryCode:
-                              message.replyCreatedByCountryCode,
-                          createdByImageUrl: message.replyCreatedByImageUrl,
-                          chatType: message.replyChatType,
-                          approvedImage: message.replyApprovedImage,
-                          created: message.replyCreated ?? Timestamp.now(),
-                          showAge: message.replyShowAge,
-                          marked: false,
-                          imageReports: message.replyImageReports),
-                      pictureData: message.replyCreatedByImageUrl,
-                      gender: message.replyCreatedByGender,
-                      userId: message.replyCreatedById,
-                      imageReports: message.replyImageReports,
-                      displayName: message.replyCreatedByName,
-                      approvedImage: message.replyApprovedImage,
-                      countryCode: message.replyCreatedByCountryCode,
-                      birthDate: message.replyBirthDate,
-                      showAge: message.replyShowAge,
-                      chat: chat,
-                      paddingLeft: 0,
-                      paddingRight: 0,
-                    ),
+  Widget getMessageContent(BuildContext context) {
+    switch (message.chatType) {
+      case ChatType.message:
+        return getMessageWidget(context);
+      case ChatType.joined:
+        return Container();
+      case ChatType.left:
+        return Container();
+      case ChatType.giphy:
+        return getImageWidget(context);
+      case ChatType.date:
+        return Container();
+      case ChatType.image:
+        return getImageWidget(context);
+    }
+  }
+
+  Widget getMessageWidget(BuildContext context) {
+    return Expanded(
+      child: GestureDetector(
+        onTap: () {
+          BlocProvider.of<MessagesBloc>(context)
+              .add(MessagesMarkedEvent(message: message, marked: true));
+          showOptionsScreen(context, message);
+        },
+        child: Align(
+          alignment: Alignment.bottomLeft,
+          child: Material(
+            type: MaterialType.card,
+            elevation: 1,
+            color: message.marked ? context.main_3 : context.grey_4,
+            shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(0.0),
+                    topRight: Radius.circular(5.0),
+                    bottomRight: Radius.circular(5.0),
+                    bottomLeft: Radius.circular(5.0))),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(left: 10, top: 5, right: 10),
+                  child: getPostedByName(
+                    context: context,
+                    displayName: displayName,
+                    gender: gender,
+                    countryCode: countryCode,
+                    showAge: showAge,
+                    birthDate: birthDate,
                   ),
                 ),
-              Padding(
-                padding: const EdgeInsets.only(left: 10, right: 10),
-                child: Text(
-                  message.text,
-                  textAlign: TextAlign.left,
-                  style: Theme.of(context).textTheme.bodyMedium?.merge(
-                        TextStyle(
-                          color:
-                              message.marked ? context.white : context.textColor,
-                          fontSize: isOnlyEmojis(message.text)
-                              ? 40
-                              : Theme.of(context)
-                                  .textTheme
-                                  .bodyMedium
-                                  ?.fontSize,
-                        ),
+                if (message.replyId.isNotEmpty)
+                  IgnorePointer(
+                    child: Transform.scale(
+                      scale: 0.8,
+                      child: AppOtherMessageWidget(
+                        message: Message(
+                            id: '',
+                            text: message.replyText,
+                            createdById: message.replyCreatedById,
+                            createdByName: message.replyCreatedByName,
+                            createdByGender: message.replyCreatedByGender,
+                            createdByCountryCode:
+                                message.replyCreatedByCountryCode,
+                            createdByImageUrl: message.replyCreatedByImageUrl,
+                            chatType: message.replyChatType,
+                            approvedImage: message.replyApprovedImage,
+                            created: message.replyCreated ?? Timestamp.now(),
+                            showAge: message.replyShowAge,
+                            marked: false,
+                            imageReports: message.replyImageReports),
+                        pictureData: message.replyCreatedByImageUrl,
+                        gender: message.replyCreatedByGender,
+                        userId: message.replyCreatedById,
+                        imageReports: message.replyImageReports,
+                        displayName: message.replyCreatedByName,
+                        approvedImage: message.replyApprovedImage,
+                        countryCode: message.replyCreatedByCountryCode,
+                        birthDate: message.replyBirthDate,
+                        showAge: message.replyShowAge,
+                        chat: chat,
+                        paddingLeft: 0,
+                        paddingRight: 0,
                       ),
-                ),
-              ),
-              if (message.translation != null &&
-                  message.translation?.isNotEmpty == true)
+                    ),
+                  ),
                 Padding(
                   padding: const EdgeInsets.only(left: 10, right: 10),
                   child: Text(
-                    message.translation ?? '',
+                    message.text,
                     textAlign: TextAlign.left,
                     style: Theme.of(context).textTheme.bodyMedium?.merge(
                           TextStyle(
-                            color: context.main,
+                            color:
+                                message.marked ? context.white : context.textColor,
                             fontSize: isOnlyEmojis(message.text)
                                 ? 40
                                 : Theme.of(context)
@@ -188,15 +183,36 @@ class AppOtherMessageWidget extends StatelessWidget {
                         ),
                   ),
                 ),
-              const SizedBox(height: 5),
-            ],
+                if (message.translation != null &&
+                    message.translation?.isNotEmpty == true)
+                  Padding(
+                    padding: const EdgeInsets.only(left: 10, right: 10),
+                    child: Text(
+                      message.translation ?? '',
+                      textAlign: TextAlign.left,
+                      style: Theme.of(context).textTheme.bodyMedium?.merge(
+                            TextStyle(
+                              color: context.main,
+                              fontSize: isOnlyEmojis(message.text)
+                                  ? 40
+                                  : Theme.of(context)
+                                      .textTheme
+                                      .bodyMedium
+                                      ?.fontSize,
+                            ),
+                          ),
+                    ),
+                  ),
+                const SizedBox(height: 5),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget giphyMessage(BuildContext context) {
+  Widget getImageWidget(BuildContext context) {
     return GestureDetector(
       onTap: () {
         showVisitScreen(context, userId, chat, false);
@@ -234,6 +250,7 @@ class AppOtherMessageWidget extends StatelessWidget {
               getFlag(countryCode: countryCode, fontSize: 16),
             ],
           ),
+          const SizedBox(height: 10),
           Align(
             alignment: Alignment.bottomLeft,
             child: ClipRRect(

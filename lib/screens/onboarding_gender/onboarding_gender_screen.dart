@@ -1,11 +1,13 @@
 import 'package:chat/screens/message_holder/message_holder_screen.dart';
 import 'package:chat/utils/lottie.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import '../../repository/firestore_repository.dart';
 import '../../utils/app_widgets.dart';
 import '../login/bloc/login_state.dart';
+import '../web_premium/web_premium_screen.dart';
 import 'bloc/onboarding_gender_bloc.dart';
 import 'bloc/onboarding_gender_event.dart';
 import 'bloc/onboarding_gender_state.dart';
@@ -37,7 +39,7 @@ class OnboardingGenderScreenContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final args = ModalRoute.of(context)?.settings.arguments
-    as OnboardingGenderScreenArguments?;
+        as OnboardingGenderScreenArguments?;
     final isEditMode = args?.isEditMode ?? false;
 
     return Scaffold(
@@ -46,9 +48,17 @@ class OnboardingGenderScreenContent extends StatelessWidget {
         if (state is OnboardingGenderSuccessState) {
           if (isEditMode) {
             Navigator.of(context).pop();
-          }else if (state.navigation == OnboardingNavigation.done) {
-            Navigator.of(context).popUntil((route) => route.isFirst);
-            Navigator.pushReplacementNamed(context, MessageHolderScreen.routeName);
+          } else if (state.navigation == OnboardingNavigation.done) {
+            if (kIsWeb &&
+                (state.user.isPremiumUser == false && state.user.isAdmin == false)) {
+              Navigator.of(context).popUntil((route) => route.isFirst);
+              Navigator.pushReplacementNamed(
+                  context, WebPremiumScreen.routeName);
+            } else {
+              Navigator.of(context).popUntil((route) => route.isFirst);
+              Navigator.pushReplacementNamed(
+                  context, MessageHolderScreen.routeName);
+            }
           }
         }
       },
@@ -66,14 +76,15 @@ class OnboardingGenderScreenContent extends StatelessWidget {
     ));
   }
 
-  Widget showBaseUi(BuildContext context, OnboardingGenderBaseState state, bool isEditMode) {
+  Widget showBaseUi(
+      BuildContext context, OnboardingGenderBaseState state, bool isEditMode) {
     return Scaffold(
       appBar: isEditMode
           ? AppBar(
-        title: Text(
-          FlutterI18n.translate(context, "change_gender"),
-        ),
-      )
+              title: Text(
+                FlutterI18n.translate(context, "change_gender"),
+              ),
+            )
           : null,
       body: Center(
         child: Column(
@@ -85,12 +96,16 @@ class OnboardingGenderScreenContent extends StatelessWidget {
                 url: state.filePath,
                 gender: 0,
                 imageReports: const [],
-                size: 110, approvalState: ApprovedImage.approved,
+                size: 110,
+                approvalState: ApprovedImage.approved,
               )),
             const SizedBox(height: 20),
             Center(
               child: Text(
-                isEditMode? FlutterI18n.translate(context, "change_gender_question_mark"): FlutterI18n.translate(context, "one_more_thing"),
+                isEditMode
+                    ? FlutterI18n.translate(
+                        context, "change_gender_question_mark")
+                    : FlutterI18n.translate(context, "one_more_thing"),
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.displayLarge,
               ),
@@ -99,15 +114,17 @@ class OnboardingGenderScreenContent extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.only(left: 20, right: 20),
                 child: Text(
-                  isEditMode? FlutterI18n.translate(context, "it_happens_exclamation"): FlutterI18n.translate(context, "before_we_are_done"),
+                  isEditMode
+                      ? FlutterI18n.translate(context, "it_happens_exclamation")
+                      : FlutterI18n.translate(context, "before_we_are_done"),
                   textAlign: TextAlign.center,
                   style: Theme.of(context).textTheme.displayMedium,
                 ),
               ),
             ),
             Padding(
-              padding:
-                  const EdgeInsets.only(left: 70, right: 70, top: 30, bottom: 20),
+              padding: const EdgeInsets.only(
+                  left: 70, right: 70, top: 30, bottom: 20),
               child: Center(
                 child: Text(
                   FlutterI18n.translate(context, "choose_what_identifies_as"),

@@ -19,6 +19,7 @@ import 'package:chat/screens/terms/copyright.dart';
 import 'package:chat/screens/terms/eula.dart';
 import 'package:chat/screens/terms/privacy.dart';
 import 'package:chat/screens/terms/terms.dart';
+import 'package:chat/screens/web_premium/web_premium_screen.dart';
 import 'package:chat/utils/app_colors.dart';
 import 'package:chat/utils/color_schemes.dart';
 import 'package:chat/utils/image_util.dart';
@@ -179,6 +180,7 @@ class KvitterApp extends StatelessWidget {
                 EulaScreen.routeName: (context) => const EulaScreen(),
                 ReviewScreen.routeName: (context) => const ReviewScreen(),
                 PremiumScreen.routeName: (context) => const PremiumScreen(),
+                WebPremiumScreen.routeName: (context) => const WebPremiumScreen(),
               },
             ),
           );
@@ -247,7 +249,7 @@ class KvitterApp extends StatelessWidget {
         bodyMedium:
             TextStyle(fontWeight: FontWeight.w600, color: context.textColor),
         bodySmall:
-            TextStyle(fontWeight: FontWeight.w400, color: context.textColor),
+            TextStyle(fontWeight: FontWeight.w500, color: context.textColor),
       ),
     );
   }
@@ -307,6 +309,6 @@ class KvitterApp extends StatelessWidget {
             bodyMedium: const TextStyle(
                 fontWeight: FontWeight.w600, color: Color(0xFFFFFFFF)),
             bodySmall: const TextStyle(
-                fontWeight: FontWeight.w400, color: Color(0xFFFFFFFF))));
+                fontWeight: FontWeight.w500, color: Color(0xFFFFFFFF))));
   }
 }

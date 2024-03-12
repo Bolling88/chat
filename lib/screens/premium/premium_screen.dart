@@ -96,6 +96,25 @@ class PremiumScreenBuilder extends StatelessWidget {
                 child: Row(
                   children: [
                     Icon(
+                      Icons.image,
+                      color: context.textColor,
+                    ),
+                    const SizedBox(width: 10),
+                    Text(
+                      translate(context, 'send_images'),
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyLarge
+                          ?.copyWith(fontSize: 18),
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 20, top: 20),
+                child: Row(
+                  children: [
+                    Icon(
                       Icons.block,
                       color: context.textColor,
                     ),
@@ -105,7 +124,7 @@ class PremiumScreenBuilder extends StatelessWidget {
                       style: Theme.of(context)
                           .textTheme
                           .bodyLarge
-                          ?.copyWith(fontSize: 20),
+                          ?.copyWith(fontSize: 18),
                     ),
                   ],
                 ),
@@ -124,26 +143,7 @@ class PremiumScreenBuilder extends StatelessWidget {
                       style: Theme.of(context)
                           .textTheme
                           .bodyLarge
-                          ?.copyWith(fontSize: 20),
-                    ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 20, top: 20),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.check_circle_outline,
-                      color: context.textColor,
-                    ),
-                    const SizedBox(width: 10),
-                    Text(
-                      translate(context, 'and_more_to_come'),
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyLarge
-                          ?.copyWith(fontSize: 20),
+                          ?.copyWith(fontSize: 18),
                     ),
                   ],
                 ),
@@ -177,7 +177,7 @@ class PremiumScreenBuilder extends StatelessWidget {
               ),
               Center(
                 child: Padding(
-                  padding: const EdgeInsets.only(bottom: 20, top: 20),
+                  padding: const EdgeInsets.only(top: 10),
                   child: TextButton(
                     onPressed: () {
                       context.read<PremiumBloc>().add(PremiumRestoreEvent());

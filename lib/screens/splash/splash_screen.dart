@@ -6,6 +6,7 @@ import '../error/error_screen.dart';
 import '../loading/loading_screen.dart';
 import '../login/bloc/login_state.dart';
 import '../login/login_screen.dart';
+import '../web_premium/web_premium_screen.dart';
 import 'bloc/splash_bloc.dart';
 import 'bloc/splash_state.dart';
 
@@ -44,6 +45,9 @@ class SplashScreenBuilder extends StatelessWidget {
             ),
           );
         }
+      }else if(state is SplashPremiumState){
+        Navigator.of(context).popUntil((route) => route.isFirst);
+        Navigator.pushReplacementNamed(context, WebPremiumScreen.routeName);
       }
     }, child: BlocBuilder<SplashBloc, SplashState>(builder: (context, state) {
       if (state is SplashErrorState) {
