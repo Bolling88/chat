@@ -245,7 +245,7 @@ class KvitterApp extends StatelessWidget {
           fontWeight: FontWeight.w800,
         ),
         bodyLarge:
-            TextStyle(fontWeight: FontWeight.w600, color: context.textColor),
+            TextStyle(fontWeight: FontWeight.w700, color: context.textColor),
         bodyMedium:
             TextStyle(fontWeight: FontWeight.w600, color: context.textColor),
         bodySmall:

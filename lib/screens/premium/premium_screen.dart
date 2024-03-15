@@ -96,12 +96,12 @@ class PremiumScreenBuilder extends StatelessWidget {
                 child: Row(
                   children: [
                     Icon(
-                      Icons.image,
+                      Icons.monetization_on_outlined,
                       color: context.textColor,
                     ),
                     const SizedBox(width: 10),
                     Text(
-                      translate(context, 'send_images'),
+                      translate(context, 'unlimited_credits'),
                       style: Theme.of(context)
                           .textTheme
                           .bodyLarge
@@ -121,25 +121,6 @@ class PremiumScreenBuilder extends StatelessWidget {
                     const SizedBox(width: 10),
                     Text(
                       translate(context, 'no_ads'),
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyLarge
-                          ?.copyWith(fontSize: 18),
-                    ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 20, top: 20),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.translate,
-                      color: context.textColor,
-                    ),
-                    const SizedBox(width: 10),
-                    Text(
-                      translate(context, 'free_translation'),
                       style: Theme.of(context)
                           .textTheme
                           .bodyLarge

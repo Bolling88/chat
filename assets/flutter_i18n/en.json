@@ -130,7 +130,7 @@
   "get_credits": "Get 10 Kvitter Credits",
   "awesome": "Awesome!",
   "watch_ad": "Watch ad",
-  "claim_reward": "Claim reward (10)",
+  "claim_reward": "Claim reward (5)",
   "no_spamming": "No duplicate messages please",
   "online": "Online",
   "offline": "Offline",
@@ -149,12 +149,17 @@
   "no_subscription_to_restore": "No subscriptions found",
   "premium_user": "Premium user",
   "get_unlimited_translations": "Get unlimited translations",
-  "watch_ad_10": "Watch ad, get 10 credits",
+  "watch_ad_10": "Watch ad, get 5 credits",
   "fetching_price": "Fetching price...",
   "transaction_aborted": "Transaction aborted",
   "no_trial": "No trial and auto renewal. Cancel at any time!",
   "web_premium_title": "Unlock Full Access with",
   "web_premium_title_second": "Kvitter Premium",
   "web_premium_description": "To enjoy the full suite of features and benefits our web app offers, you must be a Kvitter Premium user. Kvitter Premium unlocks a seamless, commercial-free experience. Additionally, Premium users benefit from unlimited, free translations, making global communication effortless.\n\nBecoming a Premium user is easy! Simply download our app available for both iOS and Android platforms. With just a few taps, you can upgrade to Premium through the app and instantly elevate your Kvitter experience across all your devices.\n\nBelow, you'll find buttons to download the Kvitter app on your preferred platform. Join the Premium community today and start enjoying an enhanced, ad-free experience with the added convenience of free translations. Your journey to an unrestricted Kvitter experience is just a click away!",
-  "send_images": "Send images!"
+  "send_images": "Send images!",
+  "get_unlimited_credits": "Get unlimited credits",
+  "unlimited_credits": "Unlimited Kvitter Credits!",
+  "send_a_photo": "Post an image",
+  "gallery": "Gallery",
+  "get_kvitter_credits": "Get Kvitter Credits"
 }

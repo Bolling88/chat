@@ -15,12 +15,13 @@ import '../../repository/firestore_repository.dart';
 import '../../utils/app_widgets.dart';
 import '../../utils/constants.dart';
 import '../../utils/translate.dart';
-import '../onboarding_photo/onboarding_photo_screen.dart';
+import '../credits/credits_screen.dart';
 import '../premium/premium_screen.dart';
 import 'bloc/messages_bloc.dart';
 import 'bloc/messages_event.dart';
 import 'bloc/messages_state.dart';
 import 'message_edit_text_widget.dart';
+import 'messages_image_bottom_sheet.dart';
 import 'my_message_widget.dart';
 import 'other_message_widget.dart';
 
@@ -69,6 +70,8 @@ class ChatsScreenContent extends StatelessWidget {
           duration: const Duration(seconds: 2),
         );
         ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      }else if(state is MessagesShowCreditsOfferState){
+        showCreditsScreen(context, state.myUser);
       }
     }, child: BlocBuilder<MessagesBloc, MessagesState>(
       builder: (context, state) {
@@ -161,7 +164,7 @@ class ChatsScreenContent extends StatelessWidget {
                     hintText:
                         FlutterI18n.translate(context, "write_message_hint"),
                     showGiphy: true,
-                    showImage: state.privateChat != null,
+                    showImage: true,
                     onTapGiphy: () async {
                       final GiphyGif? gif = await GiphyGet.getGif(
                         context: context, //Required
@@ -178,19 +181,23 @@ class ChatsScreenContent extends StatelessWidget {
                     },
                     onImageTap: () {
                       if (state.myUser.isAdmin || state.myUser.isPremiumUser) {
-                        showCameraOrImageBottomSheet(parentContext: context, onCameraPressed: () async {
-                          BlocProvider.of<MessagesBloc>(context)
-                              .add(MessagesCameraClickedEvent());
-                          Navigator.pop(context);
-                        }, onGalleryPressed: () async {
-                          BlocProvider.of<MessagesBloc>(context)
-                              .add(MessagesGalleryClickedEvent());
-                          Navigator.pop(context);
-                        });
+                        showCameraOrImageBottomSheetMessage(
+                            parentContext: context,
+                            onCameraPressed: () async {
+                              BlocProvider.of<MessagesBloc>(context)
+                                  .add(MessagesCameraClickedEvent());
+                              Navigator.pop(context);
+                            },
+                            onGalleryPressed: () async {
+                              BlocProvider.of<MessagesBloc>(context)
+                                  .add(MessagesGalleryClickedEvent());
+                              Navigator.pop(context);
+                            },
+                            isPremiumUser: state.myUser.isPremiumUser,
+                            kvitterCredits: state.myUser.kvitterCredits);
                       } else {
                         //Navigate to premium screen
-                        Navigator.pushNamed(
-                            context, PremiumScreen.routeName);
+                        Navigator.pushNamed(context, PremiumScreen.routeName);
                       }
                     },
                     onSendTapped: (String message) {

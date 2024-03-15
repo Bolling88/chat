@@ -22,7 +22,7 @@ class CreditsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (BuildContext context) =>
-          CreditsBloc(context.read<FirestoreRepository>(), user),
+          CreditsBloc(context.read<FirestoreRepository>()),
       child: CreditsScreenBuilder(parentContext: parentContext),
     );
   }
@@ -65,12 +65,12 @@ class CreditsScreenBuilder extends StatelessWidget {
                       ),
                       const SizedBox(height: 20),
                       ElevatedButton.icon(
-                        icon: const Icon(Icons.translate),
+                        icon: const Icon(Icons.monetization_on_outlined),
                         onPressed: () {
                           Navigator.pop(context);
                           Navigator.pushNamed(blocContext, PremiumScreen.routeName);
                         },
-                        label: Text(FlutterI18n.translate(context, 'get_unlimited_translations')),
+                        label: Text(FlutterI18n.translate(context, 'get_unlimited_credits')),
                       ),
                       const SizedBox(height: 20),
                     ],

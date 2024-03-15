@@ -19,6 +19,7 @@ import '../../utils/flag.dart';
 import '../../utils/gender.dart';
 import '../../utils/lottie.dart';
 import '../../utils/translate.dart';
+import '../credits/credits_screen.dart';
 import '../feedback/feedback_screen.dart';
 import '../premium/premium_screen.dart';
 
@@ -120,6 +121,16 @@ class AccountScreenBuilder extends StatelessWidget {
                       label: Text(translate(context, 'remove_ads')),
                     ),
                   ),
+                if (!state.user.isPremiumUser)...[
+                const SizedBox(height: 20),
+                ElevatedButton.icon(
+                  icon: const Icon(Icons.monetization_on_outlined),
+                  onPressed: () {
+                    showCreditsScreen(context, state.user);
+                  },
+                  label: Text('${translate(context, 'get_kvitter_credits')} (${state.user.kvitterCredits.toInt()})'),
+                ),
+                ],
                 const SizedBox(height: 20),
                 ElevatedButton.icon(
                   icon: const Icon(Icons.person),

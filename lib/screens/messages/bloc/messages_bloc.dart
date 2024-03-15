@@ -38,8 +38,8 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
 
   late ChatUser _user;
 
-  MessagesBloc(
-      this.chat, this._firestoreRepository, this._chatClickedRepository, this._storageRepository,
+  MessagesBloc(this.chat, this._firestoreRepository,
+      this._chatClickedRepository, this._storageRepository,
       {required this.isPrivateChat})
       : super(MessagesLoadingState()) {
     add(MessagesInitialEvent());
@@ -87,7 +87,7 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
                 currentState.privateChat,
                 currentState.usersInRoom,
                 null);
-          }else {
+          } else {
             await _firestoreRepository.postMessage(
               chatId: chat.id,
               user: currentState.myUser,
@@ -97,9 +97,9 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
               replyMessage: currentState.replyMessage,
               sendPushToUserId: (chat is PrivateChat
                   ? (chat as PrivateChat)
-                  .users
-                  .where((element) => element != getUserId())
-                  .firstOrNull
+                      .users
+                      .where((element) => element != getUserId())
+                      .firstOrNull
                   : null),
             );
             yield getBaseState(currentState.copyWith(currentMessage: ''));
@@ -157,7 +157,7 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
               currentState.privateChat,
               currentState.usersInRoom,
               null);
-        }else {
+        } else {
           await _firestoreRepository.postMessage(
               chatId: chat.id,
               user: currentState.myUser,
@@ -166,9 +166,9 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
               isPrivateChat: isPrivateChat,
               sendPushToUserId: (chat is PrivateChat
                   ? (chat as PrivateChat)
-                  .users
-                  .where((element) => element != getUserId())
-                  .firstOrNull
+                      .users
+                      .where((element) => element != getUserId())
+                      .firstOrNull
                   : null),
               isGiphy: true);
           yield currentState.copyWith(currentMessage: "");
@@ -222,72 +222,86 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
       if (currentState is MessagesBaseState) {
         yield getBaseState(currentState);
       }
-    }else if(event is MessagesGalleryClickedEvent){
+    } else if (event is MessagesGalleryClickedEvent) {
       if (currentState is MessagesBaseState) {
         yield MessagesLoadingState();
-      XFile? pickedFile;
-      try {
-        pickedFile = await picker.pickImage(
-            source: ImageSource.gallery, imageQuality: photoQuality);
-      } catch (e) {
-        Log.e(e);
-        yield currentState.copyWith(currentMessage: "");
-      }
-      if (pickedFile != null) {
-          String base64Image = '';
-          if (kIsWeb) {
-            var imageForWeb = await pickedFile.readAsBytes();
-            base64Image = base64Encode(imageForWeb);
+        if (_user.kvitterCredits > 0 || kIsWeb || _user.isPremiumUser) {
+          XFile? pickedFile;
+          try {
+            pickedFile = await picker.pickImage(
+                source: ImageSource.gallery, imageQuality: photoQuality);
+          } catch (e) {
+            Log.e(e);
+            yield currentState.copyWith(currentMessage: "");
           }
-          final imageUrl = await _storageRepository.uploadMessageImage(
-              pickedFile.path, base64Image);
-          final finalUrl = await imageUrl?.getDownloadURL() ?? "";
-          await _firestoreRepository.postMessage(
-              chatId: chat.id,
-              user: currentState.myUser,
-              chatType: ChatType.image,
-              message: finalUrl,
-              isPrivateChat: isPrivateChat,
-              sendPushToUserId: (chat is PrivateChat
-                  ? (chat as PrivateChat)
-                  .users
-                  .where((element) => element != getUserId())
-                  .firstOrNull
-                  : null),
-              isGiphy: true);
-          yield currentState.copyWith(currentMessage: "");
-        }else{
-          yield currentState.copyWith(currentMessage: "");
+          if (pickedFile != null) {
+            String base64Image = '';
+            if (kIsWeb) {
+              var imageForWeb = await pickedFile.readAsBytes();
+              base64Image = base64Encode(imageForWeb);
+            }
+            final imageUrl = await _storageRepository.uploadMessageImage(
+                pickedFile.path, base64Image);
+            final finalUrl = await imageUrl?.getDownloadURL() ?? "";
+            await _firestoreRepository.postMessage(
+                chatId: chat.id,
+                user: currentState.myUser,
+                chatType: ChatType.image,
+                message: finalUrl,
+                isPrivateChat: isPrivateChat,
+                sendPushToUserId: (chat is PrivateChat
+                    ? (chat as PrivateChat)
+                        .users
+                        .where((element) => element != getUserId())
+                        .firstOrNull
+                    : null),
+                isGiphy: true);
+            if (!kIsWeb || _user.isPremiumUser) {
+              _firestoreRepository.reduceUserCredits(_user.id, 1);
+            }
+            yield currentState.copyWith(currentMessage: "");
+          } else {
+            yield currentState.copyWith(currentMessage: "");
+          }
+        } else {
+          yield MessagesShowCreditsOfferState(currentState);
+        }
       }
-      }
-    }else if(event is MessagesCameraClickedEvent){
+    } else if (event is MessagesCameraClickedEvent) {
       if (currentState is MessagesBaseState) {
         yield MessagesLoadingState();
-        final pickedFile = await picker.pickImage(
-            maxHeight: 400,
-            maxWidth: 400,
-            source: ImageSource.camera,
-            imageQuality: photoQuality);
-        if (pickedFile != null) {
-          final imageUrl = await _storageRepository.uploadMessageImage(
-              pickedFile.path, '');
-          final finalUrl = await imageUrl?.getDownloadURL() ?? "";
-          await _firestoreRepository.postMessage(
-              chatId: chat.id,
-              user: currentState.myUser,
-              chatType: ChatType.image,
-              message: finalUrl,
-              isPrivateChat: isPrivateChat,
-              sendPushToUserId: (chat is PrivateChat
-                  ? (chat as PrivateChat)
-                  .users
-                  .where((element) => element != getUserId())
-                  .firstOrNull
-                  : null),
-              isGiphy: true);
-          yield currentState.copyWith(currentMessage: "");
-        }else{
-          yield currentState.copyWith(currentMessage: "");
+        if (_user.kvitterCredits > 0 || kIsWeb || _user.isPremiumUser) {
+          final pickedFile = await picker.pickImage(
+              maxHeight: 400,
+              maxWidth: 400,
+              source: ImageSource.camera,
+              imageQuality: photoQuality);
+          if (pickedFile != null) {
+            final imageUrl = await _storageRepository.uploadMessageImage(
+                pickedFile.path, '');
+            final finalUrl = await imageUrl?.getDownloadURL() ?? "";
+            await _firestoreRepository.postMessage(
+                chatId: chat.id,
+                user: currentState.myUser,
+                chatType: ChatType.image,
+                message: finalUrl,
+                isPrivateChat: isPrivateChat,
+                sendPushToUserId: (chat is PrivateChat
+                    ? (chat as PrivateChat)
+                        .users
+                        .where((element) => element != getUserId())
+                        .firstOrNull
+                    : null),
+                isGiphy: true);
+            if (!kIsWeb || _user.isPremiumUser) {
+              _firestoreRepository.reduceUserCredits(_user.id, 1);
+            }
+            yield currentState.copyWith(currentMessage: "");
+          } else {
+            yield currentState.copyWith(currentMessage: "");
+          }
+        } else {
+          yield MessagesShowCreditsOfferState(currentState);
         }
       }
     } else {
@@ -371,7 +385,7 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
   }
 
   Future<void> loadAd(int adWidth) async {
-    if(_user.isPremiumUser) {
+    if (_user.isPremiumUser) {
       return;
     }
     if (_anchoredAdaptiveAd != null) {

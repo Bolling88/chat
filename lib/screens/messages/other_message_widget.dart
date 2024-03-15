@@ -1,3 +1,4 @@
+import 'package:blur/blur.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chat/screens/messages/bloc/messages_bloc.dart';
 import 'package:chat/screens/options/options_screen.dart';
@@ -87,26 +88,33 @@ class AppOtherMessageWidget extends StatelessWidget {
       case ChatType.left:
         return Container();
       case ChatType.giphy:
-        return getImageWidget(context, () {
-          showVisitScreen(context, userId, chat, false);
-        });
+        return getImageWidget(
+            context: context,
+            shouldBlur: false,
+            onTap: () {
+              showVisitScreen(context, userId, chat, false);
+            });
       case ChatType.date:
         return Container();
       case ChatType.image:
-        return getImageWidget(context, () {
-          if (message.text.isNotEmpty) {
-            Navigator.of(context).push(
-              MaterialPageRoute<bool>(
-                builder: (BuildContext context) => FullScreenImageScreen(
-                    imageUrl: message.text,
-                    userName: message.createdByName,
-                    imageReports: message.imageReports,
-                    approvalState:
-                        ApprovedImage.fromValue(message.approvedImage)),
-              ),
-            );
-          }
-        });
+        return getImageWidget(
+            context: context,
+            shouldBlur: !chat.isPrivateChat(),
+            onTap: () {
+              if (message.text.isNotEmpty) {
+                Navigator.of(context).push(
+                  MaterialPageRoute<bool>(
+                    builder: (BuildContext context) => FullScreenImageScreen(
+                        imageUrl: message.text,
+                        userName: message.createdByName,
+                        imageReports: message.imageReports,
+                        approvalState: chat.isPrivateChat()
+                            ? ApprovedImage.approved
+                            : ApprovedImage.notApproved),
+                  ),
+                );
+              }
+            });
     }
   }
 
@@ -229,7 +237,10 @@ class AppOtherMessageWidget extends StatelessWidget {
     );
   }
 
-  Widget getImageWidget(BuildContext context, VoidCallback onTap) {
+  Widget getImageWidget(
+      {required BuildContext context,
+      required bool shouldBlur,
+      required VoidCallback onTap}) {
     return GestureDetector(
       onTap: onTap,
       child: Column(
@@ -256,11 +267,17 @@ class AppOtherMessageWidget extends StatelessWidget {
               child: SizedBox(
                 width: 200,
                 height: 200,
-                child: CachedNetworkImage(
-                  imageUrl: message.text,
-                  placeholder: (context, url) =>
-                      const Center(child: AppSpinner()),
-                  errorWidget: (context, url, error) => const Icon(Icons.error),
+                child: Blur(
+                  blur: shouldBlur ? 6 : 0,
+                  colorOpacity: shouldBlur ? 0.5 : 0,
+                  blurColor: context.white,
+                  child: CachedNetworkImage(
+                    imageUrl: message.text,
+                    placeholder: (context, url) =>
+                        const Center(child: AppSpinner()),
+                    errorWidget: (context, url, error) =>
+                        const Icon(Icons.error),
+                  ),
                 ),
               ),
             ),

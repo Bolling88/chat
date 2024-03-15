@@ -60,5 +60,19 @@ class MessagesBaseState extends MessagesState {
 }
 
 class MessageNoSpammingState extends MessagesBaseState {
-  MessageNoSpammingState(super.messages, super.myUser, super.currentMessage, super.bannerAd, super.privateChat, super.usersInRoom, super.replyMessage);
+  MessageNoSpammingState(
+    super.messages,
+    super.myUser,
+    super.currentMessage,
+    super.bannerAd,
+    super.privateChat,
+    super.usersInRoom,
+    super.replyMessage,
+  );
+}
+
+class MessagesShowCreditsOfferState extends MessagesBaseState {
+  MessagesShowCreditsOfferState(MessagesBaseState state)
+      : super(state.messages, state.myUser, state.currentMessage, state.bannerAd,
+            state.privateChat, state.usersInRoom, state.replyMessage);
 }

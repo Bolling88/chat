@@ -130,7 +130,7 @@
   "get_credits": "Obtén 10 Créditos Kvitter",
   "awesome": "¡Increíble!",
   "watch_ad": "Ver anuncio",
-  "claim_reward": "Reclamar recompensa (10)",
+  "claim_reward": "Reclamar recompensa (5)",
   "no_spamming": "Por favor, no enviar mensajes duplicados",
   "online": "En línea",
   "offline": "Desconectado",
@@ -149,10 +149,15 @@
   "no_subscription_to_restore": "No se encontraron suscripciones",
   "premium_user": "Usuario Premium",
   "get_unlimited_translations": "Obtener traducciones ilimitadas",
-  "watch_ad_10": "Ver anuncio, obtener 10 créditos",
+  "watch_ad_10": "Ver anuncio, obtener 5 créditos",
   "no_trial": "Sin prueba y renovación automática. ¡Cancela en cualquier momento!",
   "web_premium_title": "Desbloquea el Acceso Completo con",
   "web_premium_title_second": "Kvitter Premium",
   "web_premium_description": "Para disfrutar del conjunto completo de características y beneficios que ofrece nuestra aplicación web, debes ser un usuario de Kvitter Premium. Kvitter Premium desbloquea una experiencia sin anuncios y fluida. Además, los usuarios Premium se benefician de traducciones ilimitadas y gratuitas, haciendo que la comunicación global sea sin esfuerzo.\n\n¡Convertirse en un usuario Premium es fácil! Simplemente descarga nuestra aplicación disponible tanto para las plataformas iOS como Android. Con solo unos pocos toques, puedes actualizar a Premium a través de la aplicación y elevar al instante tu experiencia Kvitter en todos tus dispositivos.\n\nA continuación, encontrarás botones para descargar la aplicación Kvitter en tu plataforma preferida. Únete a la comunidad Premium hoy y comienza a disfrutar de una experiencia mejorada sin anuncios con la conveniencia adicional de traducciones gratuitas. Tu viaje hacia una experiencia Kvitter sin restricciones está a solo un clic de distancia!",
-  "send_images": "¡Enviar imágenes!"
+  "send_images": "¡Enviar imágenes!",
+  "get_unlimited_credits": "Obtener créditos ilimitados",
+  "unlimited_credits": "¡Créditos ilimitados de Kvitter!",
+  "send_a_photo": "Publicar una imagen",
+  "gallery": "Galería",
+  "get_kvitter_credits": "Obtener créditos de Kvitter"
 }

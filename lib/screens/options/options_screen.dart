@@ -123,7 +123,7 @@ class OptionsScreenBuilder extends StatelessWidget {
                                   ),
                                   Text(
                                       FlutterI18n.translate(context,
-                                          '(${state.user.kvitterCredits})'),
+                                          '(${state.user.kvitterCredits.toInt()})'),
                                       style: Theme.of(context)
                                           .textTheme
                                           .bodyMedium),
