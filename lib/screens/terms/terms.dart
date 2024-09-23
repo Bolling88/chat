@@ -6,7 +6,7 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 class TermsScreen extends StatelessWidget {
   static const routeName = "/terms_screen";
 
-  const TermsScreen({Key? key}) : super(key: key);
+  const TermsScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

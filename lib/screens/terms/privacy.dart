@@ -6,7 +6,7 @@ import 'package:flutter_markdown/flutter_markdown.dart';
 class PrivacyScreen extends StatelessWidget {
   static const routeName = "/privacy_screen";
 
-  const PrivacyScreen({Key? key}) : super(key: key);
+  const PrivacyScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

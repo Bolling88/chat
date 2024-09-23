@@ -32,8 +32,7 @@ class MessagesScreen extends StatelessWidget {
 
   final bool isPrivateChat;
 
-  const MessagesScreen(this.chat, this.isPrivateChat, {this.userIds, Key? key})
-      : super(key: key);
+  const MessagesScreen(this.chat, this.isPrivateChat, {this.userIds, super.key});
 
   @override
   Widget build(BuildContext context) {

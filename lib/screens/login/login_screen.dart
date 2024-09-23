@@ -19,7 +19,7 @@ import 'bloc/login_state.dart';
 class LoginScreen extends StatelessWidget {
   static const routeName = "/login_screen";
 
-  const LoginScreen({Key? key}) : super(key: key);
+  const LoginScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +32,7 @@ class LoginScreen extends StatelessWidget {
 }
 
 class LoginScreenBuilder extends StatelessWidget {
-  const LoginScreenBuilder({Key? key}) : super(key: key);
+  const LoginScreenBuilder({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +43,7 @@ class LoginScreenBuilder extends StatelessWidget {
 class LoginScreenContent extends StatelessWidget {
   static const routeName = "/login_screen";
 
-  const LoginScreenContent({Key? key}) : super(key: key);
+  const LoginScreenContent({super.key});
 
   @override
   Widget build(BuildContext context) {

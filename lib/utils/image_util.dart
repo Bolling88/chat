@@ -12,10 +12,9 @@ class AppImageCropper {
     final CroppedFile? croppedFile = await ImageCropper().cropImage(
       sourcePath: pickedFile.path,
       uiSettings: [
-        WebUiSettings(context: context, enableZoom: true, enableResize: true),
+        WebUiSettings(context: context, zoomable: true, scalable: true, rotatable: true),
       ],
       aspectRatio: const CropAspectRatio(ratioX: 1.0, ratioY: 1.0),
-      aspectRatioPresets: [CropAspectRatioPreset.square],
     );
     return croppedFile;
   }

@@ -37,7 +37,7 @@ class MessageHolderScreenArguments {
 class MessageHolderScreen extends StatelessWidget {
   static const routeName = "/chat_home";
 
-  const MessageHolderScreen({Key? key}) : super(key: key);
+  const MessageHolderScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +54,7 @@ class MessageHolderScreen extends StatelessWidget {
 }
 
 class MessageHolderScreenContent extends StatelessWidget {
-  const MessageHolderScreenContent({Key? key}) : super(key: key);
+  const MessageHolderScreenContent({super.key});
 
   @override
   Widget build(BuildContext context) {

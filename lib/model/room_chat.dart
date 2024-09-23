@@ -25,20 +25,13 @@ class RoomChat extends Chat implements Comparable<RoomChat> {
     required this.lastMessageReadByUser,
     required this.enabled,
     required this.infoKey,
-    required String id,
-    required String lastMessage,
-    required bool lastMessageIsGiphy,
-    required String lastMessageByName,
-    required Timestamp lastMessageTimestamp,
-    required String lastMessageUserId,
-  }) : super(
-          id: id,
-          lastMessage: lastMessage,
-          lastMessageIsGiphy: lastMessageIsGiphy,
-          lastMessageByName: lastMessageByName,
-          lastMessageTimestamp: lastMessageTimestamp,
-          lastMessageUserId: lastMessageUserId,
-        );
+    required super.id,
+    required super.lastMessage,
+    required super.lastMessageIsGiphy,
+    required super.lastMessageByName,
+    required super.lastMessageTimestamp,
+    required super.lastMessageUserId,
+  });
 
   RoomChat.fromJson(String id, Map<String, dynamic> json)
       : countryCode = json['countryCode'] ?? 'en',

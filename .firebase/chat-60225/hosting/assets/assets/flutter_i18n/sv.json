@@ -130,7 +130,7 @@
   "get_credits": "Få 10 Kvitter-krediter",
   "awesome": "Fantastiskt!",
   "watch_ad": "Titta på annons",
-  "claim_reward": "Hävda belöning (10)",
+  "claim_reward": "Hävda belöning (5)",
   "no_spamming": "Vänligen skicka inte dubbla meddelanden",
   "online": "Online",
   "offline": "Offline",
@@ -149,10 +149,15 @@
   "no_subscription_to_restore": "Inga prenumerationer hittades",
   "premium_user": "Premiumanvändare",
   "get_unlimited_translations": "Få obegränsade översättningar",
-  "watch_ad_10": "Titta på annons, få 10 krediter",
+  "watch_ad_10": "Titta på annons, få 5 krediter",
   "no_trial": "Ingen provperiod och automatisk förnyelse. Avbryt när som helst!",
   "web_premium_title": "Lås upp Full Tillgång med",
   "web_premium_title_second": "Kvitter Premium",
   "web_premium_description": "För att njuta av hela sviten av funktioner och fördelar som vår webbapp erbjuder måste du vara en Kvitter Premium-användare. Kvitter Premium låser upp en sömlös, reklamfri upplevelse. Dessutom drar Premium-användare nytta av obegränsade, gratis översättningar, vilket gör global kommunikation ansträngningslös.\n\nAtt bli en Premium-användare är enkelt! Ladda bara ner vår app som finns tillgänglig för både iOS- och Android-plattformar. Med bara några få tryck kan du uppgradera till Premium genom appen och omedelbart höja din Kvitter-upplevelse på alla dina enheter.\n\nNedan hittar du knappar för att ladda ner Kvitter-appen på din föredragna plattform. Gå med i Premium-gemenskapen idag och börja njuta av en förbättrad, reklamfri upplevelse med den tillagda bekvämligheten av gratis översättningar. Din resa till en obegränsad Kvitter-upplevelse är bara ett klick bort!",
-  "send_images": "Skicka bilder!"
+  "send_images": "Skicka bilder!",
+  "get_unlimited_credits": "Få obegränsat med krediter",
+  "unlimited_credits": "Obegränsade Kvitter-krediter!",
+  "send_a_photo": "Posta en bild",
+  "gallery": "Galleri",
+  "get_kvitter_credits": "Skaffa Kvitter-krediter"
 }

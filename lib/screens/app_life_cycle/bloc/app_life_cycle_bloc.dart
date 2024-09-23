@@ -76,7 +76,6 @@ class AppLifeCycleBloc extends Bloc<AppLifeCycleEvent, AppLifeCycleState> {
   void _loadAd() {
     AppOpenAd.load(
       adUnitId: adUnitId,
-      orientation: AppOpenAd.orientationPortrait,
       adLoadCallback: AppOpenAdLoadCallback(
         onAdLoaded: (ad) {
           _appOpenAd = ad;

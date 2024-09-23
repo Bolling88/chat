@@ -87,8 +87,7 @@ class KvitterApp extends StatelessWidget {
 
   final SharedPreferences prefs;
 
-  KvitterApp({Key? key, required this.flutterI18nDelegate, required this.prefs})
-      : super(key: key);
+  KvitterApp({super.key, required this.flutterI18nDelegate, required this.prefs});
 
   @override
   Widget build(BuildContext context) {

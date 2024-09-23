@@ -15,7 +15,7 @@ import 'bloc/chat_state.dart';
 class ChatScreen extends StatelessWidget {
   final List<ChatUser> _initialUsers;
 
-  const ChatScreen(this._initialUsers, {Key? key}) : super(key: key);
+  const ChatScreen(this._initialUsers, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +28,7 @@ class ChatScreen extends StatelessWidget {
 }
 
 class ChatsScreenContent extends StatelessWidget {
-  const ChatsScreenContent({Key? key}) : super(key: key);
+  const ChatsScreenContent({super.key});
 
   @override
   Widget build(BuildContext context) {

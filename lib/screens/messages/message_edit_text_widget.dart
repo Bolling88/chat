@@ -18,7 +18,7 @@ class MessageEditTextWidget extends StatefulWidget {
   final Message? replyMessage;
 
   const MessageEditTextWidget(
-      {Key? key,
+      {super.key,
       required this.currentMessage,
       required this.hintText,
       required this.onTextChanged,
@@ -27,8 +27,7 @@ class MessageEditTextWidget extends StatefulWidget {
       required this.onImageTap,
       required this.showGiphy,
       required this.showImage,
-      this.replyMessage})
-      : super(key: key);
+      this.replyMessage});
 
   @override
   State<MessageEditTextWidget> createState() => _MessageEditTextWidgetState();

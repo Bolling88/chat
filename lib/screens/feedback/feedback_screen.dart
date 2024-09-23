@@ -18,8 +18,8 @@ class FeedbackScreen extends StatelessWidget {
   const FeedbackScreen({
     required this.parentContext,
     required this.user,
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -36,8 +36,7 @@ const _bottomsheetHeight = 450.0;
 class FeedbackScreenContent extends StatelessWidget {
   final BuildContext parentContext;
 
-  const FeedbackScreenContent({required this.parentContext, Key? key})
-      : super(key: key);
+  const FeedbackScreenContent({required this.parentContext, super.key});
 
   @override
   Widget build(BuildContext context) {

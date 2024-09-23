@@ -2,37 +2,34 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
+import '../utils/log.dart';
+
 class LoginRepository {
   Future<UserCredential?> signInWithGoogle() async {
-    if (kIsWeb) {
-      return await _signInWithGoogleWeb();
-    } else {
-      // Trigger the authentication flow
-      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+    try {
+      if (kIsWeb) {
+        return await _signInWithGoogleWeb();
+      } else {
 
-      if (googleUser == null) {
-        return null;
+        // Obtain the auth details from the request
+        GoogleSignInAuthentication? googleAuth = await (await GoogleSignIn(
+          scopes: ["profile", "email"],
+        ).signIn())
+            ?.authentication;
+
+        // Create a new credential
+        final credential = GoogleAuthProvider.credential(
+          accessToken: googleAuth?.accessToken,
+          idToken: googleAuth?.idToken,
+        );
+
+        // Once signed in, return the UserCredential
+        return await FirebaseAuth.instance.signInWithCredential(credential);
       }
-
-      // Obtain the auth details from the request
-      OAuthCredential credential = await getGoogleCredentials(googleUser);
-
-      return await FirebaseAuth.instance.signInWithCredential(credential);
-      // Once signed in, return the UserCredential
+    } catch (e, s) {
+      Log.e(e, stackTrace: s);
+      return null;
     }
-  }
-
-  Future<OAuthCredential> getGoogleCredentials(
-      GoogleSignInAccount googleUser) async {
-    final GoogleSignInAuthentication googleAuth =
-        await googleUser.authentication;
-
-    // Create a new credential
-    final OAuthCredential credential = GoogleAuthProvider.credential(
-      accessToken: googleAuth.accessToken,
-      idToken: googleAuth.idToken,
-    );
-    return credential;
   }
 
   Future<UserCredential> _signInWithGoogleWeb() async {

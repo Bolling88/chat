@@ -4,8 +4,8 @@ import '../../utils/app_colors.dart';
 
 class ErrorScreen extends StatelessWidget {
   const ErrorScreen({
-    Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

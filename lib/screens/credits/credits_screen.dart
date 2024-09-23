@@ -15,8 +15,7 @@ class CreditsScreen extends StatelessWidget {
   final ChatUser user;
 
   const CreditsScreen(
-      {Key? key, required this.parentContext, required this.user})
-      : super(key: key);
+      {super.key, required this.parentContext, required this.user});
 
   @override
   Widget build(BuildContext context) {
