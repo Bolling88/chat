@@ -64,7 +64,7 @@ exports.deletePrivateChatOnLastLeft = functions.firestore
     try {
       const isOnline = change.after.val();
 
-      const userStatusFirestoreRef = firestore.doc(`users/${context.params.uid}`);
+      const userStatusFirestoreRef = admin.firestore().doc(`users/${context.params.uid}`);
 
       console.log(`status: ${isOnline}`);
 
