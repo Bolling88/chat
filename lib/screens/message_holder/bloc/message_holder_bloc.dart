@@ -145,24 +145,22 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
             currentState.selectedChat == null) {
           //If we are in the group chat or in all chats
           if (event.privateChats.length > currentState.privateChats.length) {
-            //If this is actually the initial load, just update the chats
-            if(privateChatFirstLoad) {
+            //If the new chat was initiated by the current user, navigate to it
+            if (event.privateChats.last.initiatedBy == getUserId()) {
+              privateChatFirstLoad = false;
+              emit(currentState.copyWith(
+                  privateChats: event.privateChats,
+                  selectedChat: event.privateChats.last,
+                  selectedChatIndex: event.privateChats.length));
+              add(MessageHolderNewChatAddedEvent(event.privateChats.last));
+            } else if (privateChatFirstLoad) {
+              //If this is the initial load, just update the chats
               privateChatFirstLoad = false;
               emit(currentState.copyWith(privateChats: event.privateChats));
-            }else {
-              //If private chats have increased and not initial load
-              if (event.privateChats.last.initiatedBy == getUserId()) {
-                //And it was by you, move to that chat
-                emit(currentState.copyWith(
-                    privateChats: event.privateChats,
-                    selectedChat: event.privateChats.last,
-                    selectedChatIndex: event.privateChats.length));
-                add(MessageHolderNewChatAddedEvent(event.privateChats.last));
-              } else {
-                //else just update the chats and play a sound
-                playNewChatSound();
-                emit(currentState.copyWith(privateChats: event.privateChats));
-              }
+            } else {
+              //Someone sent the user a private chat, play sound and update
+              playNewChatSound();
+              emit(currentState.copyWith(privateChats: event.privateChats));
             }
           } else {
             emit(currentState.copyWith(privateChats: event.privateChats));

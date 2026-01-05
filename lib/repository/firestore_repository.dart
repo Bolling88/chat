@@ -383,7 +383,7 @@ class FirestoreRepository {
         'sendPushToUserId': otherUser.id,
       });
 
-      postMessage(
+      await postMessage(
           chatId: reference.id,
           user: myUser,
           message: trimmedMessage,

@@ -27,12 +27,12 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     return super.close();
   }
 
-  void _onProfileInitialEvent(
+  Future<void> _onProfileInitialEvent(
     ProfileInitialEvent event,
     Emitter<ProfileState> emit,
-  ) {
+  ) async {
     try {
-      setUpUserListener();
+      await setUpUserListener();
     } on Exception catch (error, stacktrace) {
       emit(ProfileErrorState());
       Log.e('ProfileErrorState: $error', stackTrace: stacktrace);
@@ -66,24 +66,31 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     }
   }
 
-  void setUpUserListener() async {
-    Log.d('Setting up private chats stream');
-    userStream = _firestoreRepository.streamUser().listen((event) async {
-      if (event.docs.isEmpty) {
-        Log.d('No user found');
-        return;
-      }
-      final Map<String, dynamic> userData =
-          event.docs.first.data() as Map<String, dynamic>;
+  Future<void> setUpUserListener() async {
+    Log.d('Setting up user stream for profile');
+    userStream = _firestoreRepository.streamUser().listen(
+      (event) async {
+        if (event.docs.isEmpty) {
+          Log.e('No user found in profile stream');
+          add(ProfileUserChangedEvent(ChatUser.asUnknown('')));
+          return;
+        }
+        final Map<String, dynamic> userData =
+            event.docs.first.data() as Map<String, dynamic>;
 
-      // Convert Timestamp to int (milliseconds since epoch)
-      if (userData.containsKey('lastActive') &&
-          userData['lastActive'] is Timestamp) {
-        userData['lastActive'] =
-            (userData['lastActive'] as Timestamp).millisecondsSinceEpoch;
-      }
-      final user = ChatUser.fromJson(event.docs.first.id, userData);
-      add(ProfileUserChangedEvent(user));
-    });
+        // Convert Timestamp to int (milliseconds since epoch)
+        if (userData.containsKey('lastActive') &&
+            userData['lastActive'] is Timestamp) {
+          userData['lastActive'] =
+              (userData['lastActive'] as Timestamp).millisecondsSinceEpoch;
+        }
+        final user = ChatUser.fromJson(event.docs.first.id, userData);
+        add(ProfileUserChangedEvent(user));
+      },
+      onError: (error, stackTrace) {
+        Log.e('Profile stream error: $error', stackTrace: stackTrace);
+        add(ProfileUserChangedEvent(ChatUser.asUnknown('')));
+      },
+    );
   }
 }

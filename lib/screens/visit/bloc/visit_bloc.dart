@@ -37,9 +37,9 @@ class VisitBloc extends Bloc<VisitEvent, VisitState> {
   Future<void> _onVisitInitialEvent(
       VisitInitialEvent event, Emitter<VisitState> emit) async {
     final myUser = await _firestoreRepository.getUser();
-    setUpPeopleListener();
     final isChatAvailable =
         await _firestoreRepository.isPrivateChatAvailable(userId);
+    // Emit initial state BEFORE setting up listener to avoid race condition
     emit(VisitBaseState(
         user: null,
         myUser: myUser!,
@@ -47,6 +47,8 @@ class VisitBloc extends Bloc<VisitEvent, VisitState> {
         userLoaded: false,
         userBlocked: false,
         message: ''));
+    // Now set up listener - events will be processed correctly
+    setUpPeopleListener();
   }
 
   void _onVisitUserLoadedState(
@@ -100,25 +102,30 @@ class VisitBloc extends Bloc<VisitEvent, VisitState> {
   }
 
   void setUpPeopleListener() {
-    userStream =
-        _firestoreRepository.streamUserById(userId).listen((event) async {
-      if (event.docs.isEmpty) {
-        add(VisitUserLoadedState(null));
-        return;
-      } else {
-        final Map<String, dynamic> userData =
-        event.docs.first.data() as Map<String, dynamic>;
+    userStream = _firestoreRepository.streamUserById(userId).listen(
+      (event) async {
+        if (event.docs.isEmpty) {
+          add(VisitUserLoadedState(null));
+          return;
+        } else {
+          final Map<String, dynamic> userData =
+              event.docs.first.data() as Map<String, dynamic>;
 
-        // Convert Timestamp to int (milliseconds since epoch)
-        if (userData.containsKey('lastActive') &&
-            userData['lastActive'] is Timestamp) {
-          userData['lastActive'] =
-              (userData['lastActive'] as Timestamp).millisecondsSinceEpoch;
+          // Convert Timestamp to int (milliseconds since epoch)
+          if (userData.containsKey('lastActive') &&
+              userData['lastActive'] is Timestamp) {
+            userData['lastActive'] =
+                (userData['lastActive'] as Timestamp).millisecondsSinceEpoch;
+          }
+
+          final user = ChatUser.fromJson(event.docs.first.id, userData);
+          add(VisitUserLoadedState(user));
         }
-
-        final user = ChatUser.fromJson(event.docs.first.id, userData);
-        add(VisitUserLoadedState(user));
-      }
-    });
+      },
+      onError: (error, stackTrace) {
+        // Log error and emit loaded state with null user
+        add(VisitUserLoadedState(null));
+      },
+    );
   }
 }
