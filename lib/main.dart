@@ -29,6 +29,7 @@ import 'package:chat/utils/web_online_user_processor.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
@@ -79,9 +80,21 @@ Future<void> main() async {
 }
 
 class KvitterApp extends StatelessWidget {
-  final Future<FirebaseApp> _initialization = Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  final Future<FirebaseApp> _initialization = _initializeFirebase();
+
+  static Future<FirebaseApp> _initializeFirebase() async {
+    final app = await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+
+    // Activate App Check
+    await FirebaseAppCheck.instance.activate(
+      androidProvider: kDebugMode ? AndroidProvider.debug : AndroidProvider.playIntegrity,
+      appleProvider: kDebugMode ? AppleProvider.debug : AppleProvider.deviceCheck,
+    );
+
+    return app;
+  }
 
   final FlutterI18nDelegate flutterI18nDelegate;
 
@@ -209,7 +222,7 @@ class KvitterApp extends StatelessWidget {
             GoogleFonts.lobster(fontSize: 30, color: context.white),
         iconTheme: const IconThemeData(color: Colors.white),
       ),
-      dialogTheme: DialogTheme(
+      dialogTheme: DialogThemeData(
         backgroundColor: context.white,
         titleTextStyle: GoogleFonts.lobster(fontSize: 30, color: context.main),
         contentTextStyle: TextStyle(
@@ -275,7 +288,7 @@ class KvitterApp extends StatelessWidget {
                 topLeft: Radius.circular(20), topRight: Radius.circular(20)),
           ),
         ),
-        dialogTheme: DialogTheme(
+        dialogTheme: DialogThemeData(
           backgroundColor: const Color(0xFF002022),
           titleTextStyle:
               GoogleFonts.lobster(fontSize: 30, color: const Color(0xFF30c7c2)),

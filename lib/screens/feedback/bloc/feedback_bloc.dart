@@ -14,23 +14,29 @@ class FeedbackBloc extends Bloc<FeedbackEvent, FeedbackState> {
   late Translation translator;
 
   FeedbackBloc(this._firestoreRepository, this._chatUser) : super(FeedbackBaseState()) {
+    on<FeedbackInitialEvent>(_onInitialEvent);
+    on<FeedbackSendEvent>(_onSendEvent);
+
     add(FeedbackInitialEvent());
   }
 
-  @override
-  Stream<FeedbackState> mapEventToState(FeedbackEvent event) async* {
+  void _onInitialEvent(
+    FeedbackInitialEvent event,
+    Emitter<FeedbackState> emit,
+  ) {
+    translator = getTranslator();
+  }
+
+  Future<void> _onSendEvent(
+    FeedbackSendEvent event,
+    Emitter<FeedbackState> emit,
+  ) async {
     final currentState = state;
-    if (event is FeedbackInitialEvent) {
-      translator = getTranslator();
-    } else if (event is FeedbackSendEvent) {
-      if (currentState is FeedbackBaseState) {
-        yield FeedbackLoadingState();
-        final translation = await translator.translate(text: event.feedback, to: 'en');
-        _firestoreRepository.postFeedback(translation.translatedText, _chatUser);
-        yield FeedbackDoneState();
-      }
-    } else {
-      throw UnimplementedError();
+    if (currentState is FeedbackBaseState) {
+      emit(FeedbackLoadingState());
+      final translation = await translator.translate(text: event.feedback, to: 'en');
+      _firestoreRepository.postFeedback(translation.translatedText, _chatUser);
+      emit(FeedbackDoneState());
     }
   }
 }

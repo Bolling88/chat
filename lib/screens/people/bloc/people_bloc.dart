@@ -18,6 +18,10 @@ class PeopleBloc extends Bloc<PeopleEvent, PeopleState> {
 
   PeopleBloc(this._firestoreRepository, this._initialUsers, this._chat)
       : super(PeopleLoadingState()) {
+    on<PeopleInitialEvent>(_onPeopleInitialEvent);
+    on<PeopleLoadedEvent>(_onPeopleLoadedEvent);
+    on<PeopleFilterEvent>(_onPeopleFilterEvent);
+
     add(PeopleInitialEvent());
   }
 
@@ -28,44 +32,56 @@ class PeopleBloc extends Bloc<PeopleEvent, PeopleState> {
     return super.close();
   }
 
-  @override
-  Stream<PeopleState> mapEventToState(PeopleEvent event) async* {
+  void _onPeopleInitialEvent(
+      PeopleInitialEvent event, Emitter<PeopleState> emit) {
+    try {
+      if (_initialUsers != null) {
+        if (_chat != null) {
+          //Filter to only show people in the chat
+          final filteredUsers = _initialUsers
+              .where((element) => element.currentRoomChatId == _chat.id)
+              .toList();
+          emit(PeopleBaseState(filteredUsers, filteredUsers, 0));
+        } else {
+          emit(PeopleBaseState(_initialUsers, _initialUsers, 0));
+        }
+      }
+      setUpPeopleListener();
+    } on Exception catch (error, stacktrace) {
+      emit(PeopleErrorState());
+      Log.e('PeopleErrorState: $error', stackTrace: stacktrace);
+    }
+  }
+
+  void _onPeopleLoadedEvent(
+      PeopleLoadedEvent event, Emitter<PeopleState> emit) {
     final currentState = state;
     try {
-      if (event is PeopleInitialEvent) {
-        if (_initialUsers != null) {
-          if (_chat != null) {
-            //Filter to only show people in the chat
-            final filteredUsers = _initialUsers!
-                .where((element) => element.currentRoomChatId == _chat?.id)
-                .toList();
-            yield PeopleBaseState(filteredUsers, filteredUsers, 0);
-          } else {
-            yield PeopleBaseState(_initialUsers!, _initialUsers!, 0);
-          }
-        }
-        setUpPeopleListener();
-      } else if (event is PeopleLoadedEvent) {
-        if (currentState is PeopleBaseState) {
-          yield getFilteredState(
-              PeopleFilterEvent(currentState.genderFilterIndex),
-              currentState,
-              event.onlineUser);
-        } else {
-          yield PeopleBaseState(event.onlineUser, event.onlineUser, 0);
-        }
-      } else if (event is PeopleFilterEvent) {
-        if (currentState is PeopleBaseState) {
-          //Filter users depending on gender
-          yield getFilteredState(
-              event, currentState, currentState.allOnlineUsers);
-        }
+      if (currentState is PeopleBaseState) {
+        emit(getFilteredState(
+            PeopleFilterEvent(currentState.genderFilterIndex),
+            currentState,
+            event.onlineUser));
       } else {
-        Log.e('PeopleBloc: Not implemented');
-        throw UnimplementedError();
+        emit(PeopleBaseState(event.onlineUser, event.onlineUser, 0));
       }
     } on Exception catch (error, stacktrace) {
-      yield PeopleErrorState();
+      emit(PeopleErrorState());
+      Log.e('PeopleErrorState: $error', stackTrace: stacktrace);
+    }
+  }
+
+  void _onPeopleFilterEvent(
+      PeopleFilterEvent event, Emitter<PeopleState> emit) {
+    final currentState = state;
+    try {
+      if (currentState is PeopleBaseState) {
+        //Filter users depending on gender
+        emit(getFilteredState(
+            event, currentState, currentState.allOnlineUsers));
+      }
+    } on Exception catch (error, stacktrace) {
+      emit(PeopleErrorState());
       Log.e('PeopleErrorState: $error', stackTrace: stacktrace);
     }
   }
@@ -124,12 +140,8 @@ class PeopleBloc extends Bloc<PeopleEvent, PeopleState> {
             add(PeopleLoadedEvent(event));
           }else {
             final filteredUsers = event.where((element) {
-              if (_chat == null) {
-                return true;
-              } else {
-                return element.currentRoomChatId == _chat?.id;
-              }
-            }).toList();
+              return element.currentRoomChatId == _chat.id;
+                        }).toList();
             add(PeopleLoadedEvent(filteredUsers));
           }
     });

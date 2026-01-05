@@ -19,6 +19,12 @@ class VisitBloc extends Bloc<VisitEvent, VisitState> {
 
   VisitBloc(this._firestoreRepository, this.userId, this.chat)
       : super(VisitLoadingState()) {
+    on<VisitInitialEvent>(_onVisitInitialEvent);
+    on<VisitUserLoadedState>(_onVisitUserLoadedState);
+    on<VisitBlocUserEvent>(_onVisitBlocUserEvent);
+    on<VisitUnblocUserEvent>(_onVisitUnblocUserEvent);
+    on<VisitTextChangedEvent>(_onVisitTextChangedEvent);
+
     add(VisitInitialEvent());
   }
 
@@ -28,57 +34,68 @@ class VisitBloc extends Bloc<VisitEvent, VisitState> {
     return super.close();
   }
 
-  @override
-  Stream<VisitState> mapEventToState(VisitEvent event) async* {
+  Future<void> _onVisitInitialEvent(
+      VisitInitialEvent event, Emitter<VisitState> emit) async {
+    final myUser = await _firestoreRepository.getUser();
+    setUpPeopleListener();
+    final isChatAvailable =
+        await _firestoreRepository.isPrivateChatAvailable(userId);
+    emit(VisitBaseState(
+        user: null,
+        myUser: myUser!,
+        isChatAvailable: isChatAvailable,
+        userLoaded: false,
+        userBlocked: false,
+        message: ''));
+  }
+
+  void _onVisitUserLoadedState(
+      VisitUserLoadedState event, Emitter<VisitState> emit) {
     final currentState = state;
-    if (event is VisitInitialEvent) {
-      final myUser = await _firestoreRepository.getUser();
-      setUpPeopleListener();
-      final isChatAvailable =
-          await _firestoreRepository.isPrivateChatAvailable(userId);
-      yield VisitBaseState(
-          user: null,
-          myUser: myUser!,
-          isChatAvailable: isChatAvailable,
-          userLoaded: false,
-          userBlocked: false,
-          message: '');
-    } else if (event is VisitUserLoadedState) {
-      if (currentState is VisitBaseState) {
-        if (event.user != null) {
-          yield currentState.copyWith(
-              user: event.user,
-              userLoaded: true,
-              userBlocked: event.user?.isUserBlocked());
-        } else {
-          //User most likely deleted his account
-          yield currentState.copyWith(
-              user: null, userLoaded: true, userBlocked: false);
-        }
+    if (currentState is VisitBaseState) {
+      if (event.user != null) {
+        emit(currentState.copyWith(
+            user: event.user,
+            userLoaded: true,
+            userBlocked: event.user?.isUserBlocked()));
+      } else {
+        //User most likely deleted his account
+        emit(currentState.copyWith(
+            user: null, userLoaded: true, userBlocked: false));
       }
-    } else if (event is VisitBlocUserEvent) {
-      if (currentState is VisitBaseState) {
-        yield VisitLoadingState();
-        _firestoreRepository.blockUser(currentState.user!.id);
-        final privateChat =
-            await _firestoreRepository.getPrivateChat(currentState.user!.id);
-        if (privateChat != null) {
-          await _firestoreRepository.leavePrivateChat(privateChat);
-        }
-        yield currentState.copyWith(userBlocked: true);
+    }
+  }
+
+  Future<void> _onVisitBlocUserEvent(
+      VisitBlocUserEvent event, Emitter<VisitState> emit) async {
+    final currentState = state;
+    if (currentState is VisitBaseState) {
+      emit(VisitLoadingState());
+      _firestoreRepository.blockUser(currentState.user!.id);
+      final privateChat =
+          await _firestoreRepository.getPrivateChat(currentState.user!.id);
+      if (privateChat != null) {
+        await _firestoreRepository.leavePrivateChat(privateChat);
       }
-    } else if (event is VisitUnblocUserEvent) {
-      if (currentState is VisitBaseState) {
-        yield VisitLoadingState();
-        _firestoreRepository.unblockUser(currentState.user!.id);
-        yield currentState.copyWith(userBlocked: false);
-      }
-    } else if (event is VisitTextChangedEvent) {
-      if (currentState is VisitBaseState) {
-        yield currentState.copyWith(message: event.message);
-      }
-    } else {
-      throw UnimplementedError();
+      emit(currentState.copyWith(userBlocked: true));
+    }
+  }
+
+  Future<void> _onVisitUnblocUserEvent(
+      VisitUnblocUserEvent event, Emitter<VisitState> emit) async {
+    final currentState = state;
+    if (currentState is VisitBaseState) {
+      emit(VisitLoadingState());
+      _firestoreRepository.unblockUser(currentState.user!.id);
+      emit(currentState.copyWith(userBlocked: false));
+    }
+  }
+
+  void _onVisitTextChangedEvent(
+      VisitTextChangedEvent event, Emitter<VisitState> emit) {
+    final currentState = state;
+    if (currentState is VisitBaseState) {
+      emit(currentState.copyWith(message: event.message));
     }
   }
 

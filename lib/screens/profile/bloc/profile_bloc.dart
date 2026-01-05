@@ -14,6 +14,10 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   late StreamSubscription<QuerySnapshot<Object?>> userStream;
 
   ProfileBloc(this._firestoreRepository) : super(ProfileLoadingState()) {
+    on<ProfileInitialEvent>(_onProfileInitialEvent);
+    on<ProfileUserChangedEvent>(_onProfileUserChangedEvent);
+    on<ProfileShowAgeChangedEvent>(_onProfileShowAgeChangedEvent);
+
     add(ProfileInitialEvent());
   }
 
@@ -23,24 +27,41 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     return super.close();
   }
 
-  @override
-  Stream<ProfileState> mapEventToState(ProfileEvent event) async* {
+  void _onProfileInitialEvent(
+    ProfileInitialEvent event,
+    Emitter<ProfileState> emit,
+  ) {
+    try {
+      setUpUserListener();
+    } on Exception catch (error, stacktrace) {
+      emit(ProfileErrorState());
+      Log.e('ProfileErrorState: $error', stackTrace: stacktrace);
+    }
+  }
+
+  void _onProfileUserChangedEvent(
+    ProfileUserChangedEvent event,
+    Emitter<ProfileState> emit,
+  ) {
+    try {
+      emit(ProfileBaseState(user: event.user));
+    } on Exception catch (error, stacktrace) {
+      emit(ProfileErrorState());
+      Log.e('ProfileErrorState: $error', stackTrace: stacktrace);
+    }
+  }
+
+  void _onProfileShowAgeChangedEvent(
+    ProfileShowAgeChangedEvent event,
+    Emitter<ProfileState> emit,
+  ) {
     final currentState = state;
     try {
-      if (event is ProfileInitialEvent) {
-        setUpUserListener();
-      } else if (event is ProfileUserChangedEvent) {
-        yield ProfileBaseState(user: event.user);
-      } else if (event is ProfileShowAgeChangedEvent) {
-        if (currentState is ProfileBaseState) {
-          _firestoreRepository.updateUserShowAge(event.showAge);
-        }
-      } else {
-        Log.e('ProfileBloc: Not implemented');
-        throw UnimplementedError();
+      if (currentState is ProfileBaseState) {
+        _firestoreRepository.updateUserShowAge(event.showAge);
       }
     } on Exception catch (error, stacktrace) {
-      yield ProfileErrorState();
+      emit(ProfileErrorState());
       Log.e('ProfileErrorState: $error', stackTrace: stacktrace);
     }
   }

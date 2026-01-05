@@ -687,27 +687,27 @@ class FirestoreRepository {
     }, SetOptions(merge: true));
   }
 
-  Future<void> postInappropriateImageReport(String userId) async {
+  Future<void> postInappropriateImageReport(String reportedUserId) async {
     if (kDebugMode) {
-      await users.doc(userId).set({
+      await users.doc(reportedUserId).set({
         'approvedImage': ApprovedImage.notReviewed.value,
       }, SetOptions(merge: true));
     }
-    await users.doc(userId).set({
-      'imageReports': FieldValue.arrayUnion([userId]),
+    await users.doc(reportedUserId).set({
+      'imageReports': FieldValue.arrayUnion([getUserId()]),
       'approvedImage': ApprovedImage.notReviewed.value,
     }, SetOptions(merge: true));
   }
 
-  Future<void> postBotReport(String userId) async {
-    await users.doc(userId).set({
-      'botReports': FieldValue.arrayUnion([userId]),
+  Future<void> postBotReport(String reportedUserId) async {
+    await users.doc(reportedUserId).set({
+      'botReports': FieldValue.arrayUnion([getUserId()]),
     }, SetOptions(merge: true));
   }
 
-  Future<void> postHatefulLanguageReport(String userId) async {
-    await users.doc(userId).set({
-      'languageReports': FieldValue.arrayUnion([userId]),
+  Future<void> postHatefulLanguageReport(String reportedUserId) async {
+    await users.doc(reportedUserId).set({
+      'languageReports': FieldValue.arrayUnion([getUserId()]),
     }, SetOptions(merge: true));
   }
 

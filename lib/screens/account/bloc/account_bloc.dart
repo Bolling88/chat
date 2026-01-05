@@ -17,6 +17,12 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
   late StreamSubscription<QuerySnapshot<Object?>> userStream;
 
   AccountBloc(this._firestoreRepository, this._subscriptionRepository) : super(AccountLoadingState()) {
+    on<AccountInitialEvent>(_onAccountInitialEvent);
+    on<AccountDeleteAccountEvent>(_onAccountDeleteAccountEvent);
+    on<AccountUserChangedEvent>(_onAccountUserChangedEvent);
+    on<AccountLogoutEvent>(_onAccountLogoutEvent);
+    on<AccountBuyPremiumEvent>(_onAccountBuyPremiumEvent);
+
     add(AccountInitialEvent());
   }
 
@@ -26,46 +32,53 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
     return super.close();
   }
 
-  @override
-  Stream<AccountState> mapEventToState(AccountEvent event) async* {
+  Future<void> _onAccountInitialEvent(AccountInitialEvent event, Emitter<AccountState> emit) async {
+    setUpUserListener();
+  }
+
+  Future<void> _onAccountDeleteAccountEvent(AccountDeleteAccountEvent event, Emitter<AccountState> emit) async {
     final currentState = state;
     try {
-      if (event is AccountInitialEvent) {
-        setUpUserListener();
-      } else if (event is AccountDeleteAccountEvent) {
-        if (currentState is AccountBaseState) {
-          yield AccountLoadingState();
-          Log.d('Deleting user');
-          await _firestoreRepository.updateUserOnLogout();
-          await _firestoreRepository.leaveAllPrivateChats();
-          await _firestoreRepository.closeAllStreams();
-          await _firestoreRepository.deleteUserAndFiles();
-          yield AccountLogoutState();
-        }
-      } else if (event is AccountUserChangedEvent) {
-        yield AccountBaseState(user: event.user);
-      } else if (event is AccountLogoutEvent) {
-        yield AccountLoadingState();
+      if (currentState is AccountBaseState) {
+        emit(AccountLoadingState());
+        Log.d('Deleting user');
         await _firestoreRepository.updateUserOnLogout();
+        await _firestoreRepository.leaveAllPrivateChats();
         await _firestoreRepository.closeAllStreams();
-        if (FirebaseAuth.instance.currentUser?.isAnonymous == true) {
-          //Delete user
-          await _firestoreRepository.deleteUserAndFiles();
-        } else {
-          //else just sign out the user
-          await FirebaseAuth.instance.signOut();
-        }
-        yield AccountLogoutState();
-      }else if(event is AccountBuyPremiumEvent){
-        _subscriptionRepository.getOfferings();
-      } else {
-        Log.e('AccountBloc: Not implemented');
-        throw UnimplementedError();
+        await _firestoreRepository.deleteUserAndFiles();
+        emit(AccountLogoutState());
       }
     } on Exception catch (error, stacktrace) {
-      yield AccountErrorState();
+      emit(AccountErrorState());
       Log.e('AccountErrorState: $error', stackTrace: stacktrace);
     }
+  }
+
+  Future<void> _onAccountUserChangedEvent(AccountUserChangedEvent event, Emitter<AccountState> emit) async {
+    emit(AccountBaseState(user: event.user));
+  }
+
+  Future<void> _onAccountLogoutEvent(AccountLogoutEvent event, Emitter<AccountState> emit) async {
+    try {
+      emit(AccountLoadingState());
+      await _firestoreRepository.updateUserOnLogout();
+      await _firestoreRepository.closeAllStreams();
+      if (FirebaseAuth.instance.currentUser?.isAnonymous == true) {
+        //Delete user
+        await _firestoreRepository.deleteUserAndFiles();
+      } else {
+        //else just sign out the user
+        await FirebaseAuth.instance.signOut();
+      }
+      emit(AccountLogoutState());
+    } on Exception catch (error, stacktrace) {
+      emit(AccountErrorState());
+      Log.e('AccountErrorState: $error', stackTrace: stacktrace);
+    }
+  }
+
+  Future<void> _onAccountBuyPremiumEvent(AccountBuyPremiumEvent event, Emitter<AccountState> emit) async {
+    _subscriptionRepository.getOfferings();
   }
 
   void setUpUserListener() async {

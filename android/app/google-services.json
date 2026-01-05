@@ -39,6 +39,14 @@
           }
         },
         {
+          "client_id": "164406258776-t2q4fdbpb7b4tsdl7o3mq4gn3pm0f2h6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.xevenition.chat",
+            "certificate_hash": "8de2d51d1c3f7cae773201aeb24fdd615e7d7af0"
+          }
+        },
+        {
           "client_id": "164406258776-rqr6n103mlu4nhakdji1q9fd75avqidh.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -64,7 +72,8 @@
             }
           ]
         }
-      }
+      },
+      "admob_app_id": "ca-app-pub-5287847424239288~7207822089"
     }
   ],
   "configuration_version": "1"

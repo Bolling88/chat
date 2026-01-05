@@ -19,6 +19,12 @@ class CreditsBloc extends Bloc<CreditsEvent, CreditsState> {
 
   CreditsBloc(this._firestoreRepository)
       : super(const CreditsBaseState()) {
+    on<CreditsInitialEvent>(_onInitialEvent);
+    on<CreditsShowAdEvent>(_onShowAdEvent);
+    on<CreditsAdLoadedEvent>(_onAdLoadedEvent);
+    on<CreditsAdFailedEvent>(_onAdFailedEvent);
+    on<CreditsAdSuccessEvent>(_onAdSuccessEvent);
+
     add(CreditsInitialEvent());
   }
 
@@ -28,28 +34,48 @@ class CreditsBloc extends Bloc<CreditsEvent, CreditsState> {
     return super.close();
   }
 
-  @override
-  Stream<CreditsState> mapEventToState(CreditsEvent event) async* {
+  void _onInitialEvent(
+    CreditsInitialEvent event,
+    Emitter<CreditsState> emit,
+  ) {
+    emit(const CreditsBaseState());
+  }
+
+  void _onShowAdEvent(
+    CreditsShowAdEvent event,
+    Emitter<CreditsState> emit,
+  ) {
+    emit(CreditsLoadingState());
+    loadRewardedAd();
+  }
+
+  void _onAdLoadedEvent(
+    CreditsAdLoadedEvent event,
+    Emitter<CreditsState> emit,
+  ) {
+    _rewardedAd?.show(onUserEarnedReward:
+        (AdWithoutView ad, RewardItem rewardItem) async {
+      add(CreditsAdSuccessEvent());
+    });
+  }
+
+  void _onAdFailedEvent(
+    CreditsAdFailedEvent event,
+    Emitter<CreditsState> emit,
+  ) {
+    loadInterstitialAd();
+  }
+
+  Future<void> _onAdSuccessEvent(
+    CreditsAdSuccessEvent event,
+    Emitter<CreditsState> emit,
+  ) async {
     try {
-      if (event is CreditsInitialEvent) {
-        yield const CreditsBaseState();
-      } else if (event is CreditsShowAdEvent) {
-        yield CreditsLoadingState();
-        loadRewardedAd();
-      } else if (event is CreditsAdLoadedEvent) {
-        _rewardedAd?.show(onUserEarnedReward:
-            (AdWithoutView ad, RewardItem rewardItem) async {
-          add(CreditsAdSuccessEvent());
-        });
-      } else if (event is CreditsAdFailedEvent) {
-       loadInterstitialAd();
-      } else if (event is CreditsAdSuccessEvent) {
-        await _firestoreRepository.increaseUserCredits(
-            getUserId(), rewardAmount);
-        yield const CreditsSuccessState();
-      }
+      await _firestoreRepository.increaseUserCredits(
+          getUserId(), rewardAmount);
+      emit(const CreditsSuccessState());
     } on Exception catch (error, stacktrace) {
-      yield CreditsErrorState();
+      emit(CreditsErrorState());
       Log.e('CreditsErrorState: $error', stackTrace: stacktrace);
     }
   }

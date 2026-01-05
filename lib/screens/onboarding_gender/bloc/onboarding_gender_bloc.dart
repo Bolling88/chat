@@ -13,27 +13,52 @@ class OnboardingGenderBloc
 
   OnboardingGenderBloc(this._firestoreRepository)
       : super(OnboardingGenderLoadingState()) {
+    on<OnboardingGenderInitialState>(_onInitial);
+    on<OnboardingGenderMaleClickedEvent>(_onMaleClicked);
+    on<OnboardingGenderFemaleClickedEvent>(_onFemaleClicked);
+    on<OnboardingGenderNonBinaryClickedEvent>(_onNonBinaryClicked);
+    on<OnboardingGenderSecretClickedEvent>(_onSecretClicked);
+
     add(OnboardingGenderInitialState());
   }
 
-  @override
-  Stream<OnboardingGenderState> mapEventToState(
-      OnboardingGenderEvent event) async* {
-    if (event is OnboardingGenderInitialState) {
-      user = (await _firestoreRepository.getUser())!;
-      yield OnboardingGenderBaseState(user.pictureData);
-    } else if (event is OnboardingGenderMaleClickedEvent) {
-      _firestoreRepository.updateUserGender(Gender.male);
-      yield OnboardingGenderSuccessState(OnboardingNavigation.done, user);
-    } else if (event is OnboardingGenderFemaleClickedEvent) {
-      _firestoreRepository.updateUserGender(Gender.female);
-      yield OnboardingGenderSuccessState(OnboardingNavigation.done, user);
-    } else if (event is OnboardingGenderNonBinaryClickedEvent) {
-      _firestoreRepository.updateUserGender(Gender.nonBinary);
-      yield OnboardingGenderSuccessState(OnboardingNavigation.done, user);
-    } else if (event is OnboardingGenderSecretClickedEvent) {
-      _firestoreRepository.updateUserGender(Gender.secret);
-      yield OnboardingGenderSuccessState(OnboardingNavigation.done, user);
-    }
+  Future<void> _onInitial(
+    OnboardingGenderInitialState event,
+    Emitter<OnboardingGenderState> emit,
+  ) async {
+    user = (await _firestoreRepository.getUser())!;
+    emit(OnboardingGenderBaseState(user.pictureData));
+  }
+
+  void _onMaleClicked(
+    OnboardingGenderMaleClickedEvent event,
+    Emitter<OnboardingGenderState> emit,
+  ) {
+    _firestoreRepository.updateUserGender(Gender.male);
+    emit(OnboardingGenderSuccessState(OnboardingNavigation.done, user));
+  }
+
+  void _onFemaleClicked(
+    OnboardingGenderFemaleClickedEvent event,
+    Emitter<OnboardingGenderState> emit,
+  ) {
+    _firestoreRepository.updateUserGender(Gender.female);
+    emit(OnboardingGenderSuccessState(OnboardingNavigation.done, user));
+  }
+
+  void _onNonBinaryClicked(
+    OnboardingGenderNonBinaryClickedEvent event,
+    Emitter<OnboardingGenderState> emit,
+  ) {
+    _firestoreRepository.updateUserGender(Gender.nonBinary);
+    emit(OnboardingGenderSuccessState(OnboardingNavigation.done, user));
+  }
+
+  void _onSecretClicked(
+    OnboardingGenderSecretClickedEvent event,
+    Emitter<OnboardingGenderState> emit,
+  ) {
+    _firestoreRepository.updateUserGender(Gender.secret);
+    emit(OnboardingGenderSuccessState(OnboardingNavigation.done, user));
   }
 }

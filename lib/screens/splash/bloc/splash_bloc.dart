@@ -12,39 +12,36 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
   final FirestoreRepository _firestoreRepository;
 
   SplashBloc(this._firestoreRepository) : super(SplashBaseState()) {
+    on<SplashInitialEvent>(_onSplashInitialEvent);
+
     add(SplashInitialEvent());
   }
 
-  @override
-  Stream<SplashState> mapEventToState(SplashEvent event) async* {
+  Future<void> _onSplashInitialEvent(
+      SplashInitialEvent event, Emitter<SplashState> emit) async {
     try {
-      if (event is SplashInitialEvent) {
-        if (FirebaseAuth.instance.currentUser != null) {
-          final chatUser = await _firestoreRepository.getUser();
-          if (chatUser == null) {
-            yield SplashLoginState();
-          } else if (chatUser.displayName.isEmpty) {
-            yield SplashLoginState();
-          } else if (chatUser.birthDate == null && Platform.isAndroid) {
-            yield SplashLoginState();
-          } else if (chatUser.gender == -1) {
-            yield SplashLoginState();
-          } else {
-            if(kIsWeb && (chatUser.isPremiumUser == false && chatUser.isAdmin == false)){
-              yield SplashPremiumState();
-            }else {
-              yield const SplashSuccessState(OnboardingNavigation.done);
-            }
-          }
+      if (FirebaseAuth.instance.currentUser != null) {
+        final chatUser = await _firestoreRepository.getUser();
+        if (chatUser == null) {
+          emit(SplashLoginState());
+        } else if (chatUser.displayName.isEmpty) {
+          emit(SplashLoginState());
+        } else if (chatUser.birthDate == null && Platform.isAndroid) {
+          emit(SplashLoginState());
+        } else if (chatUser.gender == -1) {
+          emit(SplashLoginState());
         } else {
-          yield SplashLoginState();
+          if(kIsWeb && (chatUser.isPremiumUser == false && chatUser.isAdmin == false)){
+            emit(SplashPremiumState());
+          }else {
+            emit(const SplashSuccessState(OnboardingNavigation.done));
+          }
         }
       } else {
-        Log.e('SplashBloc: Not implemented');
-        throw UnimplementedError();
+        emit(SplashLoginState());
       }
     } on Exception catch (error, stacktrace) {
-      yield SplashErrorState();
+      emit(SplashErrorState());
       Log.e('SplashErrorState: $error', stackTrace: stacktrace);
     }
   }

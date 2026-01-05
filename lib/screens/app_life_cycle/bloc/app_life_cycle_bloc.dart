@@ -26,6 +26,10 @@ class AppLifeCycleBloc extends Bloc<AppLifeCycleEvent, AppLifeCycleState> {
           : 'ca-app-pub-5287847424239288/5933066490';
 
   AppLifeCycleBloc(this._firestoreRepository) : super(AppLifeCycleBaseState()) {
+    on<AppLifeCycleInitialEvent>(_onInitialEvent);
+    on<AppLifeCycleResumedEvent>(_onResumedEvent);
+    on<AppLifeCyclePausedEvent>(_onPausedEvent);
+
     add(AppLifeCycleInitialEvent());
   }
 
@@ -36,19 +40,27 @@ class AppLifeCycleBloc extends Bloc<AppLifeCycleEvent, AppLifeCycleState> {
     return super.close();
   }
 
-  @override
-  Stream<AppLifeCycleState> mapEventToState(AppLifeCycleEvent event) async* {
-    if (event is AppLifeCycleInitialEvent) {
-      _setUpUserListener();
-    } else if (event is AppLifeCycleResumedEvent) {
-      _showAdIfAvailable();
-      _firestoreRepository.setUserAsActive();
-    } else if (event is AppLifeCyclePausedEvent) {
-      if (!kIsWeb && _user?.isPremiumUser != true) {
-          _loadAd();
-      }
-    } else {
-      throw UnimplementedError();
+  void _onInitialEvent(
+    AppLifeCycleInitialEvent event,
+    Emitter<AppLifeCycleState> emit,
+  ) {
+    _setUpUserListener();
+  }
+
+  void _onResumedEvent(
+    AppLifeCycleResumedEvent event,
+    Emitter<AppLifeCycleState> emit,
+  ) {
+    _showAdIfAvailable();
+    _firestoreRepository.setUserAsActive();
+  }
+
+  void _onPausedEvent(
+    AppLifeCyclePausedEvent event,
+    Emitter<AppLifeCycleState> emit,
+  ) {
+    if (!kIsWeb && _user?.isPremiumUser != true) {
+      _loadAd();
     }
   }
 

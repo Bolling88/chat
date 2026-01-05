@@ -5,7 +5,7 @@ import 'package:chat/repository/fcm_repository.dart';
 import 'package:chat/repository/subscription_repository.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_app_badger/flutter_app_badger.dart';
+import 'package:chat/utils/app_badge.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:in_app_review/in_app_review.dart';
@@ -40,6 +40,21 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
   MessageHolderBloc(
       this._firestoreRepository, this._fcmRepository, this._chatClickedRepository, this._subscriptionRepository)
       : super(MessageHolderLoadingState()) {
+    on<MessageHolderInitialEvent>(_onInitial);
+    on<MessageHolderUserUpdatedEvent>(_onUserUpdated);
+    on<MessageHolderStartPrivateChatEvent>(_onStartPrivateChat);
+    on<MessageHolderPrivateChatsUpdatedEvent>(_onPrivateChatsUpdated);
+    on<MessageHolderNewChatAddedEvent>(_onNewChatAdded);
+    on<MessageHolderRoomChatUpdatedEvent>(_onRoomChatUpdated);
+    on<MessageHolderChatClickedEvent>(_onChatClicked);
+    on<MessageHolderClosePrivateChatEvent>(_onClosePrivateChat);
+    on<MessageHolderChangeChatRoomEvent>(_onChangeChatRoom);
+    on<MessageHolderUsersUpdatedEvent>(_onUsersUpdated);
+    on<MessageHolderShowRateDialogEvent>(_onShowRateDialog);
+    on<MessageHolderRateNeverAppEvent>(_onRateNeverApp);
+    on<MessageHolderRateLaterAppEvent>(_onRateLaterApp);
+    on<MessageHolderShowOnlineUsersInChatEvent>(_onShowOnlineUsersInChat);
+
     add(MessageHolderInitialEvent());
   }
 
@@ -55,250 +70,293 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
     return super.close();
   }
 
-  @override
-  Stream<MessageHolderState> mapEventToState(MessageHolderEvent event) async* {
+  void _onInitial(MessageHolderInitialEvent event, Emitter<MessageHolderState> emit) {
+    _firestoreRepository.updateCurrentUsersCurrentChatRoom(chatId: '');
+    _fcmRepository.setUpPushNotification();
+    _setUpUserListener();
+    _updateUserLocation();
+    if (!kIsWeb) {
+      loadInterstitialAd();
+    }
+    _handleSubscription();
+    logEvent('started_chatting');
+  }
+
+  void _onUserUpdated(MessageHolderUserUpdatedEvent event, Emitter<MessageHolderState> emit) {
     final currentState = state;
-    if (event is MessageHolderInitialEvent) {
-      _firestoreRepository.updateCurrentUsersCurrentChatRoom(chatId: '');
-      _fcmRepository.setUpPushNotification();
-      _setUpUserListener();
-      _updateUserLocation();
-      if (!kIsWeb) {
-        loadInterstitialAd();
-      }
-      _handleSubscription();
-      logEvent('started_chatting');
-    } else if (event is MessageHolderUserUpdatedEvent) {
-      _user = event.user;
-      if (currentState is MessageHolderBaseState) {
-        yield currentState.copyWith(user: event.user);
-      } else if (state is MessageHolderLoadingState) {
-        yield MessageHolderBaseState(
-            roomChat: null,
-            user: event.user,
-            onlineUsers: const [],
-            privateChats: const [],
-            selectedChat: null,
-            selectedChatIndex: 0);
+    _user = event.user;
+    if (currentState is MessageHolderBaseState) {
+      emit(currentState.copyWith(user: event.user));
+    } else if (state is MessageHolderLoadingState) {
+      emit(MessageHolderBaseState(
+          roomChat: null,
+          user: event.user,
+          onlineUsers: const [],
+          privateChats: const [],
+          selectedChat: null,
+          selectedChatIndex: 0));
 
-        _setUpOnlineUsersListener(event.user.countryCode);
-        _setUpPrivateChatsListener(event.user);
-        _setUpRateMyApp();
-      }
-    } else if (event is MessageHolderStartPrivateChatEvent) {
-      if (currentState is MessageHolderBaseState) {
-        final bool isChatAvailable =
-            await _firestoreRepository.isPrivateChatAvailable(event.user.id);
-        if (isChatAvailable) {
-          await _firestoreRepository.createPrivateChat(
-            otherUser: event.user,
-            myUser: currentState.user,
-            initialMessage: event.message,
-          );
-          if(_user?.isPremiumUser != true && !kIsWeb) {
-            _interstitialAd?.show();
-            loadInterstitialAd();
-          }
+      _setUpOnlineUsersListener(event.user.countryCode);
+      _setUpPrivateChatsListener(event.user);
+      _setUpRateMyApp();
+    }
+  }
+
+  Future<void> _onStartPrivateChat(
+      MessageHolderStartPrivateChatEvent event, Emitter<MessageHolderState> emit) async {
+    final currentState = state;
+    if (currentState is MessageHolderBaseState) {
+      final bool isChatAvailable =
+          await _firestoreRepository.isPrivateChatAvailable(event.user.id);
+      if (isChatAvailable) {
+        await _firestoreRepository.createPrivateChat(
+          otherUser: event.user,
+          myUser: currentState.user,
+          initialMessage: event.message,
+        );
+        if(_user?.isPremiumUser != true && !kIsWeb) {
+          _interstitialAd?.show();
+          loadInterstitialAd();
+        }
+      } else {
+        final privateChat = currentState.privateChats
+            .where((element) => element.users.contains(event.user.id))
+            .firstOrNull;
+        if (privateChat != null) {
+          _firestoreRepository.setLastMessageRead(chatId: privateChat.id);
+          final int index = currentState.privateChats.indexOf(privateChat);
+          emit(currentState.copyWith(
+              selectedChatIndex: index + 1, selectedChat: privateChat));
         } else {
-          final privateChat = currentState.privateChats
-              .where((element) => element.users.contains(event.user.id))
-              .firstOrNull;
-          if (privateChat != null) {
-            _firestoreRepository.setLastMessageRead(chatId: privateChat.id);
-            final int index = currentState.privateChats.indexOf(privateChat);
-            yield currentState.copyWith(
-                selectedChatIndex: index + 1, selectedChat: privateChat);
-          } else {
-            Log.e("Private chat not found");
-          }
+          Log.e("Private chat not found");
         }
       }
-    } else if (event is MessageHolderPrivateChatsUpdatedEvent) {
-      if (currentState is MessageHolderBaseState) {
-        if (!kIsWeb) updateBadgeCount(event.privateChats);
-        if (currentState.privateChats.length != event.privateChats.length) {
-          //If the number of chats have changed...
-          if (currentState.selectedChatIndex == 0 ||
-              currentState.selectedChat == null) {
-            //If we are in the group chat or in all chats
-            if (event.privateChats.length > currentState.privateChats.length) {
-              //If this is actually the initial load, just update the chats
-              if(privateChatFirstLoad) {
-                privateChatFirstLoad = false;
-                yield currentState.copyWith(privateChats: event.privateChats);
-              }else {
-                //If private chats have increased and not initial load
-                if (event.privateChats.last.initiatedBy == getUserId()) {
-                  //And it was by you, move to that chat
-                  yield currentState.copyWith(
-                      privateChats: event.privateChats,
-                      selectedChat: event.privateChats.last,
-                      selectedChatIndex: event.privateChats.length);
-                  add(MessageHolderNewChatAddedEvent(event.privateChats.last));
-                } else {
-                  //else just update the chats and play a sound
-                  playNewChatSound();
-                  yield currentState.copyWith(privateChats: event.privateChats);
-                }
+    }
+  }
+
+  void _onPrivateChatsUpdated(
+      MessageHolderPrivateChatsUpdatedEvent event, Emitter<MessageHolderState> emit) {
+    final currentState = state;
+    if (currentState is MessageHolderBaseState) {
+      if (!kIsWeb) updateBadgeCount(event.privateChats);
+      if (currentState.privateChats.length != event.privateChats.length) {
+        //If the number of chats have changed...
+        if (currentState.selectedChatIndex == 0 ||
+            currentState.selectedChat == null) {
+          //If we are in the group chat or in all chats
+          if (event.privateChats.length > currentState.privateChats.length) {
+            //If this is actually the initial load, just update the chats
+            if(privateChatFirstLoad) {
+              privateChatFirstLoad = false;
+              emit(currentState.copyWith(privateChats: event.privateChats));
+            }else {
+              //If private chats have increased and not initial load
+              if (event.privateChats.last.initiatedBy == getUserId()) {
+                //And it was by you, move to that chat
+                emit(currentState.copyWith(
+                    privateChats: event.privateChats,
+                    selectedChat: event.privateChats.last,
+                    selectedChatIndex: event.privateChats.length));
+                add(MessageHolderNewChatAddedEvent(event.privateChats.last));
+              } else {
+                //else just update the chats and play a sound
+                playNewChatSound();
+                emit(currentState.copyWith(privateChats: event.privateChats));
               }
-            } else {
-              yield currentState.copyWith(privateChats: event.privateChats);
             }
           } else {
-            //We are not in the group chat
-            if (event.privateChats.contains(currentState.selectedChat)) {
-              //My selected private chat still exists
-              setMessageAsRead(event, currentState);
-              if (event.privateChats.length >
-                  currentState.privateChats.length) {
-                //The private chats have increased
-                if (event.privateChats.last.initiatedBy == getUserId()) {
-                  //And it was by you, move to that chat
-                  yield currentState.copyWith(
-                      privateChats: event.privateChats,
-                      selectedChat: event.privateChats.last,
-                      selectedChatIndex: event.privateChats.length);
-                } else {
-                  //Someone sent the user a private chat
-                  //else just update the chats and play a sound
-                  playNewChatSound();
-                  yield currentState.copyWith(privateChats: event.privateChats);
-                }
-              } else {
-                //else just update the chats
-                yield currentState.copyWith(privateChats: event.privateChats);
-              }
-            } else {
-              //A private chat is new or have been removed
-              if (event.privateChats.length >
-                  currentState.privateChats.length) {
-                if (event.privateChats.last.initiatedBy == getUserId()) {
-                  //And it was by you, move to that chat
-                  yield currentState.copyWith(
-                      privateChats: event.privateChats,
-                      selectedChat: event.privateChats.last,
-                      selectedChatIndex: event.privateChats.length);
-                } else {
-                  //else just update the chats and play a sound
-                  playNewChatSound();
-                  yield currentState.copyWith(privateChats: event.privateChats);
-                }
-              } else {
-                if (currentState.roomChat != null) {
-                  yield currentState.copyWith(
-                      privateChats: event.privateChats,
-                      selectedChatIndex: 0,
-                      roomChat: currentState.roomChat
-                          ?.copyWith(lastMessageReadByUser: true),
-                      selectedChat: currentState.roomChat
-                          ?.copyWith(lastMessageReadByUser: true));
-                } else {
-                  yield MessageHolderBaseState(
-                      roomChat: null,
-                      user: currentState.user,
-                      onlineUsers: currentState.onlineUsers,
-                      privateChats: event.privateChats,
-                      selectedChat: null,
-                      selectedChatIndex: 0);
-                }
-              }
-            }
+            emit(currentState.copyWith(privateChats: event.privateChats));
           }
         } else {
-          //Number of private chats did not change...
-          if (currentState.selectedChatIndex != 0) {
-            //If we are not in the group chat
+          //We are not in the group chat
+          if (event.privateChats.contains(currentState.selectedChat)) {
+            //My selected private chat still exists
             setMessageAsRead(event, currentState);
+            if (event.privateChats.length >
+                currentState.privateChats.length) {
+              //The private chats have increased
+              if (event.privateChats.last.initiatedBy == getUserId()) {
+                //And it was by you, move to that chat
+                emit(currentState.copyWith(
+                    privateChats: event.privateChats,
+                    selectedChat: event.privateChats.last,
+                    selectedChatIndex: event.privateChats.length));
+              } else {
+                //Someone sent the user a private chat
+                //else just update the chats and play a sound
+                playNewChatSound();
+                emit(currentState.copyWith(privateChats: event.privateChats));
+              }
+            } else {
+              //else just update the chats
+              emit(currentState.copyWith(privateChats: event.privateChats));
+            }
+          } else {
+            //A private chat is new or have been removed
+            if (event.privateChats.length >
+                currentState.privateChats.length) {
+              if (event.privateChats.last.initiatedBy == getUserId()) {
+                //And it was by you, move to that chat
+                emit(currentState.copyWith(
+                    privateChats: event.privateChats,
+                    selectedChat: event.privateChats.last,
+                    selectedChatIndex: event.privateChats.length));
+              } else {
+                //else just update the chats and play a sound
+                playNewChatSound();
+                emit(currentState.copyWith(privateChats: event.privateChats));
+              }
+            } else {
+              if (currentState.roomChat != null) {
+                emit(currentState.copyWith(
+                    privateChats: event.privateChats,
+                    selectedChatIndex: 0,
+                    roomChat: currentState.roomChat
+                        ?.copyWith(lastMessageReadByUser: true),
+                    selectedChat: currentState.roomChat
+                        ?.copyWith(lastMessageReadByUser: true)));
+              } else {
+                emit(MessageHolderBaseState(
+                    roomChat: null,
+                    user: currentState.user,
+                    onlineUsers: currentState.onlineUsers,
+                    privateChats: event.privateChats,
+                    selectedChat: null,
+                    selectedChatIndex: 0));
+              }
+            }
           }
+        }
+      } else {
+        //Number of private chats did not change...
+        if (currentState.selectedChatIndex != 0) {
+          //If we are not in the group chat
+          setMessageAsRead(event, currentState);
+        }
 
-          // The number of private chats did not change
-          yield currentState.copyWith(privateChats: event.privateChats);
-        }
+        // The number of private chats did not change
+        emit(currentState.copyWith(privateChats: event.privateChats));
       }
-    }else if(event is MessageHolderNewChatAddedEvent){
-      if(currentState is MessageHolderBaseState){
-        //Wait a second
-        await Future.delayed(const Duration(seconds: 1));
-        _chatClickedRepository.addChatClicked(event.chat);
+    }
+  }
+
+  Future<void> _onNewChatAdded(
+      MessageHolderNewChatAddedEvent event, Emitter<MessageHolderState> emit) async {
+    final currentState = state;
+    if(currentState is MessageHolderBaseState){
+      //Wait a second
+      await Future.delayed(const Duration(seconds: 1));
+      _chatClickedRepository.addChatClicked(event.chat);
+    }
+  }
+
+  void _onRoomChatUpdated(
+      MessageHolderRoomChatUpdatedEvent event, Emitter<MessageHolderState> emit) {
+    final currentState = state;
+    if (currentState is MessageHolderBaseState) {
+      if (currentState.selectedChat?.id == event.chat.id) {
+        emit(currentState.copyWith(
+            roomChat: event.chat.copyWith(lastMessageReadByUser: true)));
+      } else {
+        emit(currentState.copyWith(roomChat: event.chat));
       }
-    } else if (event is MessageHolderRoomChatUpdatedEvent) {
-      if (currentState is MessageHolderBaseState) {
-        if (currentState.selectedChat?.id == event.chat.id) {
-          yield currentState.copyWith(
-              roomChat: event.chat.copyWith(lastMessageReadByUser: true));
-        } else {
-          yield currentState.copyWith(roomChat: event.chat);
-        }
-      }
-    } else if (event is MessageHolderChatClickedEvent) {
-      if (currentState is MessageHolderBaseState) {
-        final chat = event.chat;
-        if (chat is RoomChat) {
-          final RoomChat chat =
-              (event.chat as RoomChat).copyWith(lastMessageReadByUser: true);
-          //Set user current chat and mark as present
-          _firestoreRepository.updateCurrentUsersCurrentChatRoom(
-              chatId: chat.id);
-          yield currentState.copyWith(
-              selectedChatIndex: 0, selectedChat: chat, roomChat: chat);
-        } else if (chat is PrivateChat) {
-          _firestoreRepository.setLastMessageRead(chatId: chat.id);
-          yield currentState.copyWith(
-              selectedChatIndex: event.index, selectedChat: chat);
-          _chatClickedRepository.addChatClicked(chat);
-        } else {
-          yield MessageHolderBaseState(
-              roomChat: null,
-              user: currentState.user,
-              onlineUsers: currentState.onlineUsers,
-              privateChats: currentState.privateChats,
-              selectedChat: null,
-              selectedChatIndex: 0);
-        }
-      }
-    } else if (event is MessageHolderClosePrivateChatEvent) {
-      Log.d("Closing private chat");
-      if (currentState is MessageHolderBaseState) {
-        if (event.privateChat != null) {
-          //This is called on big screens, and can be called from any other chat
-          _firestoreRepository.leavePrivateChat(event.privateChat!);
-        } else {
-          //This is called from a small screen, and the current chat, so we must move to the room again
-          _firestoreRepository
-              .leavePrivateChat(currentState.selectedChat as PrivateChat);
-        }
-      }
-    } else if (event is MessageHolderChangeChatRoomEvent) {
-      if (currentState is MessageHolderBaseState) {
-        _firestoreRepository.updateCurrentUsersCurrentChatRoom(chatId: '');
-        yield MessageHolderBaseState(
+    }
+  }
+
+  void _onChatClicked(
+      MessageHolderChatClickedEvent event, Emitter<MessageHolderState> emit) {
+    final currentState = state;
+    if (currentState is MessageHolderBaseState) {
+      final chat = event.chat;
+      if (chat is RoomChat) {
+        final RoomChat chat =
+            (event.chat as RoomChat).copyWith(lastMessageReadByUser: true);
+        //Set user current chat and mark as present
+        _firestoreRepository.updateCurrentUsersCurrentChatRoom(
+            chatId: chat.id);
+        emit(currentState.copyWith(
+            selectedChatIndex: 0, selectedChat: chat, roomChat: chat));
+      } else if (chat is PrivateChat) {
+        _firestoreRepository.setLastMessageRead(chatId: chat.id);
+        emit(currentState.copyWith(
+            selectedChatIndex: event.index, selectedChat: chat));
+        _chatClickedRepository.addChatClicked(chat);
+      } else {
+        emit(MessageHolderBaseState(
             roomChat: null,
             user: currentState.user,
             onlineUsers: currentState.onlineUsers,
             privateChats: currentState.privateChats,
             selectedChat: null,
-            selectedChatIndex: 0);
+            selectedChatIndex: 0));
       }
-    } else if (event is MessageHolderUsersUpdatedEvent) {
-      if (currentState is MessageHolderBaseState) {
-        yield currentState.copyWith(onlineUsers: event.users);
+    }
+  }
+
+  void _onClosePrivateChat(
+      MessageHolderClosePrivateChatEvent event, Emitter<MessageHolderState> emit) {
+    final currentState = state;
+    Log.d("Closing private chat");
+    if (currentState is MessageHolderBaseState) {
+      if (event.privateChat != null) {
+        //This is called on big screens, and can be called from any other chat
+        _firestoreRepository.leavePrivateChat(event.privateChat!);
+      } else {
+        //This is called from a small screen, and the current chat, so we must move to the room again
+        _firestoreRepository
+            .leavePrivateChat(currentState.selectedChat as PrivateChat);
       }
-    } else if (event is MessageHolderShowRateDialogEvent) {
-      if (currentState is MessageHolderBaseState) {
-        yield MessageHolderLikeDialogState(currentState);
-      }
-    } else if (event is MessageHolderRateNeverAppEvent) {
-      final SharedPreferences prefs = await SharedPreferences.getInstance();
-      prefs.setBool('rated', true);
-    }else if(event is MessageHolderRateLaterAppEvent){
-      //Don't do anything, it will pop up again after 5 visits
-    } else if (event is MessageHolderShowOnlineUsersInChatEvent) {
-      if (currentState is MessageHolderBaseState) {
-        yield MessageHolderShowOnlineUsersInChatState(currentState, event.chat);
-        yield currentState; //This is to make sure the state is not changed
-      }
-    } else {
-      throw UnimplementedError();
+    }
+  }
+
+  void _onChangeChatRoom(
+      MessageHolderChangeChatRoomEvent event, Emitter<MessageHolderState> emit) {
+    final currentState = state;
+    if (currentState is MessageHolderBaseState) {
+      _firestoreRepository.updateCurrentUsersCurrentChatRoom(chatId: '');
+      emit(MessageHolderBaseState(
+          roomChat: null,
+          user: currentState.user,
+          onlineUsers: currentState.onlineUsers,
+          privateChats: currentState.privateChats,
+          selectedChat: null,
+          selectedChatIndex: 0));
+    }
+  }
+
+  void _onUsersUpdated(
+      MessageHolderUsersUpdatedEvent event, Emitter<MessageHolderState> emit) {
+    final currentState = state;
+    if (currentState is MessageHolderBaseState) {
+      emit(currentState.copyWith(onlineUsers: event.users));
+    }
+  }
+
+  void _onShowRateDialog(
+      MessageHolderShowRateDialogEvent event, Emitter<MessageHolderState> emit) {
+    final currentState = state;
+    if (currentState is MessageHolderBaseState) {
+      emit(MessageHolderLikeDialogState(currentState));
+    }
+  }
+
+  Future<void> _onRateNeverApp(
+      MessageHolderRateNeverAppEvent event, Emitter<MessageHolderState> emit) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setBool('rated', true);
+  }
+
+  void _onRateLaterApp(
+      MessageHolderRateLaterAppEvent event, Emitter<MessageHolderState> emit) {
+    //Don't do anything, it will pop up again after 5 visits
+  }
+
+  void _onShowOnlineUsersInChat(
+      MessageHolderShowOnlineUsersInChatEvent event, Emitter<MessageHolderState> emit) {
+    final currentState = state;
+    if (currentState is MessageHolderBaseState) {
+      emit(MessageHolderShowOnlineUsersInChatState(currentState, event.chat));
+      emit(currentState); //This is to make sure the state is not changed
     }
   }
 
@@ -391,9 +449,9 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
       }
     }
     if (count == 0) {
-      FlutterAppBadger.removeBadge();
+      AppBadge.removeBadge();
     } else {
-      FlutterAppBadger.updateBadgeCount(count);
+      AppBadge.updateBadgeCount(count);
     }
   }
 

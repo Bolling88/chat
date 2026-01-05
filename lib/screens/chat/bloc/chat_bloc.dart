@@ -18,6 +18,11 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
 
   ChatBloc(this._firestoreRepository, this._initialUsers)
       : super(ChatLoadingState()) {
+    on<ChatInitialEvent>(_onInitialEvent);
+    on<ChatUpdatedEvent>(_onUpdatedEvent);
+    on<ChatOnlineUsersUpdatedEvent>(_onOnlineUsersUpdatedEvent);
+    on<ChatUserUpdatedEvent>(_onUserUpdatedEvent);
+
     add(ChatInitialEvent());
   }
 
@@ -29,37 +34,52 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
     return super.close();
   }
 
-  @override
-  Stream<ChatState> mapEventToState(ChatEvent event) async* {
+  void _onInitialEvent(
+    ChatInitialEvent event,
+    Emitter<ChatState> emit,
+  ) {
+    setUpUserListener();
+  }
+
+  void _onUpdatedEvent(
+    ChatUpdatedEvent event,
+    Emitter<ChatState> emit,
+  ) {
     final currentState = state;
-    if (event is ChatInitialEvent) {
-      setUpUserListener();
-    } else if (event is ChatUpdatedEvent) {
-      if (currentState is ChatBaseState) {
-        yield currentState.copyWith(chats: event.chats);
-      } else {
-        yield ChatBaseState(
-            chats: event.chats, onlineUsers: groupUsersByChat(_initialUsers));
-      }
-    } else if (event is ChatOnlineUsersUpdatedEvent) {
-      if (currentState is ChatBaseState) {
-        yield currentState.copyWith(onlineUsers: event.onlineUsers);
-      } else {
-        yield ChatBaseState(
-            chats: const [], onlineUsers: event.onlineUsers);
-      }
-    } else if (event is ChatUserUpdatedEvent) {
-      if (currentState is ChatBaseState) {
-        //Do nothing, user info is not of interest for the state
-      } else {
-        //Set up the remaining listeners and load the UI
-        setUpPeopleListener();
-        setUpChatListener(event.chatUser);
-        yield ChatBaseState(
-            chats: const [], onlineUsers: groupUsersByChat(_initialUsers));
-      }
+    if (currentState is ChatBaseState) {
+      emit(currentState.copyWith(chats: event.chats));
     } else {
-      throw UnimplementedError();
+      emit(ChatBaseState(
+          chats: event.chats, onlineUsers: groupUsersByChat(_initialUsers)));
+    }
+  }
+
+  void _onOnlineUsersUpdatedEvent(
+    ChatOnlineUsersUpdatedEvent event,
+    Emitter<ChatState> emit,
+  ) {
+    final currentState = state;
+    if (currentState is ChatBaseState) {
+      emit(currentState.copyWith(onlineUsers: event.onlineUsers));
+    } else {
+      emit(ChatBaseState(
+          chats: const [], onlineUsers: event.onlineUsers));
+    }
+  }
+
+  void _onUserUpdatedEvent(
+    ChatUserUpdatedEvent event,
+    Emitter<ChatState> emit,
+  ) {
+    final currentState = state;
+    if (currentState is ChatBaseState) {
+      //Do nothing, user info is not of interest for the state
+    } else {
+      //Set up the remaining listeners and load the UI
+      setUpPeopleListener();
+      setUpChatListener(event.chatUser);
+      emit(ChatBaseState(
+          chats: const [], onlineUsers: groupUsersByChat(_initialUsers)));
     }
   }
 

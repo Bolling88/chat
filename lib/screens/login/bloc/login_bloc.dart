@@ -12,66 +12,81 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
   final FirestoreRepository _firestoreRepository;
 
   LoginBloc(this._loginRepository, this._firestoreRepository)
-      : super(LoginBaseState());
+      : super(LoginBaseState()) {
+    on<LoginGoogleClickedEvent>(_onGoogleClicked);
+    on<LoginAppleClickedEvent>(_onAppleClicked);
+    on<LoginGuestClickedEvent>(_onGuestClicked);
+  }
 
-  @override
-  Stream<LoginState> mapEventToState(LoginEvent event) async* {
+  Future<void> _onGoogleClicked(
+      LoginGoogleClickedEvent event, Emitter<LoginState> emit) async {
     try {
-      if (event is LoginGoogleClickedEvent) {
-        yield LoginLoadingState();
-        final credentials = await _loginRepository.signInWithGoogle();
-        if (credentials == null) {
-          yield LoginErrorState();
-        } else {
-          final chatUser = await _firestoreRepository.getUser();
-          if (chatUser == null || chatUser.displayName.isEmpty) {
-            await _firestoreRepository.setInitialUserData(
-                credentials.user?.email ?? "", credentials.user?.uid ?? "");
-            yield const LoginSuccessState(OnboardingNavigation.name);
-          } else {
-            yield await checkIfOnboardingIsDone(chatUser);
-          }
-        }
-      } else if (event is LoginAppleClickedEvent) {
-        yield LoginLoadingState();
-        final appleCredentials =
-            await _loginRepository.signInWithApple();
-
-        if(appleCredentials != null) {
-          final chatUser = await _firestoreRepository.getUser();
-          if (chatUser == null || chatUser.displayName.isEmpty) {
-            await _firestoreRepository.setInitialUserData(
-                appleCredentials.user?.email ?? "",
-                appleCredentials.user?.uid ?? "");
-            Log.d("User logged in!");
-            if (chatUser != null) {
-              yield await checkIfOnboardingIsDone(chatUser);
-            } else {
-              yield LoginErrorState();
-            }
-          } else {
-            yield await checkIfOnboardingIsDone(chatUser);
-          }
-        }else{
-          yield LoginErrorState();
-        }
-      } else if (event is LoginGuestClickedEvent) {
-        yield LoginLoadingState();
-        if (FirebaseAuth.instance.currentUser != null) {
-          final chatUser = await _firestoreRepository.getUser();
-          yield await checkIfOnboardingIsDone(chatUser);
-        }else {
-          final credentials = await FirebaseAuth.instance.signInAnonymously();
-          await _firestoreRepository.setInitialUserData(
-              "", credentials.user?.uid ?? "");
-          yield await checkIfOnboardingIsDone(null);
-        }
+      emit(LoginLoadingState());
+      final credentials = await _loginRepository.signInWithGoogle();
+      if (credentials == null) {
+        emit(LoginErrorState());
       } else {
-        yield LoginErrorState();
+        final chatUser = await _firestoreRepository.getUser();
+        if (chatUser == null || chatUser.displayName.isEmpty) {
+          await _firestoreRepository.setInitialUserData(
+              credentials.user?.email ?? "", credentials.user?.uid ?? "");
+          emit(const LoginSuccessState(OnboardingNavigation.name));
+        } else {
+          emit(await checkIfOnboardingIsDone(chatUser));
+        }
       }
     } on Exception catch (exception, stacktrace) {
       Log.e(exception, stackTrace: stacktrace);
-      yield LoginErrorState();
+      emit(LoginErrorState());
+    }
+  }
+
+  Future<void> _onAppleClicked(
+      LoginAppleClickedEvent event, Emitter<LoginState> emit) async {
+    try {
+      emit(LoginLoadingState());
+      final appleCredentials = await _loginRepository.signInWithApple();
+
+      if (appleCredentials != null) {
+        final chatUser = await _firestoreRepository.getUser();
+        if (chatUser == null || chatUser.displayName.isEmpty) {
+          await _firestoreRepository.setInitialUserData(
+              appleCredentials.user?.email ?? "",
+              appleCredentials.user?.uid ?? "");
+          Log.d("User logged in!");
+          if (chatUser != null) {
+            emit(await checkIfOnboardingIsDone(chatUser));
+          } else {
+            emit(LoginErrorState());
+          }
+        } else {
+          emit(await checkIfOnboardingIsDone(chatUser));
+        }
+      } else {
+        emit(LoginErrorState());
+      }
+    } on Exception catch (exception, stacktrace) {
+      Log.e(exception, stackTrace: stacktrace);
+      emit(LoginErrorState());
+    }
+  }
+
+  Future<void> _onGuestClicked(
+      LoginGuestClickedEvent event, Emitter<LoginState> emit) async {
+    try {
+      emit(LoginLoadingState());
+      if (FirebaseAuth.instance.currentUser != null) {
+        final chatUser = await _firestoreRepository.getUser();
+        emit(await checkIfOnboardingIsDone(chatUser));
+      } else {
+        final credentials = await FirebaseAuth.instance.signInAnonymously();
+        await _firestoreRepository.setInitialUserData(
+            "", credentials.user?.uid ?? "");
+        emit(await checkIfOnboardingIsDone(null));
+      }
+    } on Exception catch (exception, stacktrace) {
+      Log.e(exception, stackTrace: stacktrace);
+      emit(LoginErrorState());
     }
   }
 

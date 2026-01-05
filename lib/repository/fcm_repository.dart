@@ -1,11 +1,14 @@
+import 'dart:async';
+
 import 'package:chat/repository/firestore_repository.dart';
+import 'package:chat/utils/app_badge.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_app_badger/flutter_app_badger.dart';
 import '../utils/log.dart';
 
 class FcmRepository {
   final FirestoreRepository _firebaseRepository;
+  StreamSubscription<String>? _tokenRefreshSubscription;
 
   FcmRepository(this._firebaseRepository);
 
@@ -47,18 +50,24 @@ class FcmRepository {
 
     if (fcmToken != null) _firebaseRepository.saveFcmTokenOnUser(fcmToken);
 
-    FirebaseMessaging.instance.onTokenRefresh.listen((fcmToken) {
+    _tokenRefreshSubscription?.cancel();
+    _tokenRefreshSubscription = FirebaseMessaging.instance.onTokenRefresh.listen((fcmToken) {
       Log.d('FCM token updated: $fcmToken');
       _firebaseRepository.saveFcmTokenOnUser(fcmToken);
-    }).onError((err) {
+    }, onError: (err) {
       Log.e('FCM token error: $err');
     });
+  }
+
+  void dispose() {
+    _tokenRefreshSubscription?.cancel();
+    _tokenRefreshSubscription = null;
   }
 
   void setUpBadge() {
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
       Log.d('A new onMessageOpenedApp event was published!');
-      if (!kIsWeb) FlutterAppBadger.removeBadge();
+      if (!kIsWeb) AppBadge.removeBadge();
     });
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   }
@@ -66,6 +75,6 @@ class FcmRepository {
   static Future<void> _firebaseMessagingBackgroundHandler(
       RemoteMessage message) async {
     Log.d('Handling a background message ${message.messageId}');
-    if (!kIsWeb) FlutterAppBadger.updateBadgeCount(1);
+    if (!kIsWeb) AppBadge.updateBadgeCount(1);
   }
 }

@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:chat/screens/full_screen_image/bloc/full_screen_image_event.dart';
 import 'package:chat/screens/full_screen_image/bloc/full_screen_image_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -15,19 +13,18 @@ class FullScreenImageBloc
   FullScreenImageBloc(this.imageReports, this.approvalState, this.url)
       : super(FullScreenImageBaseState(
             shouldBlur(url, imageReports, approvalState), false)) {
-    add(FullScreenImageInitialEvent());
-  }
+    on<FullScreenImageInitialEvent>((event, emit) {
+      // Initial event - no state change needed
+    });
 
-  @override
-  Stream<FullScreenImageState> mapEventToState(
-      FullScreenImageEvent event) async* {
-    if (event is FullScreenImageInitialEvent) {
-    } else if (event is FullScreenImageUnblurEvent) {
-      yield FullScreenImageBaseState(false, true);
-    }else if(event is FullScreenImageBlurEvent){
-      yield FullScreenImageBaseState(true, false);
-    } else {
-      throw UnimplementedError();
-    }
+    on<FullScreenImageUnblurEvent>((event, emit) {
+      emit(FullScreenImageBaseState(false, true));
+    });
+
+    on<FullScreenImageBlurEvent>((event, emit) {
+      emit(FullScreenImageBaseState(true, false));
+    });
+
+    add(FullScreenImageInitialEvent());
   }
 }

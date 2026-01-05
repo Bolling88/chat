@@ -25,37 +25,61 @@ class OptionsBloc extends Bloc<OptionsEvent, OptionsState> {
   }
 
   OptionsBloc(this._firestoreRepository) : super(OptionsLoadingState()) {
+    on<OptionsInitialEvent>(_onOptionsInitialEvent);
+    on<OptionsTranslateEvent>(_onOptionsTranslateEvent);
+    on<OptionsUserChangedEvent>(_onOptionsUserChangedEvent);
+
     add(OptionsInitialEvent());
   }
 
-  @override
-  Stream<OptionsState> mapEventToState(OptionsEvent event) async* {
+  void _onOptionsInitialEvent(
+    OptionsInitialEvent event,
+    Emitter<OptionsState> emit,
+  ) {
+    try {
+      translator = getTranslator();
+      setUpUserListener();
+    } on Exception catch (error, stacktrace) {
+      emit(OptionsErrorState());
+      Log.e('OptionsErrorState: $error', stackTrace: stacktrace);
+    }
+  }
+
+  Future<void> _onOptionsTranslateEvent(
+    OptionsTranslateEvent event,
+    Emitter<OptionsState> emit,
+  ) async {
     final currentState = state;
     try {
-      if (event is OptionsInitialEvent) {
-        translator = getTranslator();
-        setUpUserListener();
-      } else if (event is OptionsTranslateEvent) {
-        if (currentState is OptionsBaseState) {
-          yield OptionsLoadingState();
-          final user = currentState.user;
-          if (user.kvitterCredits > 0 || kIsWeb || user.isPremiumUser) {
-            String deviceLanguage = Platform.localeName.substring(0, 2);
-            final translation = await translator.translate(
-                text: event.text, to: deviceLanguage);
-            yield OptionsTranslationDoneState(translation: translation);
-            if (!kIsWeb || user.isPremiumUser) {
-              _firestoreRepository.reduceUserCredits(user.id, 1);
-            }
-          } else {
-            yield OptionsShowCreditsOfferState(user: user);
+      if (currentState is OptionsBaseState) {
+        emit(OptionsLoadingState());
+        final user = currentState.user;
+        if (user.kvitterCredits > 0 || kIsWeb || user.isPremiumUser) {
+          String deviceLanguage = Platform.localeName.substring(0, 2);
+          final translation = await translator.translate(
+              text: event.text, to: deviceLanguage);
+          emit(OptionsTranslationDoneState(translation: translation));
+          if (!kIsWeb || user.isPremiumUser) {
+            _firestoreRepository.reduceUserCredits(user.id, 1);
           }
+        } else {
+          emit(OptionsShowCreditsOfferState(user: user));
         }
-      } else if (event is OptionsUserChangedEvent) {
-        yield OptionsBaseState(user: event.user);
       }
     } on Exception catch (error, stacktrace) {
-      yield OptionsErrorState();
+      emit(OptionsErrorState());
+      Log.e('OptionsErrorState: $error', stackTrace: stacktrace);
+    }
+  }
+
+  void _onOptionsUserChangedEvent(
+    OptionsUserChangedEvent event,
+    Emitter<OptionsState> emit,
+  ) {
+    try {
+      emit(OptionsBaseState(user: event.user));
+    } on Exception catch (error, stacktrace) {
+      emit(OptionsErrorState());
       Log.e('OptionsErrorState: $error', stackTrace: stacktrace);
     }
   }

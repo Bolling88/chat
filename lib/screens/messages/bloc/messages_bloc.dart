@@ -42,6 +42,23 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
       this._chatClickedRepository, this._storageRepository,
       {required this.isPrivateChat})
       : super(MessagesLoadingState()) {
+    on<MessagesInitialEvent>(_onInitial);
+    on<MessagesSendEvent>(_onSend);
+    on<MessagesChangedEvent>(_onChanged);
+    on<MessagesUpdatedEvent>(_onUpdated);
+    on<MessagesUserUpdatedEvent>(_onUserUpdated);
+    on<MessagesGiphyPickedEvent>(_onGiphyPicked);
+    on<MessagesReportMessageEvent>(_onReportMessage);
+    on<MessagesBannerAdLoadedEvent>(_onBannerAdLoaded);
+    on<MessagesPrivateChatsUpdatedEvent>(_onPrivateChatsUpdated);
+    on<MessagesTranslateEvent>(_onTranslate);
+    on<MessagesMarkedEvent>(_onMarked);
+    on<MessagesChatUsersInRoomUpdatedEvent>(_onChatUsersInRoomUpdated);
+    on<MessagesReplyEvent>(_onReply);
+    on<MessagesReplyEventClear>(_onReplyClear);
+    on<MessagesGalleryClickedEvent>(_onGalleryClicked);
+    on<MessagesCameraClickedEvent>(_onCameraClicked);
+
     add(MessagesInitialEvent());
   }
 
@@ -58,111 +75,234 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
     return super.close();
   }
 
-  @override
-  Stream<MessagesState> mapEventToState(MessagesEvent event) async* {
+  void _onInitial(MessagesInitialEvent event, Emitter<MessagesState> emit) {
+    _setUpUserListener();
+    if (isPrivateChat) {
+      _setUpPrivateChatStream();
+      _setUpChatClickedListener();
+    } else {
+      _setUpOnlineUsersListener();
+      //We don't want to set up message listeners for a private chat until we know the user is in the chat
+      _setUpMessagesListener(chat.id);
+    }
+  }
+
+  Future<void> _onSend(MessagesSendEvent event, Emitter<MessagesState> emit) async {
     final currentState = state;
-    if (event is MessagesInitialEvent) {
-      _setUpUserListener();
-      if (isPrivateChat) {
-        _setUpPrivateChatStream();
-        _setUpChatClickedListener();
-      } else {
-        _setUpOnlineUsersListener();
-        //We don't want to set up message listeners for a private chat until we know the user is in the chat
-        _setUpMessagesListener(chat.id);
-      }
-    } else if (event is MessagesSendEvent) {
-      if (currentState is MessagesBaseState) {
-        if (currentState.currentMessage.isNotEmpty) {
-          if (currentState.messages.firstOrNull?.text ==
-                  currentState.currentMessage &&
-              currentState.messages.firstOrNull?.createdById ==
-                  currentState.myUser.id) {
-            //We don't allow spamming the same message
-            yield MessageNoSpammingState(
-                currentState.messages,
-                currentState.myUser,
-                '',
-                currentState.bannerAd,
-                currentState.privateChat,
-                currentState.usersInRoom,
-                null);
-          } else {
-            await _firestoreRepository.postMessage(
-              chatId: chat.id,
-              user: currentState.myUser,
-              chatType: ChatType.message,
-              message: currentState.currentMessage,
-              isPrivateChat: isPrivateChat,
-              replyMessage: currentState.replyMessage,
-              sendPushToUserId: (chat is PrivateChat
-                  ? (chat as PrivateChat)
-                      .users
-                      .where((element) => element != getUserId())
-                      .firstOrNull
-                  : null),
-            );
-            yield getBaseState(currentState.copyWith(currentMessage: ''));
-          }
-        }
-      }
-    } else if (event is MessagesChangedEvent) {
-      if (currentState is MessagesBaseState) {
-        yield currentState.copyWith(currentMessage: event.message);
-      }
-    } else if (event is MessagesUpdatedEvent) {
-      Log.d("Got more messages event");
-      if (currentState is MessagesBaseState) {
-        Log.d("New message id: ${event.messages.first.id}");
-
-        //Before we can update with the new messages, we need to check which old messages were marked or translated, and make sure if an updated message has the same id, it should also be marked or translated
-        final updatedMessages = event.messages.map((e) {
-          final oldMessage = currentState.messages
-              .firstWhereOrNull((element) => element.id == e.id);
-          if (oldMessage != null) {
-            return e.copyWith(
-                marked: oldMessage.marked, translation: oldMessage.translation);
-          } else {
-            return e;
-          }
-        }).toList();
-
-        yield currentState.copyWith(messages: updatedMessages);
-        if (currentState.messages.first.id != event.messages.first.id) {
-          playMessageSound();
-        }
-      } else {
-        final currentChat = chat;
-        yield MessagesBaseState(event.messages, _user, '', _anchoredAdaptiveAd,
-            (currentChat is PrivateChat) ? currentChat : null, const [], null);
-      }
-    } else if (event is MessagesUserUpdatedEvent) {
-      _user = event.user;
-      if (currentState is MessagesBaseState) {
-        yield currentState.copyWith(myUser: event.user);
-      }
-    } else if (event is MessagesGiphyPickedEvent) {
-      Log.d("Got giphy event");
-      if (currentState is MessagesBaseState) {
-        final String giphyUrl = event.gif.images?.downsized?.url ?? "";
-        if (currentState.messages.firstOrNull?.text == giphyUrl &&
+    if (currentState is MessagesBaseState) {
+      if (currentState.currentMessage.isNotEmpty) {
+        if (currentState.messages.firstOrNull?.text ==
+                currentState.currentMessage &&
             currentState.messages.firstOrNull?.createdById ==
                 currentState.myUser.id) {
           //We don't allow spamming the same message
-          yield MessageNoSpammingState(
+          emit(MessageNoSpammingState(
               currentState.messages,
               currentState.myUser,
               '',
               currentState.bannerAd,
               currentState.privateChat,
               currentState.usersInRoom,
-              null);
+              null));
         } else {
+          await _firestoreRepository.postMessage(
+            chatId: chat.id,
+            user: currentState.myUser,
+            chatType: ChatType.message,
+            message: currentState.currentMessage,
+            isPrivateChat: isPrivateChat,
+            replyMessage: currentState.replyMessage,
+            sendPushToUserId: (chat is PrivateChat
+                ? (chat as PrivateChat)
+                    .users
+                    .where((element) => element != getUserId())
+                    .firstOrNull
+                : null),
+          );
+          emit(getBaseState(currentState.copyWith(currentMessage: '')));
+        }
+      }
+    }
+  }
+
+  void _onChanged(MessagesChangedEvent event, Emitter<MessagesState> emit) {
+    final currentState = state;
+    if (currentState is MessagesBaseState) {
+      emit(currentState.copyWith(currentMessage: event.message));
+    }
+  }
+
+  void _onUpdated(MessagesUpdatedEvent event, Emitter<MessagesState> emit) {
+    final currentState = state;
+    Log.d("Got more messages event");
+    if (currentState is MessagesBaseState) {
+      Log.d("New message id: ${event.messages.first.id}");
+
+      //Before we can update with the new messages, we need to check which old messages were marked or translated, and make sure if an updated message has the same id, it should also be marked or translated
+      final updatedMessages = event.messages.map((e) {
+        final oldMessage = currentState.messages
+            .firstWhereOrNull((element) => element.id == e.id);
+        if (oldMessage != null) {
+          return e.copyWith(
+              marked: oldMessage.marked, translation: oldMessage.translation);
+        } else {
+          return e;
+        }
+      }).toList();
+
+      emit(currentState.copyWith(messages: updatedMessages));
+      if (currentState.messages.first.id != event.messages.first.id) {
+        playMessageSound();
+      }
+    } else {
+      final currentChat = chat;
+      emit(MessagesBaseState(event.messages, _user, '', _anchoredAdaptiveAd,
+          (currentChat is PrivateChat) ? currentChat : null, const [], null));
+    }
+  }
+
+  void _onUserUpdated(MessagesUserUpdatedEvent event, Emitter<MessagesState> emit) {
+    _user = event.user;
+    final currentState = state;
+    if (currentState is MessagesBaseState) {
+      emit(currentState.copyWith(myUser: event.user));
+    }
+  }
+
+  Future<void> _onGiphyPicked(MessagesGiphyPickedEvent event, Emitter<MessagesState> emit) async {
+    final currentState = state;
+    Log.d("Got giphy event");
+    if (currentState is MessagesBaseState) {
+      final String giphyUrl = event.gif.images?.downsized?.url ?? "";
+      if (currentState.messages.firstOrNull?.text == giphyUrl &&
+          currentState.messages.firstOrNull?.createdById ==
+              currentState.myUser.id) {
+        //We don't allow spamming the same message
+        emit(MessageNoSpammingState(
+            currentState.messages,
+            currentState.myUser,
+            '',
+            currentState.bannerAd,
+            currentState.privateChat,
+            currentState.usersInRoom,
+            null));
+      } else {
+        await _firestoreRepository.postMessage(
+            chatId: chat.id,
+            user: currentState.myUser,
+            chatType: ChatType.giphy,
+            message: giphyUrl,
+            isPrivateChat: isPrivateChat,
+            sendPushToUserId: (chat is PrivateChat
+                ? (chat as PrivateChat)
+                    .users
+                    .where((element) => element != getUserId())
+                    .firstOrNull
+                : null),
+            isGiphy: true);
+        emit(currentState.copyWith(currentMessage: ""));
+      }
+    }
+  }
+
+  void _onReportMessage(MessagesReportMessageEvent event, Emitter<MessagesState> emit) {
+    _firestoreRepository.reportMessage(event.message);
+  }
+
+  void _onBannerAdLoaded(MessagesBannerAdLoadedEvent event, Emitter<MessagesState> emit) {
+    final currentState = state;
+    if (currentState is MessagesBaseState) {
+      emit(currentState.copyWith(bannerAd: _anchoredAdaptiveAd));
+    }
+  }
+
+  void _onPrivateChatsUpdated(MessagesPrivateChatsUpdatedEvent event, Emitter<MessagesState> emit) {
+    final currentState = state;
+    if (currentState is MessagesBaseState) {
+      emit(currentState.copyWith(privateChat: event.privateChats));
+    }
+  }
+
+  void _onTranslate(MessagesTranslateEvent event, Emitter<MessagesState> emit) {
+    final currentState = state;
+    if (currentState is MessagesBaseState) {
+      //Replace the message model in the state with the message model in the event and update the state
+      final updatedMessages = currentState.messages
+          .map((e) => e.id == event.message.id ? event.message : e)
+          .toList();
+      emit(currentState.copyWith(messages: updatedMessages));
+    }
+  }
+
+  void _onMarked(MessagesMarkedEvent event, Emitter<MessagesState> emit) {
+    final currentState = state;
+    if (currentState is MessagesBaseState) {
+      //Find the message in the current state messages and update the marked value
+      final updatedMessages = currentState.messages
+          .map((e) =>
+              e.id == event.message.id ? e.copyWith(marked: event.marked) : e)
+          .toList();
+      emit(currentState.copyWith(messages: updatedMessages));
+    }
+  }
+
+  void _onChatUsersInRoomUpdated(MessagesChatUsersInRoomUpdatedEvent event, Emitter<MessagesState> emit) {
+    final currentState = state;
+    if (currentState is MessagesBaseState) {
+      emit(currentState.copyWith(usersInRoom: event.chatUsers));
+    } else {
+      final currentChat = chat;
+      emit(MessagesBaseState(const [],
+          _user,
+          '',
+          _anchoredAdaptiveAd,
+          (currentChat is PrivateChat) ? currentChat : null,
+          event.chatUsers,
+          null));
+    }
+  }
+
+  void _onReply(MessagesReplyEvent event, Emitter<MessagesState> emit) {
+    final currentState = state;
+    if (currentState is MessagesBaseState) {
+      emit(currentState.copyWith(replyMessage: event.message));
+    }
+  }
+
+  void _onReplyClear(MessagesReplyEventClear event, Emitter<MessagesState> emit) {
+    final currentState = state;
+    if (currentState is MessagesBaseState) {
+      emit(getBaseState(currentState));
+    }
+  }
+
+  Future<void> _onGalleryClicked(MessagesGalleryClickedEvent event, Emitter<MessagesState> emit) async {
+    final currentState = state;
+    if (currentState is MessagesBaseState) {
+      emit(MessagesLoadingState());
+      if (_user.kvitterCredits > 0 || kIsWeb || _user.isPremiumUser) {
+        XFile? pickedFile;
+        try {
+          pickedFile = await picker.pickImage(
+              source: ImageSource.gallery, imageQuality: photoQuality);
+        } catch (e) {
+          Log.e(e);
+          emit(currentState.copyWith(currentMessage: ""));
+        }
+        if (pickedFile != null) {
+          String base64Image = '';
+          if (kIsWeb) {
+            var imageForWeb = await pickedFile.readAsBytes();
+            base64Image = base64Encode(imageForWeb);
+          }
+          final imageUrl = await _storageRepository.uploadMessageImage(
+              pickedFile.path, base64Image);
+          final finalUrl = await imageUrl?.getDownloadURL() ?? "";
           await _firestoreRepository.postMessage(
               chatId: chat.id,
               user: currentState.myUser,
-              chatType: ChatType.giphy,
-              message: giphyUrl,
+              chatType: ChatType.image,
+              message: finalUrl,
               isPrivateChat: isPrivateChat,
               sendPushToUserId: (chat is PrivateChat
                   ? (chat as PrivateChat)
@@ -171,142 +311,56 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
                       .firstOrNull
                   : null),
               isGiphy: true);
-          yield currentState.copyWith(currentMessage: "");
+          if (!kIsWeb || _user.isPremiumUser) {
+            _firestoreRepository.reduceUserCredits(_user.id, 1);
+          }
+          emit(currentState.copyWith(currentMessage: ""));
+        } else {
+          emit(currentState.copyWith(currentMessage: ""));
         }
-      }
-    } else if (event is MessagesReportMessageEvent) {
-      _firestoreRepository.reportMessage(event.message);
-    } else if (event is MessagesBannerAdLoadedEvent) {
-      if (currentState is MessagesBaseState) {
-        yield currentState.copyWith(bannerAd: _anchoredAdaptiveAd);
-      }
-    } else if (event is MessagesPrivateChatsUpdatedEvent) {
-      if (currentState is MessagesBaseState) {
-        yield currentState.copyWith(privateChat: event.privateChats);
-      }
-    } else if (event is MessagesTranslateEvent) {
-      if (currentState is MessagesBaseState) {
-        //Replace the message model in the state with the message model in the event and update the state
-        final updatedMessages = currentState.messages
-            .map((e) => e.id == event.message.id ? event.message : e)
-            .toList();
-        yield currentState.copyWith(messages: updatedMessages);
-      }
-    } else if (event is MessagesMarkedEvent) {
-      if (currentState is MessagesBaseState) {
-        //Find the message in the current state messages and update the marked value
-        final updatedMessages = currentState.messages
-            .map((e) =>
-                e.id == event.message.id ? e.copyWith(marked: event.marked) : e)
-            .toList();
-        yield currentState.copyWith(messages: updatedMessages);
-      }
-    } else if (event is MessagesChatUsersInRoomUpdatedEvent) {
-      if (currentState is MessagesBaseState) {
-        yield currentState.copyWith(usersInRoom: event.chatUsers);
       } else {
-        final currentChat = chat;
-        yield MessagesBaseState(const [],
-            _user,
-            '',
-            _anchoredAdaptiveAd,
-            (currentChat is PrivateChat) ? currentChat : null,
-            event.chatUsers,
-            null);
+        emit(MessagesShowCreditsOfferState(currentState));
       }
-    } else if (event is MessagesReplyEvent) {
-      if (currentState is MessagesBaseState) {
-        yield currentState.copyWith(replyMessage: event.message);
-      }
-    } else if (event is MessagesReplyEventClear) {
-      if (currentState is MessagesBaseState) {
-        yield getBaseState(currentState);
-      }
-    } else if (event is MessagesGalleryClickedEvent) {
-      if (currentState is MessagesBaseState) {
-        yield MessagesLoadingState();
-        if (_user.kvitterCredits > 0 || kIsWeb || _user.isPremiumUser) {
-          XFile? pickedFile;
-          try {
-            pickedFile = await picker.pickImage(
-                source: ImageSource.gallery, imageQuality: photoQuality);
-          } catch (e) {
-            Log.e(e);
-            yield currentState.copyWith(currentMessage: "");
+    }
+  }
+
+  Future<void> _onCameraClicked(MessagesCameraClickedEvent event, Emitter<MessagesState> emit) async {
+    final currentState = state;
+    if (currentState is MessagesBaseState) {
+      emit(MessagesLoadingState());
+      if (_user.kvitterCredits > 0 || kIsWeb || _user.isPremiumUser) {
+        final pickedFile = await picker.pickImage(
+            maxHeight: 400,
+            maxWidth: 400,
+            source: ImageSource.camera,
+            imageQuality: photoQuality);
+        if (pickedFile != null) {
+          final imageUrl = await _storageRepository.uploadMessageImage(
+              pickedFile.path, '');
+          final finalUrl = await imageUrl?.getDownloadURL() ?? "";
+          await _firestoreRepository.postMessage(
+              chatId: chat.id,
+              user: currentState.myUser,
+              chatType: ChatType.image,
+              message: finalUrl,
+              isPrivateChat: isPrivateChat,
+              sendPushToUserId: (chat is PrivateChat
+                  ? (chat as PrivateChat)
+                      .users
+                      .where((element) => element != getUserId())
+                      .firstOrNull
+                  : null),
+              isGiphy: true);
+          if (!kIsWeb || _user.isPremiumUser) {
+            _firestoreRepository.reduceUserCredits(_user.id, 1);
           }
-          if (pickedFile != null) {
-            String base64Image = '';
-            if (kIsWeb) {
-              var imageForWeb = await pickedFile.readAsBytes();
-              base64Image = base64Encode(imageForWeb);
-            }
-            final imageUrl = await _storageRepository.uploadMessageImage(
-                pickedFile.path, base64Image);
-            final finalUrl = await imageUrl?.getDownloadURL() ?? "";
-            await _firestoreRepository.postMessage(
-                chatId: chat.id,
-                user: currentState.myUser,
-                chatType: ChatType.image,
-                message: finalUrl,
-                isPrivateChat: isPrivateChat,
-                sendPushToUserId: (chat is PrivateChat
-                    ? (chat as PrivateChat)
-                        .users
-                        .where((element) => element != getUserId())
-                        .firstOrNull
-                    : null),
-                isGiphy: true);
-            if (!kIsWeb || _user.isPremiumUser) {
-              _firestoreRepository.reduceUserCredits(_user.id, 1);
-            }
-            yield currentState.copyWith(currentMessage: "");
-          } else {
-            yield currentState.copyWith(currentMessage: "");
-          }
+          emit(currentState.copyWith(currentMessage: ""));
         } else {
-          yield MessagesShowCreditsOfferState(currentState);
+          emit(currentState.copyWith(currentMessage: ""));
         }
+      } else {
+        emit(MessagesShowCreditsOfferState(currentState));
       }
-    } else if (event is MessagesCameraClickedEvent) {
-      if (currentState is MessagesBaseState) {
-        yield MessagesLoadingState();
-        if (_user.kvitterCredits > 0 || kIsWeb || _user.isPremiumUser) {
-          final pickedFile = await picker.pickImage(
-              maxHeight: 400,
-              maxWidth: 400,
-              source: ImageSource.camera,
-              imageQuality: photoQuality);
-          if (pickedFile != null) {
-            final imageUrl = await _storageRepository.uploadMessageImage(
-                pickedFile.path, '');
-            final finalUrl = await imageUrl?.getDownloadURL() ?? "";
-            await _firestoreRepository.postMessage(
-                chatId: chat.id,
-                user: currentState.myUser,
-                chatType: ChatType.image,
-                message: finalUrl,
-                isPrivateChat: isPrivateChat,
-                sendPushToUserId: (chat is PrivateChat
-                    ? (chat as PrivateChat)
-                        .users
-                        .where((element) => element != getUserId())
-                        .firstOrNull
-                    : null),
-                isGiphy: true);
-            if (!kIsWeb || _user.isPremiumUser) {
-              _firestoreRepository.reduceUserCredits(_user.id, 1);
-            }
-            yield currentState.copyWith(currentMessage: "");
-          } else {
-            yield currentState.copyWith(currentMessage: "");
-          }
-        } else {
-          yield MessagesShowCreditsOfferState(currentState);
-        }
-      }
-    } else {
-      yield MessagesErrorState();
-      Log.e("Error in messages");
     }
   }
 

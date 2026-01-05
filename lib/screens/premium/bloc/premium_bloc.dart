@@ -18,6 +18,10 @@ class PremiumBloc extends Bloc<PremiumEvent, PremiumState> {
 
   PremiumBloc(this._firestoreRepository, this._subscriptionRepository)
       : super(const PremiumLoadingState()) {
+    on<PremiumInitialEvent>(_onPremiumInitialEvent);
+    on<PremiumBuyEvent>(_onPremiumBuyEvent);
+    on<PremiumRestoreEvent>(_onPremiumRestoreEvent);
+
     add(PremiumInitialEvent());
   }
 
@@ -27,52 +31,71 @@ class PremiumBloc extends Bloc<PremiumEvent, PremiumState> {
     return super.close();
   }
 
-  @override
-  Stream<PremiumState> mapEventToState(PremiumEvent event) async* {
-    final currentState = state;
+  Future<void> _onPremiumInitialEvent(
+    PremiumInitialEvent event,
+    Emitter<PremiumState> emit,
+  ) async {
     try {
-      if (event is PremiumInitialEvent) {
-        final offerings = await _subscriptionRepository.getOfferings();
-        if (offerings != null) {
-          final package = offerings
-              .getOffering('kvitter_premium')
-              ?.availablePackages
-              .firstOrNull;
-          if (package != null) {
-            yield PremiumBaseState(package);
-          } else {
-            yield const PremiumErrorState();
-          }
+      final offerings = await _subscriptionRepository.getOfferings();
+      if (offerings != null) {
+        final package = offerings
+            .getOffering('kvitter_premium')
+            ?.availablePackages
+            .firstOrNull;
+        if (package != null) {
+          emit(PremiumBaseState(package));
         } else {
-          yield const PremiumErrorState();
-        }
-      } else if (event is PremiumBuyEvent) {
-        if (currentState is PremiumBaseState) {
-          yield const PremiumLoadingState();
-          final isNowPremiumUser = await _subscriptionRepository.purchase(event.package);
-          await _firestoreRepository.setUserAsPremium(isNowPremiumUser);
-          if (isNowPremiumUser) {
-            yield const PremiumDoneState();
-          } else {
-            yield PremiumAbortedState(currentState.package);
-          }
-        }
-      } else if (event is PremiumRestoreEvent) {
-        if (currentState is PremiumBaseState) {
-          final isNowPremiumUser =
-              await _subscriptionRepository.restorePurchases();
-          await _firestoreRepository.setUserAsPremium(isNowPremiumUser);
-          if (isNowPremiumUser) {
-            yield const PremiumDoneState();
-          } else {
-            yield PremiumNothingRestoreState(currentState.package);
-          }
+          emit(const PremiumErrorState());
         }
       } else {
-        yield const PremiumErrorState();
+        emit(const PremiumErrorState());
       }
     } on Exception catch (error, stacktrace) {
-      yield const PremiumErrorState();
+      emit(const PremiumErrorState());
+      Log.e('PremiumErrorState: $error', stackTrace: stacktrace);
+    }
+  }
+
+  Future<void> _onPremiumBuyEvent(
+    PremiumBuyEvent event,
+    Emitter<PremiumState> emit,
+  ) async {
+    final currentState = state;
+    try {
+      if (currentState is PremiumBaseState) {
+        emit(const PremiumLoadingState());
+        final isNowPremiumUser = await _subscriptionRepository.purchase(event.package);
+        await _firestoreRepository.setUserAsPremium(isNowPremiumUser);
+        if (isNowPremiumUser) {
+          emit(const PremiumDoneState());
+        } else {
+          emit(PremiumAbortedState(currentState.package));
+        }
+      }
+    } on Exception catch (error, stacktrace) {
+      emit(const PremiumErrorState());
+      Log.e('PremiumErrorState: $error', stackTrace: stacktrace);
+    }
+  }
+
+  Future<void> _onPremiumRestoreEvent(
+    PremiumRestoreEvent event,
+    Emitter<PremiumState> emit,
+  ) async {
+    final currentState = state;
+    try {
+      if (currentState is PremiumBaseState) {
+        final isNowPremiumUser =
+            await _subscriptionRepository.restorePurchases();
+        await _firestoreRepository.setUserAsPremium(isNowPremiumUser);
+        if (isNowPremiumUser) {
+          emit(const PremiumDoneState());
+        } else {
+          emit(PremiumNothingRestoreState(currentState.package));
+        }
+      }
+    } on Exception catch (error, stacktrace) {
+      emit(const PremiumErrorState());
       Log.e('PremiumErrorState: $error', stackTrace: stacktrace);
     }
   }

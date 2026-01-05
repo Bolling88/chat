@@ -9,44 +9,59 @@ class OnboardingAgeBloc extends Bloc<OnboardingAgeEvent, OnboardingAgeState> {
 
   OnboardingAgeBloc(this._firestoreRepository)
       : super(OnboardingAgeLoadingState()) {
+    on<OnboardingAgeInitialEvent>(_onInitial);
+    on<OnboardingAgeChangedEvent>(_onAgeChanged);
+    on<OnboardingAgeContinueClickedEvent>(_onContinueClicked);
+
     add(OnboardingAgeInitialEvent());
   }
 
-  @override
-  Stream<OnboardingAgeState> mapEventToState(OnboardingAgeEvent event) async* {
+  Future<void> _onInitial(
+    OnboardingAgeInitialEvent event,
+    Emitter<OnboardingAgeState> emit,
+  ) async {
+    final user = await _firestoreRepository.getUser();
+    emit(OnboardingAgeBaseState(
+      user?.birthDate?.toDate() ?? DateTime(2000, 1, 1),
+      false,
+      user?.displayName ?? '',
+    ));
+  }
+
+  void _onAgeChanged(
+    OnboardingAgeChangedEvent event,
+    Emitter<OnboardingAgeState> emit,
+  ) {
     final currentState = state;
-    if (event is OnboardingAgeInitialEvent) {
-      final user = await _firestoreRepository.getUser();
-      yield OnboardingAgeBaseState(
-        user?.birthDate?.toDate() ?? DateTime(2000, 1, 1),
-        false,
-        user?.displayName ?? '',
-      );
-    } else if (event is OnboardingAgeChangedEvent) {
-      if (currentState is OnboardingAgeBaseState) {
-        yield currentState.copyWith(
-          birthDate: event.date,
-          showInvalidAgeError: false,
-        );
-      }
-    } else if (event is OnboardingAgeContinueClickedEvent) {
-      if (currentState is OnboardingAgeBaseState) {
-        //Check if the user is above 18 years old
-        final now = DateTime.now();
-        final difference = now.difference(currentState.birthDate);
-        //18 years
-        if (difference.inDays < 6570) {
-          yield currentState.copyWith(showInvalidAgeError: true);
+    if (currentState is OnboardingAgeBaseState) {
+      emit(currentState.copyWith(
+        birthDate: event.date,
+        showInvalidAgeError: false,
+      ));
+    }
+  }
+
+  Future<void> _onContinueClicked(
+    OnboardingAgeContinueClickedEvent event,
+    Emitter<OnboardingAgeState> emit,
+  ) async {
+    final currentState = state;
+    if (currentState is OnboardingAgeBaseState) {
+      //Check if the user is above 18 years old
+      final now = DateTime.now();
+      final difference = now.difference(currentState.birthDate);
+      //18 years
+      if (difference.inDays < 6570) {
+        emit(currentState.copyWith(showInvalidAgeError: true));
+      } else {
+        _firestoreRepository.updateUserBirthday(currentState.birthDate);
+        final chatUser = await _firestoreRepository.getUser();
+        if (chatUser?.pictureData.isEmpty == true) {
+          emit(const OnboardingAgeSuccessState(OnboardingNavigation.picture));
+        } else if (chatUser?.gender == -1) {
+          emit(const OnboardingAgeSuccessState(OnboardingNavigation.gender));
         } else {
-          _firestoreRepository.updateUserBirthday(currentState.birthDate);
-          final chatUser = await _firestoreRepository.getUser();
-          if (chatUser?.pictureData.isEmpty == true) {
-            yield const OnboardingAgeSuccessState(OnboardingNavigation.picture);
-          } else if (chatUser?.gender == -1) {
-            yield const OnboardingAgeSuccessState(OnboardingNavigation.gender);
-          } else {
-            yield const OnboardingAgeSuccessState(OnboardingNavigation.done);
-          }
+          emit(const OnboardingAgeSuccessState(OnboardingNavigation.done));
         }
       }
     }

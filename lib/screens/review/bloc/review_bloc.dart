@@ -14,6 +14,11 @@ class ReviewBloc extends Bloc<ReviewEvent, ReviewState> {
   late StreamSubscription<QuerySnapshot<Object?>> userStream;
 
   ReviewBloc(this._firestoreRepository) : super(ReviewLoadingState()) {
+    on<ReviewInitialEvent>(_onReviewInitialEvent);
+    on<ReviewUsersChangedEvent>(_onReviewUsersChangedEvent);
+    on<ReviewApproveEvent>(_onReviewApproveEvent);
+    on<ReviewRejectEvent>(_onReviewRejectEvent);
+
     add(ReviewInitialEvent());
   }
 
@@ -23,58 +28,82 @@ class ReviewBloc extends Bloc<ReviewEvent, ReviewState> {
     return super.close();
   }
 
-  @override
-  Stream<ReviewState> mapEventToState(ReviewEvent event) async* {
+  void _onReviewInitialEvent(
+      ReviewInitialEvent event, Emitter<ReviewState> emit) {
+    try {
+      setUpProfilePickListener();
+    } on Exception catch (error, stacktrace) {
+      emit(ReviewErrorState());
+      Log.e('ReviewErrorState: $error', stackTrace: stacktrace);
+    }
+  }
+
+  void _onReviewUsersChangedEvent(
+      ReviewUsersChangedEvent event, Emitter<ReviewState> emit) {
     final currentState = state;
     try {
-      if (event is ReviewInitialEvent) {
-        setUpProfilePickListener();
-      } else if (event is ReviewUsersChangedEvent) {
-        if (event.users.isEmpty) {
-          yield ReviewNothingToApproveState();
+      if (event.users.isEmpty) {
+        emit(ReviewNothingToApproveState());
+      } else {
+        if (currentState is ReviewBaseState) {
+          emit(currentState.copyWith(users: event.users));
         } else {
-          if (currentState is ReviewBaseState) {
-            yield currentState.copyWith(users: event.users);
-          } else {
-            yield ReviewBaseState(
-                users: event.users, underReview: event.users.first);
-          }
-        }
-      } else if (event is ReviewApproveEvent) {
-        if (currentState is ReviewBaseState) {
-          _firestoreRepository.approveImage(event.user.id);
-          final ChatUser? user = currentState.users
-              .where((element) => element.id != event.user.id)
-              .firstOrNull;
-          if (user == null) {
-            yield ReviewNothingToApproveState();
-          } else {
-            yield currentState.copyWith(
-                users: currentState.users
-                    .where((element) => element.id != event.user.id)
-                    .toList(),
-                underReview: user);
-          }
-        }
-      } else if (event is ReviewRejectEvent) {
-        if (currentState is ReviewBaseState) {
-          _firestoreRepository.rejectImage(event.user.id);
-          final ChatUser? user = currentState.users
-              .where((element) => element.id != event.user.id)
-              .firstOrNull;
-          if (user == null) {
-            yield ReviewNothingToApproveState();
-          } else {
-            yield currentState.copyWith(
-                users: currentState.users
-                    .where((element) => element.id != event.user.id)
-                    .toList(),
-                underReview: user);
-          }
+          emit(ReviewBaseState(
+              users: event.users, underReview: event.users.first));
         }
       }
     } on Exception catch (error, stacktrace) {
-      yield ReviewErrorState();
+      emit(ReviewErrorState());
+      Log.e('ReviewErrorState: $error', stackTrace: stacktrace);
+    }
+  }
+
+  void _onReviewApproveEvent(
+      ReviewApproveEvent event, Emitter<ReviewState> emit) {
+    final currentState = state;
+    try {
+      if (currentState is ReviewBaseState) {
+        _firestoreRepository.approveImage(event.user.id);
+        final ChatUser? user = currentState.users
+            .where((element) => element.id != event.user.id)
+            .firstOrNull;
+        if (user == null) {
+          emit(ReviewNothingToApproveState());
+        } else {
+          emit(currentState.copyWith(
+              users: currentState.users
+                  .where((element) => element.id != event.user.id)
+                  .toList(),
+              underReview: user));
+        }
+      }
+    } on Exception catch (error, stacktrace) {
+      emit(ReviewErrorState());
+      Log.e('ReviewErrorState: $error', stackTrace: stacktrace);
+    }
+  }
+
+  void _onReviewRejectEvent(
+      ReviewRejectEvent event, Emitter<ReviewState> emit) {
+    final currentState = state;
+    try {
+      if (currentState is ReviewBaseState) {
+        _firestoreRepository.rejectImage(event.user.id);
+        final ChatUser? user = currentState.users
+            .where((element) => element.id != event.user.id)
+            .firstOrNull;
+        if (user == null) {
+          emit(ReviewNothingToApproveState());
+        } else {
+          emit(currentState.copyWith(
+              users: currentState.users
+                  .where((element) => element.id != event.user.id)
+                  .toList(),
+              underReview: user));
+        }
+      }
+    } on Exception catch (error, stacktrace) {
+      emit(ReviewErrorState());
       Log.e('ReviewErrorState: $error', stackTrace: stacktrace);
     }
   }

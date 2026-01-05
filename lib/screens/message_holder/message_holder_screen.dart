@@ -70,7 +70,7 @@ class MessageHolderScreenContent extends StatelessWidget {
         if (state is MessageHolderBaseState) {
           return PopScope(
             canPop: false,
-            onPopInvoked: (didPop) {
+            onPopInvokedWithResult: (didPop, result) {
               if (didPop) {
                 return;
               }
