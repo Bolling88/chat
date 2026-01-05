@@ -215,6 +215,10 @@ Future showOptionsScreen(BuildContext parentContext, Message message) async {
         ),
       );
     },
-  ).whenComplete(() => BlocProvider.of<MessagesBloc>(parentContext)
-      .add(MessagesMarkedEvent(message: message, marked: false)));
+  ).whenComplete(() {
+    if (parentContext.mounted) {
+      BlocProvider.of<MessagesBloc>(parentContext)
+          .add(MessagesMarkedEvent(message: message, marked: false));
+    }
+  });
 }

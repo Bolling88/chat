@@ -308,8 +308,10 @@ void showCameraOrImageBottomSheet(
       );
     },
   ).whenComplete(() {
-    BlocProvider.of<OnboardingPhotoBloc>(parentContext)
-        .add(OnboardingPhotoBottomSheetClosedEvent());
+    if (parentContext.mounted) {
+      BlocProvider.of<OnboardingPhotoBloc>(parentContext)
+          .add(OnboardingPhotoBottomSheetClosedEvent());
+    }
   });
 }
 

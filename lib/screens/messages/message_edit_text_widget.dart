@@ -166,9 +166,9 @@ class _MessageEditTextWidgetState extends State<MessageEditTextWidget> {
               if (widget.currentMessage.isEmpty && widget.showGiphy)
                 Material(
                   child: InkWell(
-                    splashColor: context.main.withOpacity(0.5),
-                    hoverColor: context.main.withOpacity(0.5),
-                    highlightColor: context.main.withOpacity(0.5),
+                    splashColor: context.main.withValues(alpha: 0.5),
+                    hoverColor: context.main.withValues(alpha: 0.5),
+                    highlightColor: context.main.withValues(alpha: 0.5),
                     borderRadius: BorderRadius.circular(25.0),
                     onTap: widget.onTapGiphy,
                     child: Container(
@@ -190,9 +190,9 @@ class _MessageEditTextWidgetState extends State<MessageEditTextWidget> {
               if (widget.currentMessage.isEmpty && widget.showImage)
                 Material(
                   child: InkWell(
-                    splashColor: context.main.withOpacity(0.5),
-                    hoverColor: context.main.withOpacity(0.5),
-                    highlightColor: context.main.withOpacity(0.5),
+                    splashColor: context.main.withValues(alpha: 0.5),
+                    hoverColor: context.main.withValues(alpha: 0.5),
+                    highlightColor: context.main.withValues(alpha: 0.5),
                     borderRadius: BorderRadius.circular(25.0),
                     onTap: widget.onImageTap,
                     child: Container(

@@ -7,4 +7,13 @@ abstract class ReportState extends Equatable {
 
 class ReportBaseState extends ReportState {}
 class ReportLoadingState extends ReportState {}
-class ReportDoneState extends ReportLoadingState {}
+class ReportDoneState extends ReportState {}
+
+class ReportErrorState extends ReportState {
+  final String message;
+
+  ReportErrorState(this.message);
+
+  @override
+  List<Object?> get props => [message];
+}

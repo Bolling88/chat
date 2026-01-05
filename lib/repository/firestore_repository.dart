@@ -357,6 +357,15 @@ class FirestoreRepository {
     required ChatUser otherUser,
     required String initialMessage,
   }) async {
+    final trimmedMessage = initialMessage.trim();
+    if (trimmedMessage.isEmpty) {
+      Log.e('Cannot create private chat with empty message');
+      return null;
+    }
+    if (trimmedMessage.length > 1000) {
+      Log.e('Initial message exceeds maximum length');
+      return null;
+    }
     try {
       final reference = await privateChats.add({
         'created': FieldValue.serverTimestamp(),
@@ -377,7 +386,7 @@ class FirestoreRepository {
       postMessage(
           chatId: reference.id,
           user: myUser,
-          message: initialMessage,
+          message: trimmedMessage,
           isPrivateChat: true,
           chatType: ChatType.message,
           sendPushToUserId: otherUser.id);

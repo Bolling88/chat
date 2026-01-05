@@ -53,9 +53,9 @@ void showCameraOrImageBottomSheetMessage(
             children: [
               Material(
                 child: InkWell(
-                  splashColor: context.main.withOpacity(0.5),
-                  hoverColor: context.main.withOpacity(0.5),
-                  highlightColor: context.main.withOpacity(0.5),
+                  splashColor: context.main.withValues(alpha: 0.5),
+                  hoverColor: context.main.withValues(alpha: 0.5),
+                  highlightColor: context.main.withValues(alpha: 0.5),
                   borderRadius: BorderRadius.circular(25.0),
                   onTap: onCameraPressed,
                   child: Container(
@@ -75,9 +75,9 @@ void showCameraOrImageBottomSheetMessage(
               const SizedBox(width: 20),
               Material(
                 child: InkWell(
-                  splashColor: context.main.withOpacity(0.5),
-                  hoverColor: context.main.withOpacity(0.5),
-                  highlightColor: context.main.withOpacity(0.5),
+                  splashColor: context.main.withValues(alpha: 0.5),
+                  hoverColor: context.main.withValues(alpha: 0.5),
+                  highlightColor: context.main.withValues(alpha: 0.5),
                   borderRadius: BorderRadius.circular(25.0),
                   onTap: onGalleryPressed,
                   child: Container(

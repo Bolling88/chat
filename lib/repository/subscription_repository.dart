@@ -10,7 +10,7 @@ class SubscriptionRepository {
 
   SubscriptionRepository(this._firestoreRepository);
 
-  static void initPlatformState() async {
+  static Future<void> initPlatformState() async {
     await Purchases.setLogLevel(LogLevel.debug);
 
     late PurchasesConfiguration configuration;
@@ -24,7 +24,7 @@ class SubscriptionRepository {
     await Purchases.configure(configuration);
   }
 
-  void setUserId() async {
+  Future<void> setUserId() async {
     final user = await _firestoreRepository.getUser();
     if (user != null) {
       Purchases.logIn(user.id);

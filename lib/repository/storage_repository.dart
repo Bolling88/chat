@@ -39,13 +39,14 @@ class StorageRepository {
   Future<Reference?> uploadMessageImage(
       String filePath, String base64Image) async {
     File file = File(filePath);
+    final fileName = getRandomString(20);
 
     try {
       final task = kIsWeb
-          ? await _storage.ref('chatImage/${file.path}.png').putData(
+          ? await _storage.ref('chatImage/$fileName.png').putData(
           base64.decode(base64Image),
           SettableMetadata(contentType: 'image/jpeg'))
-          : await _storage.ref('chatImage/${file.path}.png').putFile(file);
+          : await _storage.ref('chatImage/$fileName.png').putFile(file);
       return task.ref;
     } on FirebaseException catch (e) {
       Log.e(e.toString());
@@ -64,12 +65,17 @@ class StorageRepository {
 
   Future<void> deleteFolder(String filePath) async {
     Log.d('Deleting images in $filePath');
-    await FirebaseStorage.instance.ref(filePath).listAll().then((value) {
-      for (var element in value.items) {
-        Log.d('$element.fullPath');
-        _storage.ref(element.fullPath).delete();
-      }
-    });
+    try {
+      final listResult = await FirebaseStorage.instance.ref(filePath).listAll();
+      await Future.wait(
+        listResult.items.map((element) async {
+          Log.d('Deleting ${element.fullPath}');
+          await _storage.ref(element.fullPath).delete();
+        }),
+      );
+    } on FirebaseException catch (e) {
+      Log.e('Error deleting folder: ${e.toString()}');
+    }
   }
 
   Future<String> getUserImageUrl(String userId) async {
