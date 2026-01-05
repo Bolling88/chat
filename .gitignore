@@ -45,3 +45,4 @@ app.*.map.json
 /android/app/release
 android/java_pid80246.hprof
 android/java_pid8760.hprof
+android/keystore.properties
