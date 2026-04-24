@@ -1,16 +1,16 @@
 import 'dart:async';
 
-import 'package:chat/repository/firestore_repository.dart';
+import 'package:chat/repository/supabase_repository.dart';
 import 'package:chat/utils/app_badge.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import '../utils/log.dart';
 
 class FcmRepository {
-  final FirestoreRepository _firebaseRepository;
+  final SupabaseRepository _supabaseRepository;
   StreamSubscription<String>? _tokenRefreshSubscription;
 
-  FcmRepository(this._firebaseRepository);
+  FcmRepository(this._supabaseRepository);
 
   void setUpPushNotification() async {
     FirebaseMessaging messaging = FirebaseMessaging.instance;
@@ -29,8 +29,7 @@ class FcmRepository {
       Log.d('User granted permission');
       setUpToken();
       setUpBadge();
-    } else if (settings.authorizationStatus ==
-        AuthorizationStatus.provisional) {
+    } else if (settings.authorizationStatus == AuthorizationStatus.provisional) {
       Log.d('User granted provisional permission');
       setUpToken();
       setUpBadge();
@@ -48,12 +47,12 @@ class FcmRepository {
       fcmToken = await FirebaseMessaging.instance.getToken();
     }
 
-    if (fcmToken != null) _firebaseRepository.saveFcmTokenOnUser(fcmToken);
+    if (fcmToken != null) _supabaseRepository.saveFcmTokenOnUser(fcmToken);
 
     _tokenRefreshSubscription?.cancel();
     _tokenRefreshSubscription = FirebaseMessaging.instance.onTokenRefresh.listen((fcmToken) {
       Log.d('FCM token updated: $fcmToken');
-      _firebaseRepository.saveFcmTokenOnUser(fcmToken);
+      _supabaseRepository.saveFcmTokenOnUser(fcmToken);
     }, onError: (err) {
       Log.e('FCM token error: $err');
     });
@@ -72,8 +71,7 @@ class FcmRepository {
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   }
 
-  static Future<void> _firebaseMessagingBackgroundHandler(
-      RemoteMessage message) async {
+  static Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
     Log.d('Handling a background message ${message.messageId}');
     if (!kIsWeb) AppBadge.updateBadgeCount(1);
   }
