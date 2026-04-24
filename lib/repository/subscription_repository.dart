@@ -3,10 +3,10 @@ import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:universal_io/io.dart';
 
 import '../utils/log.dart';
-import 'firestore_repository.dart';
+import 'supabase_repository.dart';
 
 class SubscriptionRepository {
-  final FirestoreRepository _firestoreRepository;
+  final SupabaseRepository _firestoreRepository;
 
   SubscriptionRepository(this._firestoreRepository);
 

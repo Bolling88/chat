@@ -1,10 +1,11 @@
 import 'package:chat/repository/chat_clicked_repository.dart';
 import 'package:chat/repository/fcm_repository.dart';
-import 'package:chat/repository/firestore_repository.dart';
-import 'package:chat/repository/login_repository.dart';
-import 'package:chat/repository/presence_database.dart';
-import 'package:chat/repository/storage_repository.dart';
+import 'package:chat/repository/supabase_repository.dart';
+import 'package:chat/repository/supabase_auth_repository.dart';
+import 'package:chat/repository/supabase_presence_repository.dart';
+import 'package:chat/repository/supabase_storage_repository.dart';
 import 'package:chat/repository/subscription_repository.dart';
+import 'package:chat/supabase_config.dart';
 import 'package:chat/screens/account/account_screen.dart';
 import 'package:chat/screens/message_holder/message_holder_screen.dart';
 import 'package:chat/screens/onboarding_age/onboarding_age_screen.dart';
@@ -29,7 +30,6 @@ import 'package:chat/utils/web_online_user_processor.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
@@ -42,10 +42,15 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'utils/simple_bloc_observer.dart';
 import 'screens/loading/loading_screen.dart';
 import 'screens/login/login_screen.dart';
-import 'firebase_options.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await Supabase.initialize(
+    url: SupabaseConfig.url,
+    anonKey: SupabaseConfig.anonKey,
+  );
 
   if (!kIsWeb) {
     MobileAds.instance.initialize().then((initializationStatus) {
@@ -83,16 +88,7 @@ class KvitterApp extends StatelessWidget {
   final Future<FirebaseApp> _initialization = _initializeFirebase();
 
   static Future<FirebaseApp> _initializeFirebase() async {
-    final app = await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
-
-    // Activate App Check
-    await FirebaseAppCheck.instance.activate(
-      androidProvider: kDebugMode ? AndroidProvider.debug : AndroidProvider.playIntegrity,
-      appleProvider: kDebugMode ? AppleProvider.debug : AppleProvider.deviceCheck,
-    );
-
+    final app = await Firebase.initializeApp();
     return app;
   }
 
@@ -119,25 +115,28 @@ class KvitterApp extends StatelessWidget {
         if (snapshot.connectionState == ConnectionState.done) {
           final OnlineUserProcessor onlineUsersProcessor =
               kIsWeb ? WebOnlineUsersProcessor() : MobileOnlineUsersProcessor();
-          final FirestoreRepository firestoreRepository =
-              FirestoreRepository(onlineUsersProcessor);
-          final LoginRepository loginRepository = LoginRepository();
-          final StorageRepository storageRepository = StorageRepository();
+          final SupabaseRepository supabaseRepository =
+              SupabaseRepository(onlineUsersProcessor);
+          final SupabaseAuthRepository supabaseAuthRepository =
+              SupabaseAuthRepository();
+          final SupabaseStorageRepository supabaseStorageRepository =
+              SupabaseStorageRepository();
           final FcmRepository fcmRepository =
-              FcmRepository(firestoreRepository);
+              FcmRepository(supabaseRepository);
           final AppImageCropper appImageCropper = AppImageCropper(context);
-          final PresenceDatabase presenceDatabase = PresenceDatabase();
+          final SupabasePresenceRepository supabasePresenceRepository =
+              SupabasePresenceRepository();
           final ChatClickedRepository chatClickedRepository =
               ChatClickedRepository();
           final SubscriptionRepository subscriptionRepository =
-              SubscriptionRepository(firestoreRepository);
+              SubscriptionRepository(supabaseRepository);
 
           return MultiProvider(
             providers: [
-              Provider<FirestoreRepository>.value(value: firestoreRepository),
-              Provider<LoginRepository>.value(value: loginRepository),
-              Provider<StorageRepository>.value(value: storageRepository),
-              Provider<PresenceDatabase>.value(value: presenceDatabase),
+              Provider<SupabaseRepository>.value(value: supabaseRepository),
+              Provider<SupabaseAuthRepository>.value(value: supabaseAuthRepository),
+              Provider<SupabaseStorageRepository>.value(value: supabaseStorageRepository),
+              Provider<SupabasePresenceRepository>.value(value: supabasePresenceRepository),
               Provider<AppImageCropper>.value(value: appImageCropper),
               Provider<FcmRepository>.value(value: fcmRepository),
               Provider<OnlineUserProcessor>.value(value: onlineUsersProcessor),
