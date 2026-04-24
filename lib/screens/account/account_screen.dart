@@ -6,13 +6,14 @@ import 'package:chat/screens/account/bloc/account_state.dart';
 import 'package:chat/screens/login/login_screen.dart';
 import 'package:chat/screens/profile/profile_screen.dart';
 import 'package:chat/screens/review/review_screen.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:lottie/lottie.dart';
-import '../../repository/firestore_repository.dart';
+import '../../repository/supabase_repository.dart';
+import '../../repository/supabase_auth_repository.dart';
+import '../../utils/enums.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_widgets.dart';
 import '../../utils/flag.dart';
@@ -32,7 +33,8 @@ class AccountScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (BuildContext context) => AccountBloc(
-          context.read<FirestoreRepository>(),
+          context.read<SupabaseRepository>(),
+          context.read<SupabaseAuthRepository>(),
           context.read<SubscriptionRepository>()),
       child: const AccountScreenBuilder(),
     );
@@ -251,7 +253,7 @@ Row getProfileRow({
   required String displayName,
   required int gender,
   required String countryCode,
-  required Timestamp? birthDate,
+  required DateTime? birthDate,
   required bool showAge,
   required BuildContext context,
 }) {
@@ -279,11 +281,11 @@ Row getProfileRow({
   );
 }
 
-String getAge(Timestamp? birthDate) {
+String getAge(DateTime? birthDate) {
   if (birthDate == null) {
     return '';
   }
-  DateTime date = birthDate.toDate();
+  DateTime date = birthDate;
   DateTime now = DateTime.now();
   int age = now.year - date.year;
   int month1 = now.month;

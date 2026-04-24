@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:lottie/lottie.dart';
-import '../../repository/firestore_repository.dart';
+import '../../repository/supabase_repository.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_widgets.dart';
 import '../../utils/translate.dart';
@@ -20,7 +20,7 @@ class PremiumScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (BuildContext context) => PremiumBloc(
-          context.read<FirestoreRepository>(),
+          context.read<SupabaseRepository>(),
           context.read<SubscriptionRepository>()),
       child: const PremiumScreenBuilder(),
     );

@@ -2,7 +2,7 @@ import 'package:chat/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
-import '../../repository/firestore_repository.dart';
+import '../../repository/supabase_repository.dart';
 import '../../utils/app_widgets.dart';
 import '../login/bloc/login_state.dart';
 import '../message_holder/message_holder_screen.dart';
@@ -28,7 +28,7 @@ class OnboardingNameScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (BuildContext context) =>
-          OnboardingNameBloc(context.read<FirestoreRepository>()),
+          OnboardingNameBloc(context.read<SupabaseRepository>()),
       child: const OnboardingNameScreenContent(),
     );
   }

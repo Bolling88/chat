@@ -7,7 +7,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import '../../model/chat.dart';
 import '../../model/chat_user.dart';
-import '../../repository/firestore_repository.dart';
+import '../../repository/supabase_repository.dart';
+import '../../utils/enums.dart';
 import '../../utils/app_widgets.dart';
 import '../../utils/constants.dart';
 import '../../utils/flag.dart';
@@ -33,7 +34,7 @@ class PeopleScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (BuildContext context) =>
-          PeopleBloc(context.read<FirestoreRepository>(), users, chat),
+          PeopleBloc(context.read<SupabaseRepository>(), users, chat),
       child: PeopleScreenBuilder(chat: chat, parentContext: parentContext),
     );
   }

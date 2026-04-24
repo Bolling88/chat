@@ -1,17 +1,18 @@
 import 'package:chat/model/chat_user.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../repository/firestore_repository.dart';
+import '../../../repository/supabase_repository.dart';
+import '../../../utils/enums.dart';
 import '../../login/bloc/login_state.dart';
 import 'onboarding_gender_event.dart';
 import 'onboarding_gender_state.dart';
 
 class OnboardingGenderBloc
     extends Bloc<OnboardingGenderEvent, OnboardingGenderState> {
-  final FirestoreRepository _firestoreRepository;
+  final SupabaseRepository _supabaseRepository;
 
   late ChatUser user;
 
-  OnboardingGenderBloc(this._firestoreRepository)
+  OnboardingGenderBloc(this._supabaseRepository)
       : super(OnboardingGenderLoadingState()) {
     on<OnboardingGenderInitialState>(_onInitial);
     on<OnboardingGenderMaleClickedEvent>(_onMaleClicked);
@@ -26,7 +27,7 @@ class OnboardingGenderBloc
     OnboardingGenderInitialState event,
     Emitter<OnboardingGenderState> emit,
   ) async {
-    user = (await _firestoreRepository.getUser())!;
+    user = (await _supabaseRepository.getUser())!;
     emit(OnboardingGenderBaseState(user.pictureData));
   }
 
@@ -34,7 +35,7 @@ class OnboardingGenderBloc
     OnboardingGenderMaleClickedEvent event,
     Emitter<OnboardingGenderState> emit,
   ) {
-    _firestoreRepository.updateUserGender(Gender.male);
+    _supabaseRepository.updateUserGender(Gender.male);
     emit(OnboardingGenderSuccessState(OnboardingNavigation.done, user));
   }
 
@@ -42,7 +43,7 @@ class OnboardingGenderBloc
     OnboardingGenderFemaleClickedEvent event,
     Emitter<OnboardingGenderState> emit,
   ) {
-    _firestoreRepository.updateUserGender(Gender.female);
+    _supabaseRepository.updateUserGender(Gender.female);
     emit(OnboardingGenderSuccessState(OnboardingNavigation.done, user));
   }
 
@@ -50,7 +51,7 @@ class OnboardingGenderBloc
     OnboardingGenderNonBinaryClickedEvent event,
     Emitter<OnboardingGenderState> emit,
   ) {
-    _firestoreRepository.updateUserGender(Gender.nonBinary);
+    _supabaseRepository.updateUserGender(Gender.nonBinary);
     emit(OnboardingGenderSuccessState(OnboardingNavigation.done, user));
   }
 
@@ -58,7 +59,7 @@ class OnboardingGenderBloc
     OnboardingGenderSecretClickedEvent event,
     Emitter<OnboardingGenderState> emit,
   ) {
-    _firestoreRepository.updateUserGender(Gender.secret);
+    _supabaseRepository.updateUserGender(Gender.secret);
     emit(OnboardingGenderSuccessState(OnboardingNavigation.done, user));
   }
 }

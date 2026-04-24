@@ -1,12 +1,11 @@
 import 'package:chat/repository/chat_clicked_repository.dart';
 import 'package:chat/repository/fcm_repository.dart';
-import 'package:chat/repository/firestore_repository.dart';
+import 'package:chat/repository/supabase_repository.dart';
 import 'package:chat/repository/subscription_repository.dart';
 import 'package:chat/screens/chat/chat_screen.dart';
 import 'package:chat/screens/feedback/feedback_screen.dart';
 import 'package:chat/screens/visit/visit_screen.dart';
 import 'package:chat/utils/app_colors.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -17,8 +16,10 @@ import '../../model/chat.dart';
 import '../../model/chat_user.dart';
 import '../../model/private_chat.dart';
 import '../../model/room_chat.dart';
-import '../../repository/presence_database.dart';
+import '../../repository/supabase_presence_repository.dart';
 import '../../utils/app_widgets.dart';
+import '../../utils/auth_util.dart';
+import '../../utils/enums.dart';
 import '../account/account_screen.dart';
 import '../app_life_cycle/app_life_cycle_screen.dart';
 import '../messages/messages_screen.dart';
@@ -41,10 +42,10 @@ class MessageHolderScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    context.read<PresenceDatabase>().updateUserPresence();
+    context.read<SupabasePresenceRepository>().updateUserPresence();
     return BlocProvider(
       create: (BuildContext context) => MessageHolderBloc(
-          context.read<FirestoreRepository>(),
+          context.read<SupabaseRepository>(),
           context.read<FcmRepository>(),
           context.read<ChatClickedRepository>(),
           context.read<SubscriptionRepository>()),
@@ -260,7 +261,7 @@ class MessageHolderScreenContent extends StatelessWidget {
                     : Center(
                         child: Text(
                           state.privateChats[index - 1].getChatName(
-                              FirebaseAuth.instance.currentUser!.uid),
+                              getUserId()),
                           textAlign: TextAlign.center,
                           style: Theme.of(context).textTheme.bodySmall?.merge(
                                 TextStyle(
@@ -317,10 +318,10 @@ class MessageHolderScreenContent extends StatelessWidget {
             if (chat != null) const SizedBox(width: 8),
             Expanded(
               child: Text(
-                (chat?.getChatName(FirebaseAuth.instance.currentUser!.uid) ??
+                (chat?.getChatName(getUserId()) ??
                             '')
                         .isNotEmpty
-                    ? chat!.getChatName(FirebaseAuth.instance.currentUser!.uid)
+                    ? chat!.getChatName(getUserId())
                     : FlutterI18n.translate(context, "chat_rooms"),
               ),
             ),
@@ -328,7 +329,7 @@ class MessageHolderScreenContent extends StatelessWidget {
         ),
       ),
       backgroundColor:
-          chat?.getChatColor(FirebaseAuth.instance.currentUser!.uid, context) ??
+          chat?.getChatColor(getUserId(), context) ??
               context.appBar,
       actions: [
         MediaQuery.of(context).size.width >

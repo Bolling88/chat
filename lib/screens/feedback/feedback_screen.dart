@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:chat/model/chat_user.dart';
-import 'package:chat/repository/firestore_repository.dart';
+import 'package:chat/repository/supabase_repository.dart';
 import 'package:chat/screens/feedback/bloc/feedback_bloc.dart';
 import 'package:chat/screens/feedback/bloc/feedback_event.dart';
 import 'package:chat/screens/feedback/bloc/feedback_state.dart';
@@ -25,7 +25,7 @@ class FeedbackScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (BuildContext context) =>
-          FeedbackBloc(context.read<FirestoreRepository>(), user),
+          FeedbackBloc(context.read<SupabaseRepository>(), user),
       child: FeedbackScreenContent(parentContext: parentContext),
     );
   }

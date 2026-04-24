@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:lottie/lottie.dart';
 import '../../model/chat_user.dart';
-import '../../repository/firestore_repository.dart';
+import '../../repository/supabase_repository.dart';
 import '../../utils/app_widgets.dart';
 import '../premium/premium_screen.dart';
 import 'bloc/credits_bloc.dart';
@@ -21,7 +21,7 @@ class CreditsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (BuildContext context) =>
-          CreditsBloc(context.read<FirestoreRepository>()),
+          CreditsBloc(context.read<SupabaseRepository>()),
       child: CreditsScreenBuilder(parentContext: parentContext),
     );
   }

@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:chat/repository/firestore_repository.dart';
+import 'package:chat/repository/supabase_repository.dart';
 import 'package:chat/screens/report/bloc/report_bloc.dart';
 import 'package:chat/screens/report/bloc/report_event.dart';
 import 'package:chat/screens/report/bloc/report_state.dart';
@@ -22,7 +22,7 @@ class ReportScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (BuildContext context) =>
-          ReportBloc(context.read<FirestoreRepository>(), userId),
+          ReportBloc(context.read<SupabaseRepository>(), userId),
       child: ReportScreenContent(parentContext: parentContext),
     );
   }

@@ -4,7 +4,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
-import '../../repository/firestore_repository.dart';
+import '../../repository/supabase_repository.dart';
+import '../../utils/enums.dart';
 import '../../utils/app_widgets.dart';
 import '../login/bloc/login_state.dart';
 import '../web_premium/web_premium_screen.dart';
@@ -27,7 +28,7 @@ class OnboardingGenderScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (BuildContext context) =>
-          OnboardingGenderBloc(context.read<FirestoreRepository>()),
+          OnboardingGenderBloc(context.read<SupabaseRepository>()),
       child: const OnboardingGenderScreenContent(),
     );
   }

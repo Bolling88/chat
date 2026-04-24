@@ -2,18 +2,18 @@ import 'dart:async';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../model/chat_user.dart';
-import '../../../repository/firestore_repository.dart';
+import '../../../repository/supabase_repository.dart';
 import '../../../utils/cloud_translation/google_cloud_translation.dart';
 import '../../../utils/cloud_translation/translator.dart';
 import 'feedback_event.dart';
 import 'feedback_state.dart';
 
 class FeedbackBloc extends Bloc<FeedbackEvent, FeedbackState> {
-  final FirestoreRepository _firestoreRepository;
+  final SupabaseRepository _supabaseRepository;
   final ChatUser _chatUser;
   late Translation translator;
 
-  FeedbackBloc(this._firestoreRepository, this._chatUser) : super(FeedbackBaseState()) {
+  FeedbackBloc(this._supabaseRepository, this._chatUser) : super(FeedbackBaseState()) {
     on<FeedbackInitialEvent>(_onInitialEvent);
     on<FeedbackSendEvent>(_onSendEvent);
 
@@ -35,7 +35,7 @@ class FeedbackBloc extends Bloc<FeedbackEvent, FeedbackState> {
     if (currentState is FeedbackBaseState) {
       emit(FeedbackLoadingState());
       final translation = await translator.translate(text: event.feedback, to: 'en');
-      _firestoreRepository.postFeedback(translation.translatedText, _chatUser);
+      _supabaseRepository.postFeedback(translation.translatedText, _chatUser);
       emit(FeedbackDoneState());
     }
   }

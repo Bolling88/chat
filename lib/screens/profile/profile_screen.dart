@@ -3,7 +3,8 @@ import 'package:chat/screens/onboarding_name/onboarding_name_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
-import '../../repository/firestore_repository.dart';
+import '../../repository/supabase_repository.dart';
+import '../../utils/enums.dart';
 import '../../utils/app_widgets.dart';
 import '../../utils/lottie.dart';
 import '../../utils/translate.dart';
@@ -24,7 +25,7 @@ class ProfileScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (BuildContext context) =>
-          ProfileBloc(context.read<FirestoreRepository>()),
+          ProfileBloc(context.read<SupabaseRepository>()),
       child: const ProfileScreenBuilder(),
     );
   }

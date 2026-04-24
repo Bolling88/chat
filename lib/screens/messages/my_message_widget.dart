@@ -1,12 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chat/screens/messages/other_message_widget.dart';
 import 'package:chat/utils/app_colors.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import '../../model/chat.dart';
 import '../../model/message.dart';
-import '../../repository/firestore_repository.dart';
+import '../../utils/enums.dart';
 import '../../utils/app_widgets.dart';
 import '../full_screen_image/full_screen_image_screen.dart';
 
@@ -110,7 +109,7 @@ class AppMyMessageWidget extends StatelessWidget {
                       createdByImageUrl: message.replyCreatedByImageUrl,
                       chatType: message.replyChatType,
                       approvedImage: message.replyApprovedImage,
-                      created: message.replyCreated ?? Timestamp.now(),
+                      created: message.replyCreated ?? DateTime.now(),
                       showAge: message.replyShowAge,
                       marked: false,
                       imageReports: message.replyImageReports),

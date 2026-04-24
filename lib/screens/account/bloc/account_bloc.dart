@@ -1,9 +1,8 @@
 import 'dart:async';
 
-import 'package:chat/repository/firestore_repository.dart';
+import 'package:chat/repository/supabase_repository.dart';
+import 'package:chat/repository/supabase_auth_repository.dart';
 import 'package:chat/repository/subscription_repository.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../model/chat_user.dart';
 import '../../../utils/log.dart';
@@ -11,12 +10,13 @@ import 'account_event.dart';
 import 'account_state.dart';
 
 class AccountBloc extends Bloc<AccountEvent, AccountState> {
-  final FirestoreRepository _firestoreRepository;
+  final SupabaseRepository _supabaseRepository;
+  final SupabaseAuthRepository _authRepository;
   final SubscriptionRepository _subscriptionRepository;
 
-  late StreamSubscription<QuerySnapshot<Object?>> userStream;
+  late StreamSubscription<ChatUser?> userStream;
 
-  AccountBloc(this._firestoreRepository, this._subscriptionRepository) : super(AccountLoadingState()) {
+  AccountBloc(this._supabaseRepository, this._authRepository, this._subscriptionRepository) : super(AccountLoadingState()) {
     on<AccountInitialEvent>(_onAccountInitialEvent);
     on<AccountDeleteAccountEvent>(_onAccountDeleteAccountEvent);
     on<AccountUserChangedEvent>(_onAccountUserChangedEvent);
@@ -42,10 +42,10 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
       if (currentState is AccountBaseState) {
         emit(AccountLoadingState());
         Log.d('Deleting user');
-        await _firestoreRepository.updateUserOnLogout();
-        await _firestoreRepository.leaveAllPrivateChats();
-        await _firestoreRepository.closeAllStreams();
-        await _firestoreRepository.deleteUserAndFiles();
+        await _supabaseRepository.updateUserOnLogout();
+        await _supabaseRepository.leaveAllPrivateChats();
+        _supabaseRepository.closeAllStreams();
+        await _supabaseRepository.deleteUserAndFiles();
         emit(AccountLogoutState());
       }
     } on Exception catch (error, stacktrace) {
@@ -61,15 +61,9 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
   Future<void> _onAccountLogoutEvent(AccountLogoutEvent event, Emitter<AccountState> emit) async {
     try {
       emit(AccountLoadingState());
-      await _firestoreRepository.updateUserOnLogout();
-      await _firestoreRepository.closeAllStreams();
-      if (FirebaseAuth.instance.currentUser?.isAnonymous == true) {
-        //Delete user
-        await _firestoreRepository.deleteUserAndFiles();
-      } else {
-        //else just sign out the user
-        await FirebaseAuth.instance.signOut();
-      }
+      await _supabaseRepository.updateUserOnLogout();
+      _supabaseRepository.closeAllStreams();
+      await _authRepository.signOut();
       emit(AccountLogoutState());
     } on Exception catch (error, stacktrace) {
       emit(AccountErrorState());
@@ -83,22 +77,11 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
 
   void setUpUserListener() async {
     Log.d('Setting up private chats stream');
-    userStream = _firestoreRepository.streamUser().listen((event) async {
-      if (event.docs.isEmpty) {
+    userStream = _supabaseRepository.streamUser().listen((user) async {
+      if (user == null) {
         Log.d('No user found');
         return;
       }
-      final Map<String, dynamic> userData =
-      event.docs.first.data() as Map<String, dynamic>;
-
-      // Convert Timestamp to int (milliseconds since epoch)
-      if (userData.containsKey('lastActive') &&
-          userData['lastActive'] is Timestamp) {
-        userData['lastActive'] =
-            (userData['lastActive'] as Timestamp).millisecondsSinceEpoch;
-      }
-
-      final user = ChatUser.fromJson(event.docs.first.id, userData);
       add(AccountUserChangedEvent(user));
     });
   }

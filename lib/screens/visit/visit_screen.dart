@@ -1,5 +1,6 @@
 import 'dart:async';
-import 'package:chat/repository/firestore_repository.dart';
+import 'package:chat/repository/supabase_repository.dart';
+import 'package:chat/utils/enums.dart';
 import 'package:chat/screens/report/report_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -38,7 +39,7 @@ class VisitScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (BuildContext context) =>
-          VisitBloc(context.read<FirestoreRepository>(), userId, chat),
+          VisitBloc(context.read<SupabaseRepository>(), userId, chat),
       child: VisitScreenContent(
           parentContext: parentContext,
           chat: chat,

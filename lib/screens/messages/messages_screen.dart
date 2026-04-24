@@ -1,6 +1,6 @@
 import 'package:chat/model/private_chat.dart';
 import 'package:chat/repository/chat_clicked_repository.dart';
-import 'package:chat/repository/storage_repository.dart';
+import 'package:chat/repository/supabase_storage_repository.dart';
 import 'package:chat/screens/message_holder/bloc/message_holder_bloc.dart';
 import 'package:chat/screens/message_holder/bloc/message_holder_event.dart';
 import 'package:chat/utils/app_colors.dart';
@@ -11,7 +11,8 @@ import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:giphy_get/giphy_get.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import '../../model/chat.dart';
-import '../../repository/firestore_repository.dart';
+import '../../repository/supabase_repository.dart';
+import '../../utils/auth_util.dart';
 import '../../utils/app_widgets.dart';
 import '../../utils/constants.dart';
 import '../../utils/translate.dart';
@@ -39,9 +40,9 @@ class MessagesScreen extends StatelessWidget {
     return BlocProvider(
       create: (BuildContext context) => MessagesBloc(
           chat,
-          context.read<FirestoreRepository>(),
+          context.read<SupabaseRepository>(),
           context.read<ChatClickedRepository>(),
-          context.read<StorageRepository>(),
+          context.read<SupabaseStorageRepository>(),
           isPrivateChat: isPrivateChat),
       child: ChatsScreenContent(
         chat: chat,

@@ -1,5 +1,5 @@
 import 'package:blur/blur.dart';
-import 'package:chat/repository/firestore_repository.dart';
+import 'package:chat/utils/enums.dart';
 import 'package:chat/screens/full_screen_image/bloc/full_screen_image_bloc.dart';
 import 'package:chat/screens/full_screen_image/bloc/full_screen_image_state.dart';
 import 'package:chat/utils/app_colors.dart';

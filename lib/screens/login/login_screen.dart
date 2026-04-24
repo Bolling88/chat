@@ -1,5 +1,5 @@
-import 'package:chat/repository/firestore_repository.dart';
-import 'package:chat/repository/login_repository.dart';
+import 'package:chat/repository/supabase_auth_repository.dart';
+import 'package:chat/repository/supabase_repository.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -25,7 +25,7 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (BuildContext context) => LoginBloc(
-          context.read<LoginRepository>(), context.read<FirestoreRepository>()),
+          context.read<SupabaseAuthRepository>(), context.read<SupabaseRepository>()),
       child: const LoginScreenBuilder(),
     );
   }

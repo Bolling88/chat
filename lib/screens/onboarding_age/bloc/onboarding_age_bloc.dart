@@ -1,13 +1,13 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../repository/firestore_repository.dart';
+import '../../../repository/supabase_repository.dart';
 import '../../login/bloc/login_state.dart';
 import 'onboarding_age_event.dart';
 import 'onboarding_age_state.dart';
 
 class OnboardingAgeBloc extends Bloc<OnboardingAgeEvent, OnboardingAgeState> {
-  final FirestoreRepository _firestoreRepository;
+  final SupabaseRepository _supabaseRepository;
 
-  OnboardingAgeBloc(this._firestoreRepository)
+  OnboardingAgeBloc(this._supabaseRepository)
       : super(OnboardingAgeLoadingState()) {
     on<OnboardingAgeInitialEvent>(_onInitial);
     on<OnboardingAgeChangedEvent>(_onAgeChanged);
@@ -20,9 +20,9 @@ class OnboardingAgeBloc extends Bloc<OnboardingAgeEvent, OnboardingAgeState> {
     OnboardingAgeInitialEvent event,
     Emitter<OnboardingAgeState> emit,
   ) async {
-    final user = await _firestoreRepository.getUser();
+    final user = await _supabaseRepository.getUser();
     emit(OnboardingAgeBaseState(
-      user?.birthDate?.toDate() ?? DateTime(2000, 1, 1),
+      user?.birthDate ?? DateTime(2000, 1, 1),
       false,
       user?.displayName ?? '',
     ));
@@ -54,8 +54,8 @@ class OnboardingAgeBloc extends Bloc<OnboardingAgeEvent, OnboardingAgeState> {
       if (difference.inDays < 6570) {
         emit(currentState.copyWith(showInvalidAgeError: true));
       } else {
-        _firestoreRepository.updateUserBirthday(currentState.birthDate);
-        final chatUser = await _firestoreRepository.getUser();
+        _supabaseRepository.updateUserBirthday(currentState.birthDate);
+        final chatUser = await _supabaseRepository.getUser();
         if (chatUser?.pictureData.isEmpty == true) {
           emit(const OnboardingAgeSuccessState(OnboardingNavigation.picture));
         } else if (chatUser?.gender == -1) {

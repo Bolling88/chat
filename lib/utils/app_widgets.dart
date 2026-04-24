@@ -3,7 +3,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chat/utils/app_colors.dart';
 import 'package:chat/utils/translate.dart';
 import 'package:flutter/material.dart';
-import '../repository/firestore_repository.dart';
+import 'enums.dart';
 import '../screens/full_screen_image/full_screen_image_screen.dart';
 import 'gender.dart';
 

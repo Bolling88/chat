@@ -4,8 +4,7 @@ import 'dart:convert';
 import 'package:chat/model/chat_user.dart';
 import 'package:chat/model/private_chat.dart';
 import 'package:chat/repository/chat_clicked_repository.dart';
-import 'package:chat/repository/storage_repository.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:chat/repository/supabase_storage_repository.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
@@ -13,8 +12,10 @@ import 'package:image_picker/image_picker.dart';
 import 'package:universal_io/io.dart';
 import '../../../model/chat.dart';
 import '../../../model/message.dart';
-import '../../../repository/firestore_repository.dart';
+import '../../../repository/supabase_repository.dart';
+import '../../../utils/auth_util.dart';
 import '../../../utils/audio.dart';
+import '../../../utils/enums.dart';
 import '../../../utils/constants.dart';
 import '../../../utils/log.dart';
 import 'messages_event.dart';
@@ -24,21 +25,21 @@ import 'package:collection/collection.dart';
 class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
   final Chat chat;
   final bool isPrivateChat;
-  final FirestoreRepository _firestoreRepository;
+  final SupabaseRepository _supabaseRepository;
   final ChatClickedRepository _chatClickedRepository;
-  final StorageRepository _storageRepository;
+  final SupabaseStorageRepository _storageRepository;
   final picker = ImagePicker();
 
   BannerAd? _anchoredAdaptiveAd;
 
-  StreamSubscription<QuerySnapshot>? messagesStream;
-  StreamSubscription<QuerySnapshot>? userStream;
-  StreamSubscription<QuerySnapshot>? privateChatsStream;
+  StreamSubscription<List<Message>>? messagesStream;
+  StreamSubscription<ChatUser?>? userStream;
+  StreamSubscription<List<PrivateChat>>? privateChatsStream;
   StreamSubscription<List<ChatUser>>? onlineUsersStream;
 
   late ChatUser _user;
 
-  MessagesBloc(this.chat, this._firestoreRepository,
+  MessagesBloc(this.chat, this._supabaseRepository,
       this._chatClickedRepository, this._storageRepository,
       {required this.isPrivateChat})
       : super(MessagesLoadingState()) {
@@ -105,7 +106,7 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
               currentState.usersInRoom,
               null));
         } else {
-          await _firestoreRepository.postMessage(
+          await _supabaseRepository.postMessage(
             chatId: chat.id,
             user: currentState.myUser,
             chatType: ChatType.message,
@@ -187,7 +188,7 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
             currentState.usersInRoom,
             null));
       } else {
-        await _firestoreRepository.postMessage(
+        await _supabaseRepository.postMessage(
             chatId: chat.id,
             user: currentState.myUser,
             chatType: ChatType.giphy,
@@ -206,7 +207,7 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
   }
 
   void _onReportMessage(MessagesReportMessageEvent event, Emitter<MessagesState> emit) {
-    _firestoreRepository.reportMessage(event.message);
+    _supabaseRepository.reportMessage(event.message);
   }
 
   void _onBannerAdLoaded(MessagesBannerAdLoadedEvent event, Emitter<MessagesState> emit) {
@@ -295,10 +296,9 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
             var imageForWeb = await pickedFile.readAsBytes();
             base64Image = base64Encode(imageForWeb);
           }
-          final imageUrl = await _storageRepository.uploadMessageImage(
-              pickedFile.path, base64Image);
-          final finalUrl = await imageUrl?.getDownloadURL() ?? "";
-          await _firestoreRepository.postMessage(
+          final finalUrl = await _storageRepository.uploadMessageImage(
+              pickedFile.path, base64Image) ?? "";
+          await _supabaseRepository.postMessage(
               chatId: chat.id,
               user: currentState.myUser,
               chatType: ChatType.image,
@@ -312,7 +312,7 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
                   : null),
               isGiphy: true);
           if (!kIsWeb || _user.isPremiumUser) {
-            _firestoreRepository.reduceUserCredits(_user.id, 1);
+            _supabaseRepository.reduceUserCredits(_user.id, 1);
           }
           emit(currentState.copyWith(currentMessage: ""));
         } else {
@@ -335,10 +335,9 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
             source: ImageSource.camera,
             imageQuality: photoQuality);
         if (pickedFile != null) {
-          final imageUrl = await _storageRepository.uploadMessageImage(
-              pickedFile.path, '');
-          final finalUrl = await imageUrl?.getDownloadURL() ?? "";
-          await _firestoreRepository.postMessage(
+          final finalUrl = await _storageRepository.uploadMessageImage(
+              pickedFile.path, '') ?? "";
+          await _supabaseRepository.postMessage(
               chatId: chat.id,
               user: currentState.myUser,
               chatType: ChatType.image,
@@ -352,7 +351,7 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
                   : null),
               isGiphy: true);
           if (!kIsWeb || _user.isPremiumUser) {
-            _firestoreRepository.reduceUserCredits(_user.id, 1);
+            _supabaseRepository.reduceUserCredits(_user.id, 1);
           }
           emit(currentState.copyWith(currentMessage: ""));
         } else {
@@ -377,35 +376,18 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
 
   void _setUpMessagesListener(String chatId) async {
     Log.d('Setting up message stream');
-    messagesStream = _firestoreRepository
+    messagesStream = _supabaseRepository
         .streamMessages(chatId, isPrivateChat, 20)
-        .listen((data) {
+        .listen((messages) {
       Log.d("Got messages");
-      final messages = data.docs
-          .map((e) => Message.fromJson(e.id, e.data() as Map<String, dynamic>))
-          .toList();
       if (messages.isNotEmpty) add(MessagesUpdatedEvent(messages));
     });
   }
 
   void _setUpUserListener() async {
     Log.d('Setting up private chats stream');
-    userStream = _firestoreRepository.streamUser().listen((event) async {
-      if (event.docs.isEmpty) {
-        return;
-      }
-
-      final Map<String, dynamic> userData =
-          event.docs.first.data() as Map<String, dynamic>;
-
-      // Convert Timestamp to int (milliseconds since epoch)
-      if (userData.containsKey('lastActive') &&
-          userData['lastActive'] is Timestamp) {
-        userData['lastActive'] =
-            (userData['lastActive'] as Timestamp).millisecondsSinceEpoch;
-      }
-
-      final user = ChatUser.fromJson(event.docs.first.id, userData);
+    userStream = _supabaseRepository.streamUser().listen((user) async {
+      if (user == null) return;
       add(MessagesUserUpdatedEvent(user));
     });
   }
@@ -413,12 +395,10 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
   void _setUpPrivateChatStream() async {
     Log.d('Setting up private chats stream');
     privateChatsStream =
-        _firestoreRepository.getPrivateChatsStream().listen((event) async {
+        _supabaseRepository.getPrivateChatsStream().listen((chats) async {
       Log.d("Got private chats");
-      final PrivateChat? updatedChat = event.docs
-          .map((e) =>
-              PrivateChat.fromJson(e.id, e.data() as Map<String, dynamic>))
-          .firstWhereOrNull((element) => element.id == chat.id);
+      final PrivateChat? updatedChat =
+          chats.firstWhereOrNull((element) => element.id == chat.id);
       if (updatedChat != null) {
         add(MessagesPrivateChatsUpdatedEvent(updatedChat));
       }
@@ -427,7 +407,7 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
 
   void _setUpOnlineUsersListener() {
     onlineUsersStream =
-        _firestoreRepository.onlineUsersStream.listen((event) async {
+        _supabaseRepository.onlineUsersStream.listen((event) async {
       final filteredUsers = event
           .where((element) => element.currentRoomChatId == chat.id)
           .toList();

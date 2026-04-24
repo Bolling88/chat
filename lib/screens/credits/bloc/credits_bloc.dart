@@ -1,5 +1,6 @@
 import 'dart:async';
-import 'package:chat/repository/firestore_repository.dart';
+import 'package:chat/repository/supabase_repository.dart';
+import 'package:chat/utils/auth_util.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
@@ -10,14 +11,14 @@ import 'credits_event.dart';
 import 'credits_state.dart';
 
 class CreditsBloc extends Bloc<CreditsEvent, CreditsState> {
-  final FirestoreRepository _firestoreRepository;
+  final SupabaseRepository _supabaseRepository;
   RewardedAd? _rewardedAd;
   InterstitialAd? _interstitialAd;
   final rewardAmount = 5;
 
   late Translation translator;
 
-  CreditsBloc(this._firestoreRepository)
+  CreditsBloc(this._supabaseRepository)
       : super(const CreditsBaseState()) {
     on<CreditsInitialEvent>(_onInitialEvent);
     on<CreditsShowAdEvent>(_onShowAdEvent);
@@ -71,7 +72,7 @@ class CreditsBloc extends Bloc<CreditsEvent, CreditsState> {
     Emitter<CreditsState> emit,
   ) async {
     try {
-      await _firestoreRepository.increaseUserCredits(
+      await _supabaseRepository.increaseUserCredits(
           getUserId(), rewardAmount);
       emit(const CreditsSuccessState());
     } on Exception catch (error, stacktrace) {

@@ -1,23 +1,22 @@
 import 'dart:async';
 
 import 'package:chat/screens/visit/bloc/visit_state.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../model/chat.dart';
 import '../../../model/chat_user.dart';
-import '../../../repository/firestore_repository.dart';
+import '../../../repository/supabase_repository.dart';
 import 'visit_event.dart';
 
 class VisitBloc extends Bloc<VisitEvent, VisitState> {
-  final FirestoreRepository _firestoreRepository;
+  final SupabaseRepository _supabaseRepository;
   final String userId;
   final Chat? chat;
 
   ChatUser? user;
   late ChatUser me;
-  StreamSubscription<QuerySnapshot>? userStream;
+  StreamSubscription<ChatUser?>? userStream;
 
-  VisitBloc(this._firestoreRepository, this.userId, this.chat)
+  VisitBloc(this._supabaseRepository, this.userId, this.chat)
       : super(VisitLoadingState()) {
     on<VisitInitialEvent>(_onVisitInitialEvent);
     on<VisitUserLoadedState>(_onVisitUserLoadedState);
@@ -36,9 +35,9 @@ class VisitBloc extends Bloc<VisitEvent, VisitState> {
 
   Future<void> _onVisitInitialEvent(
       VisitInitialEvent event, Emitter<VisitState> emit) async {
-    final myUser = await _firestoreRepository.getUser();
+    final myUser = await _supabaseRepository.getUser();
     final isChatAvailable =
-        await _firestoreRepository.isPrivateChatAvailable(userId);
+        await _supabaseRepository.isPrivateChatAvailable(userId);
     // Emit initial state BEFORE setting up listener to avoid race condition
     emit(VisitBaseState(
         user: null,
@@ -73,11 +72,11 @@ class VisitBloc extends Bloc<VisitEvent, VisitState> {
     final currentState = state;
     if (currentState is VisitBaseState) {
       emit(VisitLoadingState());
-      _firestoreRepository.blockUser(currentState.user!.id);
+      _supabaseRepository.blockUser(currentState.user!.id);
       final privateChat =
-          await _firestoreRepository.getPrivateChat(currentState.user!.id);
+          await _supabaseRepository.getPrivateChat(currentState.user!.id);
       if (privateChat != null) {
-        await _firestoreRepository.leavePrivateChat(privateChat);
+        await _supabaseRepository.leavePrivateChat(privateChat);
       }
       emit(currentState.copyWith(userBlocked: true));
     }
@@ -88,7 +87,7 @@ class VisitBloc extends Bloc<VisitEvent, VisitState> {
     final currentState = state;
     if (currentState is VisitBaseState) {
       emit(VisitLoadingState());
-      _firestoreRepository.unblockUser(currentState.user!.id);
+      _supabaseRepository.unblockUser(currentState.user!.id);
       emit(currentState.copyWith(userBlocked: false));
     }
   }
@@ -102,25 +101,9 @@ class VisitBloc extends Bloc<VisitEvent, VisitState> {
   }
 
   void setUpPeopleListener() {
-    userStream = _firestoreRepository.streamUserById(userId).listen(
-      (event) async {
-        if (event.docs.isEmpty) {
-          add(VisitUserLoadedState(null));
-          return;
-        } else {
-          final Map<String, dynamic> userData =
-              event.docs.first.data() as Map<String, dynamic>;
-
-          // Convert Timestamp to int (milliseconds since epoch)
-          if (userData.containsKey('lastActive') &&
-              userData['lastActive'] is Timestamp) {
-            userData['lastActive'] =
-                (userData['lastActive'] as Timestamp).millisecondsSinceEpoch;
-          }
-
-          final user = ChatUser.fromJson(event.docs.first.id, userData);
-          add(VisitUserLoadedState(user));
-        }
+    userStream = _supabaseRepository.streamUserById(userId).listen(
+      (user) async {
+        add(VisitUserLoadedState(user));
       },
       onError: (error, stackTrace) {
         // Log error and emit loaded state with null user

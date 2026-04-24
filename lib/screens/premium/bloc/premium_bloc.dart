@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:chat/repository/firestore_repository.dart';
+import 'package:chat/repository/supabase_repository.dart';
 import 'package:chat/screens/premium/bloc/premium_event.dart';
 import 'package:chat/screens/premium/bloc/premium_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -9,14 +9,14 @@ import '../../../utils/cloud_translation/google_cloud_translation.dart';
 import '../../../utils/log.dart';
 
 class PremiumBloc extends Bloc<PremiumEvent, PremiumState> {
-  final FirestoreRepository _firestoreRepository;
+  final SupabaseRepository _supabaseRepository;
   final SubscriptionRepository _subscriptionRepository;
   RewardedAd? _rewardedAd;
   final rewardAmount = 10;
 
   late Translation translator;
 
-  PremiumBloc(this._firestoreRepository, this._subscriptionRepository)
+  PremiumBloc(this._supabaseRepository, this._subscriptionRepository)
       : super(const PremiumLoadingState()) {
     on<PremiumInitialEvent>(_onPremiumInitialEvent);
     on<PremiumBuyEvent>(_onPremiumBuyEvent);
@@ -65,7 +65,7 @@ class PremiumBloc extends Bloc<PremiumEvent, PremiumState> {
       if (currentState is PremiumBaseState) {
         emit(const PremiumLoadingState());
         final isNowPremiumUser = await _subscriptionRepository.purchase(event.package);
-        await _firestoreRepository.setUserAsPremium(isNowPremiumUser);
+        await _supabaseRepository.setUserAsPremium(isNowPremiumUser);
         if (isNowPremiumUser) {
           emit(const PremiumDoneState());
         } else {
@@ -87,7 +87,7 @@ class PremiumBloc extends Bloc<PremiumEvent, PremiumState> {
       if (currentState is PremiumBaseState) {
         final isNowPremiumUser =
             await _subscriptionRepository.restorePurchases();
-        await _firestoreRepository.setUserAsPremium(isNowPremiumUser);
+        await _supabaseRepository.setUserAsPremium(isNowPremiumUser);
         if (isNowPremiumUser) {
           emit(const PremiumDoneState());
         } else {

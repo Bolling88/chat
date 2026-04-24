@@ -1,7 +1,7 @@
 import 'package:chat/screens/full_screen_image/bloc/full_screen_image_event.dart';
 import 'package:chat/screens/full_screen_image/bloc/full_screen_image_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../repository/firestore_repository.dart';
+import '../../../utils/enums.dart';
 import '../full_screen_image_screen.dart';
 
 class FullScreenImageBloc

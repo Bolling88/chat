@@ -1,22 +1,21 @@
 import 'dart:async';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../model/room_chat.dart';
 import '../../../model/chat_user.dart';
-import '../../../repository/firestore_repository.dart';
+import '../../../repository/supabase_repository.dart';
 import '../../../utils/log.dart';
 import 'chat_event.dart';
 import 'chat_state.dart';
 
 class ChatBloc extends Bloc<ChatEvent, ChatState> {
-  final FirestoreRepository _firestoreRepository;
+  final SupabaseRepository _supabaseRepository;
 
-  StreamSubscription<QuerySnapshot>? chatStream;
+  StreamSubscription<List<RoomChat>>? chatStream;
   StreamSubscription<List<ChatUser>>? onlineUsersStream;
-  StreamSubscription<QuerySnapshot>? userStream;
+  StreamSubscription<ChatUser?>? userStream;
   final List<ChatUser> _initialUsers;
 
-  ChatBloc(this._firestoreRepository, this._initialUsers)
+  ChatBloc(this._supabaseRepository, this._initialUsers)
       : super(ChatLoadingState()) {
     on<ChatInitialEvent>(_onInitialEvent);
     on<ChatUpdatedEvent>(_onUpdatedEvent);
@@ -85,10 +84,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
 
   void setUpChatListener(ChatUser user) async {
     Log.d("Setting up chat listener");
-    chatStream = _firestoreRepository.streamOpenChats(user).listen((event) {
-      final List<RoomChat> chats = event.docs
-          .map((e) => RoomChat.fromJson(e.id, e.data() as Map<String, dynamic>))
-          .toList();
+    chatStream = _supabaseRepository.streamOpenChats(user).listen((chats) {
       Log.d('Chats: $chats');
       chats.sort((a, b) => b.chatName.compareTo(a.chatName));
       final reversedChats = chats.reversed;
@@ -99,7 +95,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
 
   void setUpPeopleListener() {
     onlineUsersStream =
-        _firestoreRepository.onlineUsersStream.listen((event) async {
+        _supabaseRepository.onlineUsersStream.listen((event) async {
       Map<String, List<ChatUser>> usersPerChat = groupUsersByChat(event);
       Log.d('ChatOnlineUsersUpdatedEvent');
       add(ChatOnlineUsersUpdatedEvent(usersPerChat));
@@ -123,21 +119,11 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
 
   void setUpUserListener() async {
     Log.d('Setting up private chats stream');
-    userStream = _firestoreRepository.streamUser().listen((event) async {
-      if (event.docs.isEmpty) {
+    userStream = _supabaseRepository.streamUser().listen((user) async {
+      if (user == null) {
         Log.d('No user found');
         return;
       }
-      final Map<String, dynamic> userData =
-          event.docs.first.data() as Map<String, dynamic>;
-
-      // Convert Timestamp to int (milliseconds since epoch)
-      if (userData.containsKey('lastActive') &&
-          userData['lastActive'] is Timestamp) {
-        userData['lastActive'] =
-            (userData['lastActive'] as Timestamp).millisecondsSinceEpoch;
-      }
-      final user = ChatUser.fromJson(event.docs.first.id, userData);
       add(ChatUserUpdatedEvent(user));
     });
   }

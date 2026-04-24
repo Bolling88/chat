@@ -1,19 +1,18 @@
 import 'dart:async';
 
-import 'package:chat/repository/firestore_repository.dart';
+import 'package:chat/repository/supabase_repository.dart';
 import 'package:chat/screens/review/bloc/review_event.dart';
 import 'package:chat/screens/review/bloc/review_state.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../model/chat_user.dart';
 import '../../../utils/log.dart';
 
 class ReviewBloc extends Bloc<ReviewEvent, ReviewState> {
-  final FirestoreRepository _firestoreRepository;
+  final SupabaseRepository _supabaseRepository;
 
-  late StreamSubscription<QuerySnapshot<Object?>> userStream;
+  late StreamSubscription<List<ChatUser>> userStream;
 
-  ReviewBloc(this._firestoreRepository) : super(ReviewLoadingState()) {
+  ReviewBloc(this._supabaseRepository) : super(ReviewLoadingState()) {
     on<ReviewInitialEvent>(_onReviewInitialEvent);
     on<ReviewUsersChangedEvent>(_onReviewUsersChangedEvent);
     on<ReviewApproveEvent>(_onReviewApproveEvent);
@@ -63,7 +62,7 @@ class ReviewBloc extends Bloc<ReviewEvent, ReviewState> {
     final currentState = state;
     try {
       if (currentState is ReviewBaseState) {
-        _firestoreRepository.approveImage(event.user.id);
+        _supabaseRepository.approveImage(event.user.id);
         final ChatUser? user = currentState.users
             .where((element) => element.id != event.user.id)
             .firstOrNull;
@@ -88,7 +87,7 @@ class ReviewBloc extends Bloc<ReviewEvent, ReviewState> {
     final currentState = state;
     try {
       if (currentState is ReviewBaseState) {
-        _firestoreRepository.rejectImage(event.user.id);
+        _supabaseRepository.rejectImage(event.user.id);
         final ChatUser? user = currentState.users
             .where((element) => element.id != event.user.id)
             .firstOrNull;
@@ -110,27 +109,17 @@ class ReviewBloc extends Bloc<ReviewEvent, ReviewState> {
 
   void setUpProfilePickListener() async {
     Log.d('Setting up private chats stream');
-    userStream = _firestoreRepository
+    userStream = _supabaseRepository
         .streamUnapprovedImages()
         .handleError(
             (error) => Log.e('Error while listening to review stream: $error'))
-        .listen((event) async {
-      final users = event.docs
-          .map((e) {
-        final data = e.data() as Map<String, dynamic>;
-
-        // Serialize timestamp if it exists in the data
-        if (data.containsKey('lastActive') && data['lastActive'] is Timestamp) {
-          data['lastActive'] = (data['lastActive'] as Timestamp).millisecondsSinceEpoch;
-        }
-
-        return ChatUser.fromJson(e.id, data);
-      })
+        .listen((users) async {
+      final filteredUsers = users
           .where((element) => element.pictureData.isNotEmpty)
           .toList()
           .reversed
           .toList();
-      add(ReviewUsersChangedEvent(users));
+      add(ReviewUsersChangedEvent(filteredUsers));
     });
   }
 }

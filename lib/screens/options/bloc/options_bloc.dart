@@ -1,9 +1,8 @@
 import 'dart:async';
 
-import 'package:chat/repository/firestore_repository.dart';
+import 'package:chat/repository/supabase_repository.dart';
 import 'package:chat/screens/options/bloc/options_state.dart';
 import 'package:chat/screens/options/bloc/options_event.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:universal_io/io.dart';
@@ -13,8 +12,8 @@ import '../../../utils/cloud_translation/translator.dart';
 import '../../../utils/log.dart';
 
 class OptionsBloc extends Bloc<OptionsEvent, OptionsState> {
-  final FirestoreRepository _firestoreRepository;
-  late StreamSubscription<QuerySnapshot<Object?>> userStream;
+  final SupabaseRepository _supabaseRepository;
+  late StreamSubscription<ChatUser?> userStream;
 
   late Translation translator;
 
@@ -24,7 +23,7 @@ class OptionsBloc extends Bloc<OptionsEvent, OptionsState> {
     return super.close();
   }
 
-  OptionsBloc(this._firestoreRepository) : super(OptionsLoadingState()) {
+  OptionsBloc(this._supabaseRepository) : super(OptionsLoadingState()) {
     on<OptionsInitialEvent>(_onOptionsInitialEvent);
     on<OptionsTranslateEvent>(_onOptionsTranslateEvent);
     on<OptionsUserChangedEvent>(_onOptionsUserChangedEvent);
@@ -60,7 +59,7 @@ class OptionsBloc extends Bloc<OptionsEvent, OptionsState> {
               text: event.text, to: deviceLanguage);
           emit(OptionsTranslationDoneState(translation: translation));
           if (!kIsWeb || user.isPremiumUser) {
-            _firestoreRepository.reduceUserCredits(user.id, 1);
+            _supabaseRepository.reduceUserCredits(user.id, 1);
           }
         } else {
           emit(OptionsShowCreditsOfferState(user: user));
@@ -86,21 +85,11 @@ class OptionsBloc extends Bloc<OptionsEvent, OptionsState> {
 
   void setUpUserListener() async {
     Log.d('Setting up private chats stream');
-    userStream = _firestoreRepository.streamUser().listen((event) async {
-      if (event.docs.isEmpty) {
+    userStream = _supabaseRepository.streamUser().listen((user) async {
+      if (user == null) {
         Log.d('No user found');
         return;
       }
-      final Map<String, dynamic> userData =
-          event.docs.first.data() as Map<String, dynamic>;
-
-      // Convert Timestamp to int (milliseconds since epoch)
-      if (userData.containsKey('lastActive') &&
-          userData['lastActive'] is Timestamp) {
-        userData['lastActive'] =
-            (userData['lastActive'] as Timestamp).millisecondsSinceEpoch;
-      }
-      final user = ChatUser.fromJson(event.docs.first.id, userData);
       add(OptionsUserChangedEvent(user));
     });
   }
