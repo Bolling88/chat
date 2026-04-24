@@ -37,24 +37,13 @@ dependencies:
 
   # Firebase
   firebase_core: ^3.15.2
-  firebase_analytics: ^11.6.0
-  firebase_app_check: ^0.3.2+4
-  cloud_firestore: ^5.6.12
-  firebase_auth: ^5.7.0
   firebase_crashlytics: ^4.3.10
   firebase_messaging: ^15.2.10
-  firebase_storage: ^12.4.10
-  firebase_database: ^11.3.10
-  firebase_performance: ^0.10.1+10
-  cloud_functions: ^5.6.2
+  supabase_flutter: ^2.8.0
 
   # Internationalization
   flutter_i18n: ^0.37.1
   intl: ^0.20.2
-
-  # Authentication
-  google_sign_in: ^6.3.0
-  sign_in_with_apple: ^6.1.4
 
   # Storage & Caching
   shared_preferences: ^2.5.4
@@ -62,7 +51,7 @@ dependencies:
 
   # Image handling
   image_picker: ^1.2.1
-  image_cropper: ^8.1.0
+  image_cropper: ^11.0.0
   extended_image: ^10.0.1
   extended_image_library: ^5.0.1
 
@@ -89,7 +78,6 @@ dependencies:
 
   # Platform specific (some may be discontinued but functional with overrides)
   flutter_nude_detector: ^0.0.4+1
-  google_api_headers: ^5.1.0
 
 dev_dependencies:
   flutter_test:
