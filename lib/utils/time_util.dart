@@ -1,10 +1,9 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 
-String getLastMessageTimeFromTimeStamp(Timestamp timeStamp) {
+String getLastMessageTimeFromDateTime(DateTime dateTime) {
   final DateFormat dateFormat = DateFormat('dd MMM');
   final DateFormat hourFormat = DateFormat('HH:mm');
-  final localDate = timeStamp.toDate().toLocal();
+  final localDate = dateTime.toLocal();
   final now = DateTime.now();
   final difference = now.difference(localDate);
   if (difference.inSeconds < secondsInDay) {
@@ -14,10 +13,10 @@ String getLastMessageTimeFromTimeStamp(Timestamp timeStamp) {
   }
 }
 
-String getTimeSince(Timestamp timeStamp) {
+String getTimeSince(DateTime dateTime) {
   final DateFormat dateFormat = DateFormat('yyyy-MM-dd');
   final DateFormat hourFormat = DateFormat('HH:mm');
-  final localDate = timeStamp.toDate().toLocal();
+  final localDate = dateTime.toLocal();
   final now = DateTime.now();
   final difference = now.difference(localDate);
   if (difference.inSeconds < secondsInDay) {
@@ -27,28 +26,28 @@ String getTimeSince(Timestamp timeStamp) {
   }
 }
 
-Duration getDurationFromNow(Timestamp timeStamp) {
-  final localDate = timeStamp.toDate().toLocal();
+Duration getDurationFromNow(DateTime dateTime) {
+  final localDate = dateTime.toLocal();
   final now = DateTime.now();
   return now.difference(localDate);
 }
 
-String getFormattedDate(Timestamp timeStamp) {
+String getFormattedDate(DateTime dateTime) {
   final DateFormat dateFormat = DateFormat('d MMM yyyy');
-  final localDate = timeStamp.toDate().toLocal();
+  final localDate = dateTime.toLocal();
   return dateFormat.format(localDate);
 }
 
-String getFormattedTime(Timestamp timeStamp) {
+String getFormattedTime(DateTime dateTime) {
   final DateFormat dateFormat = DateFormat('HH:mm');
-  final localDate = timeStamp.toDate().toLocal();
+  final localDate = dateTime.toLocal();
   return dateFormat.format(localDate);
 }
 
-String getMessageDate(Timestamp timeStamp) {
+String getMessageDate(DateTime dateTime) {
   final DateFormat dateFormat = DateFormat('EEEE dd MMM HH:mm');
   final DateFormat hourFormat = DateFormat('HH:mm');
-  final localDate = timeStamp.toDate().toLocal();
+  final localDate = dateTime.toLocal();
   final now = DateTime.now();
   final difference = now.difference(localDate);
   if (difference.inSeconds < secondsInDay) {
