@@ -3,7 +3,6 @@ import 'dart:convert';
 
 import 'package:chat/utils/cloud_translation/translation_model.dart';
 import 'package:flutter/foundation.dart';
-import 'package:google_api_headers/google_api_headers.dart';
 import 'package:html_unescape/html_unescape.dart';
 import 'package:http/http.dart';
 
@@ -16,7 +15,7 @@ class Translation {
   Client http = Client();
 
   /// Header to add with http request
-  Map<String, String>? _headers;
+  final Map<String, String> _headers = const {};
 
   static const String _baseUrl = 'https://translation.googleapis.com/language/translate/v2';
   static const String _detectPath = '/detect';
@@ -65,7 +64,6 @@ class Translation {
   /// Sends the text to translate to the API endpoint.
   Future<TranslationModel> _translateText(
       {required String text, required String to}) async {
-    _headers ??= await const GoogleApiHeaders().getHeaders();
     final response = await http.post(
       Uri.parse('$_baseUrl?target=$to&key=$_apiKey&q=$text', ), headers: _headers,
     );

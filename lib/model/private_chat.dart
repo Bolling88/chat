@@ -1,6 +1,5 @@
 import 'package:chat/model/chat_user.dart';
 import 'package:flutter/material.dart';
-import '../utils/auth_util.dart';
 import '../utils/enums.dart';
 import '../utils/gender.dart';
 import '../utils/time_util.dart';
