@@ -292,3 +292,29 @@ ALTER PUBLICATION supabase_realtime ADD TABLE users;
 ALTER PUBLICATION supabase_realtime ADD TABLE chats;
 ALTER PUBLICATION supabase_realtime ADD TABLE private_chats;
 ALTER PUBLICATION supabase_realtime ADD TABLE messages;
+
+-- ============================================
+-- PUSH NOTIFICATION WEBHOOK
+-- ============================================
+
+-- Requires pg_net extension (enabled by default in self-hosted Supabase)
+CREATE EXTENSION IF NOT EXISTS pg_net;
+
+CREATE OR REPLACE FUNCTION notify_push_on_private_message()
+RETURNS TRIGGER AS $$
+BEGIN
+  IF NEW.last_message IS DISTINCT FROM OLD.last_message AND NEW.send_push_to_user_id IS NOT NULL THEN
+    PERFORM net.http_post(
+      url := 'https://YOUR_CLOUD_FUNCTION_URL/sendPushNotification',
+      body := jsonb_build_object('record', row_to_json(NEW)),
+      headers := '{"Content-Type": "application/json"}'::jsonb
+    );
+  END IF;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+CREATE TRIGGER trigger_push_notification
+  AFTER UPDATE ON private_chats
+  FOR EACH ROW
+  EXECUTE FUNCTION notify_push_on_private_message();

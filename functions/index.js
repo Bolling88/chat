@@ -1,83 +1,63 @@
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
-const axios = require('axios');
+
 admin.initializeApp();
-const cors = require('cors')({origin: true});
 
-exports.deletePrivateChatOnLastLeft = functions.firestore
-  .document('/privateChats/{documentId}')
-  .onUpdate(async (change, context) => {
-    const beforeData = change.before.data();
-    const afterData = change.after.data();
-    const users = afterData.users;
-    console.log("Array size: " + users.length);
+const SUPABASE_URL = "https://YOUR_MAC_MINI_DOMAIN";
+const SUPABASE_SERVICE_KEY = "YOUR_SUPABASE_SERVICE_ROLE_KEY";
 
-    if (users.length < 2) {
-      console.log("Last person left private chat, deleting");
-      return change.after.ref.delete();
-    } else {
-      // Check if the last message has changed
-      if (beforeData.lastMessage !== afterData.lastMessage) {
-        console.log("New message detected, sending a push notification");
+exports.sendPushNotification = functions.https.onRequest(async (req, res) => {
+  if (req.method !== "POST") {
+    res.status(405).send("Method Not Allowed");
+    return;
+  }
 
-        const userRef = admin.firestore().collection("users").doc(afterData.sendPushToUserId);
+  try {
+    const {record} = req.body;
 
-        try {
-          const userSnapshot = await userRef.get();
-
-          if (userSnapshot.exists) {
-            const userData = userSnapshot.data();
-            console.log("User data:", userData);
-
-            const token = userData.fcmToken;
-            const payload = {
-              notification: {
-                title: afterData.lastMessageByName,
-                body: afterData.lastMessage,
-                badge: "1",
-              }
-            };
-
-            const recipientTokens = [token];
-
-            try {
-              const response = await admin.messaging().sendToDevice(recipientTokens, payload);
-              console.log("Notification sent successfully:", response);
-            } catch (error) {
-              console.error("Error sending notification:", error);
-            }
-          } else {
-            console.log("User not found");
-          }
-        } catch (error) {
-          console.error("Error getting user data:", error);
-        }
-      } else {
-        console.log("No new message, skipping push notification");
-      }
-
-      return null;
-    }
-  });
-
-  exports.onUserStatusChange = functions.database.ref("/{uid}/presence").onUpdate(async (change, context) => {
-    try {
-      const isOnline = change.after.val();
-
-      const userStatusFirestoreRef = admin.firestore().doc(`users/${context.params.uid}`);
-
-      console.log(`status: ${isOnline}`);
-
-      // Update Firestore document
-      await userStatusFirestoreRef.update({
-        presence: isOnline,
-        last_seen: Date.now(),
-      });
-
-
-    } catch (error) {
-      functions.logger.error("Error in onUserStatusChange:", error);
+    if (!record || !record.send_push_to_user_id) {
+      res.status(200).send("No push needed");
+      return;
     }
 
-    return null;
-  });
+    const recipientId = record.send_push_to_user_id;
+    const senderName = record.last_message_by_name || "Someone";
+    const messageText = record.last_message || "";
+
+    // Fetch recipient's FCM token from Supabase
+    const response = await fetch(
+        `${SUPABASE_URL}/rest/v1/users?id=eq.${recipientId}&select=fcm_token`,
+        {
+          headers: {
+            "apikey": SUPABASE_SERVICE_KEY,
+            "Authorization": `Bearer ${SUPABASE_SERVICE_KEY}`,
+          },
+        },
+    );
+
+    const users = await response.json();
+    if (!users || users.length === 0 || !users[0].fcm_token) {
+      res.status(200).send("No FCM token found");
+      return;
+    }
+
+    const fcmToken = users[0].fcm_token;
+
+    const payload = {
+      notification: {
+        title: senderName,
+        body: messageText,
+      },
+    };
+
+    await admin.messaging().send({
+      token: fcmToken,
+      notification: payload.notification,
+    });
+
+    res.status(200).send("Push sent");
+  } catch (error) {
+    console.error("Error sending push:", error);
+    res.status(500).send("Error");
+  }
+});
