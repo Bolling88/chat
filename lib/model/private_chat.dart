@@ -1,7 +1,6 @@
 import 'package:chat/model/chat_user.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import '../repository/firestore_repository.dart';
+import '../utils/auth_util.dart';
 import '../utils/gender.dart';
 import '../utils/time_util.dart';
 import 'chat.dart';
@@ -15,7 +14,7 @@ class PrivateChat extends Chat implements Comparable<PrivateChat> {
   final String otherUserName;
   final int otherUserGender;
   final String otherUserPictureData;
-  final Timestamp created;
+  final DateTime created;
   final List<String> lastMessageReadBy;
   final List<String> users;
   final List<ChatUser> userInfos = [];
@@ -51,23 +50,21 @@ class PrivateChat extends Chat implements Comparable<PrivateChat> {
     String? otherUserName,
     int? otherUserGender,
     String? otherUserPictureData,
-    Timestamp? created,
+    DateTime? created,
     List<String>? lastMessageReadBy,
     String? id,
     List<String>? users,
     String? lastMessage,
     bool? lastMessageIsGiphy,
     String? lastMessageByName,
-    Timestamp? lastMessageTimestamp,
+    DateTime? lastMessageTimestamp,
     String? lastMessageUserId,
   }) {
     return PrivateChat(
       initiatedBy: initiatedBy ?? this.initiatedBy,
       initiatedByUserName: initiatedByUserName ?? this.initiatedByUserName,
-      initiatedByUserGender:
-          initiatedByUserGender ?? this.initiatedByUserGender,
-      initiatedByPictureData:
-          initiatedByPictureData ?? this.initiatedByPictureData,
+      initiatedByUserGender: initiatedByUserGender ?? this.initiatedByUserGender,
+      initiatedByPictureData: initiatedByPictureData ?? this.initiatedByPictureData,
       otherUserId: otherUserId ?? this.otherUserId,
       otherUserName: otherUserName ?? this.otherUserName,
       otherUserGender: otherUserGender ?? this.otherUserGender,
@@ -85,28 +82,28 @@ class PrivateChat extends Chat implements Comparable<PrivateChat> {
   }
 
   PrivateChat.fromJson(String id, Map<String, dynamic> json)
-      : initiatedBy = json['initiatedBy'] ?? '',
-        initiatedByUserName = json['initiatedByUserName'] ?? '',
-        initiatedByUserGender = json['initiatedByUserGender'] ?? 0,
-        initiatedByPictureData = json['initiatedByPictureData'] ?? '',
-        otherUserId = json['otherUserId'] ?? '',
+      : initiatedBy = json['initiated_by'] ?? '',
+        initiatedByUserName = json['initiated_by_user_name'] ?? '',
+        initiatedByUserGender = json['initiated_by_user_gender'] ?? 0,
+        initiatedByPictureData = json['initiated_by_picture_data'] ?? '',
+        otherUserId = json['other_user_id'] ?? '',
         users = json['users']?.cast<String>() ?? [],
-        otherUserName = json['otherUserName'] ?? '',
-        otherUserGender = json['otherUserGender'] ?? 0,
-        otherUserPictureData = json['otherUserPictureData'] ?? '',
-        created = json['created'] ?? Timestamp.now(),
-        lastMessageReadBy = json['lastMessageReadBy']?.cast<String>() ?? [],
+        otherUserName = json['other_user_name'] ?? '',
+        otherUserGender = json['other_user_gender'] ?? 0,
+        otherUserPictureData = json['other_user_picture_data'] ?? '',
+        created = parseDateTime(json['created']),
+        lastMessageReadBy = json['last_message_read_by']?.cast<String>() ?? [],
         super(
           id: id,
-          lastMessage: json['lastMessage'] ?? "",
-          lastMessageIsGiphy: json['lastMessageIsGiphy'] ?? false,
-          lastMessageByName: json['lastMessageByName'] ?? "",
-          lastMessageTimestamp: json['lastMessageTimestamp'] ?? Timestamp.now(),
-          lastMessageUserId: json['lastMessageUserId'] ?? "",
+          lastMessage: json['last_message'] ?? "",
+          lastMessageIsGiphy: json['last_message_is_giphy'] ?? false,
+          lastMessageByName: json['last_message_by_name'] ?? "",
+          lastMessageTimestamp: parseDateTime(json['last_message_timestamp']),
+          lastMessageUserId: json['last_message_user_id'] ?? "",
         );
 
   String getLastMessageReadableDate() {
-    return getLastMessageTimeFromTimeStamp(lastMessageTimestamp);
+    return getLastMessageTimeFromDateTime(lastMessageTimestamp);
   }
 
   @override
@@ -116,25 +113,12 @@ class PrivateChat extends Chat implements Comparable<PrivateChat> {
 
   @override
   List<Object> get props => [
-        id,
-        lastMessage,
-        lastMessageIsGiphy,
-        lastMessageByName,
-        lastMessageTimestamp,
-        lastMessageUserId,
-        users,
-        userInfos,
-        usersText,
-        initiatedBy,
-        initiatedByUserName,
-        initiatedByUserGender,
-        initiatedByPictureData,
-        otherUserId,
-        otherUserName,
-        otherUserGender,
-        otherUserPictureData,
-        created,
-        lastMessageReadBy,
+        id, lastMessage, lastMessageIsGiphy, lastMessageByName,
+        lastMessageTimestamp, lastMessageUserId, users, userInfos,
+        usersText, initiatedBy, initiatedByUserName,
+        initiatedByUserGender, initiatedByPictureData,
+        otherUserId, otherUserName, otherUserGender,
+        otherUserPictureData, created, lastMessageReadBy,
       ];
 
   @override
@@ -145,15 +129,13 @@ class PrivateChat extends Chat implements Comparable<PrivateChat> {
   @override
   Color getChatColor(String userId, BuildContext context) {
     return userId == initiatedBy
-        ? getGenderColor(context,Gender.fromValue(otherUserGender))
-        : getGenderColor(context,Gender.fromValue(initiatedByUserGender));
+        ? getGenderColor(context, Gender.fromValue(otherUserGender))
+        : getGenderColor(context, Gender.fromValue(initiatedByUserGender));
   }
 
   @override
   String? getChatImage(String userId) {
-    return userId == initiatedBy
-        ? otherUserPictureData
-        : initiatedByPictureData;
+    return userId == initiatedBy ? otherUserPictureData : initiatedByPictureData;
   }
 
   @override
@@ -162,9 +144,7 @@ class PrivateChat extends Chat implements Comparable<PrivateChat> {
   }
 
   @override
-  bool isPrivateChat() {
-    return true;
-  }
+  bool isPrivateChat() => true;
 
   int getOtherUserGender(String userId) {
     return userId == initiatedBy ? initiatedByUserGender : otherUserGender;

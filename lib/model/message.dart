@@ -1,5 +1,5 @@
-import 'package:chat/repository/firestore_repository.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:chat/model/chat_user.dart';
+import 'package:chat/utils/enums.dart';
 import 'package:equatable/equatable.dart';
 
 class Message extends Equatable implements Comparable<Message> {
@@ -12,8 +12,8 @@ class Message extends Equatable implements Comparable<Message> {
   final String createdByImageUrl;
   final ChatType chatType;
   final int approvedImage;
-  final Timestamp created;
-  final Timestamp? birthDate;
+  final DateTime created;
+  final DateTime? birthDate;
   final bool showAge;
   final String? translation;
   final bool marked;
@@ -27,8 +27,8 @@ class Message extends Equatable implements Comparable<Message> {
   final String replyCreatedByImageUrl;
   final ChatType replyChatType;
   final int replyApprovedImage;
-  final Timestamp? replyCreated;
-  final Timestamp? replyBirthDate;
+  final DateTime? replyCreated;
+  final DateTime? replyBirthDate;
   final bool replyShowAge;
   final List<String> replyImageReports;
 
@@ -64,37 +64,35 @@ class Message extends Equatable implements Comparable<Message> {
   });
 
   Message.fromJson(this.id, Map<String, dynamic> json)
-      : created = json['created'] ?? Timestamp.now(),
-        createdById = json['createdById'] ?? "",
-        createdByName = json['createdByName'] ?? "",
-        createdByGender = json['createdByGender'] ?? 0,
-        createdByCountryCode = json['createdByCountryCode'] ?? '',
-        chatType = ChatType.values[json['chatType'] ?? 0],
-        createdByImageUrl = json['createdByImageUrl'] ?? "",
-        //For all users who have not updated, show it as true
-        approvedImage = json['approvedImage'] ?? ApprovedImage.notSet.value,
+      : created = parseDateTime(json['created']),
+        createdById = json['created_by_id'] ?? "",
+        createdByName = json['created_by_name'] ?? "",
+        createdByGender = json['created_by_gender'] ?? 0,
+        createdByCountryCode = json['created_by_country_code'] ?? '',
+        chatType = ChatType.values[json['chat_type'] ?? 0],
+        createdByImageUrl = json['created_by_image_url'] ?? "",
+        approvedImage = json['approved_image'] ?? ApprovedImage.notSet.value,
         text = json['text'] ?? "",
-        birthDate = json['birthDate'],
-        showAge = json['showAge'] ?? true,
+        birthDate = parseDateTimeNullable(json['birth_date']),
+        showAge = json['show_age'] ?? true,
         translation = null,
         marked = false,
-        imageReports = json['imageReports']?.cast<String>() ?? [],
-        replyId = json['replyId'] ?? "",
-        replyText = json['replyText'] ?? "",
-        replyCreatedById = json['replyCreatedById'] ?? "",
-        replyCreatedByName = json['replyCreatedByName'] ?? "",
-        replyCreatedByGender = json['replyCreatedByGender'] ?? 0,
-        replyCreatedByCountryCode = json['replyCreatedByCountryCode'] ?? '',
-        replyCreatedByImageUrl = json['replyCreatedByImageUrl'] ?? "",
-        replyChatType = ChatType.values[json['replyChatType'] ?? 0],
+        imageReports = json['image_reports']?.cast<String>() ?? [],
+        replyId = json['reply_id'] ?? "",
+        replyText = json['reply_text'] ?? "",
+        replyCreatedById = json['reply_created_by_id'] ?? "",
+        replyCreatedByName = json['reply_created_by_name'] ?? "",
+        replyCreatedByGender = json['reply_created_by_gender'] ?? 0,
+        replyCreatedByCountryCode = json['reply_created_by_country_code'] ?? '',
+        replyCreatedByImageUrl = json['reply_created_by_image_url'] ?? "",
+        replyChatType = ChatType.values[json['reply_chat_type'] ?? 0],
         replyApprovedImage =
-            json['replyApprovedImage'] ?? ApprovedImage.notSet.value,
-        replyCreated = json['replyCreated'],
-        replyBirthDate = json['replyBirthDate'],
-        replyShowAge = json['replyShowAge'] ?? true,
-        replyImageReports = json['replyImageReports']?.cast<String>() ?? [];
+            json['reply_approved_image'] ?? ApprovedImage.notSet.value,
+        replyCreated = parseDateTimeNullable(json['reply_created']),
+        replyBirthDate = parseDateTimeNullable(json['reply_birth_date']),
+        replyShowAge = json['reply_show_age'] ?? true,
+        replyImageReports = json['reply_image_reports']?.cast<String>() ?? [];
 
-  //Copy with method
   Message copyWith({
     String? id,
     String? text,
@@ -105,8 +103,8 @@ class Message extends Equatable implements Comparable<Message> {
     String? createdByImageUrl,
     ChatType? chatType,
     int? approvedImage,
-    Timestamp? created,
-    Timestamp? birthDate,
+    DateTime? created,
+    DateTime? birthDate,
     bool? showAge,
     String? translation,
     bool? marked,
@@ -120,8 +118,8 @@ class Message extends Equatable implements Comparable<Message> {
     String? replyCreatedByImageUrl,
     ChatType? replyChatType,
     int? replyApprovedImage,
-    Timestamp? replyCreated,
-    Timestamp? replyBirthDate,
+    DateTime? replyCreated,
+    DateTime? replyBirthDate,
     bool? replyShowAge,
     List<String>? replyImageReports,
   }) {
@@ -161,34 +159,14 @@ class Message extends Equatable implements Comparable<Message> {
 
   @override
   List<Object?> get props => [
-        id,
-        text,
-        chatType,
-        createdById,
-        createdByName,
-        createdByGender,
-        createdByCountryCode,
-        createdByImageUrl,
-        approvedImage,
-        created,
-        birthDate,
-        showAge,
-        translation,
-        marked,
-        imageReports,
-        replyId,
-        replyText,
-        replyCreatedById,
-        replyCreatedByName,
-        replyCreatedByGender,
-        replyCreatedByCountryCode,
-        replyCreatedByImageUrl,
-        replyChatType,
-        replyApprovedImage,
-        replyCreated,
-        replyBirthDate,
-        replyShowAge,
-        replyImageReports
+        id, text, chatType, createdById, createdByName,
+        createdByGender, createdByCountryCode, createdByImageUrl,
+        approvedImage, created, birthDate, showAge, translation,
+        marked, imageReports, replyId, replyText,
+        replyCreatedById, replyCreatedByName, replyCreatedByGender,
+        replyCreatedByCountryCode, replyCreatedByImageUrl,
+        replyChatType, replyApprovedImage, replyCreated,
+        replyBirthDate, replyShowAge, replyImageReports
       ];
 
   @override

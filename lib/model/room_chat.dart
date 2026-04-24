@@ -1,4 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:chat/model/chat_user.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import '../utils/time_util.dart';
@@ -34,26 +34,26 @@ class RoomChat extends Chat implements Comparable<RoomChat> {
   });
 
   RoomChat.fromJson(String id, Map<String, dynamic> json)
-      : countryCode = json['countryCode'] ?? 'en',
-        chatName = json['chatName'] ?? "",
-        chatColor = json['chatColor'] ?? 0xFF30c7c2,
-        imageUrl = json['imageUrl'] ?? "",
-        imageOverflow = json['imageOverflow'] ?? 80,
-        imageTranslationX = json['imageTranslationX'] ?? 0,
-        infoKey = json['infoKey'] ?? '',
+      : countryCode = json['country_code'] ?? 'en',
+        chatName = json['chat_name'] ?? "",
+        chatColor = json['chat_color'] ?? 0xFF30c7c2,
+        imageUrl = json['image_url'] ?? "",
+        imageOverflow = json['image_overflow'] ?? 80,
+        imageTranslationX = json['image_translation_x'] ?? 0,
+        infoKey = json['info_key'] ?? '',
         lastMessageReadByUser = false,
         enabled = json['enabled'] ?? true,
         super(
           id: id,
-          lastMessage: json['lastMessage'] ?? "",
-          lastMessageIsGiphy: json['lastMessageIsGiphy'] ?? false,
-          lastMessageByName: json['lastMessageByName'] ?? "",
-          lastMessageTimestamp: json['lastMessageTimestamp'] ?? Timestamp.now(),
-          lastMessageUserId: json['lastMessageUserId'] ?? "",
-        ); // Call the superclass constructor;
+          lastMessage: json['last_message'] ?? "",
+          lastMessageIsGiphy: json['last_message_is_giphy'] ?? false,
+          lastMessageByName: json['last_message_by_name'] ?? "",
+          lastMessageTimestamp: parseDateTime(json['last_message_timestamp']),
+          lastMessageUserId: json['last_message_user_id'] ?? "",
+        );
 
   String getLastMessageReadableDate() {
-    return getLastMessageTimeFromTimeStamp(lastMessageTimestamp);
+    return getLastMessageTimeFromDateTime(lastMessageTimestamp);
   }
 
   @override
@@ -74,7 +74,7 @@ class RoomChat extends Chat implements Comparable<RoomChat> {
     String? lastMessage,
     bool? lastMessageIsGiphy,
     String? lastMessageByName,
-    Timestamp? lastMessageTimestamp,
+    DateTime? lastMessageTimestamp,
     String? lastMessageUserId,
     bool? lastMessageReadByUser,
     bool? enabled,
@@ -102,47 +102,26 @@ class RoomChat extends Chat implements Comparable<RoomChat> {
 
   @override
   List<Object> get props => [
-        id,
-        countryCode,
-        lastMessage,
-        lastMessageIsGiphy,
-        lastMessageByName,
-        lastMessageTimestamp,
-        lastMessageUserId,
-        lastMessageReadByUser,
-        enabled,
-        chatName,
-        chatColor,
-        imageUrl,
-        imageOverflow,
-        imageTranslationX,
-        infoKey
+        id, countryCode, lastMessage, lastMessageIsGiphy,
+        lastMessageByName, lastMessageTimestamp, lastMessageUserId,
+        lastMessageReadByUser, enabled, chatName, chatColor,
+        imageUrl, imageOverflow, imageTranslationX, infoKey
       ];
 
   @override
-  String getChatName(String userId) {
-    return chatName;
-  }
+  String getChatName(String userId) => chatName;
 
   @override
-  Color getChatColor(String userId, BuildContext context) {
-    return Color(chatColor);
-  }
+  Color getChatColor(String userId, BuildContext context) => Color(chatColor);
 
   @override
-  String? getChatImage(String userId) {
-    return null;
-  }
+  String? getChatImage(String userId) => null;
 
   @override
-  String getOtherUserId(String userId) {
-    return '';
-  }
+  String getOtherUserId(String userId) => '';
 
   @override
-  bool isPrivateChat() {
-    return false;
-  }
+  bool isPrivateChat() => false;
 
   String getInfoText(BuildContext context) {
     if (infoKey.isEmpty) {

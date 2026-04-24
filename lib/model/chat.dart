@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 
@@ -7,7 +6,7 @@ abstract class Chat extends Equatable {
   final String lastMessage;
   final bool lastMessageIsGiphy;
   final String lastMessageByName;
-  final Timestamp lastMessageTimestamp;
+  final DateTime lastMessageTimestamp;
   final String lastMessageUserId;
 
   const Chat({
@@ -34,8 +33,7 @@ abstract class Chat extends Equatable {
     String? lastMessage,
     bool? lastMessageIsGiphy,
     String? lastMessageByName,
-    Timestamp? lastMessageTimestamp,
+    DateTime? lastMessageTimestamp,
     String? lastMessageUserId,
   });
-
 }

@@ -1,7 +1,28 @@
-import 'package:chat/repository/firestore_repository.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:chat/utils/auth_util.dart';
+import 'package:chat/utils/enums.dart';
 import 'package:equatable/equatable.dart';
 import 'dart:core';
+
+DateTime parseDateTime(dynamic value) {
+  if (value == null) return DateTime.now();
+  if (value is DateTime) return value;
+  if (value is String) return DateTime.parse(value);
+  return DateTime.now();
+}
+
+int parseLastActive(dynamic value) {
+  if (value == null) return DateTime.now().millisecondsSinceEpoch;
+  if (value is int) return value;
+  if (value is String) return DateTime.parse(value).millisecondsSinceEpoch;
+  return DateTime.now().millisecondsSinceEpoch;
+}
+
+DateTime? parseDateTimeNullable(dynamic value) {
+  if (value == null) return null;
+  if (value is DateTime) return value;
+  if (value is String) return DateTime.parse(value);
+  return null;
+}
 
 class ChatUser extends Equatable {
   final String id;
@@ -11,7 +32,7 @@ class ChatUser extends Equatable {
   final int approvedImage;
   final bool onboardingCompleted;
   final bool isAdmin;
-  final Timestamp created;
+  final DateTime created;
   final int lastActive;
   final String city;
   final String countryCode;
@@ -21,7 +42,7 @@ class ChatUser extends Equatable {
   final bool showAge;
   final String currentRoomChatId;
   final String fcmToken;
-  final Timestamp? birthDate;
+  final DateTime? birthDate;
   final List<String> blockedBy;
   final List<String> imageReports;
   final List<String> botReports;
@@ -56,34 +77,33 @@ class ChatUser extends Equatable {
       required this.isPremiumUser});
 
   ChatUser.fromJson(this.id, Map<String, dynamic> json)
-      : created = json['created'] ?? Timestamp.now(),
-        lastActive =
-            json['lastActive'] ?? Timestamp.now().millisecondsSinceEpoch,
-        displayName = json['displayName'] ?? "",
-        onboardingCompleted = json['onboardingCompleted'] ?? false,
-        isAdmin = json['isAdmin'] ?? false,
+      : created = parseDateTime(json['created']),
+        lastActive = parseLastActive(json['last_active']),
+        displayName = json['display_name'] ?? "",
+        onboardingCompleted = json['onboarding_completed'] ?? false,
+        isAdmin = json['is_admin'] ?? false,
         gender = json['gender'] ?? -1,
-        pictureData = json['pictureData'] ?? "",
-        approvedImage = json['approvedImage'] ?? ApprovedImage.notSet.value,
+        pictureData = json['picture_data'] ?? "",
+        approvedImage = json['approved_image'] ?? ApprovedImage.notSet.value,
         city = json['city'] ?? "",
-        countryCode = json['countryCode'] ?? "",
+        countryCode = json['country_code'] ?? "",
         country = json['country'] ?? "",
-        regionName = json['regionName'] ?? "",
+        regionName = json['region_name'] ?? "",
         presence = json['presence'] ?? false,
-        showAge = json['showAge'] ?? true,
-        currentRoomChatId = json['currentRoomChatId'] ?? '',
-        fcmToken = json['fcmToken'] ?? '',
-        birthDate = json['birthDate'],
-        blockedBy = json['blockedBy']?.cast<String>() ?? [],
-        imageReports = json['imageReports']?.cast<String>() ?? [],
-        botReports = json['botReports']?.cast<String>() ?? [],
-        languageReports = json['languageReports']?.cast<String>() ?? [],
-        kvitterCredits = json['kvitterCredits'] ?? 0,
-        isPremiumUser = json['isPremiumUser'] ?? false;
+        showAge = json['show_age'] ?? true,
+        currentRoomChatId = json['current_room_chat_id'] ?? '',
+        fcmToken = json['fcm_token'] ?? '',
+        birthDate = parseDateTimeNullable(json['birth_date']),
+        blockedBy = json['blocked_by']?.cast<String>() ?? [],
+        imageReports = json['image_reports']?.cast<String>() ?? [],
+        botReports = json['bot_reports']?.cast<String>() ?? [],
+        languageReports = json['language_reports']?.cast<String>() ?? [],
+        kvitterCredits = json['kvitter_credits'] ?? 0,
+        isPremiumUser = json['is_premium_user'] ?? false;
 
   ChatUser.asUnknown(this.id)
-      : created = Timestamp.now(),
-        lastActive = Timestamp.now().millisecondsSinceEpoch,
+      : created = DateTime.now(),
+        lastActive = DateTime.now().millisecondsSinceEpoch,
         displayName = "",
         onboardingCompleted = false,
         isAdmin = false,
@@ -114,7 +134,7 @@ class ChatUser extends Equatable {
       int? approvedImage,
       bool? onboardingCompleted,
       bool? isAdmin,
-      Timestamp? created,
+      DateTime? created,
       int? lastActive,
       String? city,
       String? countryCode,
@@ -124,7 +144,7 @@ class ChatUser extends Equatable {
       bool? showAge,
       String? currentRoomChatId,
       String? fcmToken,
-      Timestamp? birthDate,
+      DateTime? birthDate,
       List<String>? blockedBy,
       List<String>? imageReports,
       List<String>? botReports,
@@ -160,30 +180,12 @@ class ChatUser extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        displayName,
-        gender,
-        pictureData,
-        approvedImage,
-        onboardingCompleted,
-        isAdmin,
-        created,
-        lastActive,
-        city,
-        countryCode,
-        country,
-        presence,
-        showAge,
-        currentRoomChatId,
-        regionName,
-        fcmToken,
-        birthDate,
-        blockedBy,
-        imageReports,
-        botReports,
-        languageReports,
-        kvitterCredits,
-        isPremiumUser
+        id, displayName, gender, pictureData, approvedImage,
+        onboardingCompleted, isAdmin, created, lastActive,
+        city, countryCode, country, presence, showAge,
+        currentRoomChatId, regionName, fcmToken, birthDate,
+        blockedBy, imageReports, botReports, languageReports,
+        kvitterCredits, isPremiumUser
       ];
 
   bool isUserBlocked() {
