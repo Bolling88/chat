@@ -4,11 +4,11 @@ import 'package:chat/screens/visit/bloc/visit_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../model/chat.dart';
 import '../../../model/chat_user.dart';
-import '../../../repository/supabase_repository.dart';
+import '../../../repository/serverpod_repository.dart';
 import 'visit_event.dart';
 
 class VisitBloc extends Bloc<VisitEvent, VisitState> {
-  final SupabaseRepository _supabaseRepository;
+  final ServerpodRepository _serverpodRepository;
   final String userId;
   final Chat? chat;
 
@@ -16,7 +16,7 @@ class VisitBloc extends Bloc<VisitEvent, VisitState> {
   late ChatUser me;
   StreamSubscription<ChatUser?>? userStream;
 
-  VisitBloc(this._supabaseRepository, this.userId, this.chat)
+  VisitBloc(this._serverpodRepository, this.userId, this.chat)
       : super(VisitLoadingState()) {
     on<VisitInitialEvent>(_onVisitInitialEvent);
     on<VisitUserLoadedState>(_onVisitUserLoadedState);
@@ -35,9 +35,9 @@ class VisitBloc extends Bloc<VisitEvent, VisitState> {
 
   Future<void> _onVisitInitialEvent(
       VisitInitialEvent event, Emitter<VisitState> emit) async {
-    final myUser = await _supabaseRepository.getUser();
+    final myUser = await _serverpodRepository.getUser();
     final isChatAvailable =
-        await _supabaseRepository.isPrivateChatAvailable(userId);
+        await _serverpodRepository.isPrivateChatAvailable(userId);
     // Emit initial state BEFORE setting up listener to avoid race condition
     emit(VisitBaseState(
         user: null,
@@ -72,11 +72,11 @@ class VisitBloc extends Bloc<VisitEvent, VisitState> {
     final currentState = state;
     if (currentState is VisitBaseState) {
       emit(VisitLoadingState());
-      _supabaseRepository.blockUser(currentState.user!.id);
+      _serverpodRepository.blockUser(currentState.user!.id);
       final privateChat =
-          await _supabaseRepository.getPrivateChat(currentState.user!.id);
+          await _serverpodRepository.getPrivateChat(currentState.user!.id);
       if (privateChat != null) {
-        await _supabaseRepository.leavePrivateChat(privateChat);
+        await _serverpodRepository.leavePrivateChat(privateChat);
       }
       emit(currentState.copyWith(userBlocked: true));
     }
@@ -87,7 +87,7 @@ class VisitBloc extends Bloc<VisitEvent, VisitState> {
     final currentState = state;
     if (currentState is VisitBaseState) {
       emit(VisitLoadingState());
-      _supabaseRepository.unblockUser(currentState.user!.id);
+      _serverpodRepository.unblockUser(currentState.user!.id);
       emit(currentState.copyWith(userBlocked: false));
     }
   }
@@ -101,7 +101,7 @@ class VisitBloc extends Bloc<VisitEvent, VisitState> {
   }
 
   void setUpPeopleListener() {
-    userStream = _supabaseRepository.streamUserById(userId).listen(
+    userStream = _serverpodRepository.streamUserById(userId).listen(
       (user) async {
         add(VisitUserLoadedState(user));
       },

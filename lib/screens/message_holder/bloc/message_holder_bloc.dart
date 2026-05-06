@@ -13,7 +13,7 @@ import 'package:universal_io/io.dart';
 import '../../../model/room_chat.dart';
 import '../../../model/user_location.dart';
 import '../../../repository/chat_clicked_repository.dart';
-import '../../../repository/supabase_repository.dart';
+import '../../../repository/serverpod_repository.dart';
 import '../../../repository/network_repository.dart';
 import '../../../utils/auth_util.dart';
 import '../../../utils/enums.dart';
@@ -25,7 +25,7 @@ import 'message_holder_state.dart';
 import 'dart:core';
 
 class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
-  final SupabaseRepository _supabaseRepository;
+  final ServerpodRepository _serverpodRepository;
   final FcmRepository _fcmRepository;
   final ChatClickedRepository _chatClickedRepository;
   final SubscriptionRepository _subscriptionRepository;
@@ -39,7 +39,7 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
   ChatUser? _user;
 
   MessageHolderBloc(
-      this._supabaseRepository, this._fcmRepository, this._chatClickedRepository, this._subscriptionRepository)
+      this._serverpodRepository, this._fcmRepository, this._chatClickedRepository, this._subscriptionRepository)
       : super(MessageHolderLoadingState()) {
     on<MessageHolderInitialEvent>(_onInitial);
     on<MessageHolderUserUpdatedEvent>(_onUserUpdated);
@@ -62,8 +62,8 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
   @override
   Future<void> close() {
     //This will probably not never be called since the app will be fried before the widget tree is unmounted.
-    _supabaseRepository.closeOnlineUsersStream();
-    _supabaseRepository.closePrivateChatStream();
+    _serverpodRepository.closeOnlineUsersStream();
+    _serverpodRepository.closePrivateChatStream();
     privateChatStream?.cancel();
     onlineUsersStream?.cancel();
     userStream?.cancel();
@@ -72,7 +72,7 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
   }
 
   void _onInitial(MessageHolderInitialEvent event, Emitter<MessageHolderState> emit) {
-    _supabaseRepository.updateCurrentUsersCurrentChatRoom(chatId: '');
+    _serverpodRepository.updateCurrentUsersCurrentChatRoom(chatId: '');
     _fcmRepository.setUpPushNotification();
     _setUpUserListener();
     _updateUserLocation();
@@ -108,9 +108,9 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
     final currentState = state;
     if (currentState is MessageHolderBaseState) {
       final bool isChatAvailable =
-          await _supabaseRepository.isPrivateChatAvailable(event.user.id);
+          await _serverpodRepository.isPrivateChatAvailable(event.user.id);
       if (isChatAvailable) {
-        await _supabaseRepository.createPrivateChat(
+        await _serverpodRepository.createPrivateChat(
           otherUser: event.user,
           myUser: currentState.user,
           initialMessage: event.message,
@@ -124,7 +124,7 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
             .where((element) => element.users.contains(event.user.id))
             .firstOrNull;
         if (privateChat != null) {
-          _supabaseRepository.setLastMessageRead(chatId: privateChat.id);
+          _serverpodRepository.setLastMessageRead(chatId: privateChat.id);
           final int index = currentState.privateChats.indexOf(privateChat);
           emit(currentState.copyWith(
               selectedChatIndex: index + 1, selectedChat: privateChat));
@@ -271,12 +271,12 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
         final RoomChat chat =
             (event.chat as RoomChat).copyWith(lastMessageReadByUser: true);
         //Set user current chat and mark as present
-        _supabaseRepository.updateCurrentUsersCurrentChatRoom(
+        _serverpodRepository.updateCurrentUsersCurrentChatRoom(
             chatId: chat.id);
         emit(currentState.copyWith(
             selectedChatIndex: 0, selectedChat: chat, roomChat: chat));
       } else if (chat is PrivateChat) {
-        _supabaseRepository.setLastMessageRead(chatId: chat.id);
+        _serverpodRepository.setLastMessageRead(chatId: chat.id);
         emit(currentState.copyWith(
             selectedChatIndex: event.index, selectedChat: chat));
         _chatClickedRepository.addChatClicked(chat);
@@ -299,10 +299,10 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
     if (currentState is MessageHolderBaseState) {
       if (event.privateChat != null) {
         //This is called on big screens, and can be called from any other chat
-        _supabaseRepository.leavePrivateChat(event.privateChat!);
+        _serverpodRepository.leavePrivateChat(event.privateChat!);
       } else {
         //This is called from a small screen, and the current chat, so we must move to the room again
-        _supabaseRepository
+        _serverpodRepository
             .leavePrivateChat(currentState.selectedChat as PrivateChat);
       }
     }
@@ -312,7 +312,7 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
       MessageHolderChangeChatRoomEvent event, Emitter<MessageHolderState> emit) {
     final currentState = state;
     if (currentState is MessageHolderBaseState) {
-      _supabaseRepository.updateCurrentUsersCurrentChatRoom(chatId: '');
+      _serverpodRepository.updateCurrentUsersCurrentChatRoom(chatId: '');
       emit(MessageHolderBaseState(
           roomChat: null,
           user: currentState.user,
@@ -364,7 +364,7 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
       _subscriptionRepository.setUserId();
       final subscription = await _subscriptionRepository
           .isPremiumUser();
-        _supabaseRepository.setUserAsPremium(subscription);
+        _serverpodRepository.setUserAsPremium(subscription);
     }
   }
 
@@ -377,16 +377,16 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
         .firstOrNull;
     if (currentChat != null) {
       if (currentState.selectedChat?.lastMessage != currentChat.lastMessage) {
-        _supabaseRepository.setLastMessageRead(chatId: currentChat.id);
+        _serverpodRepository.setLastMessageRead(chatId: currentChat.id);
       }
     }
   }
 
   void _setUpPrivateChatsListener(ChatUser user) async {
     Log.d('Setting up private chats stream');
-    _supabaseRepository.startPrivateChatsStream(user.id);
+    _serverpodRepository.startPrivateChatsStream(user.id);
     privateChatStream =
-        _supabaseRepository.getPrivateChatsStream().listen((chats) {
+        _serverpodRepository.getPrivateChatsStream().listen((chats) {
       Log.d("Got private chats");
       chats.sort((a, b) => a.created.compareTo(b.created));
       Log.d("Chats: ${chats.length}");
@@ -397,14 +397,14 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
   void _updateUserLocation() async {
     UserLocation? userLocation = await getUserLocation();
     if (userLocation != null) {
-      _supabaseRepository.updateUserLocation(userLocation);
+      _serverpodRepository.updateUserLocation(userLocation);
     }
   }
 
   void _setUpOnlineUsersListener(String countryCode) {
-    _supabaseRepository.startOnlineUsersStream(countryCode);
+    _serverpodRepository.startOnlineUsersStream(countryCode);
     onlineUsersStream =
-        _supabaseRepository.onlineUsersStream.listen((event) async {
+        _serverpodRepository.onlineUsersStream.listen((event) async {
 
       //Sort users with the same country code as my users first
       Log.d('MessageHolderUsersUpdatedEvent');
@@ -414,12 +414,12 @@ class MessageHolderBloc extends Bloc<MessageHolderEvent, MessageHolderState> {
 
   void _setUpUserListener() async {
     Log.d('Setting up private chats stream');
-    userStream = _supabaseRepository.streamUser().listen((user) async {
+    userStream = _serverpodRepository.streamUser().listen((user) async {
       if (user == null) return;
 
       if (ApprovedImage.fromValue(user.approvedImage) == ApprovedImage.notSet &&
           user.pictureData.isNotEmpty) {
-        _supabaseRepository.updateImageNotReviewedStatus();
+        _serverpodRepository.updateImageNotReviewedStatus();
       }
       add(MessageHolderUserUpdatedEvent(user));
     });

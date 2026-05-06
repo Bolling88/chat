@@ -1,8 +1,8 @@
 import 'dart:convert';
 
 import 'package:chat/model/chat_user.dart';
-import 'package:chat/repository/supabase_repository.dart';
-import 'package:chat/repository/supabase_storage_repository.dart';
+import 'package:chat/repository/serverpod_repository.dart';
+import 'package:chat/repository/serverpod_storage_repository.dart';
 import 'package:chat/screens/login/bloc/login_state.dart';
 import 'package:chat/utils/image_util.dart';
 import 'package:flutter/foundation.dart';
@@ -18,15 +18,15 @@ const int photoQuality = 30;
 
 class OnboardingPhotoBloc
     extends Bloc<OnboardingPhotoEvent, OnboardingPhotoState> {
-  final SupabaseRepository _supabaseRepository;
-  final SupabaseStorageRepository _storageRepository;
+  final ServerpodRepository _serverpodRepository;
+  final ServerpodStorageRepository _storageRepository;
   final AppImageCropper _appImageCropper;
   final picker = ImagePicker();
 
   late ChatUser _chatUser;
 
   OnboardingPhotoBloc(
-      this._supabaseRepository, this._storageRepository, this._appImageCropper)
+      this._serverpodRepository, this._storageRepository, this._appImageCropper)
       : super(OnboardingPhotoLoadingState()) {
     on<OnboardingPhotoInitialEvent>(_onInitial);
     on<OnboardingPhotoCameraClickedEvent>(_onCameraClicked);
@@ -45,7 +45,7 @@ class OnboardingPhotoBloc
     Emitter<OnboardingPhotoState> emit,
   ) async {
     try {
-      _chatUser = (await _supabaseRepository.getUser())!;
+      _chatUser = (await _serverpodRepository.getUser())!;
       emit(OnboardingPhotoBaseState(_chatUser));
     } on Exception catch (error, stacktrace) {
       emit(OnboardingPhotoErrorState());
@@ -127,7 +127,7 @@ class OnboardingPhotoBloc
             await FlutterNudeDetector.detect(path: currentState.filePath);
         final finalUrl = await _storageRepository.uploadProfileImage(
             currentState.filePath, currentState.base64Image) ?? "";
-        await _supabaseRepository.updateUserProfileImage(
+        await _serverpodRepository.updateUserProfileImage(
             profileImageUrl: finalUrl, user: _chatUser, hasNudity: hasNudity);
 
         if (_chatUser.gender == -1) {
@@ -181,7 +181,7 @@ class OnboardingPhotoBloc
     Emitter<OnboardingPhotoState> emit,
   ) async {
     try {
-      await _supabaseRepository.updateUserProfileImage(
+      await _serverpodRepository.updateUserProfileImage(
           profileImageUrl: '', user: _chatUser, hasNudity: false);
       if (_chatUser.gender == -1) {
         emit(const OnboardingPhotoSuccessState(OnboardingNavigation.gender));
@@ -200,7 +200,7 @@ class OnboardingPhotoBloc
   ) async {
     try {
       emit(OnboardingPhotoLoadingState());
-      await _supabaseRepository.deleteUserPhoto();
+      await _serverpodRepository.deleteUserPhoto();
       emit(const OnboardingPhotoSuccessState(OnboardingNavigation.done));
     } on Exception catch (error, stacktrace) {
       emit(OnboardingPhotoErrorState());

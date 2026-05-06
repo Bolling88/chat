@@ -1,6 +1,6 @@
 import 'package:chat/model/chat_user.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../repository/supabase_repository.dart';
+import '../../../repository/serverpod_repository.dart';
 import '../../../utils/enums.dart';
 import '../../login/bloc/login_state.dart';
 import 'onboarding_gender_event.dart';
@@ -8,11 +8,11 @@ import 'onboarding_gender_state.dart';
 
 class OnboardingGenderBloc
     extends Bloc<OnboardingGenderEvent, OnboardingGenderState> {
-  final SupabaseRepository _supabaseRepository;
+  final ServerpodRepository _serverpodRepository;
 
   late ChatUser user;
 
-  OnboardingGenderBloc(this._supabaseRepository)
+  OnboardingGenderBloc(this._serverpodRepository)
       : super(OnboardingGenderLoadingState()) {
     on<OnboardingGenderInitialState>(_onInitial);
     on<OnboardingGenderMaleClickedEvent>(_onMaleClicked);
@@ -27,7 +27,7 @@ class OnboardingGenderBloc
     OnboardingGenderInitialState event,
     Emitter<OnboardingGenderState> emit,
   ) async {
-    user = (await _supabaseRepository.getUser())!;
+    user = (await _serverpodRepository.getUser())!;
     emit(OnboardingGenderBaseState(user.pictureData));
   }
 
@@ -35,7 +35,7 @@ class OnboardingGenderBloc
     OnboardingGenderMaleClickedEvent event,
     Emitter<OnboardingGenderState> emit,
   ) {
-    _supabaseRepository.updateUserGender(Gender.male);
+    _serverpodRepository.updateUserGender(Gender.male);
     emit(OnboardingGenderSuccessState(OnboardingNavigation.done, user));
   }
 
@@ -43,7 +43,7 @@ class OnboardingGenderBloc
     OnboardingGenderFemaleClickedEvent event,
     Emitter<OnboardingGenderState> emit,
   ) {
-    _supabaseRepository.updateUserGender(Gender.female);
+    _serverpodRepository.updateUserGender(Gender.female);
     emit(OnboardingGenderSuccessState(OnboardingNavigation.done, user));
   }
 
@@ -51,7 +51,7 @@ class OnboardingGenderBloc
     OnboardingGenderNonBinaryClickedEvent event,
     Emitter<OnboardingGenderState> emit,
   ) {
-    _supabaseRepository.updateUserGender(Gender.nonBinary);
+    _serverpodRepository.updateUserGender(Gender.nonBinary);
     emit(OnboardingGenderSuccessState(OnboardingNavigation.done, user));
   }
 
@@ -59,7 +59,7 @@ class OnboardingGenderBloc
     OnboardingGenderSecretClickedEvent event,
     Emitter<OnboardingGenderState> emit,
   ) {
-    _supabaseRepository.updateUserGender(Gender.secret);
+    _serverpodRepository.updateUserGender(Gender.secret);
     emit(OnboardingGenderSuccessState(OnboardingNavigation.done, user));
   }
 }

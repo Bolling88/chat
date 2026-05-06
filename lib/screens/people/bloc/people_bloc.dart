@@ -1,4 +1,4 @@
-import 'package:chat/repository/supabase_repository.dart';
+import 'package:chat/repository/serverpod_repository.dart';
 import 'package:chat/screens/people/bloc/people_event.dart';
 import 'package:chat/utils/enums.dart';
 import 'package:chat/screens/people/bloc/people_state.dart';
@@ -9,13 +9,13 @@ import '../../../utils/log.dart';
 import 'dart:async';
 
 class PeopleBloc extends Bloc<PeopleEvent, PeopleState> {
-  final SupabaseRepository _supabaseRepository;
+  final ServerpodRepository _serverpodRepository;
   final List<ChatUser>? _initialUsers;
   final Chat? _chat;
 
   StreamSubscription<List<ChatUser>>? onlineUsersStream;
 
-  PeopleBloc(this._supabaseRepository, this._initialUsers, this._chat)
+  PeopleBloc(this._serverpodRepository, this._initialUsers, this._chat)
       : super(PeopleLoadingState()) {
     on<PeopleInitialEvent>(_onPeopleInitialEvent);
     on<PeopleLoadedEvent>(_onPeopleLoadedEvent);
@@ -133,7 +133,7 @@ class PeopleBloc extends Bloc<PeopleEvent, PeopleState> {
 
   void setUpPeopleListener() {
     onlineUsersStream =
-        _supabaseRepository.onlineUsersStream.listen((event) async {
+        _serverpodRepository.onlineUsersStream.listen((event) async {
           if(_chat == null){
             add(PeopleLoadedEvent(event));
           }else {

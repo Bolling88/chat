@@ -3,12 +3,12 @@ import 'package:purchases_flutter/purchases_flutter.dart';
 import 'package:universal_io/io.dart';
 
 import '../utils/log.dart';
-import 'supabase_repository.dart';
+import 'serverpod_repository.dart';
 
 class SubscriptionRepository {
-  final SupabaseRepository _firestoreRepository;
+  final ServerpodRepository _serverpodRepository;
 
-  SubscriptionRepository(this._firestoreRepository);
+  SubscriptionRepository(this._serverpodRepository);
 
   static Future<void> initPlatformState() async {
     await Purchases.setLogLevel(LogLevel.debug);
@@ -25,7 +25,7 @@ class SubscriptionRepository {
   }
 
   Future<void> setUserId() async {
-    final user = await _firestoreRepository.getUser();
+    final user = await _serverpodRepository.getUser();
     if (user != null) {
       Purchases.logIn(user.id);
     }

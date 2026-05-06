@@ -1,17 +1,17 @@
-import 'package:chat/repository/supabase_repository.dart';
+import 'package:chat/repository/serverpod_repository.dart';
 import 'package:chat/screens/splash/bloc/splash_state.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:chat/utils/auth_util.dart';
 import 'package:universal_io/io.dart';
 import '../../../utils/log.dart';
 import '../../login/bloc/login_state.dart';
 import 'splash_event.dart';
 
 class SplashBloc extends Bloc<SplashEvent, SplashState> {
-  final SupabaseRepository _supabaseRepository;
+  final ServerpodRepository _serverpodRepository;
 
-  SplashBloc(this._supabaseRepository) : super(SplashBaseState()) {
+  SplashBloc(this._serverpodRepository) : super(SplashBaseState()) {
     on<SplashInitialEvent>(_onSplashInitialEvent);
 
     add(SplashInitialEvent());
@@ -20,8 +20,8 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
   Future<void> _onSplashInitialEvent(
       SplashInitialEvent event, Emitter<SplashState> emit) async {
     try {
-      if (Supabase.instance.client.auth.currentUser != null) {
-        final chatUser = await _supabaseRepository.getUser();
+      if (serverpodClient.auth.isAuthenticated) {
+        final chatUser = await _serverpodRepository.getUser();
         if (chatUser == null) {
           emit(SplashLoginState());
         } else if (chatUser.displayName.isEmpty) {

@@ -11,8 +11,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:lottie/lottie.dart';
-import '../../repository/supabase_repository.dart';
-import '../../repository/supabase_auth_repository.dart';
+import '../../repository/serverpod_repository.dart';
+import '../../repository/serverpod_auth_repository.dart';
 import '../../utils/enums.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_widgets.dart';
@@ -33,8 +33,8 @@ class AccountScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (BuildContext context) => AccountBloc(
-          context.read<SupabaseRepository>(),
-          context.read<SupabaseAuthRepository>(),
+          context.read<ServerpodRepository>(),
+          context.read<ServerpodAuthRepository>(),
           context.read<SubscriptionRepository>()),
       child: const AccountScreenBuilder(),
     );

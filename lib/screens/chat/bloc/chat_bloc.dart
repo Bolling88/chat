@@ -2,20 +2,20 @@ import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../model/room_chat.dart';
 import '../../../model/chat_user.dart';
-import '../../../repository/supabase_repository.dart';
+import '../../../repository/serverpod_repository.dart';
 import '../../../utils/log.dart';
 import 'chat_event.dart';
 import 'chat_state.dart';
 
 class ChatBloc extends Bloc<ChatEvent, ChatState> {
-  final SupabaseRepository _supabaseRepository;
+  final ServerpodRepository _serverpodRepository;
 
   StreamSubscription<List<RoomChat>>? chatStream;
   StreamSubscription<List<ChatUser>>? onlineUsersStream;
   StreamSubscription<ChatUser?>? userStream;
   final List<ChatUser> _initialUsers;
 
-  ChatBloc(this._supabaseRepository, this._initialUsers)
+  ChatBloc(this._serverpodRepository, this._initialUsers)
       : super(ChatLoadingState()) {
     on<ChatInitialEvent>(_onInitialEvent);
     on<ChatUpdatedEvent>(_onUpdatedEvent);
@@ -84,7 +84,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
 
   void setUpChatListener(ChatUser user) async {
     Log.d("Setting up chat listener");
-    chatStream = _supabaseRepository.streamOpenChats(user).listen((chats) {
+    chatStream = _serverpodRepository.streamOpenChats(user).listen((chats) {
       Log.d('Chats: $chats');
       chats.sort((a, b) => b.chatName.compareTo(a.chatName));
       final reversedChats = chats.reversed;
@@ -95,7 +95,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
 
   void setUpPeopleListener() {
     onlineUsersStream =
-        _supabaseRepository.onlineUsersStream.listen((event) async {
+        _serverpodRepository.onlineUsersStream.listen((event) async {
       Map<String, List<ChatUser>> usersPerChat = groupUsersByChat(event);
       Log.d('ChatOnlineUsersUpdatedEvent');
       add(ChatOnlineUsersUpdatedEvent(usersPerChat));
@@ -119,7 +119,7 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
 
   void setUpUserListener() async {
     Log.d('Setting up private chats stream');
-    userStream = _supabaseRepository.streamUser().listen((user) async {
+    userStream = _serverpodRepository.streamUser().listen((user) async {
       if (user == null) {
         Log.d('No user found');
         return;

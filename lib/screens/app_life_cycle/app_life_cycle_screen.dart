@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../repository/supabase_repository.dart';
+import '../../repository/serverpod_repository.dart';
 import 'bloc/app_life_cycle_bloc.dart';
 import 'bloc/app_life_cycle_event.dart';
 
@@ -18,7 +18,7 @@ class AppLifecycleScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (BuildContext context) =>
-          AppLifeCycleBloc(context.read<SupabaseRepository>()),
+          AppLifeCycleBloc(context.read<ServerpodRepository>()),
       child: AppLifecycleScreenContent(
         child: child,
       ),

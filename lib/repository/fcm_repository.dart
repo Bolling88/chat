@@ -1,16 +1,16 @@
 import 'dart:async';
 
-import 'package:chat/repository/supabase_repository.dart';
+import 'package:chat/repository/serverpod_repository.dart';
 import 'package:chat/utils/app_badge.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import '../utils/log.dart';
 
 class FcmRepository {
-  final SupabaseRepository _supabaseRepository;
+  final ServerpodRepository _serverpodRepository;
   StreamSubscription<String>? _tokenRefreshSubscription;
 
-  FcmRepository(this._supabaseRepository);
+  FcmRepository(this._serverpodRepository);
 
   void setUpPushNotification() async {
     FirebaseMessaging messaging = FirebaseMessaging.instance;
@@ -47,12 +47,12 @@ class FcmRepository {
       fcmToken = await FirebaseMessaging.instance.getToken();
     }
 
-    if (fcmToken != null) _supabaseRepository.saveFcmTokenOnUser(fcmToken);
+    if (fcmToken != null) _serverpodRepository.saveFcmTokenOnUser(fcmToken);
 
     _tokenRefreshSubscription?.cancel();
     _tokenRefreshSubscription = FirebaseMessaging.instance.onTokenRefresh.listen((fcmToken) {
       Log.d('FCM token updated: $fcmToken');
-      _supabaseRepository.saveFcmTokenOnUser(fcmToken);
+      _serverpodRepository.saveFcmTokenOnUser(fcmToken);
     }, onError: (err) {
       Log.e('FCM token error: $err');
     });

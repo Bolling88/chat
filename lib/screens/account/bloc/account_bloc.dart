@@ -1,7 +1,7 @@
 import 'dart:async';
 
-import 'package:chat/repository/supabase_repository.dart';
-import 'package:chat/repository/supabase_auth_repository.dart';
+import 'package:chat/repository/serverpod_repository.dart';
+import 'package:chat/repository/serverpod_auth_repository.dart';
 import 'package:chat/repository/subscription_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../model/chat_user.dart';
@@ -10,13 +10,13 @@ import 'account_event.dart';
 import 'account_state.dart';
 
 class AccountBloc extends Bloc<AccountEvent, AccountState> {
-  final SupabaseRepository _supabaseRepository;
-  final SupabaseAuthRepository _authRepository;
+  final ServerpodRepository _serverpodRepository;
+  final ServerpodAuthRepository _authRepository;
   final SubscriptionRepository _subscriptionRepository;
 
   late StreamSubscription<ChatUser?> userStream;
 
-  AccountBloc(this._supabaseRepository, this._authRepository, this._subscriptionRepository) : super(AccountLoadingState()) {
+  AccountBloc(this._serverpodRepository, this._authRepository, this._subscriptionRepository) : super(AccountLoadingState()) {
     on<AccountInitialEvent>(_onAccountInitialEvent);
     on<AccountDeleteAccountEvent>(_onAccountDeleteAccountEvent);
     on<AccountUserChangedEvent>(_onAccountUserChangedEvent);
@@ -42,10 +42,10 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
       if (currentState is AccountBaseState) {
         emit(AccountLoadingState());
         Log.d('Deleting user');
-        await _supabaseRepository.updateUserOnLogout();
-        await _supabaseRepository.leaveAllPrivateChats();
-        _supabaseRepository.closeAllStreams();
-        await _supabaseRepository.deleteUserAndFiles();
+        await _serverpodRepository.updateUserOnLogout();
+        await _serverpodRepository.leaveAllPrivateChats();
+        _serverpodRepository.closeAllStreams();
+        await _serverpodRepository.deleteUserAndFiles();
         emit(AccountLogoutState());
       }
     } on Exception catch (error, stacktrace) {
@@ -61,8 +61,8 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
   Future<void> _onAccountLogoutEvent(AccountLogoutEvent event, Emitter<AccountState> emit) async {
     try {
       emit(AccountLoadingState());
-      await _supabaseRepository.updateUserOnLogout();
-      _supabaseRepository.closeAllStreams();
+      await _serverpodRepository.updateUserOnLogout();
+      _serverpodRepository.closeAllStreams();
       await _authRepository.signOut();
       emit(AccountLogoutState());
     } on Exception catch (error, stacktrace) {
@@ -77,7 +77,7 @@ class AccountBloc extends Bloc<AccountEvent, AccountState> {
 
   void setUpUserListener() async {
     Log.d('Setting up private chats stream');
-    userStream = _supabaseRepository.streamUser().listen((user) async {
+    userStream = _serverpodRepository.streamUser().listen((user) async {
       if (user == null) {
         Log.d('No user found');
         return;

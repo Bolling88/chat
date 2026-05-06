@@ -1,6 +1,6 @@
 import 'package:chat/repository/chat_clicked_repository.dart';
 import 'package:chat/repository/fcm_repository.dart';
-import 'package:chat/repository/supabase_repository.dart';
+import 'package:chat/repository/serverpod_repository.dart';
 import 'package:chat/repository/subscription_repository.dart';
 import 'package:chat/screens/chat/chat_screen.dart';
 import 'package:chat/screens/feedback/feedback_screen.dart';
@@ -16,7 +16,6 @@ import '../../model/chat.dart';
 import '../../model/chat_user.dart';
 import '../../model/private_chat.dart';
 import '../../model/room_chat.dart';
-import '../../repository/supabase_presence_repository.dart';
 import '../../utils/app_widgets.dart';
 import '../../utils/auth_util.dart';
 import '../../utils/enums.dart';
@@ -42,10 +41,9 @@ class MessageHolderScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    context.read<SupabasePresenceRepository>().updateUserPresence();
     return BlocProvider(
       create: (BuildContext context) => MessageHolderBloc(
-          context.read<SupabaseRepository>(),
+          context.read<ServerpodRepository>(),
           context.read<FcmRepository>(),
           context.read<ChatClickedRepository>(),
           context.read<SubscriptionRepository>()),

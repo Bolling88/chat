@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:chat/repository/supabase_repository.dart';
+import 'package:chat/repository/serverpod_repository.dart';
 import 'package:chat/utils/enums.dart';
 import 'package:chat/screens/report/report_screen.dart';
 import 'package:flutter/material.dart';
@@ -39,7 +39,7 @@ class VisitScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (BuildContext context) =>
-          VisitBloc(context.read<SupabaseRepository>(), userId, chat),
+          VisitBloc(context.read<ServerpodRepository>(), userId, chat),
       child: VisitScreenContent(
           parentContext: parentContext,
           chat: chat,

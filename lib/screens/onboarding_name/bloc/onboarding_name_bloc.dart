@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:universal_io/io.dart';
-import '../../../repository/supabase_repository.dart';
+import '../../../repository/serverpod_repository.dart';
 import '../../../utils/log.dart';
 import '../../login/bloc/login_state.dart';
 import 'onboarding_name_event.dart';
@@ -9,10 +9,10 @@ import 'onboarding_name_state.dart';
 
 class OnboardingNameBloc
     extends Bloc<OnboardingNameEvent, OnboardingNameState> {
-  final SupabaseRepository _supabaseRepository;
+  final ServerpodRepository _serverpodRepository;
   final picker = ImagePicker();
 
-  OnboardingNameBloc(this._supabaseRepository)
+  OnboardingNameBloc(this._serverpodRepository)
       : super(const OnboardingNameBaseState('', false, false)) {
     on<OnboardingNameInitialEvent>(_onInitial);
     on<OnboardingNameContinueClickedEvent>(_onContinueClicked);
@@ -25,7 +25,7 @@ class OnboardingNameBloc
     OnboardingNameInitialEvent event,
     Emitter<OnboardingNameState> emit,
   ) async {
-    final user = await _supabaseRepository.getUser();
+    final user = await _serverpodRepository.getUser();
     if (user != null) {
       add(OnboardingNameChangedEvent(user.displayName));
     }
@@ -40,16 +40,16 @@ class OnboardingNameBloc
       final name = currentState.displayName.trim();
       emit(currentState.copyWith(isValidatingName: true, displayName: name));
       final nameAvailable =
-          await _supabaseRepository.getIsNameAvailable(name);
+          await _serverpodRepository.getIsNameAvailable(name);
       if (!nameAvailable) {
         emit(currentState.copyWith(
             isValidatingName: false, isNameTaken: true));
       } else {
         final fullName = name;
         final searchArray = _getSearchArray(fullName);
-        await _supabaseRepository.updateUserDisplayName(
+        await _serverpodRepository.updateUserDisplayName(
             fullName, searchArray);
-        final chatUser = await _supabaseRepository.getUser();
+        final chatUser = await _serverpodRepository.getUser();
         if (chatUser?.birthDate == null && Platform.isAndroid) {
           emit(const OnboardingNameSuccessState(OnboardingNavigation.age));
         } else if (chatUser?.pictureData.isEmpty == true) {

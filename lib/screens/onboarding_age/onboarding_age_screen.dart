@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_holo_date_picker/flutter_holo_date_picker.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
-import '../../repository/supabase_repository.dart';
+import '../../repository/serverpod_repository.dart';
 import '../../utils/app_widgets.dart';
 import '../login/bloc/login_state.dart';
 import '../onboarding_gender/onboarding_gender_screen.dart';
@@ -28,7 +28,7 @@ class OnboardingAgeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (BuildContext context) =>
-          OnboardingAgeBloc(context.read<SupabaseRepository>()),
+          OnboardingAgeBloc(context.read<ServerpodRepository>()),
       child: const OnboardingAgeScreenContent(),
     );
   }

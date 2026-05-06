@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'package:chat/model/chat_user.dart';
 import 'package:chat/model/private_chat.dart';
 import 'package:chat/repository/chat_clicked_repository.dart';
-import 'package:chat/repository/supabase_storage_repository.dart';
+import 'package:chat/repository/serverpod_storage_repository.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
@@ -12,7 +12,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:universal_io/io.dart';
 import '../../../model/chat.dart';
 import '../../../model/message.dart';
-import '../../../repository/supabase_repository.dart';
+import '../../../repository/serverpod_repository.dart';
 import '../../../utils/auth_util.dart';
 import '../../../utils/audio.dart';
 import '../../../utils/enums.dart';
@@ -25,9 +25,9 @@ import 'package:collection/collection.dart';
 class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
   final Chat chat;
   final bool isPrivateChat;
-  final SupabaseRepository _supabaseRepository;
+  final ServerpodRepository _serverpodRepository;
   final ChatClickedRepository _chatClickedRepository;
-  final SupabaseStorageRepository _storageRepository;
+  final ServerpodStorageRepository _storageRepository;
   final picker = ImagePicker();
 
   BannerAd? _anchoredAdaptiveAd;
@@ -39,7 +39,7 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
 
   late ChatUser _user;
 
-  MessagesBloc(this.chat, this._supabaseRepository,
+  MessagesBloc(this.chat, this._serverpodRepository,
       this._chatClickedRepository, this._storageRepository,
       {required this.isPrivateChat})
       : super(MessagesLoadingState()) {
@@ -106,7 +106,7 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
               currentState.usersInRoom,
               null));
         } else {
-          await _supabaseRepository.postMessage(
+          await _serverpodRepository.postMessage(
             chatId: chat.id,
             user: currentState.myUser,
             chatType: ChatType.message,
@@ -188,7 +188,7 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
             currentState.usersInRoom,
             null));
       } else {
-        await _supabaseRepository.postMessage(
+        await _serverpodRepository.postMessage(
             chatId: chat.id,
             user: currentState.myUser,
             chatType: ChatType.giphy,
@@ -207,7 +207,7 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
   }
 
   void _onReportMessage(MessagesReportMessageEvent event, Emitter<MessagesState> emit) {
-    _supabaseRepository.reportMessage(event.message);
+    _serverpodRepository.reportMessage(event.message);
   }
 
   void _onBannerAdLoaded(MessagesBannerAdLoadedEvent event, Emitter<MessagesState> emit) {
@@ -298,7 +298,7 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
           }
           final finalUrl = await _storageRepository.uploadMessageImage(
               pickedFile.path, base64Image) ?? "";
-          await _supabaseRepository.postMessage(
+          await _serverpodRepository.postMessage(
               chatId: chat.id,
               user: currentState.myUser,
               chatType: ChatType.image,
@@ -312,7 +312,7 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
                   : null),
               isGiphy: true);
           if (!kIsWeb || _user.isPremiumUser) {
-            _supabaseRepository.reduceUserCredits(_user.id, 1);
+            _serverpodRepository.reduceUserCredits(_user.id, 1);
           }
           emit(currentState.copyWith(currentMessage: ""));
         } else {
@@ -337,7 +337,7 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
         if (pickedFile != null) {
           final finalUrl = await _storageRepository.uploadMessageImage(
               pickedFile.path, '') ?? "";
-          await _supabaseRepository.postMessage(
+          await _serverpodRepository.postMessage(
               chatId: chat.id,
               user: currentState.myUser,
               chatType: ChatType.image,
@@ -351,7 +351,7 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
                   : null),
               isGiphy: true);
           if (!kIsWeb || _user.isPremiumUser) {
-            _supabaseRepository.reduceUserCredits(_user.id, 1);
+            _serverpodRepository.reduceUserCredits(_user.id, 1);
           }
           emit(currentState.copyWith(currentMessage: ""));
         } else {
@@ -376,7 +376,7 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
 
   void _setUpMessagesListener(String chatId) async {
     Log.d('Setting up message stream');
-    messagesStream = _supabaseRepository
+    messagesStream = _serverpodRepository
         .streamMessages(chatId, isPrivateChat, 20)
         .listen((messages) {
       Log.d("Got messages");
@@ -386,7 +386,7 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
 
   void _setUpUserListener() async {
     Log.d('Setting up private chats stream');
-    userStream = _supabaseRepository.streamUser().listen((user) async {
+    userStream = _serverpodRepository.streamUser().listen((user) async {
       if (user == null) return;
       add(MessagesUserUpdatedEvent(user));
     });
@@ -395,7 +395,7 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
   void _setUpPrivateChatStream() async {
     Log.d('Setting up private chats stream');
     privateChatsStream =
-        _supabaseRepository.getPrivateChatsStream().listen((chats) async {
+        _serverpodRepository.getPrivateChatsStream().listen((chats) async {
       Log.d("Got private chats");
       final PrivateChat? updatedChat =
           chats.firstWhereOrNull((element) => element.id == chat.id);
@@ -407,7 +407,7 @@ class MessagesBloc extends Bloc<MessagesEvent, MessagesState> {
 
   void _setUpOnlineUsersListener() {
     onlineUsersStream =
-        _supabaseRepository.onlineUsersStream.listen((event) async {
+        _serverpodRepository.onlineUsersStream.listen((event) async {
       final filteredUsers = event
           .where((element) => element.currentRoomChatId == chat.id)
           .toList();

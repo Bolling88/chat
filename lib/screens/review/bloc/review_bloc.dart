@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:chat/repository/supabase_repository.dart';
+import 'package:chat/repository/serverpod_repository.dart';
 import 'package:chat/screens/review/bloc/review_event.dart';
 import 'package:chat/screens/review/bloc/review_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,11 +8,11 @@ import '../../../model/chat_user.dart';
 import '../../../utils/log.dart';
 
 class ReviewBloc extends Bloc<ReviewEvent, ReviewState> {
-  final SupabaseRepository _supabaseRepository;
+  final ServerpodRepository _serverpodRepository;
 
   late StreamSubscription<List<ChatUser>> userStream;
 
-  ReviewBloc(this._supabaseRepository) : super(ReviewLoadingState()) {
+  ReviewBloc(this._serverpodRepository) : super(ReviewLoadingState()) {
     on<ReviewInitialEvent>(_onReviewInitialEvent);
     on<ReviewUsersChangedEvent>(_onReviewUsersChangedEvent);
     on<ReviewApproveEvent>(_onReviewApproveEvent);
@@ -62,7 +62,7 @@ class ReviewBloc extends Bloc<ReviewEvent, ReviewState> {
     final currentState = state;
     try {
       if (currentState is ReviewBaseState) {
-        _supabaseRepository.approveImage(event.user.id);
+        _serverpodRepository.approveImage(event.user.id);
         final ChatUser? user = currentState.users
             .where((element) => element.id != event.user.id)
             .firstOrNull;
@@ -87,7 +87,7 @@ class ReviewBloc extends Bloc<ReviewEvent, ReviewState> {
     final currentState = state;
     try {
       if (currentState is ReviewBaseState) {
-        _supabaseRepository.rejectImage(event.user.id);
+        _serverpodRepository.rejectImage(event.user.id);
         final ChatUser? user = currentState.users
             .where((element) => element.id != event.user.id)
             .firstOrNull;
@@ -109,7 +109,7 @@ class ReviewBloc extends Bloc<ReviewEvent, ReviewState> {
 
   void setUpProfilePickListener() async {
     Log.d('Setting up private chats stream');
-    userStream = _supabaseRepository
+    userStream = _serverpodRepository
         .streamUnapprovedImages()
         .handleError(
             (error) => Log.e('Error while listening to review stream: $error'))

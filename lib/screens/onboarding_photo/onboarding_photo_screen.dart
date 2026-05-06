@@ -6,8 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:universal_io/io.dart';
-import '../../repository/supabase_repository.dart';
-import '../../repository/supabase_storage_repository.dart';
+import '../../repository/serverpod_repository.dart';
+import '../../repository/serverpod_storage_repository.dart';
 import '../../utils/app_widgets.dart';
 import '../login/bloc/login_state.dart';
 import '../onboarding_gender/onboarding_gender_screen.dart';
@@ -31,8 +31,8 @@ class OnboardingPhotoScreen extends StatelessWidget {
     final AppImageCropper appImageCropper = AppImageCropper(context);
     return BlocProvider(
       create: (BuildContext context) => OnboardingPhotoBloc(
-          context.read<SupabaseRepository>(),
-          context.read<SupabaseStorageRepository>(),
+          context.read<ServerpodRepository>(),
+          context.read<ServerpodStorageRepository>(),
           appImageCropper),
       child: const OnboardingPhotoScreenContent(),
     );

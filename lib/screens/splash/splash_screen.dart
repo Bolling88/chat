@@ -1,7 +1,7 @@
 import 'package:chat/screens/message_holder/message_holder_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../repository/supabase_repository.dart';
+import '../../repository/serverpod_repository.dart';
 import '../error/error_screen.dart';
 import '../loading/loading_screen.dart';
 import '../login/bloc/login_state.dart';
@@ -17,7 +17,7 @@ class SplashScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (BuildContext context) =>
-          SplashBloc(context.read<SupabaseRepository>()),
+          SplashBloc(context.read<ServerpodRepository>()),
       child: const SplashScreenBuilder(),
     );
   }

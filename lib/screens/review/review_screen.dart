@@ -2,7 +2,7 @@
 import 'package:chat/screens/login/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../repository/supabase_repository.dart';
+import '../../repository/serverpod_repository.dart';
 import '../../utils/app_colors.dart';
 import '../../utils/app_widgets.dart';
 import 'bloc/review_bloc.dart';
@@ -18,7 +18,7 @@ class ReviewScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (BuildContext context) =>
-          ReviewBloc(context.read<SupabaseRepository>()),
+          ReviewBloc(context.read<ServerpodRepository>()),
       child: const ReviewScreenBuilder(),
     );
   }

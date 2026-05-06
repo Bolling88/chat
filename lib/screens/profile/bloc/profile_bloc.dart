@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:chat/repository/supabase_repository.dart';
+import 'package:chat/repository/serverpod_repository.dart';
 import 'package:chat/screens/profile/bloc/profile_event.dart';
 import 'package:chat/screens/profile/bloc/profile_state.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -8,11 +8,11 @@ import '../../../model/chat_user.dart';
 import '../../../utils/log.dart';
 
 class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
-  final SupabaseRepository _supabaseRepository;
+  final ServerpodRepository _serverpodRepository;
 
   late StreamSubscription<ChatUser?> userStream;
 
-  ProfileBloc(this._supabaseRepository) : super(ProfileLoadingState()) {
+  ProfileBloc(this._serverpodRepository) : super(ProfileLoadingState()) {
     on<ProfileInitialEvent>(_onProfileInitialEvent);
     on<ProfileUserChangedEvent>(_onProfileUserChangedEvent);
     on<ProfileShowAgeChangedEvent>(_onProfileShowAgeChangedEvent);
@@ -57,7 +57,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     final currentState = state;
     try {
       if (currentState is ProfileBaseState) {
-        _supabaseRepository.updateUserShowAge(event.showAge);
+        _serverpodRepository.updateUserShowAge(event.showAge);
       }
     } on Exception catch (error, stacktrace) {
       emit(ProfileErrorState());
@@ -67,7 +67,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
 
   Future<void> setUpUserListener() async {
     Log.d('Setting up user stream for profile');
-    userStream = _supabaseRepository.streamUser().listen(
+    userStream = _serverpodRepository.streamUser().listen(
       (user) async {
         if (user == null) {
           Log.e('No user found in profile stream');

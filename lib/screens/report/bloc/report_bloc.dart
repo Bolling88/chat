@@ -3,13 +3,13 @@ import 'dart:async';
 import 'package:chat/screens/report/bloc/report_state.dart';
 import 'package:chat/screens/report/bloc/report_event.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import '../../../repository/supabase_repository.dart';
+import '../../../repository/serverpod_repository.dart';
 
 class ReportBloc extends Bloc<ReportEvent, ReportState> {
-  final SupabaseRepository _supabaseRepository;
+  final ServerpodRepository _serverpodRepository;
   final String userId;
 
-  ReportBloc(this._supabaseRepository, this.userId) : super(ReportBaseState()) {
+  ReportBloc(this._serverpodRepository, this.userId) : super(ReportBaseState()) {
     on<ReportInitialEvent>(_onReportInitialEvent);
     on<ReportInappropriateImageEvent>(_onReportInappropriateImageEvent);
     on<ReportHatefulLanguageEvent>(_onReportHatefulLanguageEvent);
@@ -33,7 +33,7 @@ class ReportBloc extends Bloc<ReportEvent, ReportState> {
     if (currentState is ReportBaseState) {
       emit(ReportLoadingState());
       try {
-        await _supabaseRepository.postInappropriateImageReport(userId);
+        await _serverpodRepository.postInappropriateImageReport(userId);
         emit(ReportDoneState());
       } catch (e) {
         emit(ReportErrorState(e.toString()));
@@ -49,7 +49,7 @@ class ReportBloc extends Bloc<ReportEvent, ReportState> {
     if (currentState is ReportBaseState) {
       emit(ReportLoadingState());
       try {
-        await _supabaseRepository.postHatefulLanguageReport(userId);
+        await _serverpodRepository.postHatefulLanguageReport(userId);
         emit(ReportDoneState());
       } catch (e) {
         emit(ReportErrorState(e.toString()));
@@ -65,7 +65,7 @@ class ReportBloc extends Bloc<ReportEvent, ReportState> {
     if (currentState is ReportBaseState) {
       emit(ReportLoadingState());
       try {
-        await _supabaseRepository.postBotReport(userId);
+        await _serverpodRepository.postBotReport(userId);
         emit(ReportDoneState());
       } catch (e) {
         emit(ReportErrorState(e.toString()));
