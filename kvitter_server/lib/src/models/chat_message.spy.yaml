@@ -1,0 +1,36 @@
+class: ChatMessage
+table: messages
+fields:
+  id: UuidValue?, defaultPersist=random_v7
+  chatId: String
+  isPrivate: bool
+  text: String
+  chatType: int
+  createdById: String
+  createdByName: String
+  createdByGender: int
+  createdByCountryCode: String
+  createdByImageUrl: String
+  approvedImage: int
+  created: DateTime
+  birthDate: DateTime?
+  showAge: bool
+  imageReports: List<String>
+  replyId: String?
+  replyText: String
+  replyChatType: int
+  replyCreatedById: String?
+  replyCreatedByName: String
+  replyCreatedByGender: int
+  replyCreatedByCountryCode: String
+  replyCreatedByImageUrl: String
+  replyApprovedImage: int
+  replyCreated: DateTime?
+  replyBirthDate: DateTime?
+  replyShowAge: bool
+  replyImageReports: List<String>
+indexes:
+  message_chat_created_idx:
+    fields: chatId, created
+  message_created_by_idx:
+    fields: createdById

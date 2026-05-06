@@ -1,0 +1,20 @@
+class: RoomChat
+table: room_chats
+fields:
+  id: UuidValue?, defaultPersist=random_v7
+  chatName: String
+  chatColor: int
+  imageUrl: String
+  countryCode: String
+  enabled: bool
+  infoKey: String
+  imageOverflow: int
+  imageTranslationX: int
+  lastMessage: String
+  lastMessageIsGiphy: bool
+  lastMessageByName: String
+  lastMessageTimestamp: DateTime
+  lastMessageUserId: UuidValue?
+indexes:
+  room_chat_country_enabled_idx:
+    fields: countryCode, enabled

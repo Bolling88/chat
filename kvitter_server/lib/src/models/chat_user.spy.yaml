@@ -1,0 +1,39 @@
+class: ChatUser
+table: chat_users
+fields:
+  id: UuidValue?, defaultPersist=random_v7
+  authUserIdentifier: String
+  email: String
+  displayName: String
+  gender: int
+  birthDate: DateTime?
+  showAge: bool
+  pictureData: String
+  approvedImage: int
+  city: String
+  countryCode: String
+  country: String
+  regionName: String
+  presence: bool
+  lastActive: DateTime
+  currentRoomChatId: UuidValue?
+  fcmToken: String
+  blockedBy: List<String>
+  imageReports: List<String>
+  botReports: List<String>
+  languageReports: List<String>
+  kvitterCredits: int
+  isPremiumUser: bool
+  onboardingCompleted: bool
+  isAdmin: bool
+  searchArray: List<String>
+indexes:
+  chat_user_last_active_idx:
+    fields: lastActive
+  chat_user_approved_image_idx:
+    fields: approvedImage
+  chat_user_display_name_idx:
+    fields: displayName
+  chat_user_auth_user_idx:
+    fields: authUserIdentifier
+    unique: true

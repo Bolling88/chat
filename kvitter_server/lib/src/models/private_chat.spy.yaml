@@ -1,0 +1,22 @@
+class: PrivateChat
+table: private_chats
+fields:
+  id: UuidValue?, defaultPersist=random_v7
+  users: List<String>
+  created: DateTime
+  initiatedBy: String
+  initiatedByUserName: String
+  initiatedByUserGender: int
+  initiatedByPictureData: String
+  chatName: String
+  otherUserId: String
+  otherUserName: String
+  otherUserGender: int
+  otherUserPictureData: String
+  lastMessage: String
+  lastMessageIsGiphy: bool
+  lastMessageByName: String
+  lastMessageTimestamp: DateTime
+  lastMessageUserId: String?
+  lastMessageReadBy: List<String>
+  sendPushToUserId: String?

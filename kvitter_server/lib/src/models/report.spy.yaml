@@ -1,0 +1,14 @@
+class: Report
+table: reports
+fields:
+  id: UuidValue?, defaultPersist=random_v7
+  messageId: String
+  messageText: String
+  messageCreated: DateTime
+  messageCreatedBy: String
+  messageCreatedByGender: int
+  messageCreatedByCountryCode: String
+  messageCreatedByImageUrl: String
+  messageCreatedByDisplayName: String
+  reportedBy: String
+  reportedAt: DateTime

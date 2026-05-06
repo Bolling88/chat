@@ -5,6 +5,11 @@ description: Chat rooms app
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
+workspace:
+  - kvitter_client
+  - kvitter_server
+  - kvitter_flutter
+
 # The following defines the version and build number for your application.
 # A version number is three numbers separated by dots, like 1.2.43
 # followed by an optional build number separated by a +.
@@ -43,7 +48,7 @@ dependencies:
   serverpod_flutter: ^3.4.8
   serverpod_auth_idp_flutter: ^3.4.8
   kvitter_client:
-    path: ../kvitter/kvitter_client
+    path: kvitter_client
 
   # Internationalization
   flutter_i18n: ^0.37.1

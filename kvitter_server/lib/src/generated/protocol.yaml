@@ -1,0 +1,62 @@
+appleIdp:
+  - login:
+  - hasAccount:
+googleIdp:
+  - login:
+  - hasAccount:
+jwtRefresh:
+  - refreshAccessToken:
+chat:
+  - getChat:
+  - getOpenChats:
+  - getInitialMessages:
+  - getMoreMessages:
+  - postMessage:
+  - postFeedback:
+  - reduceCredits:
+  - increaseCredits:
+messaging:
+  - getOnlineUsers:
+  - getOnlineUserCount:
+  - cleanUpStalePresence:
+moderation:
+  - blockUser:
+  - unblockUser:
+  - reportMessage:
+  - reportInappropriateImage:
+  - reportBot:
+  - reportHatefulLanguage:
+  - approveImage:
+  - rejectImage:
+  - getUnapprovedImages:
+privateChat:
+  - createPrivateChat:
+  - isPrivateChatAvailable:
+  - leavePrivateChat:
+  - setLastMessageRead:
+  - leaveAllPrivateChats:
+  - getPrivateChats:
+  - getPrivateChatWithUser:
+storage:
+  - uploadAvatar:
+  - uploadChatImage:
+  - deleteAvatar:
+  - deleteUserAvatar:
+user:
+  - getUser:
+  - ensureUserExists:
+  - updateGender:
+  - updateBirthday:
+  - updateShowAge:
+  - updateDisplayName:
+  - updateProfileImage:
+  - isNameAvailable:
+  - updateLocation:
+  - setActive:
+  - setCurrentChatRoom:
+  - saveFcmToken:
+  - logout:
+  - deleteAccount:
+  - setPremium:
+  - deletePhoto:
+  - updateImageNotReviewedStatus:

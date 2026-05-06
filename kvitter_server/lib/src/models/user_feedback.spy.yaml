@@ -1,0 +1,10 @@
+class: UserFeedback
+table: user_feedbacks
+fields:
+  id: UuidValue?, defaultPersist=random_v7
+  feedback: String
+  createdById: String
+  createdByName: String
+  createdByCountryCode: String
+  createdByCountryName: String
+  created: DateTime
