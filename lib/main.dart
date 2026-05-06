@@ -92,9 +92,10 @@ Future<void> main() async {
 }
 
 class KvitterApp extends StatelessWidget {
-  final Future<FirebaseApp> _initialization = _initializeFirebase();
+  final Future<FirebaseApp?> _initialization = _initializeFirebase();
 
-  static Future<FirebaseApp> _initializeFirebase() async {
+  static Future<FirebaseApp?> _initializeFirebase() async {
+    if (kIsWeb) return null;
     final app = await Firebase.initializeApp();
     return app;
   }

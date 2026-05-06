@@ -4,7 +4,25 @@
       "Bash(flutter --version:*)",
       "Bash(keytool:*)",
       "Bash(python3:*)",
-      "Bash(git reset:*)"
+      "Bash(git reset:*)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(grep -E \"\\\\.\\(dart\\)$|/$\")",
+      "Bash(grep -E \"\\\\.dart$\")",
+      "Bash(git *)",
+      "Bash(dart pub *)",
+      "Bash(export PATH=\"$PATH:$HOME/.pub-cache/bin\")",
+      "Bash(serverpod create *)",
+      "Bash(serverpod generate *)",
+      "Bash(serverpod --version)",
+      "Bash(/Users/lbofhn/.pub-cache/bin/serverpod generate *)",
+      "Bash(psql --version)",
+      "Bash(postgres --version)",
+      "Bash(brew list *)",
+      "Bash(pg_isready)",
+      "Bash(cp -R /Users/lbofhn/Documents/Kvitter/kvitter/kvitter_server /Users/lbofhn/Documents/Kvitter/chat/kvitter_server)",
+      "Bash(cp -R /Users/lbofhn/Documents/Kvitter/kvitter/kvitter_client /Users/lbofhn/Documents/Kvitter/chat/kvitter_client)",
+      "Bash(cp -R /Users/lbofhn/Documents/Kvitter/kvitter/kvitter_flutter /Users/lbofhn/Documents/Kvitter/chat/kvitter_flutter)"
     ]
   }
 }
