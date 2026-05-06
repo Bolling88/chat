@@ -23,12 +23,7 @@ void run(List<String> args) async {
       // Use JWT for authentication keys towards the server.
       JwtConfigFromPasswords(),
     ],
-    identityProviderBuilders: [
-      // Configure the Google identity provider for Google OAuth authentication.
-      GoogleIdpConfigFromPasswords(),
-      // Configure the Apple identity provider for Sign in with Apple authentication.
-      AppleIdpConfigFromPasswords(),
-    ],
+    identityProviderBuilders: _buildIdentityProviders(),
   );
 
   // Setup a default page at the web root.
@@ -75,5 +70,20 @@ void run(List<String> args) async {
 
   // Start the server.
   await pod.start();
+}
+
+List<IdentityProviderBuilder> _buildIdentityProviders() {
+  final providers = <IdentityProviderBuilder>[];
+  try {
+    providers.add(GoogleIdpConfigFromPasswords());
+  } catch (e) {
+    print('Google IDP not configured: $e');
+  }
+  try {
+    providers.add(AppleIdpConfigFromPasswords());
+  } catch (e) {
+    print('Apple IDP not configured: $e');
+  }
+  return providers;
 }
 
