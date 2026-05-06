@@ -7,21 +7,21 @@
 # Configuration for the main API server.
 apiServer:
   port: 8080
-  publicHost: YOUR_MAC_MINI_DOMAIN
+  publicHost: kvitterchat.com
   publicPort: 443
   publicScheme: https
 
 # Configuration for the Insights server.
 insightsServer:
   port: 8081
-  publicHost: YOUR_MAC_MINI_DOMAIN
+  publicHost: kvitterchat.com
   publicPort: 8081
   publicScheme: https
 
 # Configuration for the web server.
 webServer:
   port: 8082
-  publicHost: YOUR_MAC_MINI_DOMAIN
+  publicHost: kvitterchat.com
   publicPort: 8082
   publicScheme: https
 
