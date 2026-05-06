@@ -1,3 +1,5 @@
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:kvitter_client/kvitter_client.dart';
 
-String getUserId() => Supabase.instance.client.auth.currentUser!.id;
+late Client serverpodClient;
+
+String getUserId() => serverpodClient.auth.authInfo!.authUserId.toString();
