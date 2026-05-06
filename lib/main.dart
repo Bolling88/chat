@@ -1,11 +1,11 @@
 import 'package:chat/repository/chat_clicked_repository.dart';
 import 'package:chat/repository/fcm_repository.dart';
-import 'package:chat/repository/supabase_repository.dart';
-import 'package:chat/repository/supabase_auth_repository.dart';
-import 'package:chat/repository/supabase_presence_repository.dart';
-import 'package:chat/repository/supabase_storage_repository.dart';
+import 'package:chat/repository/serverpod_repository.dart';
+import 'package:chat/repository/serverpod_auth_repository.dart';
+import 'package:chat/repository/serverpod_storage_repository.dart';
 import 'package:chat/repository/subscription_repository.dart';
-import 'package:chat/supabase_config.dart';
+import 'package:chat/serverpod_config.dart';
+import 'package:chat/utils/auth_util.dart';
 import 'package:chat/screens/account/account_screen.dart';
 import 'package:chat/screens/message_holder/message_holder_screen.dart';
 import 'package:chat/screens/onboarding_age/onboarding_age_screen.dart';
@@ -37,20 +37,27 @@ import 'package:flutter_i18n/flutter_i18n.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:kvitter_client/kvitter_client.dart';
 import 'package:provider/provider.dart';
+import 'package:serverpod_auth_idp_flutter/serverpod_auth_idp_flutter.dart';
+import 'package:serverpod_flutter/serverpod_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'utils/simple_bloc_observer.dart';
 import 'screens/loading/loading_screen.dart';
 import 'screens/login/login_screen.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await Supabase.initialize(
-    url: SupabaseConfig.url,
-    anonKey: SupabaseConfig.anonKey,
-  );
+  final client = Client(
+    '${ServerpodConfig.isSecure ? 'https' : 'http'}://${ServerpodConfig.host}:${ServerpodConfig.port}/',
+  )..connectivityMonitor = FlutterConnectivityMonitor();
+
+  final sessionManager = FlutterAuthSessionManager();
+  client.authSessionManager = sessionManager;
+  await sessionManager.initialize();
+
+  serverpodClient = client;
 
   if (!kIsWeb) {
     MobileAds.instance.initialize().then((initializationStatus) {
@@ -80,7 +87,7 @@ Future<void> main() async {
   Bloc.observer = SimpleBlocObserver();
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((_) {
-    runApp(KvitterApp(flutterI18nDelegate: flutterI18nDelegate, prefs: prefs));
+    runApp(KvitterApp(flutterI18nDelegate: flutterI18nDelegate, prefs: prefs, client: client));
   });
 }
 
@@ -96,7 +103,9 @@ class KvitterApp extends StatelessWidget {
 
   final SharedPreferences prefs;
 
-  KvitterApp({super.key, required this.flutterI18nDelegate, required this.prefs});
+  final Client client;
+
+  KvitterApp({super.key, required this.flutterI18nDelegate, required this.prefs, required this.client});
 
   @override
   Widget build(BuildContext context) {
@@ -115,28 +124,25 @@ class KvitterApp extends StatelessWidget {
         if (snapshot.connectionState == ConnectionState.done) {
           final OnlineUserProcessor onlineUsersProcessor =
               kIsWeb ? WebOnlineUsersProcessor() : MobileOnlineUsersProcessor();
-          final SupabaseRepository supabaseRepository =
-              SupabaseRepository(onlineUsersProcessor);
-          final SupabaseAuthRepository supabaseAuthRepository =
-              SupabaseAuthRepository();
-          final SupabaseStorageRepository supabaseStorageRepository =
-              SupabaseStorageRepository();
+          final ServerpodRepository serverpodRepository =
+              ServerpodRepository(onlineUsersProcessor);
+          final ServerpodAuthRepository serverpodAuthRepository =
+              ServerpodAuthRepository(client);
+          final ServerpodStorageRepository serverpodStorageRepository =
+              ServerpodStorageRepository(client);
           final FcmRepository fcmRepository =
-              FcmRepository(supabaseRepository);
+              FcmRepository(serverpodRepository);
           final AppImageCropper appImageCropper = AppImageCropper(context);
-          final SupabasePresenceRepository supabasePresenceRepository =
-              SupabasePresenceRepository();
           final ChatClickedRepository chatClickedRepository =
               ChatClickedRepository();
           final SubscriptionRepository subscriptionRepository =
-              SubscriptionRepository(supabaseRepository);
+              SubscriptionRepository(serverpodRepository);
 
           return MultiProvider(
             providers: [
-              Provider<SupabaseRepository>.value(value: supabaseRepository),
-              Provider<SupabaseAuthRepository>.value(value: supabaseAuthRepository),
-              Provider<SupabaseStorageRepository>.value(value: supabaseStorageRepository),
-              Provider<SupabasePresenceRepository>.value(value: supabasePresenceRepository),
+              Provider<ServerpodRepository>.value(value: serverpodRepository),
+              Provider<ServerpodAuthRepository>.value(value: serverpodAuthRepository),
+              Provider<ServerpodStorageRepository>.value(value: serverpodStorageRepository),
               Provider<AppImageCropper>.value(value: appImageCropper),
               Provider<FcmRepository>.value(value: fcmRepository),
               Provider<OnlineUserProcessor>.value(value: onlineUsersProcessor),
