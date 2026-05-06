@@ -1,5 +1,5 @@
-import 'package:chat/repository/supabase_auth_repository.dart';
-import 'package:chat/repository/supabase_repository.dart';
+import 'package:chat/repository/serverpod_auth_repository.dart';
+import 'package:chat/repository/serverpod_repository.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -25,7 +25,7 @@ class LoginScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (BuildContext context) => LoginBloc(
-          context.read<SupabaseAuthRepository>(), context.read<SupabaseRepository>()),
+          context.read<ServerpodAuthRepository>(), context.read<ServerpodRepository>()),
       child: const LoginScreenBuilder(),
     );
   }
@@ -123,17 +123,6 @@ class LoginScreenContent extends StatelessWidget {
               style: Theme.of(context).textTheme.bodyMedium,
             ),
             const SizedBox(height: 40),
-            ElevatedButton.icon(
-                onPressed: () {
-                  BlocProvider.of<LoginBloc>(context)
-                      .add(LoginGuestClickedEvent());
-                },
-                icon: const Icon(Icons.person),
-                label: Text(
-                  FlutterI18n.translate(context, 'continue_guest'),
-                  style: Theme.of(context).textTheme.bodyMedium,
-                )),
-            const SizedBox(height: 20),
             ElevatedButton.icon(
                 onPressed: () {
                   BlocProvider.of<LoginBloc>(context)
