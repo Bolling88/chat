@@ -3,6 +3,7 @@ import 'package:chat/screens/splash/bloc/splash_state.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:chat/utils/auth_util.dart';
+import 'package:serverpod_auth_idp_flutter/serverpod_auth_idp_flutter.dart';
 import 'package:universal_io/io.dart';
 import '../../../utils/log.dart';
 import '../../login/bloc/login_state.dart';
